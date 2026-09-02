@@ -6,7 +6,502 @@
 <title>PSD eNGINNo — QSHE Management V1.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css" />
+<style>
+/* ==========================================================================
+   PSD eNGINNo QSHE Management — stylesheet
+   Palette ties back to the QSHE framework document:
+   deep green (structure/authority) + warm gold (attention/accent)
+   ========================================================================== */
+
+:root {
+  --dark-green: #12492F;
+  --green: #1F7A4D;
+  --green-soft: #E8F3EC;
+  --gold: #C9992A;
+  --gold-soft: #FBF1DD;
+  --bg: #F3F5F4;
+  --card: #FFFFFF;
+  --text: #1C2622;
+  --muted: #5C6B65;
+  --border: #E1E7E4;
+  --red: #C0392B;
+  --red-soft: #FBEAE8;
+  --yellow: #B9871A;
+  --yellow-soft: #FBF1DD;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(18, 73, 47, 0.06), 0 4px 14px rgba(18, 73, 47, 0.06);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "IBM Plex Sans Thai", "Noto Sans Thai", -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+button, input, select, textarea { font-family: inherit; font-size: inherit; }
+
+a { color: var(--green); }
+
+.hidden { display: none !important; }
+
+/* ---------- Login screen ---------- */
+#login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, var(--dark-green) 0%, #0D3823 55%, #0A2E1C 100%);
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--card);
+  border-radius: 14px;
+  padding: 36px 32px 30px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+}
+
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.login-brand .mark {
+  width: 40px; height: 40px;
+  border-radius: 9px;
+  background: var(--green);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.login-brand h1 {
+  font-size: 18px;
+  margin: 0;
+  color: var(--dark-green);
+}
+.login-brand p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dark-green);
+  margin-bottom: 6px;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+  border-color: var(--green);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: var(--green);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+.btn:hover { background: var(--dark-green); }
+.btn:active { transform: translateY(1px); }
+.btn.block { width: 100%; }
+.btn.ghost {
+  background: transparent;
+  color: var(--dark-green);
+  border-color: var(--border);
+}
+.btn.ghost:hover { background: var(--green-soft); }
+.btn.danger { background: var(--red); }
+.btn.danger:hover { background: #9c2e22; }
+.btn.small { padding: 6px 10px; font-size: 13px; }
+.btn.gold { background: var(--gold); color: var(--dark-green); }
+.btn.gold:hover { background: #b3861f; }
+
+.login-error {
+  background: var(--red-soft);
+  color: var(--red);
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.login-hint {
+  margin-top: 18px;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--green-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+/* ---------- App shell ---------- */
+#app-shell {
+  display: grid;
+  grid-template-columns: 248px 1fr;
+  min-height: 100vh;
+}
+
+#sidebar {
+  background: var(--dark-green);
+  color: #EAF3EE;
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 6px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  margin-bottom: 14px;
+}
+.brand .mark {
+  width: 34px; height: 34px;
+  background: var(--gold);
+  color: var(--dark-green);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.brand .name { font-size: 13.5px; font-weight: 700; line-height: 1.25; }
+.brand .ver { font-size: 11px; color: #9FC2AC; }
+
+.nav-group-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #83A893;
+  margin: 14px 8px 6px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  color: #D8EADD;
+  cursor: pointer;
+  font-size: 13.5px;
+  margin-bottom: 2px;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+.nav-item:hover { background: rgba(255,255,255,0.08); }
+.nav-item.active {
+  background: var(--green);
+  color: #fff;
+  font-weight: 600;
+}
+.nav-item .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; opacity: 0.5;
+}
+
+#sidebar-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+.user-chip {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12.5px; color: #C9E0D1;
+  padding: 6px;
+}
+.user-chip .avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--gold); color: var(--dark-green);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 11px;
+}
+
+/* ---------- Main area ---------- */
+#main {
+  padding: 22px 28px 40px;
+  min-width: 0;
+}
+
+#topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+#topbar h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--dark-green);
+}
+#topbar .subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.building-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.building-select label { font-size: 12px; color: var(--muted); }
+.building-select select { border: none; font-weight: 600; color: var(--dark-green); }
+.building-select select:focus { outline: none; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+
+.card h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: var(--dark-green);
+}
+.card .desc { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+
+.grid { display: grid; gap: 14px; }
+.grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+@media (max-width: 980px) {
+  .grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+}
+.stat-card .label { font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
+.stat-card .value { font-size: 26px; font-weight: 700; color: var(--dark-green); }
+.stat-card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+thead th {
+  text-align: left;
+  background: var(--green-soft);
+  color: var(--dark-green);
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+  white-space: nowrap;
+}
+tbody td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tbody tr:hover td { background: #FAFCFB; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge.green { background: var(--green-soft); color: var(--green); }
+.badge.gold { background: var(--gold-soft); color: var(--yellow); }
+.badge.red { background: var(--red-soft); color: var(--red); }
+.badge.grey { background: #EEF1EF; color: var(--muted); }
+
+.status-select, .rag-select {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.toolbar .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.toolbar select, .toolbar input[type="text"] {
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--dark-green);
+  margin: 18px 0 8px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+}
+.section-title:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+.fms-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--gold);
+  border-radius: 5px;
+  padding: 1px 6px;
+  margin-right: 6px;
+}
+
+/* form modal */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(10, 30, 20, 0.45);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+  z-index: 50;
+}
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 560px;
+  padding: 22px 24px 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal h3 { margin-top: 0; color: var(--dark-green); }
+.modal .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+
+.kr-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+.kr-row input[type="text"] { flex: 1; }
+.kr-row input[type="number"] { width: 70px; }
+
+.checkbox-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.checkbox-pill {
+  display: flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12.5px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px 10px;
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.icon-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.icon-btn:hover { background: var(--green-soft); color: var(--green); }
+.icon-btn.danger:hover { background: var(--red-soft); color: var(--red); }
+
+.toast {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  background: var(--dark-green);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  z-index: 100;
+  animation: toast-in 0.18s ease;
+}
+@keyframes toast-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.progress-bar {
+  width: 100%; height: 7px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar > span {
+  display: block; height: 100%;
+  background: var(--green);
+}
+
+/* ---------- Responsive: collapse sidebar to top bar ---------- */
+@media (max-width: 860px) {
+  #app-shell { grid-template-columns: 1fr; }
+  #sidebar {
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    padding: 10px 12px;
+  }
+  .brand { border-bottom: none; margin-bottom: 0; padding: 0 10px 0 0; }
+  .nav-group-label { display: none; }
+  #sidebar nav { display: flex; gap: 4px; }
+  .nav-item { white-space: nowrap; }
+  #sidebar-footer { margin-top: 0; margin-left: 8px; border-top: none; padding-top: 0; }
+  .modal .form-row { grid-template-columns: 1fr; }
+}
+
+</style>
 </head>
 <body>
 
@@ -49,10 +544,1566 @@
     </main>
   </div>
 
-  <script src="js/data.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/export.js"></script>
-  <script src="js/app.js"></script>
+<script>
+/**
+ * data.js
+ * Static reference data + first-run seed data for PSD eNGINNo QSHE Management.
+ * Edit SEED below to change the default admin account, starting buildings,
+ * or the process/module reference list.
+ */
+
+// ---- Reference: the 5 SSPPC modules ----------------------------------
+const MODULES = [
+  { id: "structure", name: "Structure", nameTh: "โครงสร้าง", color: "#1F7A4D" },
+  { id: "system", name: "System", nameTh: "ระบบ", color: "#1F7A4D" },
+  { id: "process", name: "Process", nameTh: "กระบวนการ", color: "#1F7A4D" },
+  { id: "people", name: "People", nameTh: "บุคลากร", color: "#1F7A4D" },
+  { id: "culture", name: "Culture", nameTh: "วัฒนธรรม", color: "#1F7A4D" }
+];
+
+// ---- Reference: QSHE pillars ------------------------------------------
+const PILLARS = [
+  { id: "Q", name: "Quality", nameTh: "คุณภาพ" },
+  { id: "S", name: "Safety", nameTh: "ความปลอดภัย" },
+  { id: "H", name: "Health", nameTh: "อาชีวอนามัย" },
+  { id: "E", name: "Environment", nameTh: "สิ่งแวดล้อม" }
+];
+
+// ---- Reference: process checklist, incl. JCI FMS plans (Module 3) -----
+// category "fms" marks the 7 plans integrated from JCI Facility
+// Management and Safety standard, mapped into Module 3 — Process.
+const PROCESS_REFERENCE = [
+  { id: "p-structure-org", module: "structure", name: "ผังโครงสร้างองค์กร QSHE", owner: "QSHE Director" },
+  { id: "p-structure-committee", module: "structure", name: "คณะกรรมการบริหาร QSHE (Steering Committee)", owner: "QSHE Director" },
+
+  { id: "p-system-q", module: "system", name: "ระบบคุณภาพ (ISO 9001)", owner: "Quality Manager" },
+  { id: "p-system-s", module: "system", name: "ระบบความปลอดภัย (ISO 45001)", owner: "Safety Manager" },
+  { id: "p-system-h", module: "system", name: "ระบบอาชีวอนามัย", owner: "Health Officer" },
+  { id: "p-system-e", module: "system", name: "ระบบสิ่งแวดล้อม (ISO 14001)", owner: "Environment Officer" },
+
+  { id: "p-process-risk", module: "process", name: "ประเมินความเสี่ยง (Risk Assessment)", owner: "Pillar Lead" },
+  { id: "p-process-audit", module: "process", name: "ตรวจสอบภายใน (Internal Audit)", owner: "QSHE Officer" },
+  { id: "p-process-capa", module: "process", name: "การแก้ไข/ป้องกัน (CAPA)", owner: "เจ้าของกระบวนการ" },
+  { id: "p-process-mgmtreview", module: "process", name: "ทบทวนโดยฝ่ายบริหาร (Management Review)", owner: "QSHE Director" },
+
+  { id: "fms5", module: "process", category: "fms", fmsCode: "FMS 5", name: "Safety Management — การจัดการความปลอดภัย", owner: "Safety Manager" },
+  { id: "fms6", module: "process", category: "fms", fmsCode: "FMS 6", name: "Security — สวัสดิภาพและการรักษาความปลอดภัย", owner: "Security Manager" },
+  { id: "fms7", module: "process", category: "fms", fmsCode: "FMS 7", name: "Hazardous Materials & Waste — ขยะและวัตถุอันตราย", owner: "Environment Officer" },
+  { id: "fms8", module: "process", category: "fms", fmsCode: "FMS 8", name: "Fire Safety — ป้องกันและระงับอัคคีภัย", owner: "Safety / Fire Officer" },
+  { id: "fms10", module: "process", category: "fms", fmsCode: "FMS 10", name: "Utility Systems — ระบบสาธารณูปโภค", owner: "Engineering Manager" },
+  { id: "fms11", module: "process", category: "fms", fmsCode: "FMS 11", name: "Emergency & Disaster Management — ภัยพิบัติฉุกเฉิน", owner: "QSHE Director / QMC" },
+  { id: "fms12", module: "process", category: "fms", fmsCode: "FMS 12", name: "Construction & Renovation — ความเสี่ยงพื้นที่ก่อสร้าง (ICRA/PCRA)", owner: "Facility Manager" },
+
+  { id: "p-people-raci", module: "people", name: "RACI / บทบาทหน้าที่บุคลากร", owner: "HR + QSHE Director" },
+  { id: "p-people-training", module: "people", name: "แผนฝึกอบรมและพัฒนาสมรรถนะ", owner: "HR" },
+
+  { id: "p-culture-values", module: "culture", name: "ค่านิยมหลัก QSHE", owner: "QSHE Director" },
+  { id: "p-culture-engagement", module: "culture", name: "กิจกรรมสร้างการมีส่วนร่วม / Recognition", owner: "QSHE Director" }
+];
+
+const STATUS_LABELS = {
+  not_started: "ยังไม่เริ่ม",
+  in_progress: "กำลังดำเนินการ",
+  done: "เสร็จสมบูรณ์"
+};
+
+const RAG_LABELS = {
+  green: "ตามเป้า",
+  yellow: "เฝ้าระวัง",
+  red: "ต้องเร่งแก้ไข"
+};
+
+// ---- First-run seed (only written to localStorage if nothing exists) --
+const SEED = {
+  meta: { appName: "PSD eNGINNo QSHE Management", version: "1.0.0" },
+  users: [
+    {
+      id: "u-admin",
+      username: "admin",
+      password: "qshe2026", // demo-only auth, see README security note
+      name: "ผู้ดูแลระบบ",
+      role: "admin",
+      buildingIds: ["ALL"]
+    }
+  ],
+  buildings: [
+    { id: "b-main", code: "MAIN", name: "อาคารหลัก (Main Building)", bu: "Operations" }
+  ],
+  processStatus: [], // { id, buildingId, processId, status, note, updatedAt, updatedBy }
+  okrs: [],           // { id, buildingId, quarter, pillar, objective, keyResults:[{text,progress}], owner }
+  kpis: [],           // { id, buildingId, pillar, name, target, actual, unit, period }
+  capas: []           // { id, buildingId, title, source, owner, openedDate, dueDate, status }
+};
+
+
+/**
+ * storage.js
+ * Thin wrapper around localStorage so the rest of the app never touches
+ * localStorage directly. Swap this file's internals for a real backend
+ * (REST/API) later without changing app.js call sites.
+ */
+
+const DB_PREFIX = "qshe_";
+
+const DB = {
+  _key(name) {
+    return DB_PREFIX + name;
+  },
+  get(name, fallback) {
+    try {
+      const raw = localStorage.getItem(this._key(name));
+      if (raw === null) return fallback;
+      return JSON.parse(raw);
+    } catch (e) {
+      console.error("DB.get failed for", name, e);
+      return fallback;
+    }
+  },
+  set(name, value) {
+    try {
+      localStorage.setItem(this._key(name), JSON.stringify(value));
+      return true;
+    } catch (e) {
+      console.error("DB.set failed for", name, e);
+      return false;
+    }
+  },
+  ensureSeeded() {
+    if (this.get("users", null) === null) this.set("users", SEED.users);
+    if (this.get("buildings", null) === null) this.set("buildings", SEED.buildings);
+    if (this.get("processStatus", null) === null) this.set("processStatus", SEED.processStatus);
+    if (this.get("okrs", null) === null) this.set("okrs", SEED.okrs);
+    if (this.get("kpis", null) === null) this.set("kpis", SEED.kpis);
+    if (this.get("capas", null) === null) this.set("capas", SEED.capas);
+  },
+  resetAll() {
+    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "session"].forEach((k) =>
+      localStorage.removeItem(this._key(k))
+    );
+    this.ensureSeeded();
+  }
+};
+
+function uid(prefix) {
+  return (prefix || "id") + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+
+/**
+ * auth.js
+ * Minimal client-side auth for a static/local deployment.
+ *
+ * SECURITY NOTE: this checks the username/password against a list stored in
+ * the browser's localStorage. It is meant for an internal, trusted-network
+ * prototype (e.g. an intranet kiosk or a single-team tool), NOT for
+ * production use with sensitive data on the public internet — anyone with
+ * browser dev tools can read localStorage. Wire this up to a real backend
+ * (API + hashed passwords + sessions) before using it beyond a demo.
+ */
+
+const Auth = {
+  currentUser() {
+    return DB.get("session", null);
+  },
+  login(username, password) {
+    const users = DB.get("users", []);
+    const match = users.find(
+      (u) => u.username.toLowerCase() === String(username).trim().toLowerCase() && u.password === password
+    );
+    if (!match) return { ok: false, error: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" };
+    const session = { id: match.id, username: match.username, name: match.name, role: match.role, buildingIds: match.buildingIds };
+    DB.set("session", session);
+    return { ok: true, user: session };
+  },
+  logout() {
+    localStorage.removeItem(DB_PREFIX + "session");
+  },
+  isAdmin(user) {
+    return !!user && user.role === "admin";
+  },
+  canAccessBuilding(user, buildingId) {
+    if (!user) return false;
+    if (user.buildingIds.includes("ALL")) return true;
+    return user.buildingIds.includes(buildingId);
+  }
+};
+
+
+/**
+ * export.js
+ * CSV export (works everywhere, opens cleanly in Excel/Sheets) and a
+ * print-friendly report view (browser's native "Save as PDF" via print).
+ */
+
+const ExportUtil = {
+  toCSV(rows, headers) {
+    const esc = (v) => {
+      if (v === null || v === undefined) return "";
+      const s = String(v).replace(/"/g, '""');
+      return /[",\n]/.test(s) ? `"${s}"` : s;
+    };
+    const lines = [];
+    lines.push(headers.map((h) => esc(h.label)).join(","));
+    rows.forEach((row) => {
+      lines.push(headers.map((h) => esc(row[h.key])).join(","));
+    });
+    // BOM so Thai text opens correctly in Excel
+    return "\uFEFF" + lines.join("\r\n");
+  },
+  download(filename, content, mime) {
+    const blob = new Blob([content], { type: mime || "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  },
+  exportCSV(rows, headers, filename) {
+    const csv = this.toCSV(rows, headers);
+    this.download(filename.endsWith(".csv") ? filename : filename + ".csv", csv);
+  },
+  printSection(html, title) {
+    const win = window.open("", "_blank", "width=900,height=1000");
+    win.document.write(`
+      <html lang="th">
+      <head>
+        <meta charset="utf-8" />
+        <title>${title}</title>
+        <style>
+          body { font-family: 'IBM Plex Sans Thai', sans-serif; padding: 32px; color:#1a1a1a; }
+          h1 { font-size: 20px; color:#12492F; border-bottom:2px solid #1F7A4D; padding-bottom:8px; }
+          table { width:100%; border-collapse: collapse; margin-top:16px; }
+          th, td { border:1px solid #ccc; padding:6px 10px; font-size:13px; text-align:left; }
+          th { background:#1F7A4D; color:#fff; }
+          tr:nth-child(even) td { background:#f3f8f5; }
+          .meta { color:#666; font-size:12px; margin-bottom:4px; }
+        </style>
+      </head>
+      <body>${html}</body>
+      </html>
+    `);
+    win.document.close();
+    win.focus();
+    setTimeout(() => win.print(), 300);
+  }
+};
+
+
+/**
+ * app.js
+ * PSD eNGINNo QSHE Management V1.0 — main application logic.
+ * Vanilla JS SPA, localStorage-backed. See README.md for architecture notes.
+ */
+
+const State = {
+  user: null,
+  view: "dashboard",
+  activeBuilding: null // building id, or "ALL"
+};
+
+// ---------------------------------------------------------------- boot ---
+document.addEventListener("DOMContentLoaded", () => {
+  DB.ensureSeeded();
+  const session = Auth.currentUser();
+  if (session) {
+    startApp(session);
+  } else {
+    showLogin();
+  }
+});
+
+function showLogin() {
+  document.getElementById("app-shell").classList.add("hidden");
+  document.getElementById("login-screen").classList.remove("hidden");
+  const form = document.getElementById("login-form");
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const username = document.getElementById("login-username").value;
+    const password = document.getElementById("login-password").value;
+    const res = Auth.login(username, password);
+    const errEl = document.getElementById("login-error");
+    if (!res.ok) {
+      errEl.textContent = res.error;
+      errEl.classList.remove("hidden");
+      return;
+    }
+    errEl.classList.add("hidden");
+    startApp(res.user);
+  };
+}
+
+function startApp(user) {
+  State.user = user;
+  const buildings = DB.get("buildings", []);
+  State.activeBuilding = user.buildingIds.includes("ALL")
+    ? (buildings[0] ? buildings[0].id : "ALL")
+    : user.buildingIds[0];
+
+  document.getElementById("login-screen").classList.add("hidden");
+  document.getElementById("app-shell").classList.remove("hidden");
+  renderShell();
+  navigate("dashboard");
+}
+
+function logout() {
+  Auth.logout();
+  State.user = null;
+  location.reload();
+}
+
+// -------------------------------------------------------------- shell ---
+const NAV_ITEMS = [
+  { group: "ภาพรวม", items: [{ id: "dashboard", label: "แดชบอร์ด" }] },
+  {
+    group: "SSPPC Modules",
+    items: [
+      { id: "structure", label: "1. Structure" },
+      { id: "system", label: "2. System" },
+      { id: "process", label: "3. Process (+ JCI FMS)" },
+      { id: "people", label: "4. People" },
+      { id: "culture", label: "5. Culture" }
+    ]
+  },
+  {
+    group: "ขับเคลื่อนผลลัพธ์",
+    items: [
+      { id: "okr", label: "OKR รายไตรมาส" },
+      { id: "kpi", label: "KPI" },
+      { id: "capa", label: "CAPA / Incident" }
+    ]
+  },
+  {
+    group: "ผู้ดูแลระบบ",
+    admin: true,
+    items: [
+      { id: "buildings", label: "อาคาร / BU" },
+      { id: "users", label: "ผู้ใช้งาน" }
+    ]
+  },
+  { group: "รายงาน", items: [{ id: "reports", label: "Export / รายงาน" }] }
+];
+
+function renderShell() {
+  const sidebar = document.getElementById("sidebar");
+  const isAdmin = Auth.isAdmin(State.user);
+  const initials = State.user.name ? State.user.name.slice(0, 2) : "US";
+
+  let nav = "";
+  NAV_ITEMS.forEach((group) => {
+    if (group.admin && !isAdmin) return;
+    nav += `<div class="nav-group-label">${group.group}</div>`;
+    group.items.forEach((it) => {
+      nav += `<button class="nav-item" data-nav="${it.id}"><span class="dot"></span>${it.label}</button>`;
+    });
+  });
+
+  sidebar.innerHTML = `
+    <div class="brand">
+      <div class="mark">QS</div>
+      <div>
+        <div class="name">PSD eNGINNo<br/>QSHE Management</div>
+        <div class="ver">V1.0</div>
+      </div>
+    </div>
+    <nav>${nav}</nav>
+    <div id="sidebar-footer">
+      <div class="user-chip">
+        <div class="avatar">${initials}</div>
+        <div>
+          <div style="font-weight:600;color:#fff;">${State.user.name}</div>
+          <div>${State.user.role === "admin" ? "ผู้ดูแลระบบ" : "ผู้ใช้งาน"}</div>
+        </div>
+      </div>
+      <button class="btn ghost small block" id="logout-btn" style="margin-top:8px;color:#fff;border-color:rgba(255,255,255,0.25);">ออกจากระบบ</button>
+    </div>
+  `;
+
+  sidebar.querySelectorAll("[data-nav]").forEach((btn) => {
+    btn.addEventListener("click", () => navigate(btn.dataset.nav));
+  });
+  document.getElementById("logout-btn").addEventListener("click", logout);
+}
+
+function navigate(viewId) {
+  State.view = viewId;
+  document.querySelectorAll(".nav-item").forEach((b) => {
+    b.classList.toggle("active", b.dataset.nav === viewId);
+  });
+  renderTopbar();
+  renderView();
+}
+
+function accessibleBuildings() {
+  const all = DB.get("buildings", []);
+  if (Auth.isAdmin(State.user) || State.user.buildingIds.includes("ALL")) return all;
+  return all.filter((b) => State.user.buildingIds.includes(b.id));
+}
+
+function renderTopbar() {
+  const titles = {
+    dashboard: ["แดชบอร์ดภาพรวม", "สถานะ QSHE ในภาพรวมของอาคาร/หน่วยธุรกิจที่เลือก"],
+    structure: ["Module 1 — Structure", "โครงสร้างการบริหาร QSHE"],
+    system: ["Module 2 — System", "ระบบของแต่ละด้าน Q / S / H / E"],
+    process: ["Module 3 — Process", "กระบวนการทำงาน รวมแผน JCI Facility Management & Safety (FMS)"],
+    people: ["Module 4 — People", "หน้าที่ความรับผิดชอบของบุคลากร"],
+    culture: ["Module 5 — Culture", "ค่านิยมและกิจกรรมสร้างวัฒนธรรม QSHE"],
+    okr: ["OKR รายไตรมาส", "Objective and Key Results ต่ออาคาร/หน่วยธุรกิจ"],
+    kpi: ["ตัวชี้วัด KPI", "ติดตามผลเชิงคุณภาพรายด้าน"],
+    capa: ["CAPA / Incident Log", "บันทึกและติดตามการแก้ไข-ป้องกัน"],
+    buildings: ["อาคาร / หน่วยธุรกิจ (BU)", "จัดการรายชื่ออาคารหรือหน่วยธุรกิจในระบบ"],
+    users: ["ผู้ใช้งานระบบ", "จัดการบัญชีผู้ใช้และสิทธิ์การเข้าถึง"],
+    reports: ["Export / รายงาน", "ส่งออกข้อมูลเป็น CSV หรือพิมพ์รายงานสรุป"]
+  };
+  const [title, subtitle] = titles[State.view] || ["", ""];
+  const buildings = accessibleBuildings();
+  const showBuildingPicker = !["buildings", "users"].includes(State.view);
+
+  document.getElementById("topbar").innerHTML = `
+    <div>
+      <h2>${title}</h2>
+      <div class="subtitle">${subtitle}</div>
+    </div>
+    ${
+      showBuildingPicker
+        ? `<div class="building-select">
+            <label>อาคาร/BU</label>
+            <select id="building-picker">
+              ${Auth.isAdmin(State.user) ? `<option value="ALL">ทุกอาคาร (รวม)</option>` : ""}
+              ${buildings.map((b) => `<option value="${b.id}">${b.name}</option>`).join("")}
+            </select>
+          </div>`
+        : ""
+    }
+  `;
+
+  if (showBuildingPicker) {
+    const picker = document.getElementById("building-picker");
+    picker.value = State.activeBuilding;
+    picker.addEventListener("change", () => {
+      State.activeBuilding = picker.value;
+      renderView();
+    });
+  }
+}
+
+function toast(msg) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
+function renderView() {
+  const root = document.getElementById("view-root");
+  switch (State.view) {
+    case "dashboard": return renderDashboard(root);
+    case "structure":
+    case "system":
+    case "process":
+    case "people":
+    case "culture": return renderModuleView(root, State.view);
+    case "okr": return renderOKR(root);
+    case "kpi": return renderKPI(root);
+    case "capa": return renderCAPA(root);
+    case "buildings": return renderBuildings(root);
+    case "users": return renderUsers(root);
+    case "reports": return renderReports(root);
+    default: root.innerHTML = "<div class='card'>ไม่พบหน้านี้</div>";
+  }
+}
+
+// ------------------------------------------------------- data helpers ---
+function buildingsInScope() {
+  const buildings = accessibleBuildings();
+  if (State.activeBuilding === "ALL") return buildings;
+  return buildings.filter((b) => b.id === State.activeBuilding);
+}
+
+function getProcessStatus(buildingId, processId) {
+  const all = DB.get("processStatus", []);
+  return all.find((r) => r.buildingId === buildingId && r.processId === processId) || null;
+}
+
+function upsertProcessStatus(buildingId, processId, patch) {
+  const all = DB.get("processStatus", []);
+  const idx = all.findIndex((r) => r.buildingId === buildingId && r.processId === processId);
+  if (idx >= 0) {
+    all[idx] = { ...all[idx], ...patch, updatedAt: todayISO(), updatedBy: State.user.username };
+  } else {
+    all.push({
+      id: uid("ps"),
+      buildingId,
+      processId,
+      status: "not_started",
+      note: "",
+      ...patch,
+      updatedAt: todayISO(),
+      updatedBy: State.user.username
+    });
+  }
+  DB.set("processStatus", all);
+}
+
+function moduleCompletion(buildingIds, moduleId) {
+  const procs = PROCESS_REFERENCE.filter((p) => p.module === moduleId);
+  let done = 0, inProgress = 0, total = 0;
+  buildingIds.forEach((bid) => {
+    procs.forEach((p) => {
+      total++;
+      const rec = getProcessStatus(bid, p.id);
+      if (rec && rec.status === "done") done++;
+      else if (rec && rec.status === "in_progress") inProgress++;
+    });
+  });
+  return { total, done, inProgress, pct: total ? Math.round((done / total) * 100) : 0 };
+}
+
+function ragOf(kpi) {
+  if (kpi.actual === null || kpi.actual === undefined || kpi.actual === "") return "grey";
+  const a = parseFloat(kpi.actual), t = parseFloat(kpi.target);
+  if (isNaN(a) || isNaN(t)) return "grey";
+  const ratio = t === 0 ? 1 : a / t;
+  if (kpi.direction === "lower_better") {
+    if (a <= t) return "green";
+    if (a <= t * 1.15) return "yellow";
+    return "red";
+  }
+  if (ratio >= 1) return "green";
+  if (ratio >= 0.85) return "yellow";
+  return "red";
+}
+
+// ---------------------------------------------------------- dashboard ---
+function renderDashboard(root) {
+  const scope = buildingsInScope();
+  const ids = scope.map((b) => b.id);
+  const modulePct = MODULES.map((m) => ({ ...m, comp: moduleCompletion(ids, m.id) }));
+
+  const okrs = DB.get("okrs", []).filter((o) => ids.includes(o.buildingId));
+  const okrAvgProgress = okrs.length
+    ? Math.round(
+        okrs.reduce((sum, o) => {
+          const krs = o.keyResults || [];
+          const avg = krs.length ? krs.reduce((s, k) => s + Number(k.progress || 0), 0) / krs.length : 0;
+          return sum + avg;
+        }, 0) / okrs.length
+      )
+    : 0;
+
+  const kpis = DB.get("kpis", []).filter((k) => ids.includes(k.buildingId));
+  const ragCounts = { green: 0, yellow: 0, red: 0, grey: 0 };
+  kpis.forEach((k) => ragCounts[ragOf(k)]++);
+
+  const capas = DB.get("capas", []).filter((c) => ids.includes(c.buildingId));
+  const openCapas = capas.filter((c) => c.status !== "closed");
+  const overdueCapas = openCapas.filter((c) => c.dueDate && c.dueDate < todayISO());
+
+  const fmsProcs = PROCESS_REFERENCE.filter((p) => p.category === "fms");
+  const fmsDone = ids.reduce((sum, bid) => {
+    return sum + fmsProcs.filter((p) => (getProcessStatus(bid, p.id) || {}).status === "done").length;
+  }, 0);
+  const fmsTotal = fmsProcs.length * ids.length || 1;
+
+  root.innerHTML = `
+    <div class="grid cols-4">
+      <div class="stat-card">
+        <div class="label">ความคืบหน้า Process รวม (SSPPC)</div>
+        <div class="value">${avgPct(modulePct.map((m) => m.comp.pct))}%</div>
+        <div class="sub">เฉลี่ยจาก 5 Module</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">JCI FMS ดำเนินการเสร็จสมบูรณ์</div>
+        <div class="value">${Math.round((fmsDone / fmsTotal) * 100)}%</div>
+        <div class="sub">${fmsDone} / ${fmsTotal} รายการ (7 แผน × อาคารในขอบเขต)</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">ความคืบหน้า OKR เฉลี่ย</div>
+        <div class="value">${okrAvgProgress}%</div>
+        <div class="sub">${okrs.length} OKR ในขอบเขตที่เลือก</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">CAPA ที่ยังเปิดอยู่</div>
+        <div class="value">${openCapas.length}</div>
+        <div class="sub" style="color:${overdueCapas.length ? "var(--red)" : "var(--muted)"}">${overdueCapas.length} รายการเกินกำหนด</div>
+      </div>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>ความคืบหน้าแต่ละ Module (S-S-P-P-C)</h3>
+        <div class="desc">อิงจากเช็คลิสต์กระบวนการที่บันทึกสถานะไว้ในระบบ</div>
+        ${modulePct
+          .map(
+            (m) => `
+          <div style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+              <span>${m.nameTh} (${m.name})</span><span style="font-weight:700;color:var(--dark-green);">${m.comp.pct}%</span>
+            </div>
+            <div class="progress-bar"><span style="width:${m.comp.pct}%"></span></div>
+          </div>`
+          )
+          .join("")}
+      </div>
+
+      <div class="card">
+        <h3>สถานะ KPI (RAG)</h3>
+        <div class="desc">สรุปสถานะตัวชี้วัดทั้งหมดในขอบเขตที่เลือก</div>
+        <div class="grid cols-3" style="gap:10px;">
+          <div class="stat-card" style="background:var(--green-soft);border-color:transparent;">
+            <div class="label">ตามเป้า</div><div class="value" style="color:var(--green)">${ragCounts.green}</div>
+          </div>
+          <div class="stat-card" style="background:var(--gold-soft);border-color:transparent;">
+            <div class="label">เฝ้าระวัง</div><div class="value" style="color:var(--yellow)">${ragCounts.yellow}</div>
+          </div>
+          <div class="stat-card" style="background:var(--red-soft);border-color:transparent;">
+            <div class="label">ต้องเร่งแก้ไข</div><div class="value" style="color:var(--red)">${ragCounts.red}</div>
+          </div>
+        </div>
+        ${kpis.length === 0 ? `<div class="empty-state">ยังไม่มีข้อมูล KPI — เพิ่มได้ที่เมนู KPI</div>` : ""}
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>อาคาร/หน่วยธุรกิจในขอบเขตปัจจุบัน</h3>
+      <div class="desc">${State.activeBuilding === "ALL" ? "แสดงข้อมูลรวมทุกอาคารที่คุณมีสิทธิ์เข้าถึง" : "แสดงข้อมูลเฉพาะอาคารที่เลือกไว้ด้านบน"}</div>
+      <table>
+        <thead><tr><th>รหัส</th><th>ชื่ออาคาร / BU</th><th>หน่วยธุรกิจ</th></tr></thead>
+        <tbody>
+          ${scope.map((b) => `<tr><td>${b.code}</td><td>${b.name}</td><td>${b.bu || "-"}</td></tr>`).join("") ||
+            `<tr><td colspan="3" class="empty-state">ไม่มีอาคารในขอบเขตนี้</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function avgPct(arr) {
+  if (!arr.length) return 0;
+  return Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
+}
+
+// ------------------------------------------------------- module view ---
+const STATUS_BADGE_CLASS = { not_started: "grey", in_progress: "gold", done: "green" };
+
+function renderModuleView(root, moduleId) {
+  const procs = PROCESS_REFERENCE.filter((p) => p.module === moduleId);
+  const fmsProcs = procs.filter((p) => p.category === "fms");
+  const normalProcs = procs.filter((p) => p.category !== "fms");
+
+  if (State.activeBuilding === "ALL") {
+    const scope = buildingsInScope();
+    root.innerHTML = `
+      <div class="card">
+        <h3>มุมมองรวมทุกอาคาร (อ่านอย่างเดียว)</h3>
+        <div class="desc">เลือกอาคารใดอาคารหนึ่งด้านบนเพื่อแก้ไขสถานะและบันทึกหมายเหตุ</div>
+        ${renderMatrixTable(procs, scope)}
+      </div>
+    `;
+    return;
+  }
+
+  const buildingId = State.activeBuilding;
+  let html = "";
+  if (normalProcs.length) html += renderProcessTable(normalProcs, buildingId, null);
+  if (fmsProcs.length) {
+    html += `
+      <div class="card">
+        <h3>ระบบ JCI — Facility Management and Safety (FMS)</h3>
+        <div class="desc">7 แผนงานที่ผนวกเข้ากับ Module 3 ตามมาตรฐาน JCI สำหรับสถานพยาบาล</div>
+        ${processTableRows(fmsProcs, buildingId, true)}
+      </div>
+    `;
+  }
+  root.innerHTML = html;
+  wireProcessTable(root, buildingId);
+}
+
+function renderProcessTable(procs, buildingId, label) {
+  return `
+    <div class="card">
+      ${label ? `<h3>${label}</h3>` : ""}
+      ${processTableRows(procs, buildingId, false)}
+    </div>
+  `;
+}
+
+function processTableRows(procs, buildingId, isFms) {
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>กระบวนการ</th><th>เจ้าของ</th><th>สถานะ</th><th>หมายเหตุ</th><th>อัปเดตล่าสุด</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        ${procs
+          .map((p) => {
+            const rec = getProcessStatus(buildingId, p.id) || { status: "not_started", note: "" };
+            return `
+            <tr data-proc="${p.id}">
+              <td>${isFms ? `<span class="fms-tag">${p.fmsCode}</span>` : ""}${p.name}</td>
+              <td>${p.owner}</td>
+              <td>
+                <select class="status-select" data-field="status">
+                  <option value="not_started" ${rec.status === "not_started" ? "selected" : ""}>ยังไม่เริ่ม</option>
+                  <option value="in_progress" ${rec.status === "in_progress" ? "selected" : ""}>กำลังดำเนินการ</option>
+                  <option value="done" ${rec.status === "done" ? "selected" : ""}>เสร็จสมบูรณ์</option>
+                </select>
+              </td>
+              <td><input type="text" data-field="note" value="${escapeAttr(rec.note || "")}" placeholder="หมายเหตุ..." style="width:100%;padding:5px 7px;border:1px solid var(--border);border-radius:6px;" /></td>
+              <td style="white-space:nowrap;color:var(--muted);font-size:12px;">${rec.updatedAt || "-"}</td>
+              <td><button class="btn small save-proc-btn">บันทึก</button></td>
+            </tr>`;
+          })
+          .join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function wireProcessTable(root, buildingId) {
+  root.querySelectorAll(".save-proc-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const row = btn.closest("tr");
+      const processId = row.dataset.proc;
+      const status = row.querySelector('[data-field="status"]').value;
+      const note = row.querySelector('[data-field="note"]').value;
+      upsertProcessStatus(buildingId, processId, { status, note });
+      toast("บันทึกสถานะแล้ว");
+      renderView();
+    });
+  });
+}
+
+function renderMatrixTable(procs, buildings) {
+  return `
+    <table>
+      <thead>
+        <tr><th>กระบวนการ</th>${buildings.map((b) => `<th>${b.code}</th>`).join("")}</tr>
+      </thead>
+      <tbody>
+        ${procs
+          .map(
+            (p) => `
+          <tr>
+            <td>${p.category === "fms" ? `<span class="fms-tag">${p.fmsCode}</span>` : ""}${p.name}</td>
+            ${buildings
+              .map((b) => {
+                const rec = getProcessStatus(b.id, p.id);
+                const status = rec ? rec.status : "not_started";
+                return `<td><span class="badge ${STATUS_BADGE_CLASS[status]}">${STATUS_LABELS[status]}</span></td>`;
+              })
+              .join("")}
+          </tr>`
+          )
+          .join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function escapeAttr(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
+
+// ------------------------------------------------------------- modal ---
+function openModal(innerHtml) {
+  closeModal();
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.id = "modal-overlay";
+  overlay.innerHTML = `<div class="modal">${innerHtml}</div>`;
+  overlay.addEventListener("mousedown", (e) => {
+    if (e.target === overlay) closeModal();
+  });
+  document.body.appendChild(overlay);
+  return overlay;
+}
+function closeModal() {
+  const el = document.getElementById("modal-overlay");
+  if (el) el.remove();
+}
+
+// ---------------------------------------------------------------- OKR ---
+function renderOKR(root) {
+  if (State.activeBuilding === "ALL") {
+    root.innerHTML = `<div class="card empty-state">เลือกอาคาร/BU หนึ่งแห่งด้านบนเพื่อดูและจัดการ OKR</div>`;
+    return;
+  }
+  const buildingId = State.activeBuilding;
+  const okrs = DB.get("okrs", []).filter((o) => o.buildingId === buildingId);
+  const quarters = [...new Set(okrs.map((o) => o.quarter))].sort();
+
+  root.innerHTML = `
+    <div class="toolbar">
+      <div class="filters">
+        <select id="okr-quarter-filter">
+          <option value="">ทุกไตรมาส</option>
+          ${quarters.map((q) => `<option value="${q}">${q}</option>`).join("")}
+        </select>
+      </div>
+      <button class="btn" id="add-okr-btn">+ เพิ่ม OKR</button>
+    </div>
+    <div id="okr-list"></div>
+  `;
+
+  const listEl = document.getElementById("okr-list");
+  function draw() {
+    const filterQ = document.getElementById("okr-quarter-filter").value;
+    const items = okrs.filter((o) => !filterQ || o.quarter === filterQ);
+    listEl.innerHTML = items.length
+      ? items.map((o) => okrCardHtml(o)).join("")
+      : `<div class="card empty-state">ยังไม่มี OKR — เริ่มเพิ่มรายการแรกได้เลย</div>`;
+    listEl.querySelectorAll("[data-edit-okr]").forEach((b) =>
+      b.addEventListener("click", () => openOkrForm(buildingId, okrs.find((o) => o.id === b.dataset.editOkr)))
+    );
+    listEl.querySelectorAll("[data-del-okr]").forEach((b) =>
+      b.addEventListener("click", () => {
+        if (!confirm("ลบ OKR นี้หรือไม่?")) return;
+        DB.set("okrs", DB.get("okrs", []).filter((o) => o.id !== b.dataset.delOkr));
+        toast("ลบแล้ว");
+        renderView();
+      })
+    );
+  }
+  draw();
+  document.getElementById("okr-quarter-filter").addEventListener("change", draw);
+  document.getElementById("add-okr-btn").addEventListener("click", () => openOkrForm(buildingId, null));
+}
+
+function okrCardHtml(o) {
+  const krs = o.keyResults || [];
+  const avg = krs.length ? Math.round(krs.reduce((s, k) => s + Number(k.progress || 0), 0) / krs.length) : 0;
+  return `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+        <div>
+          <span class="badge green">${o.quarter}</span> <span class="badge grey">${o.pillar}</span>
+          <h3 style="margin-top:8px;">${o.objective}</h3>
+          <div class="desc">เจ้าของ: ${o.owner || "-"}</div>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <button class="icon-btn" data-edit-okr="${o.id}">แก้ไข</button>
+          <button class="icon-btn danger" data-del-okr="${o.id}">ลบ</button>
+        </div>
+      </div>
+      <div style="margin:10px 0 6px;font-size:13px;font-weight:600;color:var(--dark-green);">ความคืบหน้ารวม: ${avg}%</div>
+      <div class="progress-bar" style="margin-bottom:12px;"><span style="width:${avg}%"></span></div>
+      ${krs
+        .map(
+          (k) => `
+        <div style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span>${k.text}</span><span>${k.progress}%</span></div>
+          <div class="progress-bar"><span style="width:${k.progress}%;background:var(--gold);"></span></div>
+        </div>`
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function openOkrForm(buildingId, existing) {
+  const krs = existing ? existing.keyResults : [{ text: "", progress: 0 }, { text: "", progress: 0 }, { text: "", progress: 0 }];
+  const modal = openModal(`
+    <h3>${existing ? "แก้ไข OKR" : "เพิ่ม OKR ใหม่"}</h3>
+    <div class="form-row">
+      <div class="field">
+        <label>ไตรมาส</label>
+        <input type="text" id="f-quarter" placeholder="เช่น Q1-2026" value="${existing ? escapeAttr(existing.quarter) : ""}" />
+      </div>
+      <div class="field">
+        <label>Pillar</label>
+        <select id="f-pillar">
+          ${PILLARS.map((p) => `<option value="${p.id}" ${existing && existing.pillar === p.id ? "selected" : ""}>${p.id} — ${p.nameTh}</option>`).join("")}
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Objective</label>
+      <textarea id="f-objective" rows="2">${existing ? existing.objective : ""}</textarea>
+    </div>
+    <div class="field">
+      <label>เจ้าของ (Owner)</label>
+      <input type="text" id="f-owner" value="${existing ? escapeAttr(existing.owner || "") : ""}" />
+    </div>
+    <div class="field">
+      <label>Key Results (ระบุ % ความคืบหน้า)</label>
+      <div id="kr-rows"></div>
+      <button class="btn ghost small" id="add-kr-row" type="button">+ เพิ่ม Key Result</button>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" id="cancel-okr">ยกเลิก</button>
+      <button class="btn" id="save-okr">บันทึก</button>
+    </div>
+  `);
+
+  const krRows = modal.querySelector("#kr-rows");
+  function addKrRow(text, progress) {
+    const row = document.createElement("div");
+    row.className = "kr-row";
+    row.innerHTML = `
+      <input type="text" placeholder="Key Result..." value="${escapeAttr(text || "")}" />
+      <input type="number" min="0" max="100" value="${progress || 0}" />
+      <button class="icon-btn danger" type="button">ลบ</button>
+    `;
+    row.querySelector(".icon-btn").addEventListener("click", () => row.remove());
+    krRows.appendChild(row);
+  }
+  krs.forEach((k) => addKrRow(k.text, k.progress));
+  modal.querySelector("#add-kr-row").addEventListener("click", () => addKrRow("", 0));
+  modal.querySelector("#cancel-okr").addEventListener("click", closeModal);
+
+  modal.querySelector("#save-okr").addEventListener("click", () => {
+    const objective = modal.querySelector("#f-objective").value.trim();
+    if (!objective) { alert("กรุณาระบุ Objective"); return; }
+    const keyResults = [...krRows.querySelectorAll(".kr-row")]
+      .map((row) => {
+        const inputs = row.querySelectorAll("input");
+        return { text: inputs[0].value.trim(), progress: Math.max(0, Math.min(100, Number(inputs[1].value) || 0)) };
+      })
+      .filter((k) => k.text);
+
+    const data = {
+      buildingId,
+      quarter: modal.querySelector("#f-quarter").value.trim() || "Q?-????",
+      pillar: modal.querySelector("#f-pillar").value,
+      objective,
+      owner: modal.querySelector("#f-owner").value.trim(),
+      keyResults
+    };
+    const all = DB.get("okrs", []);
+    if (existing) {
+      const idx = all.findIndex((o) => o.id === existing.id);
+      all[idx] = { ...existing, ...data };
+    } else {
+      all.push({ id: uid("okr"), ...data });
+    }
+    DB.set("okrs", all);
+    closeModal();
+    toast("บันทึก OKR แล้ว");
+    renderView();
+  });
+}
+
+// ---------------------------------------------------------------- KPI ---
+function renderKPI(root) {
+  if (State.activeBuilding === "ALL") {
+    root.innerHTML = `<div class="card empty-state">เลือกอาคาร/BU หนึ่งแห่งด้านบนเพื่อดูและจัดการ KPI</div>`;
+    return;
+  }
+  const buildingId = State.activeBuilding;
+  const kpis = DB.get("kpis", []).filter((k) => k.buildingId === buildingId);
+
+  root.innerHTML = `
+    <div class="toolbar">
+      <div class="filters">
+        <select id="kpi-pillar-filter">
+          <option value="">ทุก Pillar</option>
+          ${PILLARS.map((p) => `<option value="${p.id}">${p.id} — ${p.nameTh}</option>`).join("")}
+        </select>
+      </div>
+      <button class="btn" id="add-kpi-btn">+ เพิ่ม KPI</button>
+    </div>
+    <div class="card">
+      <table id="kpi-table">
+        <thead><tr><th>Pillar</th><th>ตัวชี้วัด</th><th>เป้าหมาย</th><th>ผลจริง</th><th>หน่วย</th><th>ช่วงเวลา</th><th>สถานะ</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  `;
+
+  const tbody = root.querySelector("#kpi-table tbody");
+  function draw() {
+    const filterP = document.getElementById("kpi-pillar-filter").value;
+    const items = kpis.filter((k) => !filterP || k.pillar === filterP);
+    tbody.innerHTML = items.length
+      ? items
+          .map((k) => {
+            const rag = ragOf(k);
+            return `
+          <tr>
+            <td><span class="badge grey">${k.pillar}</span></td>
+            <td>${k.name}</td>
+            <td>${k.target}</td>
+            <td>${k.actual === "" || k.actual === undefined ? "-" : k.actual}</td>
+            <td>${k.unit || "-"}</td>
+            <td>${k.period || "-"}</td>
+            <td><span class="badge ${rag === "grey" ? "grey" : rag === "green" ? "green" : rag === "yellow" ? "gold" : "red"}">${RAG_LABELS[rag] || "ยังไม่มีข้อมูล"}</span></td>
+            <td style="white-space:nowrap;">
+              <button class="icon-btn" data-edit-kpi="${k.id}">แก้ไข</button>
+              <button class="icon-btn danger" data-del-kpi="${k.id}">ลบ</button>
+            </td>
+          </tr>`;
+          })
+          .join("")
+      : `<tr><td colspan="8" class="empty-state">ยังไม่มีข้อมูล KPI</td></tr>`;
+
+    tbody.querySelectorAll("[data-edit-kpi]").forEach((b) =>
+      b.addEventListener("click", () => openKpiForm(buildingId, kpis.find((k) => k.id === b.dataset.editKpi)))
+    );
+    tbody.querySelectorAll("[data-del-kpi]").forEach((b) =>
+      b.addEventListener("click", () => {
+        if (!confirm("ลบ KPI นี้หรือไม่?")) return;
+        DB.set("kpis", DB.get("kpis", []).filter((k) => k.id !== b.dataset.delKpi));
+        toast("ลบแล้ว");
+        renderView();
+      })
+    );
+  }
+  draw();
+  document.getElementById("kpi-pillar-filter").addEventListener("change", draw);
+  document.getElementById("add-kpi-btn").addEventListener("click", () => openKpiForm(buildingId, null));
+}
+
+function openKpiForm(buildingId, existing) {
+  const modal = openModal(`
+    <h3>${existing ? "แก้ไข KPI" : "เพิ่ม KPI ใหม่"}</h3>
+    <div class="form-row">
+      <div class="field">
+        <label>Pillar</label>
+        <select id="f-pillar">
+          ${PILLARS.map((p) => `<option value="${p.id}" ${existing && existing.pillar === p.id ? "selected" : ""}>${p.id} — ${p.nameTh}</option>`).join("")}
+        </select>
+      </div>
+      <div class="field">
+        <label>ทิศทางที่ดี</label>
+        <select id="f-direction">
+          <option value="higher_better" ${existing && existing.direction === "higher_better" ? "selected" : ""}>ยิ่งสูงยิ่งดี</option>
+          <option value="lower_better" ${existing && existing.direction === "lower_better" ? "selected" : ""}>ยิ่งต่ำยิ่งดี</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>ชื่อตัวชี้วัด</label>
+      <input type="text" id="f-name" value="${existing ? escapeAttr(existing.name) : ""}" />
+    </div>
+    <div class="form-row">
+      <div class="field"><label>เป้าหมาย</label><input type="text" id="f-target" value="${existing ? escapeAttr(existing.target) : ""}" /></div>
+      <div class="field"><label>ผลจริง</label><input type="text" id="f-actual" value="${existing ? escapeAttr(existing.actual) : ""}" /></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>หน่วย</label><input type="text" id="f-unit" placeholder="%, วัน, ครั้ง ฯลฯ" value="${existing ? escapeAttr(existing.unit || "") : ""}" /></div>
+      <div class="field"><label>ช่วงเวลา</label><input type="text" id="f-period" placeholder="เช่น ส.ค. 2569" value="${existing ? escapeAttr(existing.period || "") : ""}" /></div>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" id="cancel-kpi">ยกเลิก</button>
+      <button class="btn" id="save-kpi">บันทึก</button>
+    </div>
+  `);
+  modal.querySelector("#cancel-kpi").addEventListener("click", closeModal);
+  modal.querySelector("#save-kpi").addEventListener("click", () => {
+    const name = modal.querySelector("#f-name").value.trim();
+    if (!name) { alert("กรุณาระบุชื่อตัวชี้วัด"); return; }
+    const data = {
+      buildingId,
+      pillar: modal.querySelector("#f-pillar").value,
+      direction: modal.querySelector("#f-direction").value,
+      name,
+      target: modal.querySelector("#f-target").value.trim(),
+      actual: modal.querySelector("#f-actual").value.trim(),
+      unit: modal.querySelector("#f-unit").value.trim(),
+      period: modal.querySelector("#f-period").value.trim()
+    };
+    const all = DB.get("kpis", []);
+    if (existing) {
+      const idx = all.findIndex((k) => k.id === existing.id);
+      all[idx] = { ...existing, ...data };
+    } else {
+      all.push({ id: uid("kpi"), ...data });
+    }
+    DB.set("kpis", all);
+    closeModal();
+    toast("บันทึก KPI แล้ว");
+    renderView();
+  });
+}
+
+// --------------------------------------------------------------- CAPA ---
+function renderCAPA(root) {
+  if (State.activeBuilding === "ALL") {
+    root.innerHTML = `<div class="card empty-state">เลือกอาคาร/BU หนึ่งแห่งด้านบนเพื่อดูและจัดการ CAPA</div>`;
+    return;
+  }
+  const buildingId = State.activeBuilding;
+  const capas = DB.get("capas", []).filter((c) => c.buildingId === buildingId);
+
+  root.innerHTML = `
+    <div class="toolbar">
+      <div></div>
+      <button class="btn" id="add-capa-btn">+ เพิ่มรายการ CAPA</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>เรื่อง</th><th>ที่มา</th><th>เจ้าของ</th><th>เปิดเมื่อ</th><th>กำหนดปิด</th><th>สถานะ</th><th></th></tr></thead>
+        <tbody>
+          ${
+            capas.length
+              ? capas
+                  .map((c) => {
+                    const overdue = c.status !== "closed" && c.dueDate && c.dueDate < todayISO();
+                    return `
+              <tr>
+                <td>${c.title}</td>
+                <td>${c.source || "-"}</td>
+                <td>${c.owner || "-"}</td>
+                <td>${c.openedDate || "-"}</td>
+                <td style="color:${overdue ? "var(--red)" : "inherit"};font-weight:${overdue ? "700" : "400"};">${c.dueDate || "-"}${overdue ? " (เกินกำหนด)" : ""}</td>
+                <td>
+                  <select class="status-select" data-capa="${c.id}">
+                    <option value="open" ${c.status === "open" ? "selected" : ""}>เปิด</option>
+                    <option value="in_progress" ${c.status === "in_progress" ? "selected" : ""}>กำลังดำเนินการ</option>
+                    <option value="closed" ${c.status === "closed" ? "selected" : ""}>ปิดแล้ว</option>
+                  </select>
+                </td>
+                <td><button class="icon-btn danger" data-del-capa="${c.id}">ลบ</button></td>
+              </tr>`;
+                  })
+                  .join("")
+              : `<tr><td colspan="7" class="empty-state">ยังไม่มีรายการ CAPA</td></tr>`
+          }
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  root.querySelectorAll("[data-capa]").forEach((sel) => {
+    sel.addEventListener("change", () => {
+      const all = DB.get("capas", []);
+      const idx = all.findIndex((c) => c.id === sel.dataset.capa);
+      all[idx].status = sel.value;
+      DB.set("capas", all);
+      toast("อัปเดตสถานะแล้ว");
+      renderView();
+    });
+  });
+  root.querySelectorAll("[data-del-capa]").forEach((b) => {
+    b.addEventListener("click", () => {
+      if (!confirm("ลบรายการนี้หรือไม่?")) return;
+      DB.set("capas", DB.get("capas", []).filter((c) => c.id !== b.dataset.delCapa));
+      toast("ลบแล้ว");
+      renderView();
+    });
+  });
+  document.getElementById("add-capa-btn").addEventListener("click", () => openCapaForm(buildingId));
+}
+
+function openCapaForm(buildingId) {
+  const modal = openModal(`
+    <h3>เพิ่มรายการ CAPA / Incident</h3>
+    <div class="field"><label>เรื่อง</label><input type="text" id="f-title" /></div>
+    <div class="form-row">
+      <div class="field"><label>ที่มา</label><input type="text" id="f-source" placeholder="Audit / Incident / Near-miss ฯลฯ" /></div>
+      <div class="field"><label>เจ้าของ</label><input type="text" id="f-owner" /></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>วันที่เปิด</label><input type="date" id="f-opened" value="${todayISO()}" /></div>
+      <div class="field"><label>กำหนดปิด</label><input type="date" id="f-due" /></div>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" id="cancel-capa">ยกเลิก</button>
+      <button class="btn" id="save-capa">บันทึก</button>
+    </div>
+  `);
+  modal.querySelector("#cancel-capa").addEventListener("click", closeModal);
+  modal.querySelector("#save-capa").addEventListener("click", () => {
+    const title = modal.querySelector("#f-title").value.trim();
+    if (!title) { alert("กรุณาระบุเรื่อง"); return; }
+    const all = DB.get("capas", []);
+    all.push({
+      id: uid("capa"),
+      buildingId,
+      title,
+      source: modal.querySelector("#f-source").value.trim(),
+      owner: modal.querySelector("#f-owner").value.trim(),
+      openedDate: modal.querySelector("#f-opened").value,
+      dueDate: modal.querySelector("#f-due").value,
+      status: "open"
+    });
+    DB.set("capas", all);
+    closeModal();
+    toast("เพิ่มรายการแล้ว");
+    renderView();
+  });
+}
+
+// ---------------------------------------------------------- buildings ---
+function renderBuildings(root) {
+  if (!Auth.isAdmin(State.user)) {
+    root.innerHTML = `<div class="card empty-state">เฉพาะผู้ดูแลระบบเท่านั้นที่จัดการหน้านี้ได้</div>`;
+    return;
+  }
+  const buildings = DB.get("buildings", []);
+  root.innerHTML = `
+    <div class="toolbar">
+      <div></div>
+      <button class="btn" id="add-building-btn">+ เพิ่มอาคาร/BU</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>รหัส</th><th>ชื่ออาคาร / BU</th><th>หน่วยธุรกิจ</th><th></th></tr></thead>
+        <tbody>
+          ${
+            buildings
+              .map(
+                (b) => `
+            <tr>
+              <td>${b.code}</td><td>${b.name}</td><td>${b.bu || "-"}</td>
+              <td style="white-space:nowrap;">
+                <button class="icon-btn" data-edit-b="${b.id}">แก้ไข</button>
+                <button class="icon-btn danger" data-del-b="${b.id}">ลบ</button>
+              </td>
+            </tr>`
+              )
+              .join("") || `<tr><td colspan="4" class="empty-state">ยังไม่มีอาคาร</td></tr>`
+          }
+        </tbody>
+      </table>
+    </div>
+  `;
+  root.querySelectorAll("[data-edit-b]").forEach((b) =>
+    b.addEventListener("click", () => openBuildingForm(buildings.find((x) => x.id === b.dataset.editB)))
+  );
+  root.querySelectorAll("[data-del-b]").forEach((b) =>
+    b.addEventListener("click", () => {
+      if (!confirm("ลบอาคารนี้หรือไม่? ข้อมูลที่ผูกกับอาคารนี้จะยังอยู่แต่จะไม่แสดงในตัวเลือกอาคาร")) return;
+      DB.set("buildings", DB.get("buildings", []).filter((x) => x.id !== b.dataset.delB));
+      toast("ลบแล้ว");
+      renderShell();
+      navigate("buildings");
+    })
+  );
+  document.getElementById("add-building-btn").addEventListener("click", () => openBuildingForm(null));
+}
+
+function openBuildingForm(existing) {
+  const modal = openModal(`
+    <h3>${existing ? "แก้ไขอาคาร/BU" : "เพิ่มอาคาร/BU"}</h3>
+    <div class="form-row">
+      <div class="field"><label>รหัส</label><input type="text" id="f-code" value="${existing ? escapeAttr(existing.code) : ""}" /></div>
+      <div class="field"><label>หน่วยธุรกิจ (BU)</label><input type="text" id="f-bu" value="${existing ? escapeAttr(existing.bu || "") : ""}" /></div>
+    </div>
+    <div class="field"><label>ชื่ออาคาร</label><input type="text" id="f-name" value="${existing ? escapeAttr(existing.name) : ""}" /></div>
+    <div class="actions">
+      <button class="btn ghost" id="cancel-b">ยกเลิก</button>
+      <button class="btn" id="save-b">บันทึก</button>
+    </div>
+  `);
+  modal.querySelector("#cancel-b").addEventListener("click", closeModal);
+  modal.querySelector("#save-b").addEventListener("click", () => {
+    const name = modal.querySelector("#f-name").value.trim();
+    const code = modal.querySelector("#f-code").value.trim();
+    if (!name || !code) { alert("กรุณาระบุรหัสและชื่ออาคาร"); return; }
+    const all = DB.get("buildings", []);
+    if (existing) {
+      const idx = all.findIndex((x) => x.id === existing.id);
+      all[idx] = { ...existing, code, name, bu: modal.querySelector("#f-bu").value.trim() };
+    } else {
+      all.push({ id: uid("b"), code, name, bu: modal.querySelector("#f-bu").value.trim() });
+    }
+    DB.set("buildings", all);
+    closeModal();
+    toast("บันทึกแล้ว");
+    renderShell();
+    navigate("buildings");
+  });
+}
+
+// -------------------------------------------------------------- users ---
+function renderUsers(root) {
+  if (!Auth.isAdmin(State.user)) {
+    root.innerHTML = `<div class="card empty-state">เฉพาะผู้ดูแลระบบเท่านั้นที่จัดการหน้านี้ได้</div>`;
+    return;
+  }
+  const users = DB.get("users", []);
+  const buildings = DB.get("buildings", []);
+  root.innerHTML = `
+    <div class="toolbar">
+      <div></div>
+      <button class="btn" id="add-user-btn">+ เพิ่มผู้ใช้งาน</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อ-นามสกุล</th><th>สิทธิ์</th><th>เข้าถึงอาคาร</th><th></th></tr></thead>
+        <tbody>
+          ${users
+            .map((u) => {
+              const scope = u.buildingIds.includes("ALL")
+                ? "ทุกอาคาร"
+                : u.buildingIds.map((id) => (buildings.find((b) => b.id === id) || {}).code || "?").join(", ") || "-";
+              return `
+              <tr>
+                <td>${u.username}</td>
+                <td>${u.name}</td>
+                <td><span class="badge ${u.role === "admin" ? "gold" : "grey"}">${u.role === "admin" ? "ผู้ดูแลระบบ" : "ผู้ใช้งาน"}</span></td>
+                <td>${scope}</td>
+                <td style="white-space:nowrap;">
+                  <button class="icon-btn" data-edit-u="${u.id}">แก้ไข</button>
+                  ${u.username !== "admin" ? `<button class="icon-btn danger" data-del-u="${u.id}">ลบ</button>` : ""}
+                </td>
+              </tr>`;
+            })
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+  root.querySelectorAll("[data-edit-u]").forEach((b) =>
+    b.addEventListener("click", () => openUserForm(users.find((x) => x.id === b.dataset.editU)))
+  );
+  root.querySelectorAll("[data-del-u]").forEach((b) =>
+    b.addEventListener("click", () => {
+      if (!confirm("ลบผู้ใช้งานนี้หรือไม่?")) return;
+      DB.set("users", DB.get("users", []).filter((x) => x.id !== b.dataset.delU));
+      toast("ลบแล้ว");
+      navigate("users");
+    })
+  );
+  document.getElementById("add-user-btn").addEventListener("click", () => openUserForm(null));
+}
+
+function openUserForm(existing) {
+  const buildings = DB.get("buildings", []);
+  const selectedIds = existing ? existing.buildingIds : [];
+  const modal = openModal(`
+    <h3>${existing ? "แก้ไขผู้ใช้งาน" : "เพิ่มผู้ใช้งานใหม่"}</h3>
+    <div class="form-row">
+      <div class="field"><label>ชื่อผู้ใช้ (username)</label><input type="text" id="f-username" ${existing ? "disabled" : ""} value="${existing ? escapeAttr(existing.username) : ""}" /></div>
+      <div class="field"><label>รหัสผ่าน</label><input type="text" id="f-password" placeholder="${existing ? "เว้นว่างถ้าไม่เปลี่ยน" : ""}" /></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>ชื่อ-นามสกุล</label><input type="text" id="f-name" value="${existing ? escapeAttr(existing.name) : ""}" /></div>
+      <div class="field">
+        <label>สิทธิ์การใช้งาน</label>
+        <select id="f-role">
+          <option value="user" ${existing && existing.role === "user" ? "selected" : ""}>ผู้ใช้งานทั่วไป</option>
+          <option value="admin" ${existing && existing.role === "admin" ? "selected" : ""}>ผู้ดูแลระบบ</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>อาคาร/BU ที่เข้าถึงได้</label>
+      <div class="checkbox-list" id="building-checks">
+        <label class="checkbox-pill"><input type="checkbox" value="ALL" ${selectedIds.includes("ALL") ? "checked" : ""}/> ทุกอาคาร</label>
+        ${buildings
+          .map((b) => `<label class="checkbox-pill"><input type="checkbox" value="${b.id}" ${selectedIds.includes(b.id) ? "checked" : ""}/> ${b.name}</label>`)
+          .join("")}
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" id="cancel-u">ยกเลิก</button>
+      <button class="btn" id="save-u">บันทึก</button>
+    </div>
+  `);
+  modal.querySelector("#cancel-u").addEventListener("click", closeModal);
+  modal.querySelector("#save-u").addEventListener("click", () => {
+    const username = modal.querySelector("#f-username").value.trim();
+    const name = modal.querySelector("#f-name").value.trim();
+    if (!existing && !username) { alert("กรุณาระบุชื่อผู้ใช้"); return; }
+    if (!name) { alert("กรุณาระบุชื่อ-นามสกุล"); return; }
+    const checked = [...modal.querySelectorAll("#building-checks input:checked")].map((c) => c.value);
+    const password = modal.querySelector("#f-password").value;
+    const all = DB.get("users", []);
+    if (existing) {
+      const idx = all.findIndex((x) => x.id === existing.id);
+      all[idx] = {
+        ...existing,
+        name,
+        role: modal.querySelector("#f-role").value,
+        buildingIds: checked.length ? checked : ["ALL"],
+        password: password ? password : existing.password
+      };
+    } else {
+      if (all.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
+        alert("มีชื่อผู้ใช้นี้อยู่แล้ว");
+        return;
+      }
+      all.push({
+        id: uid("u"),
+        username,
+        password: password || "changeme",
+        name,
+        role: modal.querySelector("#f-role").value,
+        buildingIds: checked.length ? checked : ["ALL"]
+      });
+    }
+    DB.set("users", all);
+    closeModal();
+    toast("บันทึกแล้ว");
+    navigate("users");
+  });
+}
+
+// ------------------------------------------------------------- reports ---
+const DATASETS = {
+  processStatus: {
+    label: "สถานะกระบวนการ (SSPPC + FMS)",
+    headers: [
+      { key: "buildingName", label: "อาคาร" },
+      { key: "processName", label: "กระบวนการ" },
+      { key: "status", label: "สถานะ" },
+      { key: "note", label: "หมายเหตุ" },
+      { key: "updatedAt", label: "อัปเดตล่าสุด" }
+    ],
+    rows() {
+      const buildings = DB.get("buildings", []);
+      return DB.get("processStatus", []).map((r) => ({
+        buildingName: (buildings.find((b) => b.id === r.buildingId) || {}).name || r.buildingId,
+        processName: (PROCESS_REFERENCE.find((p) => p.id === r.processId) || {}).name || r.processId,
+        status: STATUS_LABELS[r.status] || r.status,
+        note: r.note,
+        updatedAt: r.updatedAt
+      }));
+    }
+  },
+  okrs: {
+    label: "OKR",
+    headers: [
+      { key: "buildingName", label: "อาคาร" }, { key: "quarter", label: "ไตรมาส" }, { key: "pillar", label: "Pillar" },
+      { key: "objective", label: "Objective" }, { key: "avgProgress", label: "ความคืบหน้า (%)" }, { key: "owner", label: "เจ้าของ" }
+    ],
+    rows() {
+      const buildings = DB.get("buildings", []);
+      return DB.get("okrs", []).map((o) => {
+        const krs = o.keyResults || [];
+        const avg = krs.length ? Math.round(krs.reduce((s, k) => s + Number(k.progress || 0), 0) / krs.length) : 0;
+        return {
+          buildingName: (buildings.find((b) => b.id === o.buildingId) || {}).name || o.buildingId,
+          quarter: o.quarter, pillar: o.pillar, objective: o.objective, avgProgress: avg, owner: o.owner
+        };
+      });
+    }
+  },
+  kpis: {
+    label: "KPI",
+    headers: [
+      { key: "buildingName", label: "อาคาร" }, { key: "pillar", label: "Pillar" }, { key: "name", label: "ตัวชี้วัด" },
+      { key: "target", label: "เป้าหมาย" }, { key: "actual", label: "ผลจริง" }, { key: "unit", label: "หน่วย" },
+      { key: "period", label: "ช่วงเวลา" }, { key: "rag", label: "สถานะ" }
+    ],
+    rows() {
+      const buildings = DB.get("buildings", []);
+      return DB.get("kpis", []).map((k) => ({
+        buildingName: (buildings.find((b) => b.id === k.buildingId) || {}).name || k.buildingId,
+        pillar: k.pillar, name: k.name, target: k.target, actual: k.actual, unit: k.unit, period: k.period,
+        rag: RAG_LABELS[ragOf(k)] || "ยังไม่มีข้อมูล"
+      }));
+    }
+  },
+  capas: {
+    label: "CAPA / Incident",
+    headers: [
+      { key: "buildingName", label: "อาคาร" }, { key: "title", label: "เรื่อง" }, { key: "source", label: "ที่มา" },
+      { key: "owner", label: "เจ้าของ" }, { key: "openedDate", label: "เปิดเมื่อ" }, { key: "dueDate", label: "กำหนดปิด" },
+      { key: "status", label: "สถานะ" }
+    ],
+    rows() {
+      const buildings = DB.get("buildings", []);
+      const labels = { open: "เปิด", in_progress: "กำลังดำเนินการ", closed: "ปิดแล้ว" };
+      return DB.get("capas", []).map((c) => ({
+        buildingName: (buildings.find((b) => b.id === c.buildingId) || {}).name || c.buildingId,
+        title: c.title, source: c.source, owner: c.owner, openedDate: c.openedDate, dueDate: c.dueDate,
+        status: labels[c.status] || c.status
+      }));
+    }
+  },
+  buildings: {
+    label: "อาคาร / BU",
+    headers: [{ key: "code", label: "รหัส" }, { key: "name", label: "ชื่อ" }, { key: "bu", label: "หน่วยธุรกิจ" }],
+    rows() { return DB.get("buildings", []); }
+  }
+};
+
+function renderReports(root) {
+  root.innerHTML = `
+    <div class="card">
+      <h3>ส่งออกข้อมูล (CSV)</h3>
+      <div class="desc">เลือกชุดข้อมูลที่ต้องการ แล้วดาวน์โหลดเป็นไฟล์ CSV เปิดได้ทันทีด้วย Excel / Google Sheets</div>
+      <div class="toolbar">
+        <div class="filters">
+          <select id="dataset-select">
+            ${Object.entries(DATASETS).map(([k, v]) => `<option value="${k}">${v.label}</option>`).join("")}
+          </select>
+        </div>
+        <button class="btn" id="export-csv-btn">ดาวน์โหลด CSV</button>
+      </div>
+      <div id="dataset-preview"></div>
+    </div>
+
+    <div class="card">
+      <h3>Executive Summary (พิมพ์ / บันทึกเป็น PDF)</h3>
+      <div class="desc">สรุปภาพรวมของอาคาร/BU ที่กำลังเลือกอยู่ ในรูปแบบพร้อมพิมพ์ให้ผู้บริหาร</div>
+      <button class="btn gold" id="print-summary-btn">เปิดหน้าสรุปเพื่อพิมพ์</button>
+    </div>
+  `;
+
+  function drawPreview() {
+    const key = document.getElementById("dataset-select").value;
+    const ds = DATASETS[key];
+    const rows = ds.rows();
+    document.getElementById("dataset-preview").innerHTML = `
+      <div style="margin-top:12px;font-size:12.5px;color:var(--muted);">พบ ${rows.length} แถว</div>
+      <div style="max-height:260px;overflow:auto;margin-top:6px;">
+      <table>
+        <thead><tr>${ds.headers.map((h) => `<th>${h.label}</th>`).join("")}</tr></thead>
+        <tbody>
+          ${rows
+            .slice(0, 25)
+            .map((r) => `<tr>${ds.headers.map((h) => `<td>${r[h.key] ?? "-"}</td>`).join("")}</tr>`)
+            .join("") || `<tr><td colspan="${ds.headers.length}" class="empty-state">ไม่มีข้อมูล</td></tr>`}
+        </tbody>
+      </table>
+      </div>
+    `;
+  }
+  drawPreview();
+  document.getElementById("dataset-select").addEventListener("change", drawPreview);
+  document.getElementById("export-csv-btn").addEventListener("click", () => {
+    const key = document.getElementById("dataset-select").value;
+    const ds = DATASETS[key];
+    ExportUtil.exportCSV(ds.rows(), ds.headers, `qshe_${key}_${todayISO()}`);
+    toast("ดาวน์โหลดไฟล์แล้ว");
+  });
+
+  document.getElementById("print-summary-btn").addEventListener("click", () => {
+    const scope = buildingsInScope();
+    const ids = scope.map((b) => b.id);
+    const modulePct = MODULES.map((m) => ({ ...m, comp: moduleCompletion(ids, m.id) }));
+    const okrs = DB.get("okrs", []).filter((o) => ids.includes(o.buildingId));
+    const kpis = DB.get("kpis", []).filter((k) => ids.includes(k.buildingId));
+    const capas = DB.get("capas", []).filter((c) => ids.includes(c.buildingId));
+    const openCapas = capas.filter((c) => c.status !== "closed");
+    const ragCounts = { green: 0, yellow: 0, red: 0, grey: 0 };
+    kpis.forEach((k) => ragCounts[ragOf(k)]++);
+
+    const html = `
+      <div class="meta">PSD eNGINNo QSHE Management — Executive Summary</div>
+      <h1>สรุปผลการดำเนินงาน QSHE ${State.activeBuilding === "ALL" ? "(ทุกอาคาร)" : "— " + scope[0]?.name}</h1>
+      <div class="meta">วันที่จัดทำรายงาน: ${todayISO()} &nbsp;|&nbsp; จัดทำโดย: ${State.user.name}</div>
+      <table>
+        <thead><tr><th>Module</th><th>ความคืบหน้า</th></tr></thead>
+        <tbody>${modulePct.map((m) => `<tr><td>${m.nameTh} (${m.name})</td><td>${m.comp.pct}%</td></tr>`).join("")}</tbody>
+      </table>
+      <table>
+        <thead><tr><th>รายการ</th><th>ค่า</th></tr></thead>
+        <tbody>
+          <tr><td>จำนวน OKR</td><td>${okrs.length}</td></tr>
+          <tr><td>KPI ตามเป้า / เฝ้าระวัง / ต้องเร่งแก้ไข</td><td>${ragCounts.green} / ${ragCounts.yellow} / ${ragCounts.red}</td></tr>
+          <tr><td>CAPA ที่ยังเปิดอยู่</td><td>${openCapas.length}</td></tr>
+        </tbody>
+      </table>
+    `;
+    ExportUtil.printSection(html, "QSHE Executive Summary");
+  });
+}
+
+</script>
 </body>
 </html>
