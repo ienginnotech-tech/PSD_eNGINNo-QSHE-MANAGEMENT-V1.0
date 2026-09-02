@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PSD eNGINNo — QSHE Management V1.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================================
    PSD eNGINNo QSHE Management — stylesheet
@@ -50,53 +50,154 @@ a { color: var(--green); }
 
 .hidden { display: none !important; }
 
-/* ---------- Login screen ---------- */
+/* ---------- Login / Register screen (dark, blue-green tech theme) ---------- */
+:root {
+  --auth-bg-1: #050C0A;
+  --auth-bg-2: #081C17;
+  --auth-card: #0E1B17;
+  --auth-card-border: rgba(140, 210, 190, 0.14);
+  --auth-text: #E9F5F0;
+  --auth-muted: #7FA398;
+  --auth-input-bg: #0A1613;
+  --auth-input-border: rgba(140, 210, 190, 0.16);
+  --accent-emerald: #2FEAA8;
+  --accent-azure: #38B6FF;
+  --accent-gradient: linear-gradient(90deg, var(--accent-emerald), var(--accent-azure));
+}
+
 #login-screen {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, var(--dark-green) 0%, #0D3823 55%, #0A2E1C 100%);
-  padding: 20px;
+  padding: 40px 20px;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(47, 234, 168, 0.10), transparent 40%),
+    radial-gradient(circle at 85% 75%, rgba(56, 182, 255, 0.10), transparent 45%),
+    radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(180deg, var(--auth-bg-1) 0%, var(--auth-bg-2) 100%);
+  background-size: auto, auto, 22px 22px, auto;
+  color: var(--auth-text);
 }
 
-.login-card {
-  width: 100%;
-  max-width: 380px;
-  background: var(--card);
-  border-radius: 14px;
-  padding: 36px 32px 30px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-}
+.auth-page { width: 100%; max-width: 420px; }
 
-.login-brand {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 22px;
+.auth-header { text-align: center; margin-bottom: 26px; }
+.eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  color: var(--accent-emerald);
+  margin-bottom: 14px;
 }
-
-.login-brand .mark {
-  width: 40px; height: 40px;
-  border-radius: 9px;
-  background: var(--green);
-  color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 15px;
-  margin-bottom: 12px;
-}
-
-.login-brand h1 {
-  font-size: 18px;
+.eyebrow-dot { color: var(--accent-azure); }
+.auth-title {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 30px;
+  font-weight: 700;
   margin: 0;
-  color: var(--dark-green);
+  color: #F4FBF8;
+  letter-spacing: 0.01em;
 }
-.login-brand p {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: var(--muted);
+.auth-title .accent {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.auth-sub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px;
+  color: var(--auth-muted);
+  margin-top: 10px;
+  letter-spacing: 0.05em;
 }
 
+.auth-card {
+  background: var(--auth-card);
+  border: 1px solid var(--auth-card-border);
+  border-radius: 16px;
+  padding: 28px 26px 24px;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.45);
+}
+
+.auth-error {
+  background: rgba(224, 82, 82, 0.12);
+  border: 1px solid rgba(224, 82, 82, 0.35);
+  color: #FF9B9B;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+.auth-success {
+  background: rgba(47, 234, 168, 0.10);
+  border: 1px solid rgba(47, 234, 168, 0.35);
+  color: var(--accent-emerald);
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.field-dark { margin-bottom: 16px; }
+.field-dark label {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--auth-muted);
+  margin-bottom: 7px;
+}
+.field-dark input, .field-dark select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--auth-input-border);
+  background: var(--auth-input-bg);
+  color: var(--auth-text);
+}
+.field-dark select { color: var(--auth-muted); }
+.field-dark input::placeholder { color: #4E6B62; }
+.field-dark input:focus, .field-dark select:focus {
+  outline: none;
+  border-color: var(--accent-emerald);
+  box-shadow: 0 0 0 3px rgba(47, 234, 168, 0.14);
+}
+
+.password-wrap { position: relative; }
+.password-wrap input { padding-right: 42px; }
+.eye-toggle {
+  position: absolute;
+  right: 10px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  color: var(--auth-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+}
+.eye-toggle:hover { color: var(--accent-emerald); }
+
+.btn-glow {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent-gradient);
+  color: #04140F;
+  font-weight: 700;
+  font-size: 14.5px;
+  cursor: pointer;
+  box-shadow: 0 8px 26px rgba(47, 234, 168, 0.28), 0 8px 26px rgba(56, 182, 255, 0.14);
+  transition: transform 0.05s ease, box-shadow 0.15s ease;
+}
+.btn-glow:hover { box-shadow: 0 10px 32px rgba(47, 234, 168, 0.4), 0 10px 32px rgba(56, 182, 255, 0.22); }
+.btn-glow:active { transform: translateY(1px); }
+
+/* Generic light-theme field (used in modal forms across the app) */
 .field { margin-bottom: 14px; }
 .field label {
   display: block;
@@ -118,6 +219,52 @@ a { color: var(--green); }
   outline-offset: 1px;
   border-color: var(--green);
 }
+
+.btn-outline-dark {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--auth-input-border);
+  background: rgba(255,255,255,0.02);
+  color: var(--auth-text);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+.btn-outline-dark:hover { border-color: var(--accent-azure); color: #fff; }
+
+.auth-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 18px 0;
+  color: var(--auth-muted);
+  font-size: 12px;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ""; flex: 1; height: 1px;
+  background: var(--auth-input-border);
+}
+
+.auth-hint {
+  margin-top: 16px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--auth-muted);
+  background: rgba(47, 234, 168, 0.06);
+  border: 1px solid rgba(47, 234, 168, 0.14);
+  border-radius: 9px;
+  padding: 10px 12px;
+}
+.auth-hint strong { color: var(--accent-emerald); }
+
+.auth-footer {
+  text-align: center;
+  margin-top: 22px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--auth-muted);
+  letter-spacing: 0.04em;
+}
+.auth-footer .accent { color: var(--accent-emerald); font-weight: 700; }
 
 .btn {
   display: inline-flex;
@@ -505,33 +652,85 @@ tbody tr:hover td { background: #FAFCFB; }
 </head>
 <body>
 
-  <!-- ===================== LOGIN SCREEN ===================== -->
+  <!-- ===================== LOGIN / REGISTER SCREEN ===================== -->
   <div id="login-screen">
-    <div class="login-card">
-      <div class="login-brand">
-        <div class="mark">QS</div>
-        <h1>PSD eNGINNo</h1>
-        <p>QSHE Management System · V1.0</p>
+    <div class="auth-page">
+      <div class="auth-header">
+        <div class="eyebrow">PSD <span class="eyebrow-dot">•</span> eNGINNo</div>
+        <h1 class="auth-title">QSHE <span class="accent">Management</span></h1>
+        <div class="auth-sub">Platform · V1.0 · 2026</div>
       </div>
 
-      <div id="login-error" class="login-error hidden"></div>
+      <!-- ---- Login card ---- -->
+      <div class="auth-card" id="login-card">
+        <div id="login-error" class="auth-error hidden"></div>
 
-      <form id="login-form">
-        <div class="field">
-          <label for="login-username">ชื่อผู้ใช้ (Username)</label>
-          <input type="text" id="login-username" autocomplete="username" required />
-        </div>
-        <div class="field">
-          <label for="login-password">รหัสผ่าน (Password)</label>
-          <input type="password" id="login-password" autocomplete="current-password" required />
-        </div>
-        <button type="submit" class="btn block">เข้าสู่ระบบ</button>
-      </form>
+        <form id="login-form">
+          <div class="field-dark">
+            <label>USERNAME</label>
+            <input type="text" id="login-username" autocomplete="username" placeholder="ชื่อผู้ใช้" required />
+          </div>
+          <div class="field-dark">
+            <label>PASSWORD</label>
+            <div class="password-wrap">
+              <input type="password" id="login-password" autocomplete="current-password" placeholder="รหัสผ่าน" required />
+              <button type="button" class="eye-toggle" id="toggle-login-pw" aria-label="แสดง/ซ่อนรหัสผ่าน">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-glow block">เข้าสู่ระบบ</button>
+        </form>
 
-      <div class="login-hint">
-        บัญชีผู้ดูแลระบบเริ่มต้น: <strong>admin</strong> / <strong>qshe2026</strong><br/>
-        แนะนำให้เปลี่ยนรหัสผ่านทันทีหลังเข้าใช้งานครั้งแรก (เมนู "ผู้ใช้งาน")
+        <div class="auth-divider"><span>หรือ</span></div>
+        <button class="btn-outline-dark block" id="show-register-btn" type="button">ลงทะเบียนผู้ใช้ใหม่</button>
+
+        <div class="auth-hint">
+          บัญชีผู้ดูแลระบบเริ่มต้น: <strong>admin</strong> / <strong>qshe2026</strong>
+        </div>
       </div>
+
+      <!-- ---- Register card ---- -->
+      <div class="auth-card hidden" id="register-card">
+        <div id="register-error" class="auth-error hidden"></div>
+        <div id="register-success" class="auth-success hidden"></div>
+
+        <form id="register-form">
+          <div class="field-dark">
+            <label>ชื่อ-นามสกุล</label>
+            <input type="text" id="reg-name" placeholder="ชื่อ นามสกุล" required />
+          </div>
+          <div class="field-dark">
+            <label>USERNAME</label>
+            <input type="text" id="reg-username" placeholder="ตั้งชื่อผู้ใช้" required />
+          </div>
+          <div class="field-dark">
+            <label>PASSWORD</label>
+            <div class="password-wrap">
+              <input type="password" id="reg-password" placeholder="ตั้งรหัสผ่าน" required />
+              <button type="button" class="eye-toggle" id="toggle-reg-pw" aria-label="แสดง/ซ่อนรหัสผ่าน">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="field-dark">
+            <label>อาคาร/BU ที่ต้องการเข้าใช้งาน (ถ้าทราบ)</label>
+            <select id="reg-building">
+              <option value="">ยังไม่ระบุ — ให้ผู้ดูแลระบบกำหนด</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-glow block">ส่งคำขอลงทะเบียน</button>
+        </form>
+
+        <div class="auth-divider"><span>หรือ</span></div>
+        <button class="btn-outline-dark block" id="show-login-btn" type="button">กลับไปหน้าเข้าสู่ระบบ</button>
+
+        <div class="auth-hint">
+          บัญชีใหม่จะยังใช้งานไม่ได้จนกว่าผู้ดูแลระบบจะอนุมัติและกำหนดสิทธิ์
+        </div>
+      </div>
+
+      <div class="auth-footer">PSD Engineering Innovation · <span class="accent">eNGINNo</span> QSHE Management · V1.0 · 2026</div>
     </div>
   </div>
 
@@ -623,6 +822,7 @@ const SEED = {
       password: "qshe2026", // demo-only auth, see README security note
       name: "ผู้ดูแลระบบ",
       role: "admin",
+      status: "active",
       buildingIds: ["ALL"]
     }
   ],
@@ -715,9 +915,32 @@ const Auth = {
       (u) => u.username.toLowerCase() === String(username).trim().toLowerCase() && u.password === password
     );
     if (!match) return { ok: false, error: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" };
+    if (match.status === "pending") {
+      return { ok: false, error: "บัญชีนี้ยังรอการอนุมัติจากผู้ดูแลระบบ กรุณาติดต่อผู้ดูแลระบบ" };
+    }
     const session = { id: match.id, username: match.username, name: match.name, role: match.role, buildingIds: match.buildingIds };
     DB.set("session", session);
     return { ok: true, user: session };
+  },
+  register({ username, password, name, buildingId }) {
+    username = String(username || "").trim();
+    name = String(name || "").trim();
+    if (!username || !password || !name) return { ok: false, error: "กรุณากรอกข้อมูลให้ครบถ้วน" };
+    const users = DB.get("users", []);
+    if (users.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
+      return { ok: false, error: "มีชื่อผู้ใช้นี้อยู่แล้วในระบบ" };
+    }
+    users.push({
+      id: uid("u"),
+      username,
+      password,
+      name,
+      role: "pending",
+      status: "pending",
+      buildingIds: buildingId ? [buildingId] : []
+    });
+    DB.set("users", users);
+    return { ok: true };
   },
   logout() {
     localStorage.removeItem(DB_PREFIX + "session");
@@ -822,8 +1045,30 @@ document.addEventListener("DOMContentLoaded", () => {
 function showLogin() {
   document.getElementById("app-shell").classList.add("hidden");
   document.getElementById("login-screen").classList.remove("hidden");
-  const form = document.getElementById("login-form");
-  form.onsubmit = (e) => {
+
+  const loginCard = document.getElementById("login-card");
+  const registerCard = document.getElementById("register-card");
+
+  // populate the "requested building" dropdown on the register form
+  const buildingSelect = document.getElementById("reg-building");
+  const buildings = DB.get("buildings", []);
+  buildingSelect.innerHTML =
+    `<option value="">ยังไม่ระบุ — ให้ผู้ดูแลระบบกำหนด</option>` +
+    buildings.map((b) => `<option value="${b.id}">${b.name}</option>`).join("");
+
+  document.getElementById("show-register-btn").addEventListener("click", () => {
+    loginCard.classList.add("hidden");
+    registerCard.classList.remove("hidden");
+  });
+  document.getElementById("show-login-btn").addEventListener("click", () => {
+    registerCard.classList.add("hidden");
+    loginCard.classList.remove("hidden");
+  });
+
+  wirePasswordToggle("toggle-login-pw", "login-password");
+  wirePasswordToggle("toggle-reg-pw", "reg-password");
+
+  document.getElementById("login-form").onsubmit = (e) => {
     e.preventDefault();
     const username = document.getElementById("login-username").value;
     const password = document.getElementById("login-password").value;
@@ -837,6 +1082,35 @@ function showLogin() {
     errEl.classList.add("hidden");
     startApp(res.user);
   };
+
+  document.getElementById("register-form").onsubmit = (e) => {
+    e.preventDefault();
+    const name = document.getElementById("reg-name").value;
+    const username = document.getElementById("reg-username").value;
+    const password = document.getElementById("reg-password").value;
+    const buildingId = document.getElementById("reg-building").value;
+    const errEl = document.getElementById("register-error");
+    const okEl = document.getElementById("register-success");
+    const res = Auth.register({ name, username, password, buildingId });
+    if (!res.ok) {
+      okEl.classList.add("hidden");
+      errEl.textContent = res.error;
+      errEl.classList.remove("hidden");
+      return;
+    }
+    errEl.classList.add("hidden");
+    okEl.textContent = "ส่งคำขอลงทะเบียนเรียบร้อย รอผู้ดูแลระบบอนุมัติสิทธิ์การใช้งาน";
+    okEl.classList.remove("hidden");
+    document.getElementById("register-form").reset();
+  };
+}
+
+function wirePasswordToggle(btnId, inputId) {
+  const btn = document.getElementById(btnId);
+  const input = document.getElementById(inputId);
+  btn.addEventListener("click", () => {
+    input.type = input.type === "password" ? "text" : "password";
+  });
 }
 
 function startApp(user) {
@@ -1824,28 +2098,39 @@ function renderUsers(root) {
   }
   const users = DB.get("users", []);
   const buildings = DB.get("buildings", []);
+  const pendingCount = users.filter((u) => u.status === "pending").length;
   root.innerHTML = `
+    ${
+      pendingCount
+        ? `<div class="card" style="border-color:var(--gold);background:var(--gold-soft);">
+             <h3 style="color:var(--yellow);">มีคำขอลงทะเบียนใหม่รออนุมัติ ${pendingCount} รายการ</h3>
+             <div class="desc">ตรวจสอบและกำหนดสิทธิ์/อาคารให้ผู้ใช้งานใหม่ในตารางด้านล่าง</div>
+           </div>`
+        : ""
+    }
     <div class="toolbar">
       <div></div>
       <button class="btn" id="add-user-btn">+ เพิ่มผู้ใช้งาน</button>
     </div>
     <div class="card">
       <table>
-        <thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อ-นามสกุล</th><th>สิทธิ์</th><th>เข้าถึงอาคาร</th><th></th></tr></thead>
+        <thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อ-นามสกุล</th><th>สิทธิ์</th><th>เข้าถึงอาคาร</th><th>สถานะ</th><th></th></tr></thead>
         <tbody>
           ${users
             .map((u) => {
               const scope = u.buildingIds.includes("ALL")
                 ? "ทุกอาคาร"
                 : u.buildingIds.map((id) => (buildings.find((b) => b.id === id) || {}).code || "?").join(", ") || "-";
+              const isPending = u.status === "pending";
               return `
               <tr>
                 <td>${u.username}</td>
                 <td>${u.name}</td>
-                <td><span class="badge ${u.role === "admin" ? "gold" : "grey"}">${u.role === "admin" ? "ผู้ดูแลระบบ" : "ผู้ใช้งาน"}</span></td>
+                <td><span class="badge ${u.role === "admin" ? "gold" : "grey"}">${u.role === "admin" ? "ผู้ดูแลระบบ" : u.role === "pending" ? "ยังไม่กำหนด" : "ผู้ใช้งาน"}</span></td>
                 <td>${scope}</td>
+                <td><span class="badge ${isPending ? "gold" : "green"}">${isPending ? "รออนุมัติ" : "ใช้งานได้"}</span></td>
                 <td style="white-space:nowrap;">
-                  <button class="icon-btn" data-edit-u="${u.id}">แก้ไข</button>
+                  ${isPending ? `<button class="icon-btn" data-approve-u="${u.id}" style="color:var(--green);font-weight:700;">อนุมัติ</button>` : `<button class="icon-btn" data-edit-u="${u.id}">แก้ไข</button>`}
                   ${u.username !== "admin" ? `<button class="icon-btn danger" data-del-u="${u.id}">ลบ</button>` : ""}
                 </td>
               </tr>`;
@@ -1858,6 +2143,9 @@ function renderUsers(root) {
   root.querySelectorAll("[data-edit-u]").forEach((b) =>
     b.addEventListener("click", () => openUserForm(users.find((x) => x.id === b.dataset.editU)))
   );
+  root.querySelectorAll("[data-approve-u]").forEach((b) =>
+    b.addEventListener("click", () => openUserForm(users.find((x) => x.id === b.dataset.approveU), true))
+  );
   root.querySelectorAll("[data-del-u]").forEach((b) =>
     b.addEventListener("click", () => {
       if (!confirm("ลบผู้ใช้งานนี้หรือไม่?")) return;
@@ -1869,11 +2157,12 @@ function renderUsers(root) {
   document.getElementById("add-user-btn").addEventListener("click", () => openUserForm(null));
 }
 
-function openUserForm(existing) {
+function openUserForm(existing, isApproval) {
   const buildings = DB.get("buildings", []);
-  const selectedIds = existing ? existing.buildingIds : [];
+  const selectedIds = existing ? existing.buildingIds.filter((id) => id !== "ALL") : [];
   const modal = openModal(`
-    <h3>${existing ? "แก้ไขผู้ใช้งาน" : "เพิ่มผู้ใช้งานใหม่"}</h3>
+    <h3>${isApproval ? "อนุมัติผู้ใช้งานใหม่" : existing ? "แก้ไขผู้ใช้งาน" : "เพิ่มผู้ใช้งานใหม่"}</h3>
+    ${isApproval ? `<div class="desc" style="margin-bottom:14px;">กำหนดสิทธิ์และอาคารที่เข้าถึงได้ก่อนเปิดใช้งานบัญชีนี้</div>` : ""}
     <div class="form-row">
       <div class="field"><label>ชื่อผู้ใช้ (username)</label><input type="text" id="f-username" ${existing ? "disabled" : ""} value="${existing ? escapeAttr(existing.username) : ""}" /></div>
       <div class="field"><label>รหัสผ่าน</label><input type="text" id="f-password" placeholder="${existing ? "เว้นว่างถ้าไม่เปลี่ยน" : ""}" /></div>
@@ -1889,9 +2178,16 @@ function openUserForm(existing) {
       </div>
     </div>
     <div class="field">
+      <label>สถานะบัญชี</label>
+      <select id="f-status">
+        <option value="active" ${!existing || existing.status !== "pending" ? "selected" : ""}>ใช้งานได้ (Active)</option>
+        <option value="pending" ${existing && existing.status === "pending" && !isApproval ? "selected" : ""}>รออนุมัติ (Pending)</option>
+      </select>
+    </div>
+    <div class="field">
       <label>อาคาร/BU ที่เข้าถึงได้</label>
       <div class="checkbox-list" id="building-checks">
-        <label class="checkbox-pill"><input type="checkbox" value="ALL" ${selectedIds.includes("ALL") ? "checked" : ""}/> ทุกอาคาร</label>
+        <label class="checkbox-pill"><input type="checkbox" value="ALL" ${existing && existing.buildingIds.includes("ALL") ? "checked" : ""}/> ทุกอาคาร</label>
         ${buildings
           .map((b) => `<label class="checkbox-pill"><input type="checkbox" value="${b.id}" ${selectedIds.includes(b.id) ? "checked" : ""}/> ${b.name}</label>`)
           .join("")}
@@ -1899,7 +2195,7 @@ function openUserForm(existing) {
     </div>
     <div class="actions">
       <button class="btn ghost" id="cancel-u">ยกเลิก</button>
-      <button class="btn" id="save-u">บันทึก</button>
+      <button class="btn" id="save-u">${isApproval ? "อนุมัติและบันทึก" : "บันทึก"}</button>
     </div>
   `);
   modal.querySelector("#cancel-u").addEventListener("click", closeModal);
@@ -1910,13 +2206,16 @@ function openUserForm(existing) {
     if (!name) { alert("กรุณาระบุชื่อ-นามสกุล"); return; }
     const checked = [...modal.querySelectorAll("#building-checks input:checked")].map((c) => c.value);
     const password = modal.querySelector("#f-password").value;
+    const role = modal.querySelector("#f-role").value;
+    const status = isApproval ? "active" : modal.querySelector("#f-status").value;
     const all = DB.get("users", []);
     if (existing) {
       const idx = all.findIndex((x) => x.id === existing.id);
       all[idx] = {
         ...existing,
         name,
-        role: modal.querySelector("#f-role").value,
+        role,
+        status,
         buildingIds: checked.length ? checked : ["ALL"],
         password: password ? password : existing.password
       };
@@ -1930,13 +2229,14 @@ function openUserForm(existing) {
         username,
         password: password || "changeme",
         name,
-        role: modal.querySelector("#f-role").value,
+        role,
+        status,
         buildingIds: checked.length ? checked : ["ALL"]
       });
     }
     DB.set("users", all);
     closeModal();
-    toast("บันทึกแล้ว");
+    toast(isApproval ? "อนุมัติผู้ใช้งานแล้ว" : "บันทึกแล้ว");
     navigate("users");
   });
 }
