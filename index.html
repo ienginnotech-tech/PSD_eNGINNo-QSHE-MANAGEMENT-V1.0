@@ -1225,7 +1225,7 @@ function renderTopbar() {
     dashboard: ["แดชบอร์ดภาพรวม", "สถานะ QSHE ในภาพรวมของอาคาร/หน่วยธุรกิจที่เลือก"],
     structure: ["Module 1 — Structure", "โครงสร้างการบริหาร QSHE"],
     system: ["Module 2 — System", "ระบบของแต่ละด้าน Q / S / H / E"],
-    process: ["Module 3 — Process", "กระบวนการทำงาน รวมแผน JCI Facility Management & Safety (FMS)"],
+    process: ["Module 3 — Process", "กระบวนการทำงาน รวมระบบ Facility Management and Safety (FMS)"],
     people: ["Module 4 — People", "หน้าที่ความรับผิดชอบของบุคลากร"],
     culture: ["Module 5 — Culture", "ค่านิยมและกิจกรรมสร้างวัฒนธรรม QSHE"],
     okr: ["OKR รายไตรมาส", "Objective and Key Results ต่ออาคาร/หน่วยธุรกิจ"],
@@ -1490,8 +1490,8 @@ function renderModuleView(root, moduleId) {
   if (fmsProcs.length) {
     html += `
       <div class="card">
-        <h3>ระบบ JCI — Facility Management and Safety (FMS)</h3>
-        <div class="desc">7 แผนงานที่ผนวกเข้ากับ Module 3 ตามมาตรฐาน JCI สำหรับสถานพยาบาล</div>
+        <h3>Facility Management and Safety (FMS)</h3>
+        <div class="desc">ระบบบริหารวิศวกรรมสิ่งอำนวยความสะดวกและความปลอดภัย — 7 แผนงานที่ผนวกเข้ากับ Module 3 ใช้ได้กับอาคารหรือสถานประกอบการทุกประเภท</div>
         ${processTableRows(fmsProcs, buildingId, true)}
       </div>
     `;
