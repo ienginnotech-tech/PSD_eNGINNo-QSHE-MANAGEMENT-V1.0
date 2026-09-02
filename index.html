@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PSD eNGINNo — QSHE Management V1.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&family=Prompt:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================================
    PSD eNGINNo QSHE Management — stylesheet
@@ -15,6 +15,8 @@
 
 :root {
   --dark-green: #12492F;
+  --brand-fixed: #12492F;
+  --heading: #12492F;
   --green: #1F7A4D;
   --green-soft: #E8F3EC;
   --gold: #C9992A;
@@ -30,6 +32,44 @@
   --yellow-soft: #FBF1DD;
   --radius: 10px;
   --shadow: 0 1px 2px rgba(18, 73, 47, 0.06), 0 4px 14px rgba(18, 73, 47, 0.06);
+  --app-font: "IBM Plex Sans Thai", "Noto Sans Thai", -apple-system, "Segoe UI", sans-serif;
+  --app-font-size: 15px;
+}
+
+/* ---------- Theme variants (toggled via body class from Settings) ---------- */
+body.theme-dark {
+  --bg: #0D1613;
+  --card: #142420;
+  --border: rgba(255,255,255,0.10);
+  --text: #E7F3EF;
+  --muted: #86A79B;
+  --heading: #EAF7F1;
+  --green: #33E6A6;
+  --green-soft: rgba(51,230,166,0.14);
+  --gold: #F0C24B;
+  --gold-soft: rgba(240,194,75,0.16);
+  --red: #FF6B6B;
+  --red-soft: rgba(255,107,107,0.14);
+  --yellow: #F0C24B;
+  --yellow-soft: rgba(240,194,75,0.16);
+  --shadow: 0 6px 22px rgba(0,0,0,0.4);
+}
+body.theme-ocean {
+  --bg: #F1F6FA;
+  --card: #FFFFFF;
+  --border: #DCE7F0;
+  --text: #16232E;
+  --muted: #5A7080;
+  --heading: #0B3D66;
+  --green: #2596F0;
+  --green-soft: #E3F0FC;
+  --gold: #14B8A6;
+  --gold-soft: #E1F7F3;
+  --red: #D64545;
+  --red-soft: #FBE7E7;
+  --yellow: #C9820F;
+  --yellow-soft: #FBF1DD;
+  --shadow: 0 1px 2px rgba(11,61,102,0.06), 0 4px 14px rgba(11,61,102,0.08);
 }
 
 * { box-sizing: border-box; }
@@ -39,9 +79,10 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "IBM Plex Sans Thai", "Noto Sans Thai", -apple-system, "Segoe UI", sans-serif;
-  font-size: 15px;
+  font-family: var(--app-font);
+  font-size: var(--app-font-size);
   line-height: 1.5;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 button, input, select, textarea { font-family: inherit; font-size: inherit; }
@@ -203,7 +244,7 @@ a { color: var(--green); }
   display: block;
   font-size: 13px;
   font-weight: 600;
-  color: var(--dark-green);
+  color: var(--heading);
   margin-bottom: 6px;
 }
 .field input, .field select, .field textarea {
@@ -211,7 +252,7 @@ a { color: var(--green); }
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--card);
   color: var(--text);
 }
 .field input:focus, .field select:focus, .field textarea:focus {
@@ -280,19 +321,19 @@ a { color: var(--green); }
   cursor: pointer;
   transition: background 0.15s ease, transform 0.05s ease;
 }
-.btn:hover { background: var(--dark-green); }
+.btn:hover { background: var(--brand-fixed); }
 .btn:active { transform: translateY(1px); }
 .btn.block { width: 100%; }
 .btn.ghost {
   background: transparent;
-  color: var(--dark-green);
+  color: var(--heading);
   border-color: var(--border);
 }
 .btn.ghost:hover { background: var(--green-soft); }
 .btn.danger { background: var(--red); }
 .btn.danger:hover { background: #9c2e22; }
 .btn.small { padding: 6px 10px; font-size: 13px; }
-.btn.gold { background: var(--gold); color: var(--dark-green); }
+.btn.gold { background: var(--gold); color: var(--brand-fixed); }
 .btn.gold:hover { background: #b3861f; }
 
 .login-error {
@@ -321,7 +362,7 @@ a { color: var(--green); }
 }
 
 #sidebar {
-  background: var(--dark-green);
+  background: var(--brand-fixed);
   color: #EAF3EE;
   padding: 20px 14px;
   display: flex;
@@ -339,7 +380,7 @@ a { color: var(--green); }
 .brand .mark {
   width: 34px; height: 34px;
   background: var(--gold);
-  color: var(--dark-green);
+  color: var(--brand-fixed);
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   font-weight: 800;
@@ -348,6 +389,30 @@ a { color: var(--green); }
 }
 .brand .name { font-size: 13.5px; font-weight: 700; line-height: 1.25; }
 .brand .ver { font-size: 11px; color: #9FC2AC; }
+
+.sidebar-toolbar {
+  display: flex;
+  gap: 6px;
+  padding: 4px 6px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  margin-bottom: 10px;
+}
+.icon-chip {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.04);
+  color: #D8EADD;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.icon-chip:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
 .nav-group-label {
   font-size: 11px;
@@ -395,7 +460,7 @@ a { color: var(--green); }
 }
 .user-chip .avatar {
   width: 26px; height: 26px; border-radius: 50%;
-  background: var(--gold); color: var(--dark-green);
+  background: var(--gold); color: var(--brand-fixed);
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 11px;
 }
@@ -418,7 +483,7 @@ a { color: var(--green); }
 #topbar h2 {
   margin: 0;
   font-size: 20px;
-  color: var(--dark-green);
+  color: var(--heading);
 }
 #topbar .subtitle {
   font-size: 13px;
@@ -430,13 +495,13 @@ a { color: var(--green); }
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 6px 10px;
 }
 .building-select label { font-size: 12px; color: var(--muted); }
-.building-select select { border: none; font-weight: 600; color: var(--dark-green); }
+.building-select select { border: none; font-weight: 600; color: var(--heading); background: transparent; }
 .building-select select:focus { outline: none; }
 
 .card {
@@ -451,7 +516,7 @@ a { color: var(--green); }
 .card h3 {
   margin: 0 0 4px;
   font-size: 15px;
-  color: var(--dark-green);
+  color: var(--heading);
 }
 .card .desc { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
 
@@ -473,14 +538,14 @@ a { color: var(--green); }
   box-shadow: var(--shadow);
 }
 .stat-card .label { font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
-.stat-card .value { font-size: 26px; font-weight: 700; color: var(--dark-green); }
+.stat-card .value { font-size: 26px; font-weight: 700; color: var(--heading); }
 .stat-card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
 table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 thead th {
   text-align: left;
   background: var(--green-soft);
-  color: var(--dark-green);
+  color: var(--heading);
   padding: 9px 10px;
   border-bottom: 1px solid var(--border);
   font-weight: 700;
@@ -532,7 +597,7 @@ tbody tr:hover td { background: #FAFCFB; }
 .section-title {
   font-size: 13px;
   font-weight: 700;
-  color: var(--dark-green);
+  color: var(--heading);
   margin: 18px 0 8px;
   padding-top: 6px;
   border-top: 1px dashed var(--border);
@@ -560,20 +625,56 @@ tbody tr:hover td { background: #FAFCFB; }
   z-index: 50;
 }
 .modal {
-  background: #fff;
+  background: var(--card);
   border-radius: 12px;
   width: 100%;
   max-width: 560px;
   padding: 22px 24px 24px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
-.modal h3 { margin-top: 0; color: var(--dark-green); }
+.modal h3 { margin-top: 0; color: var(--heading); }
 .modal .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .modal .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
 
 .kr-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
 .kr-row input[type="text"] { flex: 1; }
 .kr-row input[type="number"] { width: 70px; }
+
+.settings-section { margin-bottom: 20px; }
+.settings-section:last-child { margin-bottom: 0; }
+.settings-section h4 {
+  font-size: 13px;
+  color: var(--heading);
+  margin: 0 0 8px;
+}
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.option-card {
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  padding: 10px 8px;
+  text-align: center;
+  font-size: 12.5px;
+  cursor: pointer;
+  background: var(--card);
+  color: var(--text);
+}
+.option-card:hover { border-color: var(--green); }
+.option-card.selected {
+  border-color: var(--green);
+  background: var(--green-soft);
+  color: var(--heading);
+  font-weight: 700;
+}
+.option-card .swatch {
+  width: 100%; height: 22px;
+  border-radius: 5px;
+  margin-bottom: 6px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
 
 .checkbox-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 .checkbox-pill {
@@ -606,7 +707,7 @@ tbody tr:hover td { background: #FAFCFB; }
 .toast {
   position: fixed;
   bottom: 20px; right: 20px;
-  background: var(--dark-green);
+  background: var(--brand-fixed);
   color: #fff;
   padding: 10px 16px;
   border-radius: 8px;
@@ -812,7 +913,207 @@ const RAG_LABELS = {
   red: "ต้องเร่งแก้ไข"
 };
 
-// ---- First-run seed (only written to localStorage if nothing exists) --
+// ---- i18n: UI chrome translations (Thai default + English) ------------
+// Scope: navigation, page titles/subtitles, dashboard chrome, settings,
+// and common action buttons/toasts. Domain data (process names, FMS
+// details, user-entered OKRs/KPIs/CAPAs) stays as entered — this covers
+// the app's structural UI text, not user content.
+const I18N = {
+  th: {
+    nav_overview: "ภาพรวม",
+    nav_dashboard: "แดชบอร์ด",
+    nav_modules_group: "SSPPC Modules",
+    nav_structure: "1. Structure",
+    nav_system: "2. System",
+    nav_process: "3. Process (+ FMS)",
+    nav_people: "4. People",
+    nav_culture: "5. Culture",
+    nav_drive_group: "ขับเคลื่อนผลลัพธ์",
+    nav_okr: "OKR รายไตรมาส",
+    nav_kpi: "KPI",
+    nav_capa: "CAPA / Incident",
+    nav_admin_group: "ผู้ดูแลระบบ",
+    nav_buildings: "อาคาร / BU",
+    nav_users: "ผู้ใช้งาน",
+    nav_reports_group: "รายงาน",
+    nav_reports: "Export / รายงาน",
+    role_admin: "ผู้ดูแลระบบ",
+    role_user: "ผู้ใช้งาน",
+    logout: "ออกจากระบบ",
+    settings_btn: "ตั้งค่า",
+
+    title_dashboard: "แดชบอร์ดภาพรวม",
+    sub_dashboard: "สถานะ QSHE ในภาพรวมของอาคาร/หน่วยธุรกิจที่เลือก",
+    title_structure: "Module 1 — Structure",
+    sub_structure: "โครงสร้างการบริหาร QSHE",
+    title_system: "Module 2 — System",
+    sub_system: "ระบบของแต่ละด้าน Q / S / H / E",
+    title_process: "Module 3 — Process",
+    sub_process: "กระบวนการทำงาน รวมระบบ Facility Management and Safety (FMS)",
+    title_people: "Module 4 — People",
+    sub_people: "หน้าที่ความรับผิดชอบของบุคลากร",
+    title_culture: "Module 5 — Culture",
+    sub_culture: "ค่านิยมและกิจกรรมสร้างวัฒนธรรม QSHE",
+    title_okr: "OKR รายไตรมาส",
+    sub_okr: "Objective and Key Results ต่ออาคาร/หน่วยธุรกิจ",
+    title_kpi: "ตัวชี้วัด KPI",
+    sub_kpi: "ติดตามผลเชิงคุณภาพรายด้าน",
+    title_capa: "CAPA / Incident Log",
+    sub_capa: "บันทึกและติดตามการแก้ไข-ป้องกัน",
+    title_buildings: "อาคาร / หน่วยธุรกิจ (BU)",
+    sub_buildings: "จัดการรายชื่ออาคารหรือหน่วยธุรกิจในระบบ",
+    title_users: "ผู้ใช้งานระบบ",
+    sub_users: "จัดการบัญชีผู้ใช้และสิทธิ์การเข้าถึง",
+    title_reports: "Export / รายงาน",
+    sub_reports: "ส่งออกข้อมูลเป็น CSV หรือพิมพ์รายงานสรุป",
+
+    building_picker_label: "อาคาร/BU",
+    all_buildings_opt: "ทุกอาคาร (รวม)",
+
+    btn_save: "บันทึก",
+    btn_cancel: "ยกเลิก",
+    btn_edit: "แก้ไข",
+    btn_delete: "ลบ",
+    btn_approve: "อนุมัติ",
+
+    dash_stat1_label: "ความคืบหน้า Process รวม (SSPPC)",
+    dash_stat1_sub: "เฉลี่ยจาก 5 Module",
+    dash_stat2_label: "FMS ดำเนินการเสร็จสมบูรณ์",
+    dash_stat3_label: "ความคืบหน้า OKR เฉลี่ย",
+    dash_stat4_label: "CAPA ที่ยังเปิดอยู่",
+    dash_modcard_title: "ความคืบหน้าแต่ละ Module (S-S-P-P-C)",
+    dash_modcard_desc: "อิงจากเช็คลิสต์กระบวนการที่บันทึกสถานะไว้ในระบบ",
+    dash_kpicard_title: "สถานะ KPI (RAG)",
+    dash_kpicard_desc: "สรุปสถานะตัวชี้วัดทั้งหมดในขอบเขตที่เลือก",
+    dash_kpi_empty: "ยังไม่มีข้อมูล KPI — เพิ่มได้ที่เมนู KPI",
+    dash_rag_green: "ตามเป้า",
+    dash_rag_yellow: "เฝ้าระวัง",
+    dash_rag_red: "ต้องเร่งแก้ไข",
+    dash_buildings_title: "อาคาร/หน่วยธุรกิจในขอบเขตปัจจุบัน",
+    dash_buildings_desc_all: "แสดงข้อมูลรวมทุกอาคารที่คุณมีสิทธิ์เข้าถึง",
+    dash_buildings_desc_one: "แสดงข้อมูลเฉพาะอาคารที่เลือกไว้ด้านบน",
+
+    settings_title: "ตั้งค่า",
+    settings_font: "รูปแบบตัวอักษร (Font)",
+    settings_theme: "ธีมสี (Theme)",
+    settings_fontsize: "ขนาดตัวอักษร",
+    settings_modules: "ซ่อน/แสดง Module (สำหรับผู้ดูแลระบบเท่านั้น)",
+    settings_modules_desc: "เลือกติ๊กเพื่อซ่อน Module ที่ไม่ต้องการให้แสดงในเมนูของผู้ใช้งานทุกคน",
+    settings_close: "ปิด",
+    settings_saved: "บันทึกการตั้งค่าแล้ว",
+
+    toast_saved: "บันทึกแล้ว",
+    toast_deleted: "ลบแล้ว"
+  },
+  en: {
+    nav_overview: "Overview",
+    nav_dashboard: "Dashboard",
+    nav_modules_group: "SSPPC Modules",
+    nav_structure: "1. Structure",
+    nav_system: "2. System",
+    nav_process: "3. Process (+ FMS)",
+    nav_people: "4. People",
+    nav_culture: "5. Culture",
+    nav_drive_group: "Drive Results",
+    nav_okr: "Quarterly OKR",
+    nav_kpi: "KPI",
+    nav_capa: "CAPA / Incident",
+    nav_admin_group: "Administration",
+    nav_buildings: "Buildings / BU",
+    nav_users: "Users",
+    nav_reports_group: "Reports",
+    nav_reports: "Export / Reports",
+    role_admin: "Administrator",
+    role_user: "User",
+    logout: "Log out",
+    settings_btn: "Settings",
+
+    title_dashboard: "Overview Dashboard",
+    sub_dashboard: "QSHE status overview for the selected building/BU",
+    title_structure: "Module 1 — Structure",
+    sub_structure: "QSHE management structure",
+    title_system: "Module 2 — System",
+    sub_system: "Systems for each pillar: Q / S / H / E",
+    title_process: "Module 3 — Process",
+    sub_process: "Working processes, incl. Facility Management and Safety (FMS)",
+    title_people: "Module 4 — People",
+    sub_people: "Roles and responsibilities of personnel",
+    title_culture: "Module 5 — Culture",
+    sub_culture: "QSHE values and culture-building activities",
+    title_okr: "Quarterly OKR",
+    sub_okr: "Objectives and Key Results per building/BU",
+    title_kpi: "KPI Tracking",
+    sub_kpi: "Track qualitative results by pillar",
+    title_capa: "CAPA / Incident Log",
+    sub_capa: "Log and track corrective/preventive actions",
+    title_buildings: "Buildings / Business Units (BU)",
+    sub_buildings: "Manage the list of buildings or business units",
+    title_users: "System Users",
+    sub_users: "Manage user accounts and access rights",
+    title_reports: "Export / Reports",
+    sub_reports: "Export data as CSV or print a summary report",
+
+    building_picker_label: "Building/BU",
+    all_buildings_opt: "All buildings (combined)",
+
+    btn_save: "Save",
+    btn_cancel: "Cancel",
+    btn_edit: "Edit",
+    btn_delete: "Delete",
+    btn_approve: "Approve",
+
+    dash_stat1_label: "Overall Process progress (SSPPC)",
+    dash_stat1_sub: "Average across 5 modules",
+    dash_stat2_label: "FMS items completed",
+    dash_stat3_label: "Average OKR progress",
+    dash_stat4_label: "Open CAPA items",
+    dash_modcard_title: "Progress by module (S-S-P-P-C)",
+    dash_modcard_desc: "Based on the process checklist status recorded in the system",
+    dash_kpicard_title: "KPI status (RAG)",
+    dash_kpicard_desc: "Summary status of all KPIs in the selected scope",
+    dash_kpi_empty: "No KPI data yet — add some from the KPI menu",
+    dash_rag_green: "On target",
+    dash_rag_yellow: "Watch",
+    dash_rag_red: "Needs attention",
+    dash_buildings_title: "Buildings/BU in current scope",
+    dash_buildings_desc_all: "Showing combined data for all buildings you can access",
+    dash_buildings_desc_one: "Showing data for the building selected above",
+
+    settings_title: "Settings",
+    settings_font: "Font",
+    settings_theme: "Theme",
+    settings_fontsize: "Font size",
+    settings_modules: "Show/hide modules (admin only)",
+    settings_modules_desc: "Uncheck to hide a module from the menu for all users",
+    settings_close: "Close",
+    settings_saved: "Settings saved",
+
+    toast_saved: "Saved",
+    toast_deleted: "Deleted"
+  }
+};
+
+function t(key) {
+  const lang = DB.get("lang", "th");
+  return (I18N[lang] && I18N[lang][key]) || I18N.th[key] || key;
+}
+
+// ---- Settings: fonts, themes, sizes -------------------------------
+const FONT_OPTIONS = [
+  { id: "plex", labelTh: "IBM Plex Sans Thai (ค่าเริ่มต้น)", labelEn: "IBM Plex Sans Thai (default)", stack: `"IBM Plex Sans Thai", "Noto Sans Thai", -apple-system, "Segoe UI", sans-serif` },
+  { id: "sarabun", labelTh: "Sarabun", labelEn: "Sarabun", stack: `"Sarabun", "Noto Sans Thai", -apple-system, "Segoe UI", sans-serif` },
+  { id: "prompt", labelTh: "Prompt", labelEn: "Prompt", stack: `"Prompt", "Noto Sans Thai", -apple-system, "Segoe UI", sans-serif` }
+];
+const THEME_OPTIONS = [
+  { id: "light", labelTh: "สว่าง (Light)", labelEn: "Light" },
+  { id: "dark", labelTh: "มืด (Dark)", labelEn: "Dark" },
+  { id: "ocean", labelTh: "ฟ้า-เขียว (Ocean)", labelEn: "Ocean (blue/green)" }
+];
+const FONT_SIZE_OPTIONS = [
+  { id: "sm", labelTh: "เล็ก", labelEn: "Small", px: "14px" },
+  { id: "md", labelTh: "ปกติ (ค่าเริ่มต้น)", labelEn: "Medium (default)", px: "15px" },
+  { id: "lg", labelTh: "ใหญ่", labelEn: "Large", px: "17px" }
+];
 const SEED = {
   meta: { appName: "PSD eNGINNo QSHE Management", version: "1.0.0" },
   users: [
@@ -832,7 +1133,10 @@ const SEED = {
   processStatus: [], // { id, buildingId, processId, status, note, updatedAt, updatedBy }
   okrs: [],           // { id, buildingId, quarter, pillar, objective, keyResults:[{text,progress}], owner }
   kpis: [],           // { id, buildingId, pillar, name, target, actual, unit, period }
-  capas: []           // { id, buildingId, title, source, owner, openedDate, dueDate, status }
+  capas: [],          // { id, buildingId, title, source, owner, openedDate, dueDate, status }
+  lang: "th",
+  uiPrefs: { font: "plex", fontSize: "md", theme: "light" },
+  moduleVisibility: { structure: true, system: true, process: true, people: true, culture: true }
 };
 
 
@@ -1034,6 +1338,7 @@ const State = {
 // ---------------------------------------------------------------- boot ---
 document.addEventListener("DOMContentLoaded", () => {
   DB.ensureSeeded();
+  applyUiPrefs();
   const session = Auth.currentUser();
   if (session) {
     startApp(session);
@@ -1041,6 +1346,17 @@ document.addEventListener("DOMContentLoaded", () => {
     showLogin();
   }
 });
+
+function applyUiPrefs() {
+  const prefs = DB.get("uiPrefs", { font: "plex", fontSize: "md", theme: "light" });
+  const fontDef = FONT_OPTIONS.find((f) => f.id === prefs.font) || FONT_OPTIONS[0];
+  const sizeDef = FONT_SIZE_OPTIONS.find((s) => s.id === prefs.fontSize) || FONT_SIZE_OPTIONS[1];
+  document.documentElement.style.setProperty("--app-font", fontDef.stack);
+  document.documentElement.style.setProperty("--app-font-size", sizeDef.px);
+  document.body.classList.remove("theme-dark", "theme-ocean");
+  if (prefs.theme === "dark") document.body.classList.add("theme-dark");
+  if (prefs.theme === "ocean") document.body.classList.add("theme-ocean");
+}
 
 function showLogin() {
   document.getElementById("app-shell").classList.add("hidden");
@@ -1134,47 +1450,54 @@ function logout() {
 
 // -------------------------------------------------------------- shell ---
 const NAV_ITEMS = [
-  { group: "ภาพรวม", items: [{ id: "dashboard", label: "แดชบอร์ด" }] },
+  { groupKey: "nav_overview", items: [{ id: "dashboard", labelKey: "nav_dashboard" }] },
   {
-    group: "SSPPC Modules",
+    groupKey: "nav_modules_group",
+    isModuleGroup: true,
     items: [
-      { id: "structure", label: "1. Structure" },
-      { id: "system", label: "2. System" },
-      { id: "process", label: "3. Process (+ JCI FMS)" },
-      { id: "people", label: "4. People" },
-      { id: "culture", label: "5. Culture" }
+      { id: "structure", labelKey: "nav_structure" },
+      { id: "system", labelKey: "nav_system" },
+      { id: "process", labelKey: "nav_process" },
+      { id: "people", labelKey: "nav_people" },
+      { id: "culture", labelKey: "nav_culture" }
     ]
   },
   {
-    group: "ขับเคลื่อนผลลัพธ์",
+    groupKey: "nav_drive_group",
     items: [
-      { id: "okr", label: "OKR รายไตรมาส" },
-      { id: "kpi", label: "KPI" },
-      { id: "capa", label: "CAPA / Incident" }
+      { id: "okr", labelKey: "nav_okr" },
+      { id: "kpi", labelKey: "nav_kpi" },
+      { id: "capa", labelKey: "nav_capa" }
     ]
   },
   {
-    group: "ผู้ดูแลระบบ",
+    groupKey: "nav_admin_group",
     admin: true,
     items: [
-      { id: "buildings", label: "อาคาร / BU" },
-      { id: "users", label: "ผู้ใช้งาน" }
+      { id: "buildings", labelKey: "nav_buildings" },
+      { id: "users", labelKey: "nav_users" }
     ]
   },
-  { group: "รายงาน", items: [{ id: "reports", label: "Export / รายงาน" }] }
+  { groupKey: "nav_reports_group", items: [{ id: "reports", labelKey: "nav_reports" }] }
 ];
 
 function renderShell() {
   const sidebar = document.getElementById("sidebar");
   const isAdmin = Auth.isAdmin(State.user);
   const initials = State.user.name ? State.user.name.slice(0, 2) : "US";
+  const moduleVisibility = DB.get("moduleVisibility", {});
+  const lang = DB.get("lang", "th");
 
   let nav = "";
   NAV_ITEMS.forEach((group) => {
     if (group.admin && !isAdmin) return;
-    nav += `<div class="nav-group-label">${group.group}</div>`;
-    group.items.forEach((it) => {
-      nav += `<button class="nav-item" data-nav="${it.id}"><span class="dot"></span>${it.label}</button>`;
+    const items = group.isModuleGroup
+      ? group.items.filter((it) => moduleVisibility[it.id] !== false)
+      : group.items;
+    if (!items.length) return;
+    nav += `<div class="nav-group-label">${t(group.groupKey)}</div>`;
+    items.forEach((it) => {
+      nav += `<button class="nav-item" data-nav="${it.id}"><span class="dot"></span>${t(it.labelKey)}</button>`;
     });
   });
 
@@ -1186,16 +1509,20 @@ function renderShell() {
         <div class="ver">V1.0</div>
       </div>
     </div>
+    <div class="sidebar-toolbar">
+      <button class="icon-chip" id="open-settings-btn" title="${t("settings_btn")}">⚙ ${t("settings_btn")}</button>
+      <button class="icon-chip" id="lang-toggle-btn" title="Language">${lang === "th" ? "EN" : "TH"}</button>
+    </div>
     <nav>${nav}</nav>
     <div id="sidebar-footer">
       <div class="user-chip">
         <div class="avatar">${initials}</div>
         <div>
           <div style="font-weight:600;color:#fff;">${State.user.name}</div>
-          <div>${State.user.role === "admin" ? "ผู้ดูแลระบบ" : "ผู้ใช้งาน"}</div>
+          <div>${State.user.role === "admin" ? t("role_admin") : t("role_user")}</div>
         </div>
       </div>
-      <button class="btn ghost small block" id="logout-btn" style="margin-top:8px;color:#fff;border-color:rgba(255,255,255,0.25);">ออกจากระบบ</button>
+      <button class="btn ghost small block" id="logout-btn" style="margin-top:8px;color:#fff;border-color:rgba(255,255,255,0.25);">${t("logout")}</button>
     </div>
   `;
 
@@ -1203,6 +1530,14 @@ function renderShell() {
     btn.addEventListener("click", () => navigate(btn.dataset.nav));
   });
   document.getElementById("logout-btn").addEventListener("click", logout);
+  document.getElementById("open-settings-btn").addEventListener("click", openSettingsModal);
+  document.getElementById("lang-toggle-btn").addEventListener("click", () => {
+    const cur = DB.get("lang", "th");
+    DB.set("lang", cur === "th" ? "en" : "th");
+    renderShell();
+    renderTopbar();
+    renderView();
+  });
 }
 
 function navigate(viewId) {
@@ -1221,21 +1556,23 @@ function accessibleBuildings() {
 }
 
 function renderTopbar() {
-  const titles = {
-    dashboard: ["แดชบอร์ดภาพรวม", "สถานะ QSHE ในภาพรวมของอาคาร/หน่วยธุรกิจที่เลือก"],
-    structure: ["Module 1 — Structure", "โครงสร้างการบริหาร QSHE"],
-    system: ["Module 2 — System", "ระบบของแต่ละด้าน Q / S / H / E"],
-    process: ["Module 3 — Process", "กระบวนการทำงาน รวมระบบ Facility Management and Safety (FMS)"],
-    people: ["Module 4 — People", "หน้าที่ความรับผิดชอบของบุคลากร"],
-    culture: ["Module 5 — Culture", "ค่านิยมและกิจกรรมสร้างวัฒนธรรม QSHE"],
-    okr: ["OKR รายไตรมาส", "Objective and Key Results ต่ออาคาร/หน่วยธุรกิจ"],
-    kpi: ["ตัวชี้วัด KPI", "ติดตามผลเชิงคุณภาพรายด้าน"],
-    capa: ["CAPA / Incident Log", "บันทึกและติดตามการแก้ไข-ป้องกัน"],
-    buildings: ["อาคาร / หน่วยธุรกิจ (BU)", "จัดการรายชื่ออาคารหรือหน่วยธุรกิจในระบบ"],
-    users: ["ผู้ใช้งานระบบ", "จัดการบัญชีผู้ใช้และสิทธิ์การเข้าถึง"],
-    reports: ["Export / รายงาน", "ส่งออกข้อมูลเป็น CSV หรือพิมพ์รายงานสรุป"]
+  const titleKeys = {
+    dashboard: ["title_dashboard", "sub_dashboard"],
+    structure: ["title_structure", "sub_structure"],
+    system: ["title_system", "sub_system"],
+    process: ["title_process", "sub_process"],
+    people: ["title_people", "sub_people"],
+    culture: ["title_culture", "sub_culture"],
+    okr: ["title_okr", "sub_okr"],
+    kpi: ["title_kpi", "sub_kpi"],
+    capa: ["title_capa", "sub_capa"],
+    buildings: ["title_buildings", "sub_buildings"],
+    users: ["title_users", "sub_users"],
+    reports: ["title_reports", "sub_reports"]
   };
-  const [title, subtitle] = titles[State.view] || ["", ""];
+  const [titleKey, subKey] = titleKeys[State.view] || ["", ""];
+  const title = titleKey ? t(titleKey) : "";
+  const subtitle = subKey ? t(subKey) : "";
   const buildings = accessibleBuildings();
   const showBuildingPicker = !["buildings", "users"].includes(State.view);
 
@@ -1247,9 +1584,9 @@ function renderTopbar() {
     ${
       showBuildingPicker
         ? `<div class="building-select">
-            <label>อาคาร/BU</label>
+            <label>${t("building_picker_label")}</label>
             <select id="building-picker">
-              ${Auth.isAdmin(State.user) ? `<option value="ALL">ทุกอาคาร (รวม)</option>` : ""}
+              ${Auth.isAdmin(State.user) ? `<option value="ALL">${t("all_buildings_opt")}</option>` : ""}
               ${buildings.map((b) => `<option value="${b.id}">${b.name}</option>`).join("")}
             </select>
           </div>`
@@ -1389,22 +1726,22 @@ function renderDashboard(root) {
   root.innerHTML = `
     <div class="grid cols-4">
       <div class="stat-card">
-        <div class="label">ความคืบหน้า Process รวม (SSPPC)</div>
+        <div class="label">${t("dash_stat1_label")}</div>
         <div class="value">${avgPct(modulePct.map((m) => m.comp.pct))}%</div>
-        <div class="sub">เฉลี่ยจาก 5 Module</div>
+        <div class="sub">${t("dash_stat1_sub")}</div>
       </div>
       <div class="stat-card">
-        <div class="label">JCI FMS ดำเนินการเสร็จสมบูรณ์</div>
+        <div class="label">${t("dash_stat2_label")}</div>
         <div class="value">${Math.round((fmsDone / fmsTotal) * 100)}%</div>
         <div class="sub">${fmsDone} / ${fmsTotal} รายการ (7 แผน × อาคารในขอบเขต)</div>
       </div>
       <div class="stat-card">
-        <div class="label">ความคืบหน้า OKR เฉลี่ย</div>
+        <div class="label">${t("dash_stat3_label")}</div>
         <div class="value">${okrAvgProgress}%</div>
         <div class="sub">${okrs.length} OKR ในขอบเขตที่เลือก</div>
       </div>
       <div class="stat-card">
-        <div class="label">CAPA ที่ยังเปิดอยู่</div>
+        <div class="label">${t("dash_stat4_label")}</div>
         <div class="value">${openCapas.length}</div>
         <div class="sub" style="color:${overdueCapas.length ? "var(--red)" : "var(--muted)"}">${overdueCapas.length} รายการเกินกำหนด</div>
       </div>
@@ -1412,14 +1749,14 @@ function renderDashboard(root) {
 
     <div class="grid cols-2">
       <div class="card">
-        <h3>ความคืบหน้าแต่ละ Module (S-S-P-P-C)</h3>
-        <div class="desc">อิงจากเช็คลิสต์กระบวนการที่บันทึกสถานะไว้ในระบบ</div>
+        <h3>${t("dash_modcard_title")}</h3>
+        <div class="desc">${t("dash_modcard_desc")}</div>
         ${modulePct
           .map(
             (m) => `
           <div style="margin-bottom:10px;">
             <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
-              <span>${m.nameTh} (${m.name})</span><span style="font-weight:700;color:var(--dark-green);">${m.comp.pct}%</span>
+              <span>${m.nameTh} (${m.name})</span><span style="font-weight:700;color:var(--heading);">${m.comp.pct}%</span>
             </div>
             <div class="progress-bar"><span style="width:${m.comp.pct}%"></span></div>
           </div>`
@@ -1428,26 +1765,26 @@ function renderDashboard(root) {
       </div>
 
       <div class="card">
-        <h3>สถานะ KPI (RAG)</h3>
-        <div class="desc">สรุปสถานะตัวชี้วัดทั้งหมดในขอบเขตที่เลือก</div>
+        <h3>${t("dash_kpicard_title")}</h3>
+        <div class="desc">${t("dash_kpicard_desc")}</div>
         <div class="grid cols-3" style="gap:10px;">
           <div class="stat-card" style="background:var(--green-soft);border-color:transparent;">
-            <div class="label">ตามเป้า</div><div class="value" style="color:var(--green)">${ragCounts.green}</div>
+            <div class="label">${t("dash_rag_green")}</div><div class="value" style="color:var(--green)">${ragCounts.green}</div>
           </div>
           <div class="stat-card" style="background:var(--gold-soft);border-color:transparent;">
-            <div class="label">เฝ้าระวัง</div><div class="value" style="color:var(--yellow)">${ragCounts.yellow}</div>
+            <div class="label">${t("dash_rag_yellow")}</div><div class="value" style="color:var(--yellow)">${ragCounts.yellow}</div>
           </div>
           <div class="stat-card" style="background:var(--red-soft);border-color:transparent;">
-            <div class="label">ต้องเร่งแก้ไข</div><div class="value" style="color:var(--red)">${ragCounts.red}</div>
+            <div class="label">${t("dash_rag_red")}</div><div class="value" style="color:var(--red)">${ragCounts.red}</div>
           </div>
         </div>
-        ${kpis.length === 0 ? `<div class="empty-state">ยังไม่มีข้อมูล KPI — เพิ่มได้ที่เมนู KPI</div>` : ""}
+        ${kpis.length === 0 ? `<div class="empty-state">${t("dash_kpi_empty")}</div>` : ""}
       </div>
     </div>
 
     <div class="card">
-      <h3>อาคาร/หน่วยธุรกิจในขอบเขตปัจจุบัน</h3>
-      <div class="desc">${State.activeBuilding === "ALL" ? "แสดงข้อมูลรวมทุกอาคารที่คุณมีสิทธิ์เข้าถึง" : "แสดงข้อมูลเฉพาะอาคารที่เลือกไว้ด้านบน"}</div>
+      <h3>${t("dash_buildings_title")}</h3>
+      <div class="desc">${State.activeBuilding === "ALL" ? t("dash_buildings_desc_all") : t("dash_buildings_desc_one")}</div>
       <table>
         <thead><tr><th>รหัส</th><th>ชื่ออาคาร / BU</th><th>หน่วยธุรกิจ</th></tr></thead>
         <tbody>
@@ -1534,7 +1871,7 @@ function processTableRows(procs, buildingId, isFms) {
               </td>
               <td><input type="text" data-field="note" value="${escapeAttr(rec.note || "")}" placeholder="หมายเหตุ..." style="width:100%;padding:5px 7px;border:1px solid var(--border);border-radius:6px;" /></td>
               <td style="white-space:nowrap;color:var(--muted);font-size:12px;">${rec.updatedAt || "-"}</td>
-              <td><button class="btn small save-proc-btn">บันทึก</button></td>
+              <td><button class="btn small save-proc-btn">${t("btn_save")}</button></td>
             </tr>`;
           })
           .join("")}
@@ -1606,6 +1943,93 @@ function closeModal() {
   if (el) el.remove();
 }
 
+// ------------------------------------------------------------ settings ---
+function openSettingsModal() {
+  const isAdmin = Auth.isAdmin(State.user);
+  const prefs = DB.get("uiPrefs", { font: "plex", fontSize: "md", theme: "light" });
+  const moduleVisibility = DB.get("moduleVisibility", {});
+  const lang = DB.get("lang", "th");
+  const labelKey = lang === "th" ? "labelTh" : "labelEn";
+
+  const fontCards = FONT_OPTIONS.map(
+    (f) => `<div class="option-card ${f.id === prefs.font ? "selected" : ""}" data-setting="font" data-value="${f.id}" style="font-family:${f.stack};">Aก ${f[labelKey]}</div>`
+  ).join("");
+
+  const themeSwatch = { light: "linear-gradient(135deg,#FFFFFF,#E8F3EC)", dark: "linear-gradient(135deg,#0D1613,#142420)", ocean: "linear-gradient(135deg,#F1F6FA,#2596F0)" };
+  const themeCards = THEME_OPTIONS.map(
+    (th_) => `<div class="option-card ${th_.id === prefs.theme ? "selected" : ""}" data-setting="theme" data-value="${th_.id}">
+      <div class="swatch" style="background:${themeSwatch[th_.id]};"></div>${th_[labelKey]}
+    </div>`
+  ).join("");
+
+  const sizeCards = FONT_SIZE_OPTIONS.map(
+    (s) => `<div class="option-card ${s.id === prefs.fontSize ? "selected" : ""}" data-setting="fontSize" data-value="${s.id}" style="font-size:${s.px};">Aa ${s[labelKey]}</div>`
+  ).join("");
+
+  const moduleChecks = MODULES.map((m) => {
+    const checked = moduleVisibility[m.id] !== false;
+    return `<label class="checkbox-pill"><input type="checkbox" data-module-toggle="${m.id}" ${checked ? "checked" : ""}/> ${m.nameTh} (${m.name})</label>`;
+  }).join("");
+
+  const modal = openModal(`
+    <h3>${t("settings_title")}</h3>
+    <div class="settings-section">
+      <h4>${t("settings_font")}</h4>
+      <div class="option-grid" data-setting-group="font">${fontCards}</div>
+    </div>
+    <div class="settings-section">
+      <h4>${t("settings_theme")}</h4>
+      <div class="option-grid" data-setting-group="theme">${themeCards}</div>
+    </div>
+    <div class="settings-section">
+      <h4>${t("settings_fontsize")}</h4>
+      <div class="option-grid" data-setting-group="fontSize">${sizeCards}</div>
+    </div>
+    ${
+      isAdmin
+        ? `<div class="settings-section">
+            <h4>${t("settings_modules")}</h4>
+            <div class="desc" style="margin-bottom:8px;">${t("settings_modules_desc")}</div>
+            <div class="checkbox-list">${moduleChecks}</div>
+          </div>`
+        : ""
+    }
+    <div class="actions">
+      <button class="btn ghost" id="close-settings">${t("settings_close")}</button>
+    </div>
+  `);
+
+  modal.querySelectorAll("[data-setting]").forEach((card) => {
+    card.addEventListener("click", () => {
+      const key = card.dataset.setting;
+      const value = card.dataset.value;
+      const p = DB.get("uiPrefs", { font: "plex", fontSize: "md", theme: "light" });
+      p[key] = value;
+      DB.set("uiPrefs", p);
+      applyUiPrefs();
+      modal.querySelectorAll(`[data-setting-group="${key}"] .option-card`).forEach((c) => c.classList.remove("selected"));
+      card.classList.add("selected");
+    });
+  });
+
+  if (isAdmin) {
+    modal.querySelectorAll("[data-module-toggle]").forEach((cb) => {
+      cb.addEventListener("change", () => {
+        const mv = DB.get("moduleVisibility", {});
+        mv[cb.dataset.moduleToggle] = cb.checked;
+        DB.set("moduleVisibility", mv);
+        renderShell();
+      });
+    });
+  }
+
+  modal.querySelector("#close-settings").addEventListener("click", () => {
+    closeModal();
+    toast(t("settings_saved"));
+  });
+}
+
+
 // ---------------------------------------------------------------- OKR ---
 function renderOKR(root) {
   if (State.activeBuilding === "ALL") {
@@ -1665,11 +2089,11 @@ function okrCardHtml(o) {
           <div class="desc">เจ้าของ: ${o.owner || "-"}</div>
         </div>
         <div style="display:flex;gap:4px;">
-          <button class="icon-btn" data-edit-okr="${o.id}">แก้ไข</button>
-          <button class="icon-btn danger" data-del-okr="${o.id}">ลบ</button>
+          <button class="icon-btn" data-edit-okr="${o.id}">${t("btn_edit")}</button>
+          <button class="icon-btn danger" data-del-okr="${o.id}">${t("btn_delete")}</button>
         </div>
       </div>
-      <div style="margin:10px 0 6px;font-size:13px;font-weight:600;color:var(--dark-green);">ความคืบหน้ารวม: ${avg}%</div>
+      <div style="margin:10px 0 6px;font-size:13px;font-weight:600;color:var(--heading);">ความคืบหน้ารวม: ${avg}%</div>
       <div class="progress-bar" style="margin-bottom:12px;"><span style="width:${avg}%"></span></div>
       ${krs
         .map(
@@ -1714,8 +2138,8 @@ function openOkrForm(buildingId, existing) {
       <button class="btn ghost small" id="add-kr-row" type="button">+ เพิ่ม Key Result</button>
     </div>
     <div class="actions">
-      <button class="btn ghost" id="cancel-okr">ยกเลิก</button>
-      <button class="btn" id="save-okr">บันทึก</button>
+      <button class="btn ghost" id="cancel-okr">${t("btn_cancel")}</button>
+      <button class="btn" id="save-okr">${t("btn_save")}</button>
     </div>
   `);
 
@@ -1726,7 +2150,7 @@ function openOkrForm(buildingId, existing) {
     row.innerHTML = `
       <input type="text" placeholder="Key Result..." value="${escapeAttr(text || "")}" />
       <input type="number" min="0" max="100" value="${progress || 0}" />
-      <button class="icon-btn danger" type="button">ลบ</button>
+      <button class="icon-btn danger" type="button">${t("btn_delete")}</button>
     `;
     row.querySelector(".icon-btn").addEventListener("click", () => row.remove());
     krRows.appendChild(row);
@@ -1812,8 +2236,8 @@ function renderKPI(root) {
             <td>${k.period || "-"}</td>
             <td><span class="badge ${rag === "grey" ? "grey" : rag === "green" ? "green" : rag === "yellow" ? "gold" : "red"}">${RAG_LABELS[rag] || "ยังไม่มีข้อมูล"}</span></td>
             <td style="white-space:nowrap;">
-              <button class="icon-btn" data-edit-kpi="${k.id}">แก้ไข</button>
-              <button class="icon-btn danger" data-del-kpi="${k.id}">ลบ</button>
+              <button class="icon-btn" data-edit-kpi="${k.id}">${t("btn_edit")}</button>
+              <button class="icon-btn danger" data-del-kpi="${k.id}">${t("btn_delete")}</button>
             </td>
           </tr>`;
           })
@@ -1868,8 +2292,8 @@ function openKpiForm(buildingId, existing) {
       <div class="field"><label>ช่วงเวลา</label><input type="text" id="f-period" placeholder="เช่น ส.ค. 2569" value="${existing ? escapeAttr(existing.period || "") : ""}" /></div>
     </div>
     <div class="actions">
-      <button class="btn ghost" id="cancel-kpi">ยกเลิก</button>
-      <button class="btn" id="save-kpi">บันทึก</button>
+      <button class="btn ghost" id="cancel-kpi">${t("btn_cancel")}</button>
+      <button class="btn" id="save-kpi">${t("btn_save")}</button>
     </div>
   `);
   modal.querySelector("#cancel-kpi").addEventListener("click", closeModal);
@@ -1937,7 +2361,7 @@ function renderCAPA(root) {
                     <option value="closed" ${c.status === "closed" ? "selected" : ""}>ปิดแล้ว</option>
                   </select>
                 </td>
-                <td><button class="icon-btn danger" data-del-capa="${c.id}">ลบ</button></td>
+                <td><button class="icon-btn danger" data-del-capa="${c.id}">${t("btn_delete")}</button></td>
               </tr>`;
                   })
                   .join("")
@@ -1982,8 +2406,8 @@ function openCapaForm(buildingId) {
       <div class="field"><label>กำหนดปิด</label><input type="date" id="f-due" /></div>
     </div>
     <div class="actions">
-      <button class="btn ghost" id="cancel-capa">ยกเลิก</button>
-      <button class="btn" id="save-capa">บันทึก</button>
+      <button class="btn ghost" id="cancel-capa">${t("btn_cancel")}</button>
+      <button class="btn" id="save-capa">${t("btn_save")}</button>
     </div>
   `);
   modal.querySelector("#cancel-capa").addEventListener("click", closeModal);
@@ -2031,8 +2455,8 @@ function renderBuildings(root) {
             <tr>
               <td>${b.code}</td><td>${b.name}</td><td>${b.bu || "-"}</td>
               <td style="white-space:nowrap;">
-                <button class="icon-btn" data-edit-b="${b.id}">แก้ไข</button>
-                <button class="icon-btn danger" data-del-b="${b.id}">ลบ</button>
+                <button class="icon-btn" data-edit-b="${b.id}">${t("btn_edit")}</button>
+                <button class="icon-btn danger" data-del-b="${b.id}">${t("btn_delete")}</button>
               </td>
             </tr>`
               )
@@ -2066,8 +2490,8 @@ function openBuildingForm(existing) {
     </div>
     <div class="field"><label>ชื่ออาคาร</label><input type="text" id="f-name" value="${existing ? escapeAttr(existing.name) : ""}" /></div>
     <div class="actions">
-      <button class="btn ghost" id="cancel-b">ยกเลิก</button>
-      <button class="btn" id="save-b">บันทึก</button>
+      <button class="btn ghost" id="cancel-b">${t("btn_cancel")}</button>
+      <button class="btn" id="save-b">${t("btn_save")}</button>
     </div>
   `);
   modal.querySelector("#cancel-b").addEventListener("click", closeModal);
@@ -2130,8 +2554,8 @@ function renderUsers(root) {
                 <td>${scope}</td>
                 <td><span class="badge ${isPending ? "gold" : "green"}">${isPending ? "รออนุมัติ" : "ใช้งานได้"}</span></td>
                 <td style="white-space:nowrap;">
-                  ${isPending ? `<button class="icon-btn" data-approve-u="${u.id}" style="color:var(--green);font-weight:700;">อนุมัติ</button>` : `<button class="icon-btn" data-edit-u="${u.id}">แก้ไข</button>`}
-                  ${u.username !== "admin" ? `<button class="icon-btn danger" data-del-u="${u.id}">ลบ</button>` : ""}
+                  ${isPending ? `<button class="icon-btn" data-approve-u="${u.id}" style="color:var(--green);font-weight:700;">${t("btn_approve")}</button>` : `<button class="icon-btn" data-edit-u="${u.id}">${t("btn_edit")}</button>`}
+                  ${u.username !== "admin" ? `<button class="icon-btn danger" data-del-u="${u.id}">${t("btn_delete")}</button>` : ""}
                 </td>
               </tr>`;
             })
@@ -2194,7 +2618,7 @@ function openUserForm(existing, isApproval) {
       </div>
     </div>
     <div class="actions">
-      <button class="btn ghost" id="cancel-u">ยกเลิก</button>
+      <button class="btn ghost" id="cancel-u">${t("btn_cancel")}</button>
       <button class="btn" id="save-u">${isApproval ? "อนุมัติและบันทึก" : "บันทึก"}</button>
     </div>
   `);
