@@ -894,6 +894,31 @@ textarea { font-family: inherit; }
 #mp-check-body .form-row { display: grid; grid-template-columns: 220px 1fr; gap: 12px; }
 @media (max-width: 860px) { #mp-check-body .form-row { grid-template-columns: 1fr; } }
 
+/* checklist photos: slot 1 = before / finding, slot 2 = after correction */
+.chk-row { grid-template-columns: 44px 1fr 184px 210px; }
+.chk-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-content: start; }
+.ph-slot { position: relative; height: 76px; }
+.ph-add {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  border: 1.5px dashed var(--border); border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 11.5px; text-align: center; line-height: 1.25;
+}
+.ph-add:hover { border-color: var(--green); color: var(--green); background: var(--green-soft); }
+.ph-add small { font-size: 10.5px; opacity: .85; }
+.ph-plus { font-size: 17px; line-height: 1; }
+.ph-slot.has .ph-add { display: none; }
+.ph-slot.disabled { opacity: .45; pointer-events: none; }
+.ph-img { position: absolute; inset: 0; padding: 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; cursor: zoom-in; background: var(--card); }
+.ph-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ph-tag { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.55); color: #fff; font-size: 10.5px; padding: 1px 0; text-align: center; }
+.ph-x { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; border: none; background: var(--st-critical); color: #fff; font-size: 14px; line-height: 1; cursor: pointer; padding: 0; }
+.ph-cell { white-space: nowrap; }
+.ph-mini { padding: 0; border: 1px solid var(--border); border-radius: 6px; margin-right: 4px; width: 44px; height: 34px; overflow: hidden; cursor: zoom-in; background: var(--card); }
+.ph-mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 900px) {
+  .chk-row { grid-template-columns: 36px 1fr; }
+  .chk-photos { grid-column: 2; grid-template-columns: 110px 110px; }
+}
+
 </style>
 </head>
 <body>
@@ -1936,8 +1961,8 @@ function renderMpRisk(root) {
   const issues = S.issues.slice(0, 15);
   const issueHtml = `<div class="card"><h3>${mt("รายการเสี่ยงสูงที่ต้องแก้ไขก่อน", "Highest-risk items to fix first")}</h3>
     <div class="desc">${S.issues.length ? mt(`พบ ${S.issues.length} ข้อที่เสี่ยงระดับวิกฤต/สูง (แสดง ${issues.length} ข้อแรก เรียงจากคะแนนต่ำสุด)`, `${S.issues.length} items rated Critical/High (showing the first ${issues.length}, lowest score first)`) : mt("ไม่พบข้อที่เสี่ยงระดับวิกฤตหรือสูง", "No Critical or High risk items")}</div>
-    ${S.issues.length ? `<div class="mp-scroll"><table><thead><tr><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("ข้อ", "Item")}</th><th>${mt("รายการตรวจ", "Checklist item")}</th><th>${mt("คะแนน", "Score")}</th><th>${mt("ระดับ", "Risk")}</th><th>${mt("ข้อสังเกต", "Note")}</th></tr></thead><tbody>
-      ${issues.map((x) => `<tr><td>${mpEsc(unitName(x.unitId))}</td><td>${x.item.id}</td><td>${mpEsc(x.item.text)}</td><td>${x.score}/5</td><td>${mpRiskChip(x.risk)}</td><td>${mpEsc(x.note) || "–"}</td></tr>`).join("")}
+    ${S.issues.length ? `<div class="mp-scroll"><table><thead><tr><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("ข้อ", "Item")}</th><th>${mt("รายการตรวจ", "Checklist item")}</th><th>${mt("คะแนน", "Score")}</th><th>${mt("ระดับ", "Risk")}</th><th>${mt("ข้อสังเกต", "Note")}</th><th>${mt("รูป", "Photos")}</th></tr></thead><tbody>
+      ${issues.map((x) => `<tr><td>${mpEsc(unitName(x.unitId))}</td><td>${x.item.id}</td><td>${mpEsc(x.item.text)}</td><td>${x.score}/5</td><td>${mpRiskChip(x.risk)}</td><td>${mpEsc(x.note) || "–"}</td><td class="ph-cell" data-ph-unit="${x.unitId}" data-ph-item="${x.item.id}"></td></tr>`).join("")}
     </tbody></table></div>` : ""}</div>`;
 
   const tableHtml = `<div class="card"><h3>${mt("ตารางสรุปตามหมวด", "Summary by category")}</h3>
@@ -1967,6 +1992,25 @@ function renderMpRisk(root) {
     ${issueHtml}
   `;
   bindMpRiskCommon(root);
+  mpFillIssuePhotos(root);
+}
+
+/** thumbnails (before / after) in the risk-items table, loaded from IndexedDB */
+function mpFillIssuePhotos(root) {
+  const cells = [...root.querySelectorAll(".ph-cell")];
+  if (!cells.length || !MpImg.available()) return;
+  const cache = {};
+  const unitIds = [...new Set(cells.map((c) => c.dataset.phUnit))];
+  Promise.all(unitIds.map((u) => MpImg.forUnit(u).then((all) => { cache[u] = all; }))).then(() => {
+    cells.forEach((c) => {
+      const all = cache[c.dataset.phUnit] || {};
+      c.innerHTML = [1, 2].map((n) => {
+        const d = all[c.dataset.phItem + "|" + n];
+        return d ? `<button type="button" class="ph-mini" data-full="${n}" title="${mt(MP_PHOTO_LABEL[n].th, MP_PHOTO_LABEL[n].en)} (${mt(MP_PHOTO_LABEL[n].sub.th, MP_PHOTO_LABEL[n].sub.en)})"><img src="${d}" alt="" /></button>` : "";
+      }).join("") || "–";
+      c.querySelectorAll(".ph-mini").forEach((b) => b.addEventListener("click", () => mpShowPhoto(b.querySelector("img").src, `${c.dataset.phItem} · ${mt(MP_PHOTO_LABEL[b.dataset.full].th, MP_PHOTO_LABEL[b.dataset.full].en)}`)));
+    });
+  }).catch(() => {});
 }
 
 function bindMpRiskCommon(root) {
@@ -2016,6 +2060,135 @@ function mpLoadDemo() {
       scores[it.id] = Math.min(5, Math.max(1, v));
     });
     mpSaveRecord({ unitId: u.id, date: todayISO(), inspector: "(demo)", scores, notes: {}, demo: true });
+  });
+}
+
+// ------------------------------------------------ photo store (IndexedDB) ---
+// Photos (2 per checklist item: 1 = finding / before, 2 = after correction) are
+// compressed in the browser and kept in IndexedDB, not localStorage (size limit).
+const MpImg = {
+  _db: null,
+  available() { return typeof indexedDB !== "undefined" && !!indexedDB; },
+  open() {
+    if (this._db) return Promise.resolve(this._db);
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open("qshe_images", 1);
+      req.onupgradeneeded = () => req.result.createObjectStore("img", { keyPath: "key" });
+      req.onsuccess = () => { this._db = req.result; resolve(this._db); };
+      req.onerror = () => reject(req.error);
+    });
+  },
+  _tx(mode, fn) {
+    return this.open().then((db) => new Promise((resolve, reject) => {
+      const tx = db.transaction("img", mode);
+      const st = tx.objectStore("img");
+      const out = fn(st);
+      tx.oncomplete = () => resolve(out && "result" in out ? out.result : undefined);
+      tx.onerror = () => reject(tx.error);
+    }));
+  },
+  key(unitId, itemId, slot) { return `${unitId}|${itemId}|${slot}`; },
+  put(key, data) { return this._tx("readwrite", (st) => st.put({ key, data })); },
+  del(key) { return this._tx("readwrite", (st) => st.delete(key)); },
+  /** all photos of one unit -> { "itemId|slot": dataURL } */
+  forUnit(unitId) {
+    return this._tx("readonly", (st) => st.getAll()).then((rows) => {
+      const out = {};
+      (rows || []).forEach((r) => {
+        const [u, item, slot] = r.key.split("|");
+        if (u === unitId) out[item + "|" + slot] = r.data;
+      });
+      return out;
+    });
+  },
+  delUnit(unitId) {
+    return this._tx("readwrite", (st) => {
+      const req = st.getAllKeys();
+      req.onsuccess = () => req.result.filter((k) => k.startsWith(unitId + "|")).forEach((k) => st.delete(k));
+      return req;
+    });
+  },
+  /** resize to max 1000px, JPEG 0.75 -> dataURL */
+  compress(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const max = 1000, sc = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+        const g = c.getContext("2d");
+        g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height);
+        g.drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL("image/jpeg", 0.75));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
+      img.src = url;
+    });
+  }
+};
+const MP_PHOTO_LABEL = [
+  null,
+  { th: "รูปที่ 1", en: "Photo 1", sub: { th: "ก่อนแก้ไข", en: "before" } },
+  { th: "รูปที่ 2", en: "Photo 2", sub: { th: "หลังแก้ไข", en: "after fix" } }
+];
+function mpPhotoSlotHtml(unitId, itemId, slot) {
+  const L = MP_PHOTO_LABEL[slot];
+  return `<div class="ph-slot" data-ph-item="${itemId}" data-ph-slot="${slot}">
+    <label class="ph-add" title="${mt("เพิ่ม", "Add")} ${mt(L.th, L.en)} (${mt(L.sub.th, L.sub.en)})">
+      <span class="ph-plus">＋</span><span>${mt(L.th, L.en)}</span><small>${mt(L.sub.th, L.sub.en)}</small>
+      <input type="file" accept="image/*" hidden />
+    </label>
+  </div>`;
+}
+function mpPaintSlot(slotEl, data) {
+  const slot = Number(slotEl.dataset.phSlot), L = MP_PHOTO_LABEL[slot];
+  if (!data) { slotEl.classList.remove("has"); slotEl.querySelector(".ph-img")?.remove(); slotEl.querySelector(".ph-x")?.remove(); return; }
+  slotEl.classList.add("has");
+  slotEl.querySelector(".ph-img")?.remove(); slotEl.querySelector(".ph-x")?.remove();
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "ph-img"; b.title = mt("ดูรูปขยาย", "View larger");
+  b.innerHTML = `<img src="${data}" alt="${mt(L.th, L.en)}" /><span class="ph-tag">${mt(L.th, L.en)}</span>`;
+  slotEl.appendChild(b);
+  const x = document.createElement("button");
+  x.type = "button"; x.className = "ph-x"; x.title = mt("ลบรูป", "Remove photo"); x.textContent = "×";
+  slotEl.appendChild(x);
+}
+function mpShowPhoto(data, caption) {
+  const m = openModal(`<h3 style="font-size:15px;">${mpEsc(caption)}</h3>
+    <img src="${data}" alt="" style="max-width:100%;border-radius:8px;display:block;margin:0 auto;" />
+    <div class="actions"><button class="btn ghost" id="ph-close">${mt("ปิด", "Close")}</button></div>`);
+  m.querySelector("#ph-close").addEventListener("click", closeModal);
+}
+function mpWirePhotos(body, unit) {
+  if (!MpImg.available()) {
+    body.querySelectorAll(".ph-slot").forEach((s) => { s.classList.add("disabled"); s.title = mt("เบราว์เซอร์นี้ไม่รองรับการเก็บรูป", "Photo storage not supported in this browser"); });
+    return;
+  }
+  const slots = () => [...body.querySelectorAll(".ph-slot")];
+  MpImg.forUnit(unit.id).then((all) => {
+    slots().forEach((el) => { const d = all[el.dataset.phItem + "|" + el.dataset.phSlot]; if (d) mpPaintSlot(el, d); });
+  }).catch(() => {});
+  body.addEventListener("change", (e) => {
+    const inp = e.target.closest(".ph-slot input[type=file]");
+    if (!inp || !inp.files[0]) return;
+    const el = inp.closest(".ph-slot");
+    const key = MpImg.key(unit.id, el.dataset.phItem, el.dataset.phSlot);
+    MpImg.compress(inp.files[0])
+      .then((data) => MpImg.put(key, data).then(() => mpPaintSlot(el, data)))
+      .catch(() => alert(mt("ไม่สามารถบันทึกรูปนี้ได้", "Could not save this photo")));
+    inp.value = "";
+  });
+  body.addEventListener("click", (e) => {
+    const el = e.target.closest(".ph-slot");
+    if (!el) return;
+    if (e.target.closest(".ph-x")) {
+      MpImg.del(MpImg.key(unit.id, el.dataset.phItem, el.dataset.phSlot)).then(() => mpPaintSlot(el, null));
+    } else if (e.target.closest(".ph-img")) {
+      const src = el.querySelector(".ph-img img").src;
+      mpShowPhoto(src, `${unit.name} · ${el.dataset.phItem} · ${mt(MP_PHOTO_LABEL[el.dataset.phSlot].th, MP_PHOTO_LABEL[el.dataset.phSlot].en)}`);
+    }
   });
 }
 
@@ -2081,6 +2254,7 @@ function renderMpChecklistBody(unit) {
             ${it.law ? `<div><b>${mt("อ้างอิง", "Reference")}:</b> ${mpEsc(it.law)}</div>` : ""}</details>` : ""}
           <input type="text" class="chk-note" data-note="${it.id}" placeholder="${mt("ข้อสังเกต / สิ่งที่ต้องแก้ไข (ถ้ามี)", "Finding / action needed (optional)")}" value="${mpEsc(rec.notes[it.id] || "")}" />
         </div>
+        <div class="chk-photos">${mpPhotoSlotHtml(unit.id, it.id, 1)}${mpPhotoSlotHtml(unit.id, it.id, 2)}</div>
         <div class="chk-score">
           <select data-score="${it.id}" aria-label="${mt("คะแนนข้อ", "Score for item")} ${it.id}">${opts(cur)}</select>
           <div class="chk-risk" data-risk="${it.id}">${rk ? mpRiskChip(rk) : ""}</div>
@@ -2108,7 +2282,7 @@ function renderMpChecklistBody(unit) {
         <div class="field"><label>${mt("ผู้ตรวจประเมิน (Safety Inspector)", "Safety inspector")}</label><input type="text" id="mp-inspector" value="${mpEsc(rec.inspector || "")}" /></div>
       </div>
       <div class="mp-sumbar" id="mp-sumbar"></div>
-      <div class="desc" style="margin-top:8px;">${mt("เกณฑ์: 5 ดีเยี่ยม · 4 ดี · 3 พอใช้ · 2 ปรับปรุง · 1 วิกฤต/ไม่ปลอดภัย · ข้อที่ไม่เกี่ยวข้องเลือก N/A (ไม่นำมาคิดคะแนน) · บันทึกอัตโนมัติ", "Scale: 5 excellent · 4 good · 3 fair · 2 needs work · 1 critical/unsafe · choose N/A if the item does not apply (excluded from score) · saved automatically")}</div>
+      <div class="desc" style="margin-top:8px;">${mt("เกณฑ์: 5 ดีเยี่ยม · 4 ดี · 3 พอใช้ · 2 ปรับปรุง · 1 วิกฤต/ไม่ปลอดภัย · ข้อที่ไม่เกี่ยวข้องเลือก N/A (ไม่นำมาคิดคะแนน) · แนบรูปได้ข้อละ 2 รูป (ก่อน/หลังแก้ไข) · บันทึกอัตโนมัติ", "Scale: 5 excellent · 4 good · 3 fair · 2 needs work · 1 critical/unsafe · choose N/A if the item does not apply (excluded from score) · up to 2 photos per item (before / after fix) · saved automatically")}</div>
     </div>
     ${cats}
   `;
@@ -2133,6 +2307,7 @@ function renderMpChecklistBody(unit) {
     if (ic) { const st = mpStatusOf(S.pct); ic.innerHTML = st ? `<i style="color:var(--st-${st.cls})">${st.icon}</i>` : "<i>○</i>"; }
   };
   refresh();
+  mpWirePhotos(body, unit);
 
   body.querySelectorAll("[data-score]").forEach((sel) => sel.addEventListener("change", () => {
     const r = persist();
@@ -2159,15 +2334,17 @@ function renderMpChecklistBody(unit) {
 
   document.getElementById("mp-unit-edit").addEventListener("click", () => openMpUnitForm(unit.id));
   document.getElementById("mp-unit-clear").addEventListener("click", () => {
-    if (!confirm(mt("ล้างคะแนนทั้งหมดของหน่วยงานนี้หรือไม่?", "Clear all scores for this unit?"))) return;
+    if (!confirm(mt("ล้างคะแนนและรูปทั้งหมดของหน่วยงานนี้หรือไม่?", "Clear all scores and photos for this unit?"))) return;
     DB.set("mpScores", DB.get("mpScores", []).filter((r) => r.unitId !== unit.id));
+    if (MpImg.available()) MpImg.delUnit(unit.id).catch(() => {});
     toast(mt("ล้างคะแนนแล้ว", "Scores cleared"));
     renderMpCheck(document.getElementById("view-root"));
   });
   document.getElementById("mp-unit-del").addEventListener("click", () => {
-    if (!confirm(mt(`ลบหน่วยงาน “${unit.name}” และคะแนนทั้งหมดหรือไม่?`, `Delete unit “${unit.name}” and all its scores?`))) return;
+    if (!confirm(mt(`ลบหน่วยงาน “${unit.name}” พร้อมคะแนนและรูปทั้งหมดหรือไม่?`, `Delete unit “${unit.name}” with all its scores and photos?`))) return;
     DB.set("mpUnits", DB.get("mpUnits", []).filter((u) => u.id !== unit.id));
     DB.set("mpScores", DB.get("mpScores", []).filter((r) => r.unitId !== unit.id));
+    if (MpImg.available()) MpImg.delUnit(unit.id).catch(() => {});
     MpCheckUI.unitId = null;
     toast(mt("ลบแล้ว", "Deleted"));
     renderMpCheck(document.getElementById("view-root"));

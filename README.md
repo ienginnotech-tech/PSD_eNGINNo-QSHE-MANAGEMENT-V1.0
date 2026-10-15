@@ -174,3 +174,5 @@ Sidebar group **Master Plan** (after the SSPPC modules, can be hidden by admin i
 Scoring follows the Excel: risk 1=Critical, 2=High, 3=Medium, 4-5=Low; category/overall >=85% Pass, >=70% Fair, else Improve. N/A and unscored items are excluded from the percentage. Master Plan data is organisation-level (not per building).
 
 Editing: change files in `css/` and `js/`, then run `python3 build.py` to regenerate the single-file `index.html`.
+
+Photos: each checklist item has 2 photo slots (1 = before / finding, 2 = after correction). Images are resized in the browser and stored in IndexedDB (per browser, not in localStorage); thumbnails also appear in the Inspection Risk Summary's high-risk table.
