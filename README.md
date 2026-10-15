@@ -176,3 +176,9 @@ Scoring follows the Excel: risk 1=Critical, 2=High, 3=Medium, 4-5=Low; category/
 Editing: change files in `css/` and `js/`, then run `python3 build.py` to regenerate the single-file `index.html`.
 
 Photos: each checklist item has 2 photo slots (1 = before / finding, 2 = after correction). Images are resized in the browser and stored in IndexedDB (per browser, not in localStorage); thumbnails also appear in the Inspection Risk Summary's high-risk table.
+
+## Backup (admin: Backup / Restore menu)
+- **A. JSON file** – everything incl. users (plain-text passwords, keep safe) and photos; restore from file.
+- **B. Google Sheet via Apps Script** – paste `apps-script/Code.gs` in a Google Sheet (Extensions > Apps Script), deploy as Web app (Anyone), put URL + Token in the app. One tab per dataset + `_Snapshot` for restore (no passwords/photos). Runs on button press or automatically every 7 days while an admin has the app open.
+- **C. CSV** per dataset.
+An admin banner appears when the last backup is older than 7 days.

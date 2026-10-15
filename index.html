@@ -919,6 +919,11 @@ textarea { font-family: inherit; }
   .chk-photos { grid-column: 2; grid-template-columns: 110px 110px; }
 }
 
+/* backup page */
+.code-box { background: #0D1613; color: #CFE9DD; border-radius: 8px; padding: 12px; font-size: 12px; line-height: 1.5; max-height: 320px; overflow: auto; white-space: pre; font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; }
+.chip-list { display: flex; gap: 8px; flex-wrap: wrap; }
+#backup-banner .btn { vertical-align: middle; }
+
 </style>
 </head>
 <body>
@@ -1116,6 +1121,9 @@ const I18N = {
     title_mp_check: "Risk Assessment Checklist",
     sub_mp_check: "จัดการหน่วยงาน และให้คะแนนรายข้อ 56 ข้อใน 8 หมวด",
     settings_mp_label: "Master Plan (3 หัวข้อ)",
+    nav_backup: "สำรองข้อมูล / Backup",
+    title_backup: "สำรองและกู้คืนข้อมูล",
+    sub_backup: "ไฟล์ JSON, Google Sheet (Apps Script) อัตโนมัติทุก 7 วัน และ CSV",
     nav_reports_group: "รายงาน",
     nav_reports: "Export / รายงาน",
     role_admin: "ผู้ดูแลระบบ",
@@ -1213,6 +1221,9 @@ const I18N = {
     title_mp_check: "Risk Assessment Checklist",
     sub_mp_check: "Manage units and score 56 items across 8 categories",
     settings_mp_label: "Master Plan (3 topics)",
+    nav_backup: "Backup / Restore",
+    title_backup: "Backup & restore",
+    sub_backup: "JSON file, Google Sheet (Apps Script) every 7 days, and CSV",
     nav_reports_group: "Reports",
     nav_reports: "Export / Reports",
     role_admin: "Administrator",
@@ -2449,6 +2460,331 @@ const MP_DATASETS = {
 };
 
 /**
+ * backup.js
+ * Backup / restore so data kept in the browser (localStorage + IndexedDB photos) is not lost.
+ *   A. JSON backup file  – everything incl. users and photos; download any time, restore from file
+ *   B. Google Sheet      – via a Google Apps Script web app the owner deploys; one tab per dataset
+ *                          plus a restorable snapshot; runs on a button press or automatically
+ *                          every 7 days (checked whenever an admin has the app open)
+ *   C. CSV               – per-dataset export (same datasets as Export / Reports)
+ * A static web page cannot run in the background, so the "every 7 days" check happens when an
+ * admin opens the app (and hourly while it stays open).
+ */
+
+const BACKUP_DAYS = 7;
+const BACKUP_KEYS = ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "lang", "uiPrefs", "moduleVisibility"];
+// "users" is only in the JSON file backup (it holds passwords). Never sent to Google Sheets.
+
+const BackupMgr = {
+  cfg() { return Object.assign({ url: "", token: "", auto: true }, DB.get("backupCfg", {})); },
+  saveCfg(c) { DB.set("backupCfg", c); },
+  meta() { return DB.get("backupMeta", {}); },
+  saveMeta(patch) { DB.set("backupMeta", Object.assign(this.meta(), patch)); },
+  lastAt() {
+    const m = this.meta();
+    return [m.fileAt, m.sheetAt].filter(Boolean).sort().pop() || null;
+  },
+  daysSince(iso) { return iso ? (Date.now() - new Date(iso).getTime()) / 86400000 : Infinity; },
+  isOverdue() { return this.daysSince(this.lastAt()) >= BACKUP_DAYS; },
+  validUrl(u) { return /^https:\/\/script\.google(usercontent)?\.com\//.test(String(u || "").trim()); },
+  newToken() {
+    const a = new Uint8Array(18);
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    return Array.from(a, (b) => "abcdefghijkmnpqrstuvwxyz23456789"[b % 32]).join("");
+  },
+
+  // ---------- collect / apply ----------
+  async collect(opts) {
+    const keys = {};
+    const list = opts.users ? ["users"].concat(BACKUP_KEYS) : BACKUP_KEYS;
+    list.forEach((k) => { keys[k] = DB.get(k, null); });
+    const out = { app: "PSD eNGINNo QSHE Management", version: "1.0", exportedAt: new Date().toISOString(), by: State.user ? State.user.username : "", keys };
+    if (opts.photos && MpImg.available()) {
+      const rows = await MpImg._tx("readonly", (st) => st.getAll());
+      out.photos = {};
+      (rows || []).forEach((r) => { out.photos[r.key] = r.data; });
+    }
+    return out;
+  },
+  async apply(snap, opts) {
+    if (!snap || typeof snap !== "object" || !snap.keys || typeof snap.keys !== "object") throw new Error("invalid backup");
+    const allowed = ["users"].concat(BACKUP_KEYS);
+    Object.keys(snap.keys).forEach((k) => {
+      if (!allowed.includes(k)) return;
+      if (k === "users" && !opts.users) return;
+      if (snap.keys[k] !== null) DB.set(k, snap.keys[k]);
+    });
+    if (snap.photos && MpImg.available()) {
+      await MpImg._tx("readwrite", (st) => { st.clear(); Object.keys(snap.photos).forEach((k) => st.put({ key: k, data: snap.photos[k] })); });
+    }
+  },
+  tables() {
+    const t = {};
+    Object.keys(DATASETS).forEach((k) => {
+      const ds = DATASETS[k];
+      t[k] = { headers: ds.headers.map((h) => h.label), rows: ds.rows().map((r) => ds.headers.map((h) => (r[h.key] === undefined || r[h.key] === null ? "" : r[h.key]))) };
+    });
+    // user list for reference only – no passwords
+    t.users = { headers: ["username", "name", "role", "status", "buildings"], rows: DB.get("users", []).map((u) => [u.username, u.name, u.role, u.status || "active", (u.buildingIds || []).join(" ")]) };
+    return t;
+  },
+
+  // ---------- Google Apps Script ----------
+  async call(payload) {
+    const c = this.cfg();
+    if (!this.validUrl(c.url)) throw new Error(mt("URL ของ Apps Script ไม่ถูกต้อง (ต้องขึ้นต้นด้วย https://script.google.com/)", "Invalid Apps Script URL (must start with https://script.google.com/)"));
+    if (!c.token) throw new Error(mt("ยังไม่ได้ตั้งรหัสลับ (Token)", "Token is empty"));
+    const body = JSON.stringify(Object.assign({ token: c.token }, payload));
+    const init = { method: "POST", body, headers: { "Content-Type": "text/plain;charset=utf-8" } };
+    try {
+      const r = await fetch(c.url.trim(), init);
+      return await r.json();
+    } catch (e) {
+      if (payload.action === "ping" || payload.action === "latest") throw new Error(mt("เชื่อมต่อไม่ได้ ตรวจสอบ URL / การ Deploy (Who has access = Anyone)", "Cannot connect. Check the URL and deployment (Who has access = Anyone)"));
+      // response not readable (CORS) – send once more blind so the write still happens
+      await fetch(c.url.trim(), Object.assign({}, init, { mode: "no-cors" }));
+      return { ok: true, unconfirmed: true };
+    }
+  },
+  async backupToSheet(reason) {
+    const snapshot = await this.collect({ users: false, photos: false });
+    const res = await this.call({ action: "save", reason: reason || "manual", by: snapshot.by, tables: this.tables(), snapshot });
+    if (!res.ok) throw new Error(res.error || "failed");
+    this.saveMeta({ sheetAt: new Date().toISOString(), sheetStatus: res.unconfirmed ? "unconfirmed" : "ok", sheetReason: reason || "manual" });
+    return res;
+  },
+  async autoCheck() {
+    if (!State.user || !Auth.isAdmin(State.user)) return;
+    const c = this.cfg();
+    if (!c.auto || !this.validUrl(c.url) || !c.token) return;
+    if (this.daysSince(this.meta().sheetAt) < BACKUP_DAYS) return;
+    try {
+      await this.backupToSheet("auto");
+      toast(mt("สำรองข้อมูลไป Google Sheet อัตโนมัติแล้ว", "Automatic Google Sheet backup done"));
+    } catch (e) {
+      this.saveMeta({ sheetStatus: "error: " + e.message });
+    }
+    if (State.view === "backup") renderView();
+  },
+  startTimer() {
+    if (this._timer) return;
+    this._timer = setInterval(() => this.autoCheck(), 3600 * 1000);
+  },
+  /** banner shown on every page for admins when the last backup is older than 7 days */
+  bannerHtml() {
+    if (!State.user || !Auth.isAdmin(State.user) || State.view === "backup" || !this.isOverdue()) return "";
+    const last = this.lastAt();
+    const txt = last
+      ? mt(`ยังไม่ได้สำรองข้อมูลมา ${Math.floor(this.daysSince(last))} วันแล้ว (เกณฑ์ ${BACKUP_DAYS} วัน)`, `No backup for ${Math.floor(this.daysSince(last))} days (limit ${BACKUP_DAYS})`)
+      : mt("ยังไม่เคยสำรองข้อมูล", "No backup has been made yet");
+    return `<div class="mp-banner" id="backup-banner">▲ ${txt} <button class="btn small" id="backup-banner-go" style="margin-left:10px;">${mt("ไปหน้าสำรองข้อมูล", "Go to Backup")}</button></div>`;
+  }
+};
+
+const APPS_SCRIPT_CODE = `/**
+ * PSD eNGINNo QSHE Management - Google Sheet backup receiver
+ * Paste into Extensions > Apps Script of the Google Sheet that should hold the backup.
+ */
+const TOKEN = '__TOKEN__';   // must equal the Token typed in the app
+const CHUNK = 45000;         // one cell holds at most 50,000 characters
+
+function doPost(e) {
+  try {
+    var p = JSON.parse(e.postData.contents);
+    if (!p.token || p.token !== TOKEN) return out_({ ok: false, error: 'bad token' });
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (p.action === 'ping') return out_({ ok: true, sheet: ss.getName() });
+    if (p.action === 'latest') return out_(readSnapshot_(ss));
+    if (p.action === 'save') return out_(save_(ss, p));
+    return out_({ ok: false, error: 'unknown action' });
+  } catch (err) {
+    return out_({ ok: false, error: String(err) });
+  }
+}
+
+function save_(ss, p) {
+  var names = Object.keys(p.tables || {});
+  names.forEach(function (n) { writeTable_(ss, n, p.tables[n]); });
+
+  var snap = sheet_(ss, '_Snapshot');
+  snap.clear();
+  var json = JSON.stringify(p.snapshot || {});
+  var rows = [['savedAt', new Date().toISOString()]];
+  for (var i = 0, k = 1; i < json.length; i += CHUNK, k++) rows.push([String(k), json.substr(i, CHUNK)]);
+  snap.getRange(1, 1, rows.length, 2).setNumberFormat('@').setValues(rows);
+
+  sheet_(ss, '_Log').appendRow([new Date(), String(p.by || ''), String(p.reason || ''), names.length + ' tables']);
+  return { ok: true, tables: names.length };
+}
+
+function readSnapshot_(ss) {
+  var snap = ss.getSheetByName('_Snapshot');
+  if (!snap) return { ok: false, error: 'no snapshot yet' };
+  var v = snap.getDataRange().getValues();
+  if (v.length < 2) return { ok: false, error: 'no snapshot yet' };
+  var json = v.slice(1).map(function (r) { return r[1]; }).join('');
+  return { ok: true, savedAt: v[0][1], snapshot: JSON.parse(json) };
+}
+
+function writeTable_(ss, name, t) {
+  var sh = sheet_(ss, name);
+  sh.clear();
+  var data = [t.headers].concat(t.rows || []).map(function (r) {
+    return r.map(function (c) { return c === null || c === undefined ? '' : String(c); });
+  });
+  var rng = sh.getRange(1, 1, data.length, t.headers.length);
+  rng.setNumberFormat('@');            // plain text: nothing is evaluated as a formula
+  rng.setValues(data);
+  sh.setFrozenRows(1);
+  sh.getRange(1, 1, 1, t.headers.length).setFontWeight('bold');
+}
+
+function sheet_(ss, name) { return ss.getSheetByName(name) || ss.insertSheet(name); }
+function out_(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+`;
+
+// --------------------------------------------------------------- view ---
+function renderBackup(root) {
+  const c = BackupMgr.cfg();
+  const m = BackupMgr.meta();
+  const last = BackupMgr.lastAt();
+  const overdue = BackupMgr.isOverdue();
+  const next = last ? new Date(new Date(last).getTime() + BACKUP_DAYS * 86400000) : null;
+  const fmt = (iso) => (iso ? new Date(iso).toLocaleString(mt("th-TH", "en-GB")) : "–");
+  const stChip = overdue
+    ? `<span class="st-chip"><i style="color:var(--st-serious)">▲</i>${mt("ถึงกำหนดสำรองแล้ว", "Backup due")}</span>`
+    : `<span class="st-chip"><i style="color:var(--st-good)">✔</i>${mt("ปกติ", "Up to date")}</span>`;
+  const sheetState = !m.sheetAt ? "–" : m.sheetStatus === "ok" ? "✔ " + mt("สำเร็จ", "OK") : m.sheetStatus === "unconfirmed" ? "◆ " + mt("ส่งแล้ว (ยืนยันผลไม่ได้)", "sent (not confirmed)") : "▲ " + String(m.sheetStatus || "");
+  const datasets = Object.keys(DATASETS);
+
+  root.innerHTML = `
+    <div class="grid cols-3" style="margin-bottom:14px;">
+      <div class="stat-card"><div class="label">${mt("สำรองข้อมูลล่าสุด", "Last backup")}</div><div class="value" style="font-size:16px;line-height:1.5;">${fmt(last)}</div><div class="sub">${stChip}</div></div>
+      <div class="stat-card"><div class="label">${mt("ครบกำหนดครั้งถัดไป", "Next due")}</div><div class="value" style="font-size:16px;line-height:1.5;">${next ? fmt(next.toISOString()) : mt("ทำได้เลยตอนนี้", "Do it now")}</div><div class="sub">${mt("ทุก", "Every")} ${BACKUP_DAYS} ${mt("วัน", "days")}</div></div>
+      <div class="stat-card"><div class="label">Google Sheet</div><div class="value" style="font-size:16px;line-height:1.5;">${fmt(m.sheetAt)}</div><div class="sub">${mpEsc(sheetState)}</div></div>
+    </div>
+
+    <div class="card">
+      <h3>A. ${mt("ไฟล์สำรอง (JSON) — ดาวน์โหลดเก็บไว้เอง", "Backup file (JSON) — keep your own copy")}</h3>
+      <div class="desc">${mt("รวมข้อมูลทั้งระบบ (ผู้ใช้, อาคาร, SSPPC/FMS, OKR, KPI, CAPA, Master Plan) และรูปภาพ ใช้กู้คืนได้ทั้งหมด", "Everything: users, buildings, SSPPC/FMS, OKR, KPI, CAPA, Master Plan and photos. Fully restorable.")}</div>
+      <div class="mp-banner" style="margin-top:0">ⓘ ${mt("ไฟล์นี้มีรหัสผ่านผู้ใช้แบบไม่เข้ารหัส เก็บไว้ในที่ปลอดภัย อย่าส่งต่อ", "This file contains user passwords in plain text. Store it safely and do not share it.")}</div>
+      <label class="checkbox-pill"><input type="checkbox" id="bk-photos" checked /> ${mt("รวมรูปภาพ", "Include photos")}</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+        <button class="btn" id="bk-download">${mt("ดาวน์โหลดไฟล์สำรอง", "Download backup file")}</button>
+        <label class="btn ghost" style="cursor:pointer;">${mt("กู้คืนจากไฟล์…", "Restore from file…")}<input type="file" id="bk-restore-file" accept=".json,application/json" hidden /></label>
+      </div>
+      <div class="muted-s" style="margin-top:6px;">${mt("ครั้งล่าสุด", "Last file backup")}: ${fmt(m.fileAt)}</div>
+    </div>
+
+    <div class="card">
+      <h3>B. Google Sheet (Apps Script) — ${mt("อัตโนมัติทุก 7 วัน หรือกดปุ่ม", "automatic every 7 days or on demand")}</h3>
+      <div class="desc">${mt("ส่งข้อมูลไปเก็บใน Google Sheet ของคุณเอง: 1 ชีตต่อชุดข้อมูล + ชีต _Snapshot สำหรับกู้คืน (ไม่รวมรหัสผ่านผู้ใช้และรูปภาพ) การสำรองอัตโนมัติทำงานเมื่อมี Admin เปิดแอปอยู่", "Sends data to your own Google Sheet: one tab per dataset plus a _Snapshot tab for restore (no user passwords, no photos). The automatic run happens while an admin has the app open.")}</div>
+      <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="field"><label>Apps Script Web App URL</label><input type="text" id="bk-url" placeholder="https://script.google.com/macros/s/.../exec" value="${mpEsc(c.url)}" /></div>
+        <div class="field"><label>${mt("รหัสลับ (Token)", "Token (shared secret)")}</label>
+          <div style="display:flex;gap:6px;"><input type="text" id="bk-token" value="${mpEsc(c.token)}" /><button class="btn ghost small" id="bk-gen" type="button">${mt("สร้างให้", "Generate")}</button></div></div>
+      </div>
+      <label class="checkbox-pill"><input type="checkbox" id="bk-auto" ${c.auto ? "checked" : ""} /> ${mt("สำรองอัตโนมัติทุก 7 วัน", "Back up automatically every 7 days")}</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+        <button class="btn ghost" id="bk-save">${mt("บันทึกการตั้งค่า", "Save settings")}</button>
+        <button class="btn ghost" id="bk-test">${mt("ทดสอบการเชื่อมต่อ", "Test connection")}</button>
+        <button class="btn" id="bk-now">${mt("สำรองไป Google Sheet ตอนนี้", "Back up to Google Sheet now")}</button>
+        <button class="btn ghost" id="bk-restore-sheet">${mt("กู้คืนจาก Google Sheet", "Restore from Google Sheet")}</button>
+      </div>
+      <div id="bk-msg" class="muted-s" style="margin-top:8px;min-height:18px;"></div>
+      <details class="chk-more" style="margin-top:12px;">
+        <summary><b>${mt("วิธีตั้งค่า (ทำครั้งเดียว ~5 นาที)", "Setup (once, ~5 minutes)")}</b></summary>
+        <ol style="margin:8px 0 8px 18px;line-height:1.7;">
+          <li>${mt("สร้าง Google Sheet ใหม่ (ตั้งชื่อเช่น “QSHE Backup”)", "Create a new Google Sheet (e.g. “QSHE Backup”)")}</li>
+          <li>${mt("เมนู Extensions → Apps Script ลบโค้ดเดิม แล้ววางโค้ดด้านล่าง", "Extensions → Apps Script, delete the sample code and paste the code below")}</li>
+          <li>${mt("กด “สร้างให้” ที่ช่อง Token ด้านบน โค้ดด้านล่างจะใส่ Token ให้อัตโนมัติ (คัดลอกใหม่ทุกครั้งที่เปลี่ยน Token)", "Press “Generate” for the Token above; the code below fills it in (copy again after changing it)")}</li>
+          <li>${mt("Deploy → New deployment → ประเภท Web app → Execute as: Me → Who has access: Anyone → Deploy (อนุญาตสิทธิ์ครั้งแรก)", "Deploy → New deployment → Web app → Execute as: Me → Who has access: Anyone → Deploy (authorize on first run)")}</li>
+          <li>${mt("คัดลอก Web app URL (ลงท้าย /exec) มาวางในช่อง URL → บันทึก → ทดสอบการเชื่อมต่อ", "Copy the Web app URL (ends with /exec) into the URL field → Save → Test connection")}</li>
+          <li>${mt("ถ้าแก้โค้ดภายหลัง ต้อง Deploy → Manage deployments → New version", "If you edit the code later: Deploy → Manage deployments → New version")}</li>
+        </ol>
+        <div style="margin:6px 0;"><button class="btn ghost small" id="bk-copy-code">${mt("คัดลอกโค้ด", "Copy code")}</button></div>
+        <pre class="code-box" id="bk-code"></pre>
+        <div class="muted-s">${mt("ความปลอดภัย: ใครมี URL + Token ก็เขียน/อ่านชีตนี้ได้ จึงควรเก็บทั้งสองอย่างเป็นความลับ และข้อมูลใน Sheet จะเห็นโดยผู้ที่คุณแชร์ชีตให้", "Security: anyone with the URL + Token can write to / read this sheet, so keep both secret. People you share the sheet with can read the data.")}</div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>C. ${mt("ส่งออก CSV รายชุดข้อมูล", "CSV export per dataset")}</h3>
+      <div class="desc">${mt("เปิดใน Excel/Google Sheets ได้ทันที (รหัสผ่านผู้ใช้ไม่รวมอยู่ในชุดข้อมูล)", "Opens directly in Excel / Google Sheets (user passwords are not in any dataset)")}</div>
+      <div class="chip-list">${datasets.map((k) => `<button class="btn ghost small" data-csv="${k}">⬇ ${mpEsc(DATASETS[k].label)}</button>`).join("")}</div>
+    </div>`;
+
+  const msg = (txt, bad) => { const el = document.getElementById("bk-msg"); el.textContent = txt; el.style.color = bad ? "var(--text)" : "var(--muted)"; el.style.fontWeight = bad ? "700" : "400"; if (bad) el.textContent = "▲ " + txt; };
+  const readCfg = () => ({ url: document.getElementById("bk-url").value.trim(), token: document.getElementById("bk-token").value.trim(), auto: document.getElementById("bk-auto").checked });
+  const drawCode = () => { document.getElementById("bk-code").textContent = APPS_SCRIPT_CODE.replace("__TOKEN__", (document.getElementById("bk-token").value.trim() || "PUT-YOUR-TOKEN-HERE").replace(/[^\w-]/g, "")); };
+  drawCode();
+  const busy = (b, on) => { b.disabled = on; b.style.opacity = on ? 0.6 : 1; };
+
+  document.getElementById("bk-token").addEventListener("input", drawCode);
+  document.getElementById("bk-gen").addEventListener("click", () => { document.getElementById("bk-token").value = BackupMgr.newToken(); drawCode(); });
+  document.getElementById("bk-copy-code").addEventListener("click", () => {
+    const code = document.getElementById("bk-code").textContent;
+    (navigator.clipboard ? navigator.clipboard.writeText(code) : Promise.reject()).then(() => toast(mt("คัดลอกแล้ว", "Copied")), () => {
+      const r = document.createRange(); r.selectNodeContents(document.getElementById("bk-code")); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      toast(mt("เลือกโค้ดแล้ว กด Ctrl+C", "Code selected – press Ctrl+C"));
+    });
+  });
+  document.getElementById("bk-save").addEventListener("click", () => {
+    const cfg = readCfg();
+    if (cfg.url && !BackupMgr.validUrl(cfg.url)) return msg(mt("URL ต้องขึ้นต้นด้วย https://script.google.com/", "URL must start with https://script.google.com/"), true);
+    BackupMgr.saveCfg(cfg); msg(mt("บันทึกการตั้งค่าแล้ว", "Settings saved"));
+  });
+  document.getElementById("bk-test").addEventListener("click", async (e) => {
+    const cfg = readCfg();
+    if (cfg.url && !BackupMgr.validUrl(cfg.url)) return msg(mt("URL ต้องขึ้นต้นด้วย https://script.google.com/", "URL must start with https://script.google.com/"), true);
+    BackupMgr.saveCfg(cfg); busy(e.target, true); msg(mt("กำลังทดสอบ…", "Testing…"));
+    try { const r = await BackupMgr.call({ action: "ping" }); r.ok ? msg(mt("เชื่อมต่อสำเร็จ — ชีต: ", "Connected — sheet: ") + (r.sheet || "")) : msg(r.error === "bad token" ? mt("Token ไม่ตรงกับในโค้ด Apps Script", "Token does not match the Apps Script code") : String(r.error), true); }
+    catch (err) { msg(err.message, true); }
+    busy(e.target, false);
+  });
+  document.getElementById("bk-now").addEventListener("click", async (e) => {
+    BackupMgr.saveCfg(readCfg()); busy(e.target, true); msg(mt("กำลังสำรองข้อมูล…", "Backing up…"));
+    try { const r = await BackupMgr.backupToSheet("manual"); toast(mt("สำรองข้อมูลแล้ว", "Backup done")); renderBackup(root); document.getElementById("bk-msg").textContent = r.unconfirmed ? mt("ส่งข้อมูลแล้ว แต่เบราว์เซอร์อ่านผลตอบกลับไม่ได้ — เปิด Google Sheet ตรวจสอบ", "Sent, but the reply could not be read — open the Google Sheet to verify") : mt("สำรองสำเร็จ", "Backup succeeded"); }
+    catch (err) { msg(err.message === "bad token" ? mt("Token ไม่ตรงกับในโค้ด Apps Script", "Token does not match the Apps Script code") : err.message, true); busy(e.target, false); }
+  });
+  document.getElementById("bk-restore-sheet").addEventListener("click", async (e) => {
+    BackupMgr.saveCfg(readCfg()); busy(e.target, true); msg(mt("กำลังดึงข้อมูลล่าสุดจาก Google Sheet…", "Fetching the latest snapshot…"));
+    try {
+      const r = await BackupMgr.call({ action: "latest" });
+      if (!r.ok) throw new Error(r.error || "failed");
+      if (!confirm(mt(`กู้คืนข้อมูลจากสแนปช็อตเมื่อ ${r.savedAt}?\nข้อมูลปัจจุบันของ OKR/KPI/CAPA/Master Plan ฯลฯ จะถูกแทนที่ (ผู้ใช้และรูปภาพไม่ถูกแตะต้อง)`, `Restore the snapshot from ${r.savedAt}?\nCurrent OKR/KPI/CAPA/Master Plan etc. will be replaced (users and photos are untouched).`))) { busy(e.target, false); return msg(""); }
+      await BackupMgr.apply(r.snapshot, { users: false });
+      toast(mt("กู้คืนแล้ว", "Restored")); renderShell(); renderTopbar(); renderBackup(root);
+    } catch (err) { msg(err.message, true); busy(e.target, false); }
+  });
+  document.getElementById("bk-download").addEventListener("click", async () => {
+    const snap = await BackupMgr.collect({ users: true, photos: document.getElementById("bk-photos").checked });
+    const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, "-");
+    ExportUtil.download(`QSHE_backup_${stamp}.json`, JSON.stringify(snap), "application/json;charset=utf-8");
+    BackupMgr.saveMeta({ fileAt: new Date().toISOString() });
+    toast(mt("ดาวน์โหลดไฟล์สำรองแล้ว", "Backup file downloaded"));
+    renderBackup(root);
+  });
+  document.getElementById("bk-restore-file").addEventListener("change", async (e) => {
+    const f = e.target.files[0]; e.target.value = "";
+    if (!f) return;
+    try {
+      const snap = JSON.parse(await f.text());
+      if (snap.app !== "PSD eNGINNo QSHE Management" || !snap.keys) throw new Error(mt("ไฟล์นี้ไม่ใช่ไฟล์สำรองของระบบนี้", "This is not a backup file of this app"));
+      const hasUsers = !!snap.keys.users;
+      if (!confirm(mt(`กู้คืนจากไฟล์ (สำรองเมื่อ ${snap.exportedAt})?\nข้อมูลปัจจุบันทั้งหมด${hasUsers ? " รวมถึงผู้ใช้" : ""}${snap.photos ? " และรูปภาพ" : ""}จะถูกแทนที่ ควรดาวน์โหลดไฟล์สำรองปัจจุบันก่อน`, `Restore from file (made ${snap.exportedAt})?\nAll current data${hasUsers ? " including users" : ""}${snap.photos ? " and photos" : ""} will be replaced. Consider downloading a current backup first.`))) return;
+      await BackupMgr.apply(snap, { users: true });
+      toast(mt("กู้คืนแล้ว กำลังรีโหลด…", "Restored, reloading…"));
+      setTimeout(() => { Auth.logout(); location.reload(); }, 700);
+    } catch (err) { msg(err.message || mt("อ่านไฟล์ไม่ได้", "Could not read the file"), true); }
+  });
+  root.querySelectorAll("[data-csv]").forEach((b) => b.addEventListener("click", () => {
+    const ds = DATASETS[b.dataset.csv];
+    ExportUtil.exportCSV(ds.rows(), ds.headers, "QSHE_" + b.dataset.csv);
+  }));
+}
+
+/**
  * app.js
  * PSD eNGINNo QSHE Management V1.0 — main application logic.
  * Vanilla JS SPA, localStorage-backed. See README.md for architecture notes.
@@ -2565,6 +2901,8 @@ function startApp(user) {
   document.getElementById("app-shell").classList.remove("hidden");
   renderShell();
   navigate("dashboard");
+  BackupMgr.autoCheck();
+  BackupMgr.startTimer();
 }
 
 function logout() {
@@ -2609,7 +2947,8 @@ const NAV_ITEMS = [
     admin: true,
     items: [
       { id: "buildings", labelKey: "nav_buildings" },
-      { id: "users", labelKey: "nav_users" }
+      { id: "users", labelKey: "nav_users" },
+      { id: "backup", labelKey: "nav_backup" }
     ]
   },
   { groupKey: "nav_reports_group", items: [{ id: "reports", labelKey: "nav_reports" }] }
@@ -2707,13 +3046,14 @@ function renderTopbar() {
     mp_plan: ["title_mp_plan", "sub_mp_plan"],
     mp_risk: ["title_mp_risk", "sub_mp_risk"],
     mp_check: ["title_mp_check", "sub_mp_check"],
+    backup: ["title_backup", "sub_backup"],
     reports: ["title_reports", "sub_reports"]
   };
   const [titleKey, subKey] = titleKeys[State.view] || ["", ""];
   const title = titleKey ? t(titleKey) : "";
   const subtitle = subKey ? t(subKey) : "";
   const buildings = accessibleBuildings();
-  const showBuildingPicker = !["buildings", "users", "mp_plan", "mp_risk", "mp_check"].includes(State.view);
+  const showBuildingPicker = !["buildings", "users", "backup", "mp_plan", "mp_risk", "mp_check"].includes(State.view);
 
   document.getElementById("topbar").innerHTML = `
     <div>
@@ -2753,6 +3093,15 @@ function toast(msg) {
 
 function renderView() {
   const root = document.getElementById("view-root");
+  renderViewInner(root);
+  const banner = BackupMgr.bannerHtml();
+  if (banner) {
+    root.insertAdjacentHTML("afterbegin", banner);
+    document.getElementById("backup-banner-go").addEventListener("click", () => navigate("backup"));
+  }
+}
+
+function renderViewInner(root) {
   switch (State.view) {
     case "dashboard": return renderDashboard(root);
     case "structure":
@@ -2769,6 +3118,7 @@ function renderView() {
     case "mp_risk": return renderMpRisk(root);
     case "mp_check": return renderMpCheck(root);
     case "reports": return renderReports(root);
+    case "backup": return renderBackup(root);
     default: root.innerHTML = "<div class='card'>ไม่พบหน้านี้</div>";
   }
 }
