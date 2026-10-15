@@ -749,6 +749,151 @@ tbody tr:hover td { background: #FAFCFB; }
   .modal .form-row { grid-template-columns: 1fr; }
 }
 
+/* ==========================================================================
+   Sidebar logo + Master Plan module
+   ========================================================================== */
+:root {
+  /* Status palette is fixed across themes (always paired with an icon + label) */
+  --st-good: #0ca30c;
+  --st-warning: #fab219;
+  --st-serious: #ec835a;
+  --st-critical: #d03b3b;
+}
+.brand-logo {
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin: 2px 4px 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.brand-logo img { display: block; width: 100%; max-width: 168px; height: auto; }
+
+.mp-scroll { overflow-x: auto; }
+.mp-sub { font-size: 12px; color: var(--muted); margin-top: 3px; max-width: 360px; }
+.mp-od { color: var(--text); font-size: 11.5px; font-weight: 700; margin-top: 2px; }
+.mp-od::first-letter { color: var(--st-critical); }
+.muted-s { font-size: 12px; color: var(--muted); }
+.mp-banner {
+  background: var(--gold-soft); color: var(--text); border: 1px solid var(--border);
+  border-left: 4px solid var(--st-warning); border-radius: 8px;
+  padding: 8px 12px; font-size: 13px; margin-bottom: 12px;
+}
+.mp-tip {
+  position: fixed; z-index: 90; display: none; pointer-events: none;
+  background: var(--heading); color: var(--card); font-size: 12.5px; line-height: 1.45;
+  padding: 7px 10px; border-radius: 6px; white-space: pre-line; max-width: 320px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+/* plan table + timeline */
+.mp-plan-table { min-width: 1100px; }
+.mp-plan-table th, .mp-plan-table td { vertical-align: top; }
+.mp-plan-table .c-no { width: 28px; color: var(--muted); }
+.mp-plan-table .c-step { min-width: 220px; }
+.mp-plan-table .c-loc, .mp-plan-table .c-own { min-width: 130px; font-size: 13px; }
+.mp-plan-table .c-per { min-width: 110px; font-size: 12.5px; white-space: nowrap; }
+.mp-plan-table .c-act { white-space: nowrap; }
+.tl-h { padding: 4px 0 !important; width: 28px; min-width: 28px; text-align: center; font-weight: 600; line-height: 1.1; }
+.tl-h span { display: block; font-size: 11px; }
+.tl-h small { display: block; font-size: 10px; color: var(--muted); font-weight: 400; }
+.tl-h.cur, .tl-c.cur { background: var(--green-soft); }
+.tl-c { padding: 0 !important; text-align: center; vertical-align: middle !important; }
+.tl-bar { display: block; height: 8px; margin: 0 1px; border-radius: 4px; background: var(--muted); }
+.tl-c .tl-bar { margin: 0 2px; }
+.tl-bar.st-todo { background: #9AA7A1; }
+.tl-bar.st-doing { background: var(--st-warning); }
+.tl-bar.st-done { background: var(--st-good); }
+i.tl-bar { display: inline-block; width: 18px; vertical-align: middle; margin-right: 4px; }
+.mp-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); margin: 10px 2px 0; align-items: center; }
+.mp-legend.top { margin: 0 0 12px; color: var(--text); }
+.mp-legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+/* status chip: icon carries the colour, label stays in ink */
+.st-chip {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600;
+  color: var(--text); padding: 2px 10px 2px 8px; border: 1px solid var(--border); border-radius: 999px; white-space: nowrap;
+}
+.st-chip i { font-style: normal; font-size: 12px; }
+.st-chip.muted { color: var(--muted); font-weight: 400; }
+
+/* horizontal bars */
+.bar-row { display: grid; grid-template-columns: minmax(140px, 300px) 1fr 62px minmax(120px, 190px); gap: 12px; align-items: center; padding: 5px 0; }
+.bar-label { font-size: 13px; color: var(--text); }
+.bar-val { font-size: 13px; font-weight: 700; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; }
+.bar-track { position: relative; height: 14px; background: var(--green-soft); border-radius: 4px; cursor: default; }
+.bar-track:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.bar-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0 4px 4px 0; transition: width .25s; }
+.bar-track .thr { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--card); }
+.bar-track .thr::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--muted); opacity: .55; }
+.bar-row.axis { padding: 0; }
+.bar-track.axis-t { background: none; height: 16px; cursor: default; }
+.axis-t span { position: absolute; top: 0; font-size: 11px; color: var(--muted); transform: translateX(-50%); }
+.axis-t span:first-child { transform: none; }
+.axis-t span:last-child { transform: translateX(-100%); }
+.stack-row { grid-template-columns: minmax(140px, 300px) 1fr 80px; }
+.stack-track { display: flex; gap: 2px; height: 16px; align-items: center; }
+.stack-track .seg { height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: center; min-width: 6px; cursor: default; }
+.stack-track .seg:first-child { border-radius: 4px 3px 3px 4px; }
+.stack-track .seg b { font-size: 10.5px; color: #111; font-weight: 700; }
+.total-row td { border-top: 2px solid var(--border); }
+
+/* checklist */
+.unit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.unit-card {
+  position: relative; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 34px 10px 12px;
+  background: var(--card); cursor: pointer;
+}
+.unit-card:hover { border-color: var(--green); }
+.unit-card.selected { border-color: var(--green); background: var(--green-soft); }
+.unit-card .u-name { font-weight: 700; font-size: 14px; color: var(--heading); }
+.unit-card .u-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.unit-card .u-st { position: absolute; right: 12px; top: 10px; font-size: 15px; }
+.unit-card .u-st i { font-style: normal; color: var(--muted); }
+.mp-sumbar { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; font-size: 14px; padding: 10px 12px; background: var(--green-soft); border-radius: 8px; }
+.mp-sumbar b { font-size: 20px; color: var(--heading); }
+.chk-cat { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-top: 12px; box-shadow: var(--shadow); }
+.chk-cat > summary { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; cursor: pointer; font-weight: 700; color: var(--heading); list-style: none; }
+.chk-cat > summary::-webkit-details-marker { display: none; }
+.chk-cat > summary::before { content: "▸"; margin-right: 8px; transition: transform .15s; display: inline-block; }
+.chk-cat[open] > summary::before { transform: rotate(90deg); }
+.chk-cat > summary .cat-title { flex: 1; }
+.cat-sum { font-size: 12.5px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.cat-sum i { font-style: normal; }
+.chk-row { display: grid; grid-template-columns: 44px 1fr 210px; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--border); border-left: 4px solid var(--rk, transparent); }
+.chk-id { font-weight: 700; color: var(--muted); font-size: 13px; }
+.chk-text { font-size: 14px; }
+.chk-more { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+.chk-more summary { cursor: pointer; }
+.chk-more div { margin-top: 3px; }
+.chk-note { margin-top: 6px; width: 100%; font-size: 13px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--text); font-family: inherit; }
+.chk-score select { width: 100%; padding: 7px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--card); color: var(--text); font-family: inherit; font-size: 13.5px; }
+.chk-risk { margin-top: 6px; min-height: 24px; }
+textarea { font-family: inherit; }
+
+@media (max-width: 900px) {
+  .bar-row { grid-template-columns: 1fr 56px; }
+  .bar-row .bar-track { grid-column: 1 / -1; grid-row: 2; }
+  .bar-row .bar-st { grid-column: 1 / -1; }
+  .bar-row.axis { display: none; }
+  .stack-row { grid-template-columns: 1fr 70px; }
+  .stack-row .stack-track { grid-column: 1 / -1; grid-row: 2; }
+  .chk-row { grid-template-columns: 36px 1fr; }
+  .chk-score { grid-column: 2; }
+}
+@media (max-width: 860px) { .brand-logo { display: none; } }
+.mp-plan-table { min-width: 0; width: 100%; }
+.mp-plan-table .c-step { min-width: 190px; max-width: 260px; }
+.mp-plan-table .c-loc { min-width: 110px; max-width: 150px; }
+.mp-plan-table .c-own { min-width: 100px; max-width: 120px; }
+.mp-plan-table .badge { white-space: nowrap; }
+.mp-plan-table .c-act { display: table-cell; }
+.mp-plan-table .c-act .icon-btn { display: block; margin: 0 0 4px; }
+.tl-h { width: 20px; min-width: 20px; }
+.tl-h span { font-size: 10px; }
+.tl-c .tl-bar { margin: 0 1px; }
+#mp-check-body .form-row { display: grid; grid-template-columns: 220px 1fr; gap: 12px; }
+@media (max-width: 860px) { #mp-check-body .form-row { grid-template-columns: 1fr; } }
+
 </style>
 </head>
 <body>
@@ -935,6 +1080,17 @@ const I18N = {
     nav_admin_group: "ผู้ดูแลระบบ",
     nav_buildings: "อาคาร / BU",
     nav_users: "ผู้ใช้งาน",
+    nav_masterplan_group: "Master Plan",
+    nav_mp_plan: "QSHE Action Plan 2026-2027",
+    nav_mp_risk: "Inspection Risk Summary",
+    nav_mp_check: "Risk Assessment Checklist",
+    title_mp_plan: "QSHE Action Plan 2026-2027",
+    sub_mp_plan: "แผนงาน QSHE ระดับองค์กร — เพิ่ม แก้ไข ลบ และติดตามสถานะ",
+    title_mp_risk: "Inspection Risk Summary",
+    sub_mp_risk: "กราฟสรุปคะแนนและระดับความเสี่ยงจากผลการตรวจประเมินแต่ละหน่วยงาน",
+    title_mp_check: "Risk Assessment Checklist",
+    sub_mp_check: "จัดการหน่วยงาน และให้คะแนนรายข้อ 56 ข้อใน 8 หมวด",
+    settings_mp_label: "Master Plan (3 หัวข้อ)",
     nav_reports_group: "รายงาน",
     nav_reports: "Export / รายงาน",
     role_admin: "ผู้ดูแลระบบ",
@@ -1021,6 +1177,17 @@ const I18N = {
     nav_admin_group: "Administration",
     nav_buildings: "Buildings / BU",
     nav_users: "Users",
+    nav_masterplan_group: "Master Plan",
+    nav_mp_plan: "QSHE Action Plan 2026-2027",
+    nav_mp_risk: "Inspection Risk Summary",
+    nav_mp_check: "Risk Assessment Checklist",
+    title_mp_plan: "QSHE Action Plan 2026-2027",
+    sub_mp_plan: "Organization-level QSHE plans — add, edit, delete and track status",
+    title_mp_risk: "Inspection Risk Summary",
+    sub_mp_risk: "Score and risk-level charts from each unit's inspection results",
+    title_mp_check: "Risk Assessment Checklist",
+    sub_mp_check: "Manage units and score 56 items across 8 categories",
+    settings_mp_label: "Master Plan (3 topics)",
     nav_reports_group: "Reports",
     nav_reports: "Export / Reports",
     role_admin: "Administrator",
@@ -1139,6 +1306,11 @@ const SEED = {
   moduleVisibility: { structure: true, system: true, process: true, people: true, culture: true }
 };
 
+/* Generated from Master_plan_of_QSHE_2026_re01.xlsx - Risk Assessment Checklist template */
+const MP_CATEGORIES = [{"id": 1, "en": "Safety", "th": "ความปลอดภัยในการปฏิบัติงาน"}, {"id": 2, "en": "Security", "th": "การรักษาความปลอดภัย"}, {"id": 3, "en": "Fire safety", "th": "ความปลอดภัยด้านอัคคีภัย"}, {"id": 4, "en": "Utility", "th": "ระบบสาธารณูปโภคและระบบประกอบอาคาร"}, {"id": 5, "en": "Hazardous & Waste", "th": "การจัดการสารอันตรายและของเสีย"}, {"id": 6, "en": "Emergency & Disaster", "th": "การเตรียมความพร้อมและการจัดการภาวะฉุกเฉินและภัยพิบัติ"}, {"id": 7, "en": "Construction & Renovation", "th": "ความปลอดภัยในการก่อสร้างและปรับปรุงพื้นที่"}, {"id": 8, "en": "QSHE Management", "th": "การบริหารจัดการด้านความปลอดภัย / สิ่งแวดล้อม"}];
+const MP_ITEMS = [{"id": "1.1", "catIdx": 1, "text": "พื้นผิวเดิน สภาพเรียบ ไม่ลื่น ไม่แตกร้าว ไม่มีคราบน้ำ น้ำมัน หรือดินโคลนขัง", "ctx": "ร้านค้า/ร้านอาหาร: คราบน้ำมัน | สนามกีฬา: พื้นคอร์ทเรียบ | ลานจอดรถ: น้ำมันหยด", "law": "พ.ร.บ. ความปลอดภัย อาชีวอนามัยฯ พ.ศ. 2554 ม. 14 / กฎกระทรวงกำหนดมาตรฐานอาคาร พ.ศ. 2564"}, {"id": "1.2", "catIdx": 1, "text": "ทางสัญจรส่วนกลาง ทางเดินเท้า และช่องทางวิ่งรถ มีความกว้างเพียงพอ ไม่วางสิ่งของกีดขวาง", "ctx": "ร้านต้นไม้: กระถางไม่ขวางทาง | ลานจอดรถ: ตีเส้นทางเดิน | ร้านค้า: สินค้าไม่ล้นทางเดิน", "law": "พ.ร.บ. ควบคุมอาคาร พ.ศ. 2522 (ทางเดินส่วนกลาง) / พ.ร.บ. ความปลอดภัยฯ พ.ศ. 2554"}, {"id": "1.3", "catIdx": 1, "text": "ทางต่างระดับ บันได ทางลาด (Ramp) มีราวจับยึดมั่นคง มีแถบกันลื่น และป้ายเตือนระวังสะดุด/ล้ม", "ctx": "อาคารเช่า: บันไดส่วนกลาง | ร้านอาหาร: ทางลาด wheelchairs | ปีนผา: บันไดขึ้นแพลตฟอร์ม", "law": "กฎกระทรวงกำหนดสิ่งอำนวยความสะดวกในอาคารสำหรับผู้พิการและคนชรา พ.ศ. 2548 / ข้อกำหนด กทม."}, {"id": "1.4", "catIdx": 1, "text": "อาคาร โครงสร้าง หลังคา ฝ้าเพดาน และผนัง มั่นคงแข็งแรง ไม่มีรอยร้าวรุนแรงหรือร่องรอยหลุดร่วง", "ctx": "ร้านต้นไม้: สแลน/เรือนกระจก | ลานจอดรถ: โครงหลังคาเหล็ก | ร้านค้า: ฝ้าเพดาน/กระจก", "law": "พ.ร.บ. ควบคุมอาคาร พ.ศ. 2522 / มาตรฐานความปลอดภัยวิศวกรรมโครงสร้าง (EIT)"}, {"id": "1.5", "catIdx": 1, "text": "มีป้ายสัญลักษณ์เตือนภัย ป้ายบอกทาง ป้ายจำกัดความเร็ว และป้ายระเบียบการใช้งานชัดเจน", "ctx": "ลานจอดรถ: ป้ายความเร็ว | เครื่องเล่น: ป้ายระเบียบคำเตือน | สนามกีฬา: ป้ายข้อบังคับสนาม", "law": "ประกาศกรมสวัสดิการและคุ้มครองแรงงาน เรื่อง เครื่องหมายความปลอดภัย / พ.ร.บ. จราจรทางบก"}, {"id": "1.6", "catIdx": 1, "text": "มีการจำกัดจำนวนผู้เข้าใช้บริการ (Capacity Limit) ไม่ให้แออัดจนเกิดอันตราย", "ctx": "โซนเครื่องเล่น, โซนสนามกีฬา, อาคารเช่าช่วงเทศกาล", "law": "กฎกระทรวงกำหนดประเภทและระบบความปลอดภัยของอาคารที่ใช้ประกอบธุรกิจ พ.ศ. 2555"}, {"id": "1.7", "catIdx": 1, "text": "เจ้าหน้าที่สวมใส่ อุปกรณ์ป้องกันอันตรายส่วนบุคคล (PPE) เหมาะสมกับลักษณะงาน", "ctx": "ปีนผา: หมวก/Harness | ร้านต้นไม้: ถุงมือ/รองเท้าบู๊ท | ช่างอาคาร: รองเท้าเซฟตี้/แว่นตา", "law": "พ.ร.บ. ความปลอดภัย อาชีวอนามัยฯ พ.ศ. 2554 ม. 22 (นายจ้างต้องจัดหา PPE ให้ลูกจ้าง)"}, {"id": "2.1", "catIdx": 2, "text": "ขอบ คม คมกระจก เสาโครงสร้าง มีวัสดุกันกระแทก (Foam/Rubber Guard) ป้องกันการชนบาดเจ็บ", "ctx": "สนามกีฬา: นวมหุ้มเสา | เครื่องเล่น: โฟมกันกระแทก | ร้านอาหาร/ต้นไม้: ขอบชั้นวางของ", "law": "พ.ร.บ. ความปลอดภัยฯ พ.ศ. 2554 ม. 8 (นายจ้างต้องจัดสถานที่ทำงานให้ปลอดภัย)"}, {"id": "2.2", "catIdx": 2, "text": "ตู้ควบคุมไฟฟ้า (MDB/DB/Sub-panel) ปิดมิดชิด มีป้ายเตือนอันตราย ผังตู้ และไม่มีสิ่งของวางขวาง 1m", "ctx": "ตู้ไฟร้านค้า, ตู้ไฟลานจอดรถ, ตู้ไฟปั๊มน้ำ, ตู้ไฟเครื่องเล่น", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับระบบไฟฟ้า พ.ศ. 2558 / มาตรฐานการติดตั้งทางไฟฟ้าแห่งประเทศไทย (EIT)"}, {"id": "2.3", "catIdx": 2, "text": "มีการต่อสายดิน (Grounding) ครบถ้วน สำหรับตู้ไฟ โครงโลหะ และเครื่องใช้ไฟฟ้าทุกชนิด", "ctx": "เครื่องเล่น: โครงเหล็กปีนผา/สไลเดอร์ | ร้านอาหาร: เครื่องครัว | สนามกีฬา: เสาไฟส่องสว่าง", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับระบบไฟฟ้า พ.ศ. 2558 ข้อ 12"}, {"id": "2.4", "catIdx": 2, "text": "มีอุปกรณ์ตัดไฟรั่วอัตโนมัติ (ELCB/RCD) ในจุดเสี่ยง เปียกชื้น ชื้นแฉะ หรืออุปกรณ์กลางแจ้ง", "ctx": "ร้านต้นไม้: ปั๊มน้ำรดน้ำ | เครื่องเล่นน้ำ/เจ็ตสกีจำลอง | ร้านอาหาร: โซนล้างจาน", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับระบบไฟฟ้า พ.ศ. 2558 / มาตรฐานการไฟฟ้าส่วนภูมิภาค/นครหลวง"}, {"id": "2.5", "catIdx": 2, "text": "สายไฟฟ้า เต้ารับ ปลั๊ก สวิตช์ สภาพดี ไม่ชำรุด เปลือย หรือพาดผ่านพื้นโดยไม่มีฉนวนคุ้มกัน", "ctx": "ลานจอดรถ: ไฟส่องสว่าง | ร้านค้า: สายไฟต่อพ่วง | สไลเดอร์/เจ็ตสกี: สายไฟปั๊มลม/ปั๊มน้ำ", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับระบบไฟฟ้า พ.ศ. 2558 ข้อ 5-8"}, {"id": "2.6", "catIdx": 2, "text": "ระดับความเข้มของแสงสว่าง (Lux) เพียงพอต่อการใช้งาน ไม่มืดอับสายตาในจุดเสี่ยง/กลางคืน", "ctx": "ลานจอดรถ: แสงสว่างช่วงคืน | สนามกีฬา: ไฟคอร์ท | ร้านค้า/อาหาร: โถงเดิน", "law": "กฎกระทรวง กำหนดมาตรฐานความร้อน แสงสว่าง และเสียง พ.ศ. 2549 (หมวดแสงสว่าง)"}, {"id": "3.1", "catIdx": 3, "text": "ถังก๊าซหุงต้ม (LPG) / เชื้อเพลิง มีการยึดติดแน่น มีระบบตัดก๊าซ และตั้งในที่ระบายอากาศดี", "ctx": "ร้านอาหาร/ครัว: ถังก๊าซ LPG | เครื่องเล่น/เครื่องยนต์: น้ำมันเชื้อเพลิงสำรอง", "law": "กฎกระทรวง สถานที่เก็บรักษาก๊าซ石油เหลว พ.ศ. 2554 (กระทรวงพลังงาน)"}, {"id": "3.2", "catIdx": 3, "text": "ถังดับเพลิงมีจำนวนเพียงพอ ถูกประเภท แรงดันปกติ สลักครบ ตรวจเช็ครายเดือน และเข้าถึงสะดวก", "ctx": "ร้านค้า, ร้านอาหาร, ลานจอดรถ, ซุ้มเครื่องเล่น, คลับฮ้าส์สนามกีฬา", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับการป้องกันและระงับอัคคีภัย พ.ศ. 2555 (หมวดถังดับเพลิง)"}, {"id": "3.3", "catIdx": 3, "text": "เส้นทางหนีไฟ ประตูหนีไฟ บันไดหนีไฟ ไม่ถูกปิดล็อก ไม่วางสิ่งของกีดขวาง และผลักออกง่าย", "ctx": "อาคารเช่า/ร้านค้า: ประตูหนีไฟ | เครื่องเล่นในอาคาร: ทางออกฉุกเฉิน", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับการป้องกันและระงับอัคคีภัย พ.ศ. 2555 / พ.ร.บ. ควบคุมอาคาร"}, {"id": "3.4", "catIdx": 3, "text": "ป้ายทางออกฉุกเฉินชนิดส่องสว่าง และโคมไฟส่องสว่างฉุกเฉิน (Emergency Light) ทำงานปกติ", "ctx": "อาคารจอดรถ, อาคารเช่าร้านค้า, โถงสนามกีฬาอินดอร์, อาคารเครื่องเล่นในร่ม", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับการป้องกันและระงับอัคคีภัย พ.ศ. 2555 / มาตรฐาน EIT 2002"}, {"id": "3.5", "catIdx": 3, "text": "ระบบสัญญาณแจ้งเหตุเพลิงไหม้ (Fire Alarm, Detector) และตู้สายดับเพลิง (FHC) พร้อมใช้งาน", "ctx": "อาคารจอดรถ, ศูนย์การค้า/ร้านค้าให้เช่า, อาคารกีฬาอินดอร์", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับการป้องกันและระงับอัคคีภัย พ.ศ. 2555 ข้อ 6-10"}, {"id": "3.6", "catIdx": 3, "text": "มีการจัดทำแผนผังอพยพหนีไฟ (Evacuation Plan) ติดแสดงในตำแหน่งที่มองเห็นชัดเจน", "ctx": "ติดบริเวณโถงส่วนกลาง, หน้าลิฟต์, ทางเข้าเครื่องเล่น, ทางเข้าอาคาร", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับการป้องกันและระงับอัคคีภัย พ.ศ. 2555 ข้อ 28"}, {"id": "3.7", "catIdx": 3, "text": "ไม่มีการสะสมวัตถุไวไฟ เศษกระดาษ ขยะ หรือใบไม้แห้ง ในจุดเสี่ยงต่อการเกิดเพลิงไหม้", "ctx": "ร้านต้นไม้: กองปุ๋ย/เศษหญ้าแห้ง | ร้านอาหาร: คราบไขมันในท่อ | ลานจอด: เศษขยะ", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับการป้องกันและระงับอัคคีภัย พ.ศ. 2555 ข้อ 3"}, {"id": "3.8", "catIdx": 3, "text": "อุปกรณ์ สายรัดนิรภัย (Harness), รอก, สลิง, สลักล็อก (Carabiner) ได้มาตรฐานและผ่านการตรวจสภาพ", "ctx": "เครื่องเล่นปีนผา/สไลเดอร์: ชุด Harness & สลิง | สนามกีฬา: ตาข่าย/โครงโกล์", "law": "พ.ร.บ. ความปลอดภัยฯ พ.ศ. 2554 ม. 8 / มาตรฐานสากล EN/UIAA สำหรับอุปกรณ์ปีนผา"}, {"id": "3.9", "catIdx": 3, "text": "ปั๊มน้ำดับเพลิง / ปั๊มรักษาแรงดันแรงดันน้ำปกติเป็นไปตามมาตรฐาน พร้อมใช้งานไม่มีชำรุด อยู่ในโหมด Automatic", "ctx": "อาคารจอดรถ, อาคารเช่าร้านค้า, โครงการ BEAT Active/Discovery: ห้องปั๊มน้ำดับเพลิง (Fire Pump)", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับการป้องกันและระงับอัคคีภัย พ.ศ. 2555 / มาตรฐาน NFPA 20"}, {"id": "3.10", "catIdx": 3, "text": "ถังเก็บบรรจุน้ำดับเพลิงสำรองน้ำได้มากกว่า 30 นาทีตามกฎหมายกำหนด", "ctx": "อาคารจอดรถ, ศูนย์การค้า, อาคารเช่าส่วนกลาง: ถังเก็บน้ำสำรองดับเพลิง", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับการป้องกันและระงับอัคคีภัย พ.ศ. 2555 / พ.ร.บ. ควบคุมอาคาร พ.ศ. 2522"}, {"id": "4.1", "catIdx": 4, "text": "มีการทำความสะอาดและตรวจสอบระบบความปลอดภัยประจำวัน (Daily Safety Checklist)ตามห้องเครื่องจักรหลัก", "ctx": "พนักงานเช็คเครื่องเล่นทุกเช้าก่อนเปิดบริการ, ช่างเช็คตู้ไฟ/ปั๊มน้ำ, รปภ. ตรวจลานจอด", "law": "ระบบการจัดการความปลอดภัย ISO 45001 / ข้อกำหนดความปลอดภัยอาคาร"}, {"id": "4.2", "catIdx": 4, "text": "มีเอกสารประวัติการบำรุงรักษาเชิงป้องกัน (Preventive Maintenance - PM) ของระบบอาคาร/เครื่องเล่น หรือ เครื่องจักรหลัก", "ctx": "PM ระบบลิฟต์, PM เครื่องเล่น/ปั๊มน้ำ, PM ไฟสนาม, PM แขนกั้นจราจร", "law": "พ.ร.บ. ควบคุมอาคาร (การตรวจสอบอาคารและระบบวิศวกรรมประกอบอาคาร)"}, {"id": "4.3", "catIdx": 4, "text": "ถังน้ำประปาสามารถสำรองน้ำใช้มากกว่า 2 วัน", "ctx": "ทุกโครงการ: ถังน้ำประปาสำรองส่วนกลาง (สำรองน้ำใช้งานไม่น้อยกว่า 2 วัน)", "law": "พ.ร.บ. การสาธารณสุข พ.ศ. 2535 / เกณฑ์มาตรฐานวิศวกรรมสุขาภิบาล"}, {"id": "4.4", "catIdx": 4, "text": "ระบบไฟฟ้าสำรองมีการทดสอบทุกสัปดาห์และน้ำมันสำรอง มากกว่า 4 ชั่วโมง", "ctx": "ทุกโครงการ: เครื่องกำเนิดไฟฟ้าสำรอง (Generator) และน้ำมันดีเซลสำรอง", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับระบบไฟฟ้า พ.ศ. 2558 / มาตรฐาน EIT"}, {"id": "4.5", "catIdx": 4, "text": "ตัวเครื่องเล่น เครื่องจักร ปั๊มน้ำ ปั๊มลม ลมดันสไลเดอร์ มีฝาครอบป้องกันจุดหมุน (Safety Guard)", "ctx": "เจ็ตสกีจำลอง/สไลเดอร์: ปั๊มน้ำ/เครื่องสูบ | ร้านอาหาร: เครื่องบด/ปั่น | ลานจอด: แขนกั้น Barrier", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับเครื่องจักร ปั้นจั่น และหม้อน้ำ พ.ศ. 2564"}, {"id": "4.6", "catIdx": 4, "text": "มีปุ่มหยุดฉุกเฉิน (Emergency Stop / E-Stop) อยู่ในตำแหน่งที่กดได้ทันทีเมื่อเกิดเหตุ", "ctx": "เครื่องเล่นปีนผา/เจ็ตสกีจำลอง/สไลเดอร์ | ลานจอดรถ: แขนกั้นอัตโนมัติ | ลิฟต์อาคาร", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับเครื่องจักรฯ พ.ศ. 2564 หมวดปุ่มหยุดฉุกเฉิน"}, {"id": "4.7", "catIdx": 4, "text": "เบาะรองรับการตก (Crash Pad / Mat) หรือน้ำในสไลเดอร์ มีความหนา/ลึกเพียงพอตามมาตรฐาน", "ctx": "ผาจำลอง: เบาะรองตกหนาแน่น | สไลเดอร์/เจ็ตสกี: ระดับน้ำและกันชนข้าง", "law": "มาตรฐานความปลอดภัยเครื่องเล่นสนาม (มอก. 3000) / มาตรฐานความปลอดภัยสไลเดอร์สวนสนุก"}, {"id": "4.8", "catIdx": 4, "text": "มีการกำหนดนัยสำคัญเรื่องน้ำหนัก ส่วนสูง อายุ และจำนวนผู้เล่นต่อรอบอย่างชัดเจน", "ctx": "เครื่องเล่นปีนผา / สไลเดอร์ / เครื่องเล่นทางน้ำ / สไลเดอร์เด็ก", "law": "พ.ร.บ. ควบคุมอาคาร (เครื่องเล่นตามกฎกระทรวงควบคุมเครื่องเล่น พ.ศ. 2558)"}, {"id": "4.9", "catIdx": 4, "text": "มีป้ายและปฏิบัติตามมาตรการตัดแยกพลังงาน (Lockout/Tagout - LOTO) ขณะซ่อมบำรุงอุปกรณ์", "ctx": "การซ่อมบำรุงลิฟต์, ปั๊มน้ำสไลเดอร์, แขนกั้นลานจอดรถ, ไฟสนาม", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับเครื่องจักรฯ พ.ศ. 2564 หมวดการซ่อมบำรุง"}, {"id": "4.10", "catIdx": 4, "text": "ห้องน้ำส่วนกลาง Cleanliness สะอาด พื้นไม่ลื่น สุขภัณฑ์และพัดลมดูดอากาศทำงานปกติ", "ctx": "ทุกพื้นที่: ร้านอาหาร, สนามกีฬา, ลานจอดรถ, อาคารเช่า, โซนเครื่องเล่น", "law": "พ.ร.บ. การสาธารณสุข พ.ศ. 2535 / มาตรฐานห้องน้ำสาธารณะอาเซียน (HAS)"}, {"id": "5.1", "catIdx": 5, "text": "สารเคมี น้ำยาทำความสะอาด คลอรีน ปุ๋ยเคมี จัดเก็บมิดชิด มี SDS และถาดรองรับการรั่วไหล", "ctx": "ร้านต้นไม้: ปุ๋ย/ยาฆ่าแมลง | สไลเดอร์/เจ็ตสกี: คลอรีนน้ำ | ร้านอาหาร: น้ำยาล้างจาน", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับสารเคมีอันตราย พ.ศ. 2556 / พ.ร.บ. วัตถุอันตราย พ.ศ. 2535"}, {"id": "5.2", "catIdx": 5, "text": "ถังขยะมีการแยกประเภท มีฝาปิดมิดชิด จุดพักขยะสะอาด ไม่ส่งกลิ่นหรือเป็นแหล่งเชื้อโรค", "ctx": "ร้านอาหาร: ขยะเปียก/เศษอาหาร | ร้านต้นไม้: เศษกระถาง/ใบไม้ | ลานจอด: ขยะทั่วไป", "law": "พ.ร.บ. การสาธารณสุข พ.ศ. 2535 หมวดการจัดการสิ่งปฏิกูลและมูลฝอย"}, {"id": "5.3", "catIdx": 5, "text": "ระบบท่อน้ำทิ้ง ถังดักไขมัน (Grease Trap) ไม่บวมรั่ว ไม่มีน้ำท่วมขังหรือส่งกลิ่นเหม็น", "ctx": "ร้านอาหาร/ครัว: ถังดักไขมัน | ร้านต้นไม้: ทางระบายน้ำ | สไลเดอร์: ระบบกรองน้ำ", "law": "ข้อบัญญัติ กทม. / เทศบาล เรื่อง การบำบัดน้ำเสียและดักไขมันในสถานประกอบการอาหาร"}, {"id": "5.4", "catIdx": 5, "text": "คุณภาพน้ำใช้งาน/น้ำเล่นกีฬา/น้ำดื่ม ผ่านการตรวจวัดตามมาตรฐาน สะอาด ปลอดเชื้อโรค", "ctx": "เจ็ตสกีจำลอง/สไลเดอร์: คุณภาพน้ำ | ร้านอาหาร/สนามกีฬา: น้ำดื่มส่วนกลาง", "law": "ประกาศกระทรวงสาธารณสุข เรื่อง มาตรฐานน้ำบริโภค / มาตรฐานคุณภาพน้ำสระว่ายน้ำ"}, {"id": "5.5", "catIdx": 5, "text": "มีมาตรการควบคุมสัตว์พาหะนำโรค (Pest Control) เช่น หนู แมลงสาบ ยุง มด อย่างสม่ำเสมอ", "ctx": "ร้านอาหาร, ร้านขายต้นไม้, อาคารเช่าร้านค้า, โซนเครื่องเล่น", "law": "พ.ร.บ. การสาธารณสุข พ.ศ. 2535 หมวดสุขลักษณะของสถานที่จำหน่ายอาหาร"}, {"id": "5.6", "catIdx": 5, "text": "สภาพบ่อบำบัด ฝาปิดสนิท/ไม่มีกลิ่น / ระบบควบคุมทำงานปกติ / ค่าน้ำผ่านทุกค่าควบคุม", "ctx": "ทุกโครงการ: ระบบบำบัดน้ำเสียส่วนกลาง และบ่อดักไขมัน", "law": "พ.ร.บ. ส่งเสริมและรักษาคุณภาพสิ่งแวดล้อมแห่งชาติ พ.ศ. 2535 / พ.ร.บ. การสาธารณสุข พ.ศ. 2535"}, {"id": "6.1", "catIdx": 6, "text": "มีกล่อง/ตู้ปฐมพยาบาล (First Aid Kit) มียาสมุนไพร/เวชภัณฑ์ครบถ้วนและไม่หมดอายุ", "ctx": "ประจำเคาน์เตอร์ร้านค้า, คลับฮ้าส์กีฬา, ซุ้มเครื่องเล่น, ป้อม รปภ.", "law": "ประกาศกระทรวงแรงงาน เรื่อง จัดให้มีใบอนุญาตและอุปกรณ์ปฐมพยาบาลในสถานที่ทำงาน"}, {"id": "6.2", "catIdx": 6, "text": "มีเครื่องกระตุกหัวใจไฟฟ้าอัตโนมัติ (AED) อยู่ในจุดที่เข้าถึงง่าย พร้อมใช้งานตลอดเวลา", "ctx": "โซนกีฬา (แบด/เทนนิส), โซนเครื่องเล่นเสี่ยงสูง, อาคารส่วนกลาง, ลานจอดรถ", "law": "คำแนะนำสถาบันการแพทย์ฉุกเฉินแห่งชาติ (สพฉ.) / ประกาศกระทรวงสาธารณสุข"}, {"id": "6.3", "catIdx": 6, "text": "มีอุปกรณ์กู้ภัยเฉพาะทางประจำพื้นที่ (เช่น ห่วงยางกู้ภัย, ไม้สไลด์, บอร์ดดามหลัง)", "ctx": "เครื่องเล่นเจ็ตสกี/สไลเดอร์/ผาจำลอง: อุปกรณ์เซฟตี้กู้ภัยทางน้ำ/ทางสูง", "law": "พ.ร.บ. ควบคุมอาคาร (กฎกระทรวงควบคุมเครื่องเล่น พ.ศ. 2558) / มาตรฐานกู้ภัย"}, {"id": "6.4", "catIdx": 6, "text": "มีเบอร์โทรศัพท์สายด่วนฉุกเฉิน (Emergency Contact) ปิดแสดงในจุดที่เห็นชัดเจน", "ctx": "ติดประจำเคาน์เตอร์บริการ, จุดขายตั๋วเครื่องเล่น, ป้อม รปภ., ห้องควบคุม", "law": "แนวปฏิบัติระบบการจัดการความปลอดภัย อาชีวอนามัย (TOSH / ISO 45001)"}, {"id": "6.5", "catIdx": 6, "text": "มีพื้นที่จุดปฐมพยาบาลเบื้องต้น (First Aid Room/Corner) ที่เป็นสัดส่วนและสะอาด", "ctx": "โซนเครื่องเล่นกิจกรรม, สนามกีฬา, อาคารเช่าส่วนกลาง", "law": "ประกาศกระทรวงแรงงาน เรื่อง สวัสดิการในสถานประกอบการ"}, {"id": "6.6", "catIdx": 6, "text": "เจ้าหน้าที่ประจำพื้นที่ผ่านการอบรมการปฐมพยาบาลเบื้องต้นและการทำ CPR/AED", "ctx": "พนักงานควบคุมเครื่องเล่น, โค้ช/เจ้าหน้าที่สนาม, รปภ., เจ้าหน้าที่อาคาร", "law": "พ.ร.บ. ความปลอดภัย อาชีวอนามัยฯ พ.ศ. 2554 ม. 16 (การฝึกอบรมความปลอดภัย)"}, {"id": "6.7", "catIdx": 6, "text": "มีแผนและการซ้อมแผนความเสี่ยงภัยพิบัติ น้ำท่วม / พายุรุนแรง / สารเคมีรั่วไหล / แผ่นดินไหว ทุกปีหรือตามความเหมาะสม", "ctx": "ทุกโครงการ: แผนรับมือภัยพิบัติธรรมชาติ (น้ำท่วม/พายุ/แผ่นดินไหว/สารเคมี)", "law": "พ.ร.บ. ป้องกันและบรรเทาสาธารณภัย พ.ศ. 2550 / แนวปฏิบัติตาม ISO 45001"}, {"id": "6.8", "catIdx": 6, "text": "มีการซ้อมแผนฉุกเฉิน เป็นไปตามแผนและทุกคนมีส่วนร่วม", "ctx": "ทุกโครงการ: การซ้อมแผนฉุกเฉินและอพยพหนีไฟประจำปี", "law": "กฎกระทรวง กำหนดมาตรฐานเกี่ยวกับการป้องกันและระงับอัคคีภัย พ.ศ. 2555 ข้อ 28-30"}, {"id": "7.1", "catIdx": 7, "text": "ผู้รับเหมาภายนอกมีการขออนุญาตทำงานเสี่ยง (Permit to Work) ก่อนเข้าปฏิบัติงาน", "ctx": "การซ่อมบำรุงบนที่สูง, งานเชื่อมไฟฟ้า, งานตกแต่งร้านค้าผู้เช่า, งานระบบไฟ", "law": "พ.ร.บ. ความปลอดภัยฯ พ.ศ. 2554 ม. 14 / แนวปฏิบัติการควบคุมงานเสี่ยง (High Risk Work)"}, {"id": "7.2", "catIdx": 7, "text": "พื้นที่ก่อสร้างหรือปรับปรุง มีป้ายโครงการ ระบุวันเริ่ม/เสร็จ ผู้รับผิดชอบ ชัดเจน", "ctx": "พื้นที่ที่มีการปรับปรุง/ก่อสร้าง: ป้ายชื่อโครงการ ระบุวันเริ่ม-เสร็จ และผู้ควบคุมงาน", "law": "พ.ร.บ. ควบคุมอาคาร พ.ศ. 2522 / พ.ร.บ. ความปลอดภัยฯ พ.ศ. 2554 ม. 14"}, {"id": "7.3", "catIdx": 7, "text": "พื้นที่ก่อสร้างหรือปรับปรุง มีป้ายแสดงความปลอดภัย และ PPE ตามกำหนด", "ctx": "พื้นที่ก่อสร้าง/ปรับปรุง: ป้ายเตือนความปลอดภัย และข้อบังคับการสวมใส่ PPE", "law": "ประกาศกรมสวัสดิการและคุ้มครองแรงงาน เรื่อง เครื่องหมายความปลอดภัย / พ.ร.บ. ความปลอดภัยฯ ม. 22"}, {"id": "7.4", "catIdx": 7, "text": "พื้นที่ก่อสร้างหรือปรับปรุง มีการประเมินความเสี่ยง PCRA & ICRA และปฎิบัติตามอย่างเคร่งครัด", "ctx": "พื้นที่ก่อสร้าง/ปรับปรุง: เอกสารประเมินความเสี่ยง PCRA & ICRA ก่อนเริ่มงาน", "law": "แนวปฏิบัติความปลอดภัยงานก่อสร้าง / พ.ร.บ. ความปลอดภัย อาชีวอนามัยฯ พ.ศ. 2554"}, {"id": "7.5", "catIdx": 7, "text": "พื้นที่ก่อสร้างหรือปรับปรุง มีอบรมผู้รับเหมาก่อนทำงาน", "ctx": "พื้นที่ก่อสร้าง/ปรับปรุง: บันทึกการอบรม Safety Orientation ผู้รับเหมาก่อนเข้าทำงาน", "law": "พ.ร.บ. ความปลอดภัย อาชีวอนามัยฯ พ.ศ. 2554 ม. 16 (การฝึกอบรมความปลอดภัย)"}, {"id": "7.6", "catIdx": 7, "text": "พื้นที่ก่อสร้างหรือปรับปรุง มีการเดินตรวจสอบความปลอดภัยโดยผู้ควบคุมงาน", "ctx": "พื้นที่ก่อสร้าง/ปรับปรุง: สมุดบันทึกการตรวจความปลอดภัยประจำวันโดยผู้ควบคุมงาน (Safety Walk)", "law": "พ.ร.บ. ความปลอดภัย อาชีวอนามัยฯ พ.ศ. 2554 ม. 14 / แนวปฏิบัติการควบคุมงานก่อสร้าง"}, {"id": "8.1", "catIdx": 8, "text": "มีระบบการรับแจ้งข้อร้องเรียน/อุบัติเหตุ (Incident Report) และการวิเคราะห์หาสาเหตุป้องกันซ้ำ", "ctx": "บันทึกเมื่อเกิดเหตุคนลื่นล้ม, อุปกรณ์ชำรุด, หรือเครื่องเล่นติดขัด", "law": "ประกาศกระทรวงแรงงาน เรื่อง การรายงานอุบัติเหตุและการประสบอันตรายจากการทำงาน"}, {"id": "8.2", "catIdx": 8, "text": "อาคารผ่านการรับรองความปลอดภัยจากทางราชการหรือองค์กรหน่วยงานภายนอกรับรอง", "ctx": "ทุกโครงการ: ใบอนุญาตประกอบอาคาร (อ.1/อ.6), ใบรับรองการตรวจสอบอาคารประจำปี", "law": "พ.ร.บ. ควบคุมอาคาร พ.ศ. 2522 ม. 32 / กฎกระทรวงกำหนดประเภทอาคารที่ต้องตรวจ พ.ศ. 2548"}, {"id": "8.3", "catIdx": 8, "text": "ไม่มีข้อร้องเรียนจากผู้อยู่อาศัยรอบๆหรือชุมชน ได้รับการสนับสนุนเป็นอย่างดีและเข้าร่วมกับชุมชนอย่างต่อเนื่อง", "ctx": "ทุกโครงการ: ช่องทางรับข้อร้องเรียนชุมชนรอบข้าง (CSR/CRM) และบันทึกการแก้ไข", "law": "พ.ร.บ. การสาธารณสุข พ.ศ. 2535 หมวดเหตุรำคาญ / แนวปฏิบัติด้านสิ่งแวดล้อม QSHE"}];
+
+const LOGO_DATA_URI = "data:image/png;base64,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";
 
 /**
  * storage.js
@@ -1179,9 +1351,12 @@ const DB = {
     if (this.get("okrs", null) === null) this.set("okrs", SEED.okrs);
     if (this.get("kpis", null) === null) this.set("kpis", SEED.kpis);
     if (this.get("capas", null) === null) this.set("capas", SEED.capas);
+    if (this.get("mpPlans", null) === null) this.set("mpPlans", SEED.mpPlans);
+    if (this.get("mpUnits", null) === null) this.set("mpUnits", SEED.mpUnits);
+    if (this.get("mpScores", null) === null) this.set("mpScores", SEED.mpScores);
   },
   resetAll() {
-    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "session"].forEach((k) =>
+    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "session"].forEach((k) =>
       localStorage.removeItem(this._key(k))
     );
     this.ensureSeeded();
@@ -1195,7 +1370,6 @@ function uid(prefix) {
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
 }
-
 
 /**
  * auth.js
@@ -1259,7 +1433,6 @@ const Auth = {
   }
 };
 
-
 /**
  * export.js
  * CSV export (works everywhere, opens cleanly in Excel/Sheets) and a
@@ -1322,6 +1495,781 @@ const ExportUtil = {
   }
 };
 
+/**
+ * masterplan.js
+ * Master Plan module (org-level, not scoped to a single building):
+ *   1. QSHE Action Plan 2026-2027  – plan list + month timeline, add / edit / delete
+ *   2. Inspection Risk Summary     – charts + risk levels computed from the checklist
+ *   3. Risk Assessment Checklist   – manage หน่วยงาน (units) and score 56 items per unit
+ *
+ * Scoring follows Master_plan_of_QSHE_2026_re01.xlsx:
+ *   item score 1-5 (full mark 5), risk level: <=1 Critical, <=2 High, <=3 Medium, else Low
+ *   category / overall %: >=85 Pass, >=70 Fair, else Improve
+ * Items marked N/A or left blank are NOT counted in the denominator.
+ */
+
+// ------------------------------------------------------------ helpers ---
+function mt(th, en) {
+  return DB.get("lang", "th") === "en" ? en : th;
+}
+function mpEsc(s) {
+  return String(s === null || s === undefined ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function mpNl(s) {
+  return mpEsc(s).replace(/\n/g, "<br/>");
+}
+
+const MP_RISK = [
+  { id: "critical", th: "วิกฤต", en: "Critical", icon: "✖" },
+  { id: "high", th: "สูง", en: "High", icon: "▲" },
+  { id: "medium", th: "กลาง", en: "Medium", icon: "◆" },
+  { id: "low", th: "ต่ำ", en: "Low", icon: "✔" }
+];
+const MP_SCORE_LABELS = {
+  5: { th: "ดีเยี่ยม", en: "Excellent" },
+  4: { th: "ดี", en: "Good" },
+  3: { th: "พอใช้", en: "Fair" },
+  2: { th: "ปรับปรุง", en: "Needs work" },
+  1: { th: "วิกฤต", en: "Critical" }
+};
+const MP_PLAN_STATUS = [
+  { id: "todo", th: "รอดำเนินการ", en: "Pending" },
+  { id: "doing", th: "กำลังดำเนินการ", en: "In progress" },
+  { id: "done", th: "เสร็จสิ้น", en: "Done" }
+];
+const MP_MONTHS = (() => {
+  const out = [];
+  for (let i = 0; i < 15; i++) {
+    const d = new Date(Date.UTC(2026, 9 + i, 1));
+    out.push({ y: d.getUTCFullYear(), m: d.getUTCMonth(), start: d.toISOString().slice(0, 10),
+      end: new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).toISOString().slice(0, 10) });
+  }
+  return out;
+})();
+const MP_MONTH_TH = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+const MP_MONTH_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function mpRiskMeta(id) {
+  return MP_RISK.find((r) => r.id === id);
+}
+function mpRiskLabel(id) {
+  const r = mpRiskMeta(id);
+  return r ? mt(r.th, r.en) : "";
+}
+function mpStatusOf(pct) {
+  if (pct === null) return null;
+  if (pct >= 85) return { cls: "good", icon: "✔", th: "ผ่านเกณฑ์ดีมาก (Pass)", en: "Pass" };
+  if (pct >= 70) return { cls: "warning", icon: "◆", th: "ผ่านเกณฑ์ขั้นต่ำ (Fair)", en: "Fair" };
+  return { cls: "serious", icon: "▲", th: "ต้องปรับปรุงด่วน (Improve)", en: "Improve" };
+}
+function mpOverallStatusOf(pct) {
+  if (pct === null) return null;
+  if (pct >= 85) return { cls: "good", icon: "✔", th: "ระดับมาตรฐานความปลอดภัยสูง", en: "High safety standard" };
+  if (pct >= 70) return { cls: "warning", icon: "◆", th: "ผ่านเกณฑ์มาตรฐานขั้นต่ำ", en: "Meets minimum standard" };
+  return { cls: "critical", icon: "✖", th: "ไม่ผ่านเกณฑ์ - ต้องแก้ไขด่วน", en: "Below standard - act now" };
+}
+function mpChip(st) {
+  if (!st) return `<span class="st-chip muted">${mt("ยังไม่ประเมิน", "Not assessed")}</span>`;
+  return `<span class="st-chip"><i style="color:var(--st-${st.cls})" aria-hidden="true">${st.icon}</i>${mt(st.th, st.en)}</span>`;
+}
+function mpRiskChip(riskId) {
+  const r = mpRiskMeta(riskId);
+  if (!r) return `<span class="st-chip muted">–</span>`;
+  const col = { critical: "critical", high: "serious", medium: "warning", low: "good" }[riskId];
+  return `<span class="st-chip"><i style="color:var(--st-${col})" aria-hidden="true">${r.icon}</i>${mt(r.th, r.en)}</span>`;
+}
+function mpRiskColor(riskId) {
+  return `var(--st-${{ critical: "critical", high: "serious", medium: "warning", low: "good" }[riskId]})`;
+}
+function mpFmtDate(iso) {
+  if (!iso) return "–";
+  const [y, m, d] = iso.split("-").map(Number);
+  const th = DB.get("lang", "th") === "th";
+  const mon = (th ? MP_MONTH_TH : MP_MONTH_EN)[m - 1];
+  return `${d} ${mon} ${th ? y + 543 : y}`;
+}
+
+// --------------------------------------------------------------- seed ---
+SEED.mpPlans = [
+  { id: "mpp-1", step: "1. Master Plan QSHE - Q4/2026 to 2027", detail: "จัดทำและทบทวนแผนแม่บท QSHE สำหรับไตรมาส 4/2026 ถึงปี 2027 ให้ครอบคลุมทุกพื้นที่โครงการ", location: "ภาพรวมองค์กร / ทุกพื้นที่", owner: "คุณกฤตนัน / คุณสกัลยา", start: "2026-10-01", end: "2027-12-31", status: "doing" },
+  { id: "mpp-2", step: "  - QSHE Annual report - Q4/2026", detail: "สรุปรายงาน QSHE ประจำปี 2026", location: "ภาพรวมองค์กร", owner: "คุณกฤตนัน / คุณสกัลยา", start: "2026-10-01", end: "2026-12-31", status: "todo" },
+  { id: "mpp-3", step: "  - QSHE Improvement plan 2027", detail: "Safety culture activity (Communication + Activity), Dashboards Monitor and Trend, Safety awards excellent for quarter (3M), Training QSHE plan for Staff", location: "ภาพรวมองค์กร", owner: "คุณกฤตนัน / คุณสกัลยา", start: "2026-10-05", end: "2026-10-31", status: "todo" },
+  { id: "mpp-4", step: "2. Make dashboards QSHE", detail: "ออกแบบและจัดทำ Dashboard สรุปผลคะแนน QSHE, % Compliance และติดตาม KPI ภาพรวม", location: "ระบบสารสนเทศ QSHE: Dashboards overview QSHE, SSOT data record QSHE", owner: "คุณกฤตนัน / คุณสกัลยา", start: "2026-10-05", end: "2026-10-31", status: "todo" },
+  { id: "mpp-5", step: "3. Safety visit site", detail: "ลงพื้นที่ตรวจประเมิน Safety Inspection / Safety Visit Site ในแต่ละโซนพื้นที่จริง", location: "SAMA Garden (7 ต.ค.), BEAT Active (7 ต.ค.), Park X Ekkamai (8 ต.ค.), BEAT Discovery (5 ต.ค.), One Udomsuk", owner: "ทีม Safety Tour / Inspector / คปอ.", start: "2026-10-05", end: "2026-10-23", status: "todo" },
+  { id: "mpp-6", step: "4. Review regulation", detail: "ทบทวนกฎหมายและข้อกำหนด QSHE ที่เกี่ยวข้องทั้งหมด เพื่อเทียบสอดคล้องกับผลการตรวจพื้นที่", location: "ทุกข้อกำหนดกฎหมายที่เกี่ยวข้อง", owner: "คุณสกัลยา", start: "2026-10-20", end: "2026-10-31", status: "todo" },
+  { id: "mpp-7", step: "5. Risk assessment", detail: "ประเมินความเสี่ยง (Risk Assessment) จากข้อมูลการลงตรวจพื้นที่และข้อกฎหมาย พร้อมสรุปผลแยกตาม Location", location: "ทุกพื้นที่โครงการ", owner: "QSHE All Building", start: "2026-10-15", end: "2026-10-31", status: "todo" },
+  { id: "mpp-8", step: "6. Meeting Monthly and Follow up", detail: "ประชุมและติดตามผลการดำเนินการ: Monthly Meeting Report, Dashboard notification & boards", location: "ทุกเดือน (Every month)", owner: "QSHE All Building", start: "2026-10-01", end: "2027-12-31", status: "doing" }
+];
+SEED.mpUnits = [
+  { id: "mpu-sama", name: "SAMA Garden", type: "", note: "" },
+  { id: "mpu-beat-a", name: "BEAT Active", type: "", note: "" },
+  { id: "mpu-ekm", name: "Park X Ekkamai (EKM)", type: "", note: "" },
+  { id: "mpu-beat-d", name: "BEAT Discovery", type: "", note: "" },
+  { id: "mpu-ous", name: "One Udomsuk (OUS)", type: "", note: "" }
+];
+SEED.mpScores = []; // [{unitId, date, inspector, scores:{itemId: 1-5|"na"}, notes:{itemId:text}, demo?:true}]
+
+// --------------------------------------------------- scoring engine ---
+function mpItemsOfCat(catId) {
+  return MP_ITEMS.filter((i) => i.catIdx === catId);
+}
+function mpRecord(unitId) {
+  return DB.get("mpScores", []).find((r) => r.unitId === unitId) || null;
+}
+function mpSaveRecord(rec) {
+  const all = DB.get("mpScores", []);
+  const idx = all.findIndex((r) => r.unitId === rec.unitId);
+  if (idx >= 0) all[idx] = rec; else all.push(rec);
+  DB.set("mpScores", all);
+}
+/** Stats for a list of unit ids (pooled). */
+function mpStats(unitIds) {
+  const recs = DB.get("mpScores", []).filter((r) => unitIds.includes(r.unitId));
+  const cats = MP_CATEGORIES.map((c) => ({
+    id: c.id, th: c.th, en: c.en, total: mpItemsOfCat(c.id).length * unitIds.length,
+    assessed: 0, na: 0, sum: 0, max: 0, pct: null,
+    risk: { critical: 0, high: 0, medium: 0, low: 0 }
+  }));
+  const perUnit = {};
+  unitIds.forEach((u) => { perUnit[u] = { assessed: 0, sum: 0, max: 0 }; });
+  const issues = [];
+  recs.forEach((rec) => {
+    MP_ITEMS.forEach((it) => {
+      const v = (rec.scores || {})[it.id];
+      const c = cats[it.catIdx - 1];
+      if (v === "na") { c.na++; return; }
+      if (typeof v !== "number") return;
+      c.assessed++; c.sum += v; c.max += 5;
+      const rk = v <= 1 ? "critical" : v <= 2 ? "high" : v <= 3 ? "medium" : "low";
+      c.risk[rk]++;
+      perUnit[rec.unitId].assessed++; perUnit[rec.unitId].sum += v; perUnit[rec.unitId].max += 5;
+      if (rk === "critical" || rk === "high") issues.push({ unitId: rec.unitId, item: it, score: v, risk: rk, note: (rec.notes || {})[it.id] || "" });
+    });
+  });
+  cats.forEach((c) => { c.pct = c.max ? (c.sum / c.max) * 100 : null; });
+  const sum = cats.reduce((a, c) => a + c.sum, 0);
+  const max = cats.reduce((a, c) => a + c.max, 0);
+  const risk = { critical: 0, high: 0, medium: 0, low: 0 };
+  cats.forEach((c) => MP_RISK.forEach((r) => { risk[r.id] += c.risk[r.id]; }));
+  Object.keys(perUnit).forEach((u) => { const p = perUnit[u]; p.pct = p.max ? (p.sum / p.max) * 100 : null; });
+  issues.sort((a, b) => a.score - b.score);
+  return {
+    cats, perUnit, risk, issues, sum, max,
+    assessed: cats.reduce((a, c) => a + c.assessed, 0),
+    total: MP_ITEMS.length * unitIds.length,
+    pct: max ? (sum / max) * 100 : null
+  };
+}
+const mpFmtPct = (p) => (p === null ? "–" : p.toFixed(1) + "%");
+
+// ------------------------------------------------------------ tooltip ---
+function mpWireTips(root) {
+  let tip = document.getElementById("mp-tip");
+  if (!tip) {
+    tip = document.createElement("div");
+    tip.id = "mp-tip";
+    tip.className = "mp-tip";
+    tip.setAttribute("role", "tooltip");
+    document.body.appendChild(tip);
+  }
+  const hide = () => { tip.style.display = "none"; };
+  root.addEventListener("mouseover", (e) => {
+    const el = e.target.closest("[data-tip]");
+    if (!el || !root.contains(el)) return hide();
+    tip.textContent = el.dataset.tip;
+    tip.style.display = "block";
+  });
+  root.addEventListener("mousemove", (e) => {
+    if (tip.style.display !== "block") return;
+    const w = tip.offsetWidth;
+    let x = e.clientX + 14;
+    if (x + w > window.innerWidth - 8) x = e.clientX - w - 14;
+    tip.style.left = Math.max(8, x) + "px";
+    tip.style.top = e.clientY + 16 + "px";
+  });
+  root.addEventListener("mouseout", (e) => { if (!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest("[data-tip]")) hide(); });
+  root.addEventListener("mouseleave", hide);
+}
+
+function mpToolbarExport(btnId, datasetKey, filename) {
+  const b = document.getElementById(btnId);
+  if (b) b.addEventListener("click", () => {
+    const ds = DATASETS[datasetKey];
+    ExportUtil.exportCSV(ds.rows(), ds.headers, filename);
+  });
+}
+
+// ============================================================ 1. PLAN ===
+const MpPlanUI = { q: "", status: "all" };
+
+function mpPlanOverdue(p) {
+  return p.status !== "done" && p.end && p.end < todayISO();
+}
+function renderMpPlan(root) {
+  const all = DB.get("mpPlans", []);
+  const today = todayISO();
+  const cnt = { done: 0, doing: 0, todo: 0, overdue: 0 };
+  all.forEach((p) => { cnt[p.status] = (cnt[p.status] || 0) + 1; if (mpPlanOverdue(p)) cnt.overdue++; });
+  const q = MpPlanUI.q.trim().toLowerCase();
+  const plans = all.filter((p) =>
+    (MpPlanUI.status === "all" || p.status === MpPlanUI.status || (MpPlanUI.status === "overdue" && mpPlanOverdue(p))) &&
+    (!q || [p.step, p.detail, p.location, p.owner].join(" ").toLowerCase().includes(q))
+  );
+  const donePct = all.length ? Math.round((cnt.done / all.length) * 100) : 0;
+  const th = DB.get("lang", "th") === "th";
+  const monthHead = MP_MONTHS.map((m) => {
+    const cur = today >= m.start && today <= m.end;
+    return `<th class="tl-h ${cur ? "cur" : ""}" title="${(th ? MP_MONTH_TH : MP_MONTH_EN)[m.m]} ${m.y}"><span>${(th ? MP_MONTH_TH : MP_MONTH_EN)[m.m]}</span><small>${String(m.y).slice(2)}</small></th>`;
+  }).join("");
+
+  const rows = plans.length
+    ? plans.map((p, i) => {
+        const st = MP_PLAN_STATUS.find((s) => s.id === p.status) || MP_PLAN_STATUS[0];
+        const od = mpPlanOverdue(p);
+        const cells = MP_MONTHS.map((m) => {
+          const on = p.start && p.end && p.start <= m.end && p.end >= m.start;
+          const cur = today >= m.start && today <= m.end;
+          return `<td class="tl-c ${cur ? "cur" : ""}">${on ? `<span class="tl-bar st-${p.status}" data-tip="${mpEsc(p.step.trim())}: ${mpFmtDate(p.start)} – ${mpFmtDate(p.end)}"></span>` : ""}</td>`;
+        }).join("");
+        const stCls = { todo: "grey", doing: "gold", done: "green" }[p.status];
+        return `<tr>
+          <td class="c-no">${i + 1}</td>
+          <td class="c-step"><strong>${mpEsc(p.step.trim())}</strong><div class="mp-sub">${mpNl(p.detail)}</div></td>
+          <td class="c-loc">${mpNl(p.location) || "–"}</td>
+          <td class="c-own">${mpEsc(p.owner) || "–"}</td>
+          <td class="c-per">${mpFmtDate(p.start)}<br/>– ${mpFmtDate(p.end)}${od ? `<div class="mp-od">▲ ${mt("เกินกำหนด", "Overdue")}</div>` : ""}</td>
+          ${cells}
+          <td><span class="badge ${stCls}">${mt(st.th, st.en)}</span></td>
+          <td class="c-act"><button class="icon-btn" data-edit-plan="${p.id}">${mt("แก้ไข", "Edit")}</button><button class="icon-btn danger" data-del-plan="${p.id}">${t("btn_delete")}</button></td>
+        </tr>`;
+      }).join("")
+    : `<tr><td colspan="${6 + MP_MONTHS.length + 2}" class="empty-state">${mt("ไม่พบแผนงาน", "No plans found")}</td></tr>`;
+
+  root.innerHTML = `
+    <div class="grid cols-4" style="margin-bottom:14px;">
+      <div class="stat-card"><div class="label">${mt("แผนทั้งหมด", "Total plans")}</div><div class="value">${all.length}</div><div class="sub">${mt("เสร็จสิ้น", "Done")} ${donePct}%</div></div>
+      <div class="stat-card"><div class="label">${mt("กำลังดำเนินการ", "In progress")}</div><div class="value">${cnt.doing}</div></div>
+      <div class="stat-card"><div class="label">${mt("รอดำเนินการ", "Pending")}</div><div class="value">${cnt.todo}</div></div>
+      <div class="stat-card"><div class="label">${mt("เกินกำหนด", "Overdue")}</div><div class="value">${cnt.overdue ? "▲ " : ""}${cnt.overdue}</div></div>
+    </div>
+    <div class="toolbar">
+      <div class="filters">
+        <input type="text" id="mp-plan-q" placeholder="${mt("ค้นหาแผน / ผู้รับผิดชอบ / พื้นที่", "Search plan / owner / location")}" value="${mpEsc(MpPlanUI.q)}" />
+        <select id="mp-plan-status">
+          <option value="all">${mt("ทุกสถานะ", "All statuses")}</option>
+          ${MP_PLAN_STATUS.map((s) => `<option value="${s.id}" ${MpPlanUI.status === s.id ? "selected" : ""}>${mt(s.th, s.en)}</option>`).join("")}
+          <option value="overdue" ${MpPlanUI.status === "overdue" ? "selected" : ""}>${mt("เกินกำหนด", "Overdue")}</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost" id="mp-plan-csv">${mt("ส่งออก CSV", "Export CSV")}</button>
+        <button class="btn" id="mp-plan-add">+ ${mt("เพิ่มแผน", "Add plan")}</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;">
+      <div class="mp-scroll">
+        <table class="mp-plan-table">
+          <thead><tr>
+            <th>#</th><th>${mt("ขั้นตอนหลัก / กิจกรรม", "Key step / activity")}</th><th>${mt("พื้นที่เป้าหมาย", "Target location")}</th>
+            <th>${mt("ผู้รับผิดชอบ", "Owner")}</th><th>${mt("ระยะเวลา", "Period")}</th>${monthHead}<th>${mt("สถานะ", "Status")}</th><th></th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mp-legend">
+      <span><i class="tl-bar st-todo"></i> ${mt("รอดำเนินการ", "Pending")}</span>
+      <span><i class="tl-bar st-doing"></i> ${mt("กำลังดำเนินการ", "In progress")}</span>
+      <span><i class="tl-bar st-done"></i> ${mt("เสร็จสิ้น", "Done")}</span>
+    </div>
+  `;
+  mpWireTips(root);
+  document.getElementById("mp-plan-q").addEventListener("input", (e) => {
+    MpPlanUI.q = e.target.value;
+    const pos = e.target.selectionStart;
+    renderMpPlan(root);
+    const el = document.getElementById("mp-plan-q");
+    el.focus(); el.setSelectionRange(pos, pos);
+  });
+  document.getElementById("mp-plan-status").addEventListener("change", (e) => { MpPlanUI.status = e.target.value; renderMpPlan(root); });
+  document.getElementById("mp-plan-add").addEventListener("click", () => openMpPlanForm(null));
+  mpToolbarExport("mp-plan-csv", "mpPlans", "QSHE_Action_Plan_2026-2027");
+  root.querySelectorAll("[data-edit-plan]").forEach((b) => b.addEventListener("click", () => openMpPlanForm(b.dataset.editPlan)));
+  root.querySelectorAll("[data-del-plan]").forEach((b) => b.addEventListener("click", () => {
+    if (!confirm(mt("ลบแผนนี้หรือไม่?", "Delete this plan?"))) return;
+    DB.set("mpPlans", DB.get("mpPlans", []).filter((p) => p.id !== b.dataset.delPlan));
+    toast(mt("ลบแล้ว", "Deleted"));
+    renderMpPlan(root);
+  }));
+}
+
+function openMpPlanForm(id) {
+  const ex = id ? DB.get("mpPlans", []).find((p) => p.id === id) : null;
+  const v = ex || { step: "", detail: "", location: "", owner: "", start: todayISO(), end: todayISO(), status: "todo" };
+  const modal = openModal(`
+    <h3>${ex ? mt("แก้ไขแผนงาน", "Edit plan") : mt("เพิ่มแผนงาน", "Add plan")}</h3>
+    <div class="field"><label>${mt("ขั้นตอนหลัก / ชื่อแผน", "Key step / plan name")} *</label><input type="text" id="f-step" value="${mpEsc(v.step.trim())}" /></div>
+    <div class="field"><label>${mt("กิจกรรมย่อย / รายละเอียด", "Activities / details")}</label><textarea id="f-detail" rows="3">${mpEsc(v.detail)}</textarea></div>
+    <div class="field"><label>${mt("พื้นที่เป้าหมาย", "Target location")}</label><textarea id="f-loc" rows="2">${mpEsc(v.location)}</textarea></div>
+    <div class="form-row">
+      <div class="field"><label>${mt("ผู้รับผิดชอบ", "Owner")}</label><input type="text" id="f-owner" value="${mpEsc(v.owner)}" /></div>
+      <div class="field"><label>${mt("สถานะ", "Status")}</label><select id="f-status">${MP_PLAN_STATUS.map((s) => `<option value="${s.id}" ${v.status === s.id ? "selected" : ""}>${mt(s.th, s.en)}</option>`).join("")}</select></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>${mt("วันที่เริ่ม", "Start date")}</label><input type="date" id="f-start" value="${v.start}" /></div>
+      <div class="field"><label>${mt("วันที่สิ้นสุด", "End date")}</label><input type="date" id="f-end" value="${v.end}" /></div>
+    </div>
+    <div class="actions"><button class="btn ghost" id="f-cancel">${mt("ยกเลิก", "Cancel")}</button><button class="btn" id="f-save">${mt("บันทึก", "Save")}</button></div>
+  `);
+  modal.querySelector("#f-cancel").addEventListener("click", closeModal);
+  modal.querySelector("#f-save").addEventListener("click", () => {
+    const step = modal.querySelector("#f-step").value.trim();
+    const start = modal.querySelector("#f-start").value;
+    const end = modal.querySelector("#f-end").value;
+    if (!step) return alert(mt("กรุณากรอกชื่อแผน", "Please enter a plan name"));
+    if (!start || !end || end < start) return alert(mt("วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่ม", "End date must not be before start date"));
+    const next = {
+      id: ex ? ex.id : uid("mpp"), step,
+      detail: modal.querySelector("#f-detail").value.trim(),
+      location: modal.querySelector("#f-loc").value.trim(),
+      owner: modal.querySelector("#f-owner").value.trim(),
+      status: modal.querySelector("#f-status").value, start, end
+    };
+    const all = DB.get("mpPlans", []);
+    if (ex) all[all.findIndex((p) => p.id === ex.id)] = next; else all.push(next);
+    DB.set("mpPlans", all);
+    closeModal();
+    toast(mt("บันทึกแล้ว", "Saved"));
+    renderMpPlan(document.getElementById("view-root"));
+  });
+}
+
+// ===================================================== 2. RISK SUMMARY ===
+const MpRiskUI = { scope: "ALL", table: false };
+
+function mpBar(label, pct, tip, cls) {
+  const st = mpStatusOf(pct);
+  return `<div class="bar-row">
+    <div class="bar-label">${label}</div>
+    <div class="bar-track" data-tip="${mpEsc(tip)}" tabindex="0">
+      ${pct === null ? "" : `<div class="bar-fill" style="width:${Math.max(pct, 0.8).toFixed(1)}%;background:var(--st-${cls || st.cls});"></div>`}
+      <span class="thr" style="left:70%"></span><span class="thr" style="left:85%"></span>
+    </div>
+    <div class="bar-val">${mpFmtPct(pct)}</div>
+    <div class="bar-st">${pct === null ? `<span class="st-chip muted">${mt("ยังไม่ประเมิน", "Not assessed")}</span>` : mpChip(st)}</div>
+  </div>`;
+}
+function mpBarAxis() {
+  return `<div class="bar-row axis"><div class="bar-label"></div><div class="bar-track axis-t">
+    <span style="left:0">0</span><span style="left:70%">70</span><span style="left:85%">85</span><span style="left:100%">100%</span></div><div class="bar-val"></div><div class="bar-st"></div></div>`;
+}
+function mpCatName(c) {
+  return `${c.id}. ${mt(c.th, c.en)}`;
+}
+
+function renderMpRisk(root) {
+  const units = DB.get("mpUnits", []);
+  if (MpRiskUI.scope !== "ALL" && !units.find((u) => u.id === MpRiskUI.scope)) MpRiskUI.scope = "ALL";
+  const scoped = MpRiskUI.scope === "ALL" ? units : units.filter((u) => u.id === MpRiskUI.scope);
+  const ids = scoped.map((u) => u.id);
+  const S = mpStats(ids);
+  const recs = DB.get("mpScores", []);
+  const demo = recs.some((r) => r.demo && ids.includes(r.unitId));
+  const scopeName = MpRiskUI.scope === "ALL" ? mt("ทุกหน่วยงาน (รวม)", "All units (pooled)") : scoped[0].name;
+  const overall = mpOverallStatusOf(S.pct);
+  const unitName = (id) => (units.find((u) => u.id === id) || {}).name || id;
+
+  const toolbar = `
+    <div class="toolbar">
+      <div class="filters">
+        <select id="mp-risk-scope">
+          <option value="ALL">${mt("ทุกหน่วยงาน (รวม)", "All units (pooled)")}</option>
+          ${units.map((u) => `<option value="${u.id}" ${MpRiskUI.scope === u.id ? "selected" : ""}>${mpEsc(u.name)}</option>`).join("")}
+        </select>
+        <button class="btn ghost small" id="mp-risk-view">${MpRiskUI.table ? mt("แสดงเป็นกราฟ", "Show charts") : mt("แสดงเป็นตาราง", "Show table")}</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn ghost" id="mp-risk-csv">${mt("ส่งออก CSV", "Export CSV")}</button>
+        <button class="btn" id="mp-risk-print">${mt("พิมพ์ / PDF", "Print / PDF")}</button>
+      </div>
+    </div>`;
+
+  if (!S.assessed) {
+    root.innerHTML = toolbar + `<div class="card empty-state">
+      <div style="font-size:15px;margin-bottom:6px;">${mt("ยังไม่มีคะแนนการตรวจประเมินของ", "No inspection scores yet for")} <strong>${mpEsc(scopeName)}</strong></div>
+      <div style="margin-bottom:14px;">${mt("กรอกคะแนนในหน้า Risk Assessment Checklist แล้วกราฟและระดับความเสี่ยงจะแสดงที่นี่อัตโนมัติ", "Score items in the Risk Assessment Checklist and charts + risk levels will appear here automatically.")}</div>
+      <button class="btn" id="mp-go-check">${mt("ไปที่ Risk Assessment Checklist", "Go to Risk Assessment Checklist")}</button>
+      ${Auth.isAdmin(State.user) ? `<button class="btn ghost" id="mp-load-demo" style="margin-left:8px;">${mt("สร้างคะแนนตัวอย่าง (Demo)", "Load demo scores")}</button>` : ""}
+    </div>`;
+    bindMpRiskCommon(root);
+    return;
+  }
+
+  const riskTotal = S.risk.critical + S.risk.high + S.risk.medium + S.risk.low;
+  const catBars = S.cats.map((c) =>
+    mpBar(mpCatName(c), c.pct, `${mpCatName(c)}\n${mt("คะแนน", "Score")} ${c.sum}/${c.max} (${mpFmtPct(c.pct)}) · ${c.assessed} ${mt("ข้อที่ประเมิน", "items assessed")}`)
+  ).join("");
+
+  const stackRows = S.cats.map((c) => {
+    const n = c.assessed;
+    const segs = MP_RISK.map((r) => {
+      const k = c.risk[r.id];
+      if (!k) return "";
+      return `<div class="seg" style="flex:${k};background:${mpRiskColor(r.id)};" data-tip="${mpEsc(mpCatName(c))}\n${r.icon} ${mpRiskLabel(r.id)}: ${k} ${mt("ข้อ", "items")} (${((k / n) * 100).toFixed(0)}%)">${k >= 2 ? `<b>${k}</b>` : ""}</div>`;
+    }).join("");
+    return `<div class="bar-row stack-row"><div class="bar-label">${mpCatName(c)}</div>
+      <div class="stack-track">${n ? segs : `<span class="muted-s">${mt("ยังไม่ประเมิน", "Not assessed")}</span>`}</div>
+      <div class="bar-val">${n} ${mt("ข้อ", "items")}</div></div>`;
+  }).join("");
+
+  const compareHtml = MpRiskUI.scope === "ALL" && units.length > 1
+    ? `<div class="card"><h3>${mt("เปรียบเทียบหน่วยงาน", "Unit comparison")}</h3>
+        <div class="desc">${mt("คะแนนรวมแต่ละหน่วยงาน เรียงจากมากไปน้อย (เส้นที่ 70% และ 85% คือเกณฑ์)", "Overall score per unit, highest first (lines mark the 70% and 85% thresholds)")}</div>
+        ${mpBarAxis()}
+        ${[...units].sort((a, b) => (S.perUnit[b.id].pct ?? -1) - (S.perUnit[a.id].pct ?? -1)).map((u) => {
+          const p = S.perUnit[u.id];
+          return mpBar(mpEsc(u.name), p.pct, `${u.name}\n${mt("คะแนน", "Score")} ${p.sum}/${p.max} · ${p.assessed}/${MP_ITEMS.length} ${mt("ข้อ", "items")}`);
+        }).join("")}</div>`
+    : "";
+
+  const issues = S.issues.slice(0, 15);
+  const issueHtml = `<div class="card"><h3>${mt("รายการเสี่ยงสูงที่ต้องแก้ไขก่อน", "Highest-risk items to fix first")}</h3>
+    <div class="desc">${S.issues.length ? mt(`พบ ${S.issues.length} ข้อที่เสี่ยงระดับวิกฤต/สูง (แสดง ${issues.length} ข้อแรก เรียงจากคะแนนต่ำสุด)`, `${S.issues.length} items rated Critical/High (showing the first ${issues.length}, lowest score first)`) : mt("ไม่พบข้อที่เสี่ยงระดับวิกฤตหรือสูง", "No Critical or High risk items")}</div>
+    ${S.issues.length ? `<div class="mp-scroll"><table><thead><tr><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("ข้อ", "Item")}</th><th>${mt("รายการตรวจ", "Checklist item")}</th><th>${mt("คะแนน", "Score")}</th><th>${mt("ระดับ", "Risk")}</th><th>${mt("ข้อสังเกต", "Note")}</th></tr></thead><tbody>
+      ${issues.map((x) => `<tr><td>${mpEsc(unitName(x.unitId))}</td><td>${x.item.id}</td><td>${mpEsc(x.item.text)}</td><td>${x.score}/5</td><td>${mpRiskChip(x.risk)}</td><td>${mpEsc(x.note) || "–"}</td></tr>`).join("")}
+    </tbody></table></div>` : ""}</div>`;
+
+  const tableHtml = `<div class="card"><h3>${mt("ตารางสรุปตามหมวด", "Summary by category")}</h3>
+    <div class="mp-scroll"><table><thead><tr><th>${mt("หมวดหมู่การตรวจประเมิน", "Category")}</th><th>${mt("ข้อที่ประเมิน", "Assessed")}</th><th>${mt("คะแนนเต็มรวม", "Max")}</th><th>${mt("คะแนนที่ได้", "Score")}</th><th>%</th>${MP_RISK.map((r) => `<th>${r.icon} ${mt(r.th, r.en)}</th>`).join("")}<th>${mt("สถานะ", "Status")}</th></tr></thead><tbody>
+    ${S.cats.map((c) => `<tr><td>${mpCatName(c)}</td><td>${c.assessed}/${c.total}</td><td>${c.max}</td><td>${c.sum}</td><td>${mpFmtPct(c.pct)}</td>${MP_RISK.map((r) => `<td>${c.risk[r.id]}</td>`).join("")}<td>${mpChip(mpStatusOf(c.pct))}</td></tr>`).join("")}
+    <tr class="total-row"><td><strong>${mt("รวมทั้งสิ้น", "Total")}</strong></td><td>${S.assessed}/${S.total}</td><td>${S.max}</td><td>${S.sum}</td><td><strong>${mpFmtPct(S.pct)}</strong></td>${MP_RISK.map((r) => `<td>${S.risk[r.id]}</td>`).join("")}<td>${mpChip(overall)}</td></tr>
+    </tbody></table></div></div>`;
+
+  root.innerHTML = toolbar + (demo ? `<div class="mp-banner">ⓘ ${mt("กำลังแสดงคะแนนตัวอย่าง (Demo) ไม่ใช่ผลตรวจจริง – แก้ไขคะแนนในหน้า Checklist เพื่อแทนที่", "Showing demo scores, not real inspection results – edit scores in the Checklist to replace them")}</div>` : "") + `
+    <div class="grid cols-4" style="margin-bottom:14px;">
+      <div class="stat-card"><div class="label">${mt("คะแนนรวม", "Overall score")} · ${mpEsc(scopeName)}</div><div class="value">${mpFmtPct(S.pct)}</div><div class="sub">${S.sum}/${S.max} ${mt("คะแนน", "pts")}</div></div>
+      <div class="stat-card"><div class="label">${mt("ระดับการประเมินภาพรวม", "Overall rating")}</div><div class="value" style="font-size:15px;line-height:1.5;padding-top:6px;">${mpChip(overall)}</div></div>
+      <div class="stat-card"><div class="label">${mt("ข้อที่ประเมินแล้ว", "Items assessed")}</div><div class="value">${S.assessed}<span style="font-size:15px;color:var(--muted);">/${S.total}</span></div><div class="sub">${Math.round((S.assessed / S.total) * 100)}%</div></div>
+      <div class="stat-card"><div class="label">${mt("ข้อเสี่ยงวิกฤต + สูง", "Critical + High items")}</div><div class="value">${S.risk.critical + S.risk.high}</div><div class="sub">${mt("วิกฤต", "Critical")} ${S.risk.critical} · ${mt("สูง", "High")} ${S.risk.high}</div></div>
+    </div>
+    ${MpRiskUI.table ? tableHtml : `
+    <div class="card"><h3>${mt("คะแนนตามหมวดหมู่ (% เทียบเกณฑ์)", "Score by category (% vs thresholds)")}</h3>
+      <div class="desc">${mt("เส้นที่ 70% = เกณฑ์ขั้นต่ำ, 85% = ดีมาก", "Lines at 70% = minimum, 85% = very good")}</div>
+      ${mpBarAxis()}${catBars}
+    </div>
+    <div class="card"><h3>${mt("ระดับความเสี่ยงของข้อตรวจ แยกตามหมวด", "Risk level of items, by category")}</h3>
+      <div class="desc">${mt("จำนวนข้อตรวจในแต่ละระดับความเสี่ยง (วิกฤต = คะแนน 1, สูง = 2, กลาง = 3, ต่ำ = 4–5)", "Item count per risk level (Critical = score 1, High = 2, Medium = 3, Low = 4–5)")}</div>
+      <div class="mp-legend top">${MP_RISK.map((r) => `<span><i class="sw" style="background:${mpRiskColor(r.id)}"></i>${r.icon} ${mt(r.th, r.en)} <b>${S.risk[r.id]}</b></span>`).join("")}<span class="muted-s">${mt("รวม", "Total")} ${riskTotal}</span></div>
+      ${stackRows}
+    </div>
+    ${compareHtml}`}
+    ${issueHtml}
+  `;
+  bindMpRiskCommon(root);
+}
+
+function bindMpRiskCommon(root) {
+  mpWireTips(root);
+  const sc = document.getElementById("mp-risk-scope");
+  if (sc) sc.addEventListener("change", () => { MpRiskUI.scope = sc.value; renderMpRisk(root); });
+  const vw = document.getElementById("mp-risk-view");
+  if (vw) vw.addEventListener("click", () => { MpRiskUI.table = !MpRiskUI.table; renderMpRisk(root); });
+  mpToolbarExport("mp-risk-csv", "mpSummary", "QSHE_Inspection_Risk_Summary");
+  const pr = document.getElementById("mp-risk-print");
+  if (pr) pr.addEventListener("click", () => {
+    const units = DB.get("mpUnits", []);
+    const ids = MpRiskUI.scope === "ALL" ? units.map((u) => u.id) : [MpRiskUI.scope];
+    const S = mpStats(ids);
+    const nm = MpRiskUI.scope === "ALL" ? "ทุกหน่วยงาน (รวม)" : (units.find((u) => u.id === MpRiskUI.scope) || {}).name;
+    const html = `<div class="meta">PSD eNGINNo QSHE Management — Inspection Risk Summary</div>
+      <h1>สรุปผลการตรวจประเมินความปลอดภัย — ${mpEsc(nm)}</h1>
+      <div class="meta">วันที่จัดทำ: ${todayISO()} | คะแนนรวม ${mpFmtPct(S.pct)} | ข้อเสี่ยงวิกฤต ${S.risk.critical} / สูง ${S.risk.high}</div>
+      <table><thead><tr><th>หมวดหมู่</th><th>ข้อที่ประเมิน</th><th>คะแนน</th><th>%</th><th>สถานะ</th></tr></thead><tbody>
+      ${S.cats.map((c) => { const st = mpStatusOf(c.pct); return `<tr><td>${c.id}. ${c.th} (${c.en})</td><td>${c.assessed}/${c.total}</td><td>${c.sum}/${c.max}</td><td>${mpFmtPct(c.pct)}</td><td>${st ? st.icon + " " + st.th : "ยังไม่ประเมิน"}</td></tr>`; }).join("")}
+      </tbody></table>`;
+    ExportUtil.printSection(html, "QSHE Inspection Risk Summary");
+  });
+  const go = document.getElementById("mp-go-check");
+  if (go) go.addEventListener("click", () => navigate("mp_check"));
+  const dm = document.getElementById("mp-load-demo");
+  if (dm) dm.addEventListener("click", () => {
+    mpLoadDemo();
+    toast(mt("สร้างคะแนนตัวอย่างแล้ว", "Demo scores created"));
+    renderMpRisk(root);
+  });
+}
+
+/** Deterministic demo scores for units that have none (flagged demo:true). */
+function mpLoadDemo() {
+  const units = DB.get("mpUnits", []);
+  const bias = [4.3, 3.6, 4.0, 3.1, 3.8];
+  units.forEach((u, ui) => {
+    if (mpRecord(u.id)) return;
+    let seed = 7 + ui * 13;
+    const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    const scores = {};
+    MP_ITEMS.forEach((it) => {
+      const r = rnd();
+      if (r < 0.04) { scores[it.id] = "na"; return; }
+      let v = Math.round(bias[ui % bias.length] + (rnd() - 0.5) * 3.2 - (it.catIdx === 3 && ui === 3 ? 0.8 : 0));
+      scores[it.id] = Math.min(5, Math.max(1, v));
+    });
+    mpSaveRecord({ unitId: u.id, date: todayISO(), inspector: "(demo)", scores, notes: {}, demo: true });
+  });
+}
+
+// ================================================== 3. CHECKLIST + UNITS ===
+const MpCheckUI = { unitId: null };
+
+function renderMpCheck(root) {
+  const units = DB.get("mpUnits", []);
+  if (!units.find((u) => u.id === MpCheckUI.unitId)) MpCheckUI.unitId = units[0] ? units[0].id : null;
+  const unit = units.find((u) => u.id === MpCheckUI.unitId);
+
+  const unitCards = units.map((u) => {
+    const S = mpStats([u.id]);
+    const st = mpStatusOf(S.pct);
+    return `<div class="unit-card ${u.id === MpCheckUI.unitId ? "selected" : ""}" data-unit="${u.id}" tabindex="0" role="button">
+      <div class="u-name">${mpEsc(u.name)}</div>
+      <div class="u-meta">${u.type ? mpEsc(u.type) + " · " : ""}${S.assessed}/${MP_ITEMS.length} ${mt("ข้อ", "items")} · ${mpFmtPct(S.pct)}</div>
+      <div class="u-st">${st ? `<i style="color:var(--st-${st.cls})">${st.icon}</i>` : "<i>○</i>"}</div>
+    </div>`;
+  }).join("");
+
+  root.innerHTML = `
+    <div class="card">
+      <div class="toolbar" style="margin-bottom:10px;">
+        <div><h3 style="margin:0;">${mt("หน่วยงานที่ตรวจประเมิน", "Units under inspection")}</h3>
+          <div class="desc" style="margin:2px 0 0;">${mt("เลือกหน่วยงานเพื่อกรอกคะแนน หรือเพิ่ม / แก้ไข / ลบหน่วยงาน", "Select a unit to score it, or add / edit / delete units")}</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn ghost" id="mp-chk-csv">${mt("ส่งออก CSV", "Export CSV")}</button>
+          <button class="btn" id="mp-unit-add">+ ${mt("เพิ่มหน่วยงาน", "Add unit")}</button>
+        </div>
+      </div>
+      <div class="unit-grid">${unitCards || `<div class="empty-state">${mt("ยังไม่มีหน่วยงาน กด “เพิ่มหน่วยงาน”", "No units yet – click “Add unit”")}</div>`}</div>
+    </div>
+    <div id="mp-check-body"></div>
+  `;
+  document.getElementById("mp-unit-add").addEventListener("click", () => openMpUnitForm(null));
+  mpToolbarExport("mp-chk-csv", "mpScores", "QSHE_Risk_Assessment_Checklist");
+  root.querySelectorAll("[data-unit]").forEach((c) => {
+    const pick = () => { MpCheckUI.unitId = c.dataset.unit; renderMpCheck(root); };
+    c.addEventListener("click", pick);
+    c.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+  });
+  if (unit) renderMpChecklistBody(unit);
+}
+
+function renderMpChecklistBody(unit) {
+  const body = document.getElementById("mp-check-body");
+  const rec = mpRecord(unit.id) || { unitId: unit.id, date: todayISO(), inspector: "", scores: {}, notes: {} };
+  const opts = (cur) => `<option value="">— ${mt("ยังไม่ประเมิน", "not assessed")}</option>` +
+    [5, 4, 3, 2, 1].map((n) => `<option value="${n}" ${cur === n ? "selected" : ""}>${n} · ${mt(MP_SCORE_LABELS[n].th, MP_SCORE_LABELS[n].en)}</option>`).join("") +
+    `<option value="na" ${cur === "na" ? "selected" : ""}>N/A · ${mt("ไม่มีข้อนี้", "not applicable")}</option>`;
+
+  const cats = MP_CATEGORIES.map((c) => {
+    const items = mpItemsOfCat(c.id).map((it) => {
+      const cur = rec.scores[it.id];
+      const rk = typeof cur === "number" ? (cur <= 1 ? "critical" : cur <= 2 ? "high" : cur <= 3 ? "medium" : "low") : null;
+      return `<div class="chk-row" data-row="${it.id}" ${rk ? `style="--rk:${mpRiskColor(rk)}"` : ""}>
+        <div class="chk-id">${it.id}</div>
+        <div class="chk-main">
+          <div class="chk-text">${mpEsc(it.text)}</div>
+          ${it.ctx || it.law ? `<details class="chk-more"><summary>${mt("บริบท / กฎหมายอ้างอิง", "Context / legal reference")}</summary>
+            ${it.ctx ? `<div><b>${mt("บริบทการตรวจ", "Context")}:</b> ${mpEsc(it.ctx)}</div>` : ""}
+            ${it.law ? `<div><b>${mt("อ้างอิง", "Reference")}:</b> ${mpEsc(it.law)}</div>` : ""}</details>` : ""}
+          <input type="text" class="chk-note" data-note="${it.id}" placeholder="${mt("ข้อสังเกต / สิ่งที่ต้องแก้ไข (ถ้ามี)", "Finding / action needed (optional)")}" value="${mpEsc(rec.notes[it.id] || "")}" />
+        </div>
+        <div class="chk-score">
+          <select data-score="${it.id}" aria-label="${mt("คะแนนข้อ", "Score for item")} ${it.id}">${opts(cur)}</select>
+          <div class="chk-risk" data-risk="${it.id}">${rk ? mpRiskChip(rk) : ""}</div>
+        </div>
+      </div>`;
+    }).join("");
+    return `<details class="chk-cat" open>
+      <summary><span class="cat-title">${mpCatName(c)}</span><span class="cat-sum" data-catsum="${c.id}"></span></summary>
+      ${items}</details>`;
+  }).join("");
+
+  body.innerHTML = `
+    <div class="card">
+      <div class="toolbar" style="margin-bottom:10px;">
+        <h3 style="margin:0;">${mpEsc(unit.name)}</h3>
+        <div style="display:flex;gap:8px;">
+          <button class="btn ghost small" id="mp-unit-edit">${mt("แก้ไขหน่วยงาน", "Edit unit")}</button>
+          <button class="btn ghost small" id="mp-unit-clear">${mt("ล้างคะแนน", "Clear scores")}</button>
+          <button class="btn danger small" id="mp-unit-del">${mt("ลบหน่วยงาน", "Delete unit")}</button>
+        </div>
+      </div>
+      ${rec.demo ? `<div class="mp-banner">ⓘ ${mt("คะแนนตัวอย่าง (Demo) – แก้ไขข้อใดก็ได้เพื่อเปลี่ยนเป็นข้อมูลจริง", "Demo scores – edit any item to turn this into real data")}</div>` : ""}
+      <div class="form-row" style="margin-bottom:10px;">
+        <div class="field"><label>${mt("วันที่ตรวจประเมิน", "Inspection date")}</label><input type="date" id="mp-date" value="${rec.date || ""}" /></div>
+        <div class="field"><label>${mt("ผู้ตรวจประเมิน (Safety Inspector)", "Safety inspector")}</label><input type="text" id="mp-inspector" value="${mpEsc(rec.inspector || "")}" /></div>
+      </div>
+      <div class="mp-sumbar" id="mp-sumbar"></div>
+      <div class="desc" style="margin-top:8px;">${mt("เกณฑ์: 5 ดีเยี่ยม · 4 ดี · 3 พอใช้ · 2 ปรับปรุง · 1 วิกฤต/ไม่ปลอดภัย · ข้อที่ไม่เกี่ยวข้องเลือก N/A (ไม่นำมาคิดคะแนน) · บันทึกอัตโนมัติ", "Scale: 5 excellent · 4 good · 3 fair · 2 needs work · 1 critical/unsafe · choose N/A if the item does not apply (excluded from score) · saved automatically")}</div>
+    </div>
+    ${cats}
+  `;
+
+  const persist = () => {
+    const r = mpRecord(unit.id) || { unitId: unit.id, date: todayISO(), inspector: "", scores: {}, notes: {} };
+    return r;
+  };
+  const refresh = () => {
+    const S = mpStats([unit.id]);
+    S.cats.forEach((c) => {
+      const el = body.querySelector(`[data-catsum="${c.id}"]`);
+      if (el) el.innerHTML = `${c.assessed}/${c.total} · ${mpFmtPct(c.pct)} ${c.pct === null ? "" : `<i style="color:var(--st-${mpStatusOf(c.pct).cls})">${mpStatusOf(c.pct).icon}</i>`}`;
+    });
+    document.getElementById("mp-sumbar").innerHTML =
+      `<div><b>${mpFmtPct(S.pct)}</b> <span class="muted-s">${S.sum}/${S.max}</span></div><div>${mpChip(mpOverallStatusOf(S.pct))}</div>
+       <div class="muted-s">${S.assessed}/${S.total} ${mt("ข้อที่ประเมินแล้ว", "items assessed")}</div>
+       <div class="muted-s">${MP_RISK.map((r) => `${r.icon} ${mpRiskLabel(r.id)} ${S.risk[r.id]}`).join(" · ")}</div>`;
+    const card = document.querySelector(`.unit-card[data-unit="${unit.id}"] .u-meta`);
+    if (card) card.textContent = `${unit.type ? unit.type + " · " : ""}${S.assessed}/${MP_ITEMS.length} ${mt("ข้อ", "items")} · ${mpFmtPct(S.pct)}`;
+    const ic = document.querySelector(`.unit-card[data-unit="${unit.id}"] .u-st`);
+    if (ic) { const st = mpStatusOf(S.pct); ic.innerHTML = st ? `<i style="color:var(--st-${st.cls})">${st.icon}</i>` : "<i>○</i>"; }
+  };
+  refresh();
+
+  body.querySelectorAll("[data-score]").forEach((sel) => sel.addEventListener("change", () => {
+    const r = persist();
+    const id = sel.dataset.score;
+    if (sel.value === "") delete r.scores[id];
+    else r.scores[id] = sel.value === "na" ? "na" : Number(sel.value);
+    delete r.demo;
+    mpSaveRecord(r);
+    const v = r.scores[id];
+    const rk = typeof v === "number" ? (v <= 1 ? "critical" : v <= 2 ? "high" : v <= 3 ? "medium" : "low") : null;
+    const row = body.querySelector(`[data-row="${id}"]`);
+    if (rk) row.style.setProperty("--rk", mpRiskColor(rk)); else row.style.removeProperty("--rk");
+    body.querySelector(`[data-risk="${id}"]`).innerHTML = rk ? mpRiskChip(rk) : "";
+    const banner = body.querySelector(".mp-banner"); if (banner) banner.remove();
+    refresh();
+  }));
+  body.querySelectorAll("[data-note]").forEach((inp) => inp.addEventListener("change", () => {
+    const r = persist();
+    if (inp.value.trim()) r.notes[inp.dataset.note] = inp.value.trim(); else delete r.notes[inp.dataset.note];
+    mpSaveRecord(r);
+  }));
+  document.getElementById("mp-date").addEventListener("change", (e) => { const r = persist(); r.date = e.target.value; mpSaveRecord(r); });
+  document.getElementById("mp-inspector").addEventListener("change", (e) => { const r = persist(); r.inspector = e.target.value.trim(); mpSaveRecord(r); });
+
+  document.getElementById("mp-unit-edit").addEventListener("click", () => openMpUnitForm(unit.id));
+  document.getElementById("mp-unit-clear").addEventListener("click", () => {
+    if (!confirm(mt("ล้างคะแนนทั้งหมดของหน่วยงานนี้หรือไม่?", "Clear all scores for this unit?"))) return;
+    DB.set("mpScores", DB.get("mpScores", []).filter((r) => r.unitId !== unit.id));
+    toast(mt("ล้างคะแนนแล้ว", "Scores cleared"));
+    renderMpCheck(document.getElementById("view-root"));
+  });
+  document.getElementById("mp-unit-del").addEventListener("click", () => {
+    if (!confirm(mt(`ลบหน่วยงาน “${unit.name}” และคะแนนทั้งหมดหรือไม่?`, `Delete unit “${unit.name}” and all its scores?`))) return;
+    DB.set("mpUnits", DB.get("mpUnits", []).filter((u) => u.id !== unit.id));
+    DB.set("mpScores", DB.get("mpScores", []).filter((r) => r.unitId !== unit.id));
+    MpCheckUI.unitId = null;
+    toast(mt("ลบแล้ว", "Deleted"));
+    renderMpCheck(document.getElementById("view-root"));
+  });
+}
+
+function openMpUnitForm(id) {
+  const ex = id ? DB.get("mpUnits", []).find((u) => u.id === id) : null;
+  const v = ex || { name: "", type: "", note: "" };
+  const modal = openModal(`
+    <h3>${ex ? mt("แก้ไขหน่วยงาน", "Edit unit") : mt("เพิ่มหน่วยงาน", "Add unit")}</h3>
+    <div class="field"><label>${mt("ชื่อหน่วยงาน / พื้นที่", "Unit / area name")} *</label><input type="text" id="f-name" value="${mpEsc(v.name)}" /></div>
+    <div class="field"><label>${mt("ประเภทพื้นที่", "Area type")}</label>
+      <input type="text" id="f-type" list="mp-type-list" value="${mpEsc(v.type)}" placeholder="${mt("เช่น อาคารจอดรถ, สนามกีฬา, อาคารเช่าร้านค้า", "e.g. car park, sports field, retail building")}" />
+      <datalist id="mp-type-list">${["ร้านต้นไม้/ร้านอาหาร", "เครื่องเล่น/ผาจำลอง/สไลเดอร์", "อาคารจอดรถ", "สนามกีฬา", "อาคารเช่าร้านค้า"].map((x) => `<option value="${x}">`).join("")}</datalist></div>
+    <div class="field"><label>${mt("หมายเหตุ", "Note")}</label><textarea id="f-note" rows="2">${mpEsc(v.note)}</textarea></div>
+    <div class="actions"><button class="btn ghost" id="f-cancel">${mt("ยกเลิก", "Cancel")}</button><button class="btn" id="f-save">${mt("บันทึก", "Save")}</button></div>
+  `);
+  modal.querySelector("#f-cancel").addEventListener("click", closeModal);
+  modal.querySelector("#f-save").addEventListener("click", () => {
+    const name = modal.querySelector("#f-name").value.trim();
+    if (!name) return alert(mt("กรุณากรอกชื่อหน่วยงาน", "Please enter a unit name"));
+    const all = DB.get("mpUnits", []);
+    if (all.some((u) => u.name.toLowerCase() === name.toLowerCase() && u.id !== (ex && ex.id)))
+      return alert(mt("มีหน่วยงานชื่อนี้แล้ว", "A unit with this name already exists"));
+    const next = { id: ex ? ex.id : uid("mpu"), name, type: modal.querySelector("#f-type").value.trim(), note: modal.querySelector("#f-note").value.trim() };
+    if (ex) all[all.findIndex((u) => u.id === ex.id)] = next; else all.push(next);
+    DB.set("mpUnits", all);
+    MpCheckUI.unitId = next.id;
+    closeModal();
+    toast(mt("บันทึกแล้ว", "Saved"));
+    renderMpCheck(document.getElementById("view-root"));
+  });
+}
+
+// ----------------------------------------------- report datasets (CSV) ---
+const MP_DATASETS = {
+  mpPlans: {
+    label: "Master Plan — QSHE Action Plan 2026-2027",
+    headers: [
+      { key: "no", label: "ลำดับ" }, { key: "step", label: "ขั้นตอนหลัก" }, { key: "detail", label: "รายละเอียด" },
+      { key: "location", label: "พื้นที่เป้าหมาย" }, { key: "owner", label: "ผู้รับผิดชอบ" },
+      { key: "start", label: "เริ่ม" }, { key: "end", label: "สิ้นสุด" }, { key: "status", label: "สถานะ" }
+    ],
+    rows() {
+      return DB.get("mpPlans", []).map((p, i) => ({
+        no: i + 1, step: p.step.trim(), detail: p.detail, location: p.location, owner: p.owner, start: p.start, end: p.end,
+        status: (MP_PLAN_STATUS.find((s) => s.id === p.status) || {}).th || p.status
+      }));
+    }
+  },
+  mpSummary: {
+    label: "Master Plan — Inspection Risk Summary (หน่วยงาน × หมวด)",
+    headers: [
+      { key: "unit", label: "หน่วยงาน" }, { key: "category", label: "หมวดหมู่" }, { key: "assessed", label: "ข้อที่ประเมิน" },
+      { key: "max", label: "คะแนนเต็มรวม" }, { key: "sum", label: "คะแนนที่ได้รวม" }, { key: "pct", label: "คิดเป็น %" },
+      { key: "critical", label: "วิกฤต" }, { key: "high", label: "สูง" }, { key: "medium", label: "กลาง" }, { key: "low", label: "ต่ำ" }, { key: "status", label: "ระดับการประเมิน" }
+    ],
+    rows() {
+      const out = [];
+      DB.get("mpUnits", []).forEach((u) => {
+        const S = mpStats([u.id]);
+        S.cats.forEach((c) => out.push({
+          unit: u.name, category: `${c.id}. ${c.th} (${c.en})`, assessed: c.assessed, max: c.max, sum: c.sum,
+          pct: c.pct === null ? "" : c.pct.toFixed(1), critical: c.risk.critical, high: c.risk.high, medium: c.risk.medium, low: c.risk.low,
+          status: c.pct === null ? "ยังไม่ประเมิน" : mpStatusOf(c.pct).th
+        }));
+        out.push({
+          unit: u.name, category: "รวมทั้งสิ้น (Total)", assessed: S.assessed, max: S.max, sum: S.sum,
+          pct: S.pct === null ? "" : S.pct.toFixed(1), critical: S.risk.critical, high: S.risk.high, medium: S.risk.medium, low: S.risk.low,
+          status: S.pct === null ? "ยังไม่ประเมิน" : mpOverallStatusOf(S.pct).th
+        });
+      });
+      return out;
+    }
+  },
+  mpScores: {
+    label: "Master Plan — Risk Assessment Checklist (รายข้อ)",
+    headers: [
+      { key: "unit", label: "หน่วยงาน" }, { key: "date", label: "วันที่ตรวจ" }, { key: "inspector", label: "ผู้ตรวจ" },
+      { key: "id", label: "ข้อ" }, { key: "category", label: "หมวด" }, { key: "text", label: "รายการตรวจ" },
+      { key: "score", label: "คะแนน (เต็ม 5)" }, { key: "risk", label: "ระดับความเสี่ยง" }, { key: "note", label: "ข้อสังเกต" }
+    ],
+    rows() {
+      const out = [];
+      DB.get("mpUnits", []).forEach((u) => {
+        const rec = mpRecord(u.id);
+        MP_ITEMS.forEach((it) => {
+          const v = rec ? rec.scores[it.id] : undefined;
+          out.push({
+            unit: u.name, date: rec ? rec.date : "", inspector: rec ? rec.inspector : "", id: it.id,
+            category: MP_CATEGORIES[it.catIdx - 1].th, text: it.text,
+            score: v === "na" ? "N/A" : typeof v === "number" ? v : "",
+            risk: typeof v === "number" ? mpRiskMeta(v <= 1 ? "critical" : v <= 2 ? "high" : v <= 3 ? "medium" : "low").th : "",
+            note: rec && rec.notes ? rec.notes[it.id] || "" : ""
+          });
+        });
+      });
+      return out;
+    }
+  }
+};
 
 /**
  * app.js
@@ -1463,6 +2411,15 @@ const NAV_ITEMS = [
     ]
   },
   {
+    groupKey: "nav_masterplan_group",
+    visKey: "masterplan",
+    items: [
+      { id: "mp_plan", labelKey: "nav_mp_plan" },
+      { id: "mp_risk", labelKey: "nav_mp_risk" },
+      { id: "mp_check", labelKey: "nav_mp_check" }
+    ]
+  },
+  {
     groupKey: "nav_drive_group",
     items: [
       { id: "okr", labelKey: "nav_okr" },
@@ -1491,6 +2448,7 @@ function renderShell() {
   let nav = "";
   NAV_ITEMS.forEach((group) => {
     if (group.admin && !isAdmin) return;
+    if (group.visKey && moduleVisibility[group.visKey] === false) return;
     const items = group.isModuleGroup
       ? group.items.filter((it) => moduleVisibility[it.id] !== false)
       : group.items;
@@ -1502,6 +2460,7 @@ function renderShell() {
   });
 
   sidebar.innerHTML = `
+    <div class="brand-logo"><img src="${LOGO_DATA_URI}" alt="Bhiraj Buri Group" /></div>
     <div class="brand">
       <div class="mark">QS</div>
       <div>
@@ -1568,13 +2527,16 @@ function renderTopbar() {
     capa: ["title_capa", "sub_capa"],
     buildings: ["title_buildings", "sub_buildings"],
     users: ["title_users", "sub_users"],
+    mp_plan: ["title_mp_plan", "sub_mp_plan"],
+    mp_risk: ["title_mp_risk", "sub_mp_risk"],
+    mp_check: ["title_mp_check", "sub_mp_check"],
     reports: ["title_reports", "sub_reports"]
   };
   const [titleKey, subKey] = titleKeys[State.view] || ["", ""];
   const title = titleKey ? t(titleKey) : "";
   const subtitle = subKey ? t(subKey) : "";
   const buildings = accessibleBuildings();
-  const showBuildingPicker = !["buildings", "users"].includes(State.view);
+  const showBuildingPicker = !["buildings", "users", "mp_plan", "mp_risk", "mp_check"].includes(State.view);
 
   document.getElementById("topbar").innerHTML = `
     <div>
@@ -1626,6 +2588,9 @@ function renderView() {
     case "capa": return renderCAPA(root);
     case "buildings": return renderBuildings(root);
     case "users": return renderUsers(root);
+    case "mp_plan": return renderMpPlan(root);
+    case "mp_risk": return renderMpRisk(root);
+    case "mp_check": return renderMpCheck(root);
     case "reports": return renderReports(root);
     default: root.innerHTML = "<div class='card'>ไม่พบหน้านี้</div>";
   }
@@ -1969,7 +2934,8 @@ function openSettingsModal() {
   const moduleChecks = MODULES.map((m) => {
     const checked = moduleVisibility[m.id] !== false;
     return `<label class="checkbox-pill"><input type="checkbox" data-module-toggle="${m.id}" ${checked ? "checked" : ""}/> ${m.nameTh} (${m.name})</label>`;
-  }).join("");
+  }).join("") +
+    `<label class="checkbox-pill"><input type="checkbox" data-module-toggle="masterplan" ${moduleVisibility.masterplan !== false ? "checked" : ""}/> ${t("settings_mp_label")}</label>`;
 
   const modal = openModal(`
     <h3>${t("settings_title")}</h3>
@@ -2744,6 +3710,8 @@ const DATASETS = {
     rows() { return DB.get("buildings", []); }
   }
 };
+
+Object.assign(DATASETS, MP_DATASETS);
 
 function renderReports(root) {
   root.innerHTML = `
