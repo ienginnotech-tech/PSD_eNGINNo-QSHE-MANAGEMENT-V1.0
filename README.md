@@ -26,7 +26,7 @@ python3 -m http.server 8080
 or double-click `index.html` directly (works fine even on `file://` since
 there are no external file dependencies to break).
 
-**Default login:** `admin` / `qshe2026` — change this immediately from the
+**Default login (no longer shown on the login page):** `admin` / `qshe2026` — change this immediately from the
 **ผู้ใช้งาน (Users)** page after first login.
 
 ## Troubleshooting: "the page loads but looks unstyled"
