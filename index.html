@@ -2401,7 +2401,7 @@ function mpWirePhotos(body, unit, visit) {
 }
 
 // ================================================== 3. CHECKLIST + UNITS ===
-const MpCheckUI = { unitId: null, visit: null, formsType: "all" };
+const MpCheckUI = { unitId: null, visit: null, formsType: "all", open: {} };
 
 function renderMpCheck(root) {
   const units = DB.get("mpUnits", []);
@@ -2510,7 +2510,7 @@ function renderMpChecklistBody(unit) {
     const isConstr = c.id === 7;
     const formsChips = isConstr && typeof mpFormsCount === "function"
       ? `<span class="cat-forms"><button type="button" class="form-chip" data-open-forms="PCRA" title="Pre-Construction Risk Assessment">PCRA <b>${mpFormsCount(unit.id, "PCRA")}</b></button><button type="button" class="form-chip" data-open-forms="ICRA" title="Infection Control Risk Assessment / Construction inspection">ICRA <b>${mpFormsCount(unit.id, "ICRA")}</b></button></span>` : "";
-    return `<details class="chk-cat" ${isConstr ? 'id="cat-7"' : ""} open>
+    return `<details class="chk-cat" data-cat="${c.id}" ${isConstr ? 'id="cat-7"' : ""} ${MpCheckUI.open[unit.id + ":" + c.id] ? "open" : ""}>
       <summary><span class="cat-title">${mpCatName(c)}</span>${formsChips}<span class="cat-sum" data-catsum="${c.id}"></span></summary>
       ${isConstr ? `<div class="forms-panel" id="forms-panel"></div>` : ""}
       ${items}</details>`;
@@ -2535,6 +2535,7 @@ function renderMpChecklistBody(unit) {
         <div class="field"><label>${mt("ผู้ตรวจประเมิน (Safety Inspector)", "Safety inspector")}</label><input type="text" id="mp-inspector" value="${mpEsc(rec0.inspector || "")}" /></div>
       </div>
       <div class="mp-sumbar" id="mp-sumbar"></div>
+      <div style="margin-top:8px;"><button class="btn ghost small" id="mp-cat-all">${mt("ขยายทุกหมวด", "Expand all")}</button></div>
       <div class="desc" style="margin-top:8px;">${mt("เกณฑ์: 5 ดีเยี่ยม · 4 ดี · 3 พอใช้ · 2 ปรับปรุง · 1 วิกฤต/ไม่ปลอดภัย · ข้อที่ไม่เกี่ยวข้องเลือก N/A = 0 คะแนน นับว่าประเมินแล้ว แต่ไม่นำมาคิด % · แนบรูปได้ข้อละ 3 รูป (ก่อน/ระหว่าง/หลังแก้ไข) · บันทึกอัตโนมัติ", "Scale: 5 excellent · 4 good · 3 fair · 2 needs work · 1 critical/unsafe · N/A = 0 points, counts as assessed but is left out of the % · up to 3 photos per item (before / during / after) · saved automatically")}</div>
       ${rec0.by ? `<div class="muted-s" style="margin-top:4px;">${mt("บันทึกล่าสุดโดย", "Last saved by")}: ${mpEsc(rec0.by)}</div>` : ""}
     </div>
@@ -2561,11 +2562,18 @@ function renderMpChecklistBody(unit) {
   mpWirePhotos(body, unit, cv);
   if (typeof mpRenderFormsPanel === "function") mpRenderFormsPanel(document.getElementById("forms-panel"), unit);
 
+  body.querySelectorAll("details.chk-cat[data-cat]").forEach((d) => d.addEventListener("toggle", () => { MpCheckUI.open[unit.id + ":" + d.dataset.cat] = d.open; }));
+  const ab = document.getElementById("mp-cat-all");
+  if (ab) ab.addEventListener("click", () => {
+    const anyClosed = [...body.querySelectorAll("details.chk-cat[data-cat]")].some((d) => !d.open);
+    body.querySelectorAll("details.chk-cat[data-cat]").forEach((d) => { d.open = anyClosed; });
+    ab.textContent = anyClosed ? mt("ย่อทุกหมวด", "Collapse all") : mt("ขยายทุกหมวด", "Expand all");
+  });
   body.querySelectorAll("[data-open-forms]").forEach((b) => b.addEventListener("click", (e) => {
     e.preventDefault(); e.stopPropagation();
     MpCheckUI.formsType = b.dataset.openForms;
     const cat = document.getElementById("cat-7");
-    cat.open = true;
+    cat.open = true; MpCheckUI.open[unit.id + ":7"] = true;
     mpRenderFormsPanel(document.getElementById("forms-panel"), unit);
     document.getElementById("forms-panel").scrollIntoView({ behavior: "smooth", block: "start" });
   }));
