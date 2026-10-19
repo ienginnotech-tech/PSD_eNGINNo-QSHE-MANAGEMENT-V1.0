@@ -182,3 +182,11 @@ Photos: each checklist item has 2 photo slots (1 = before / finding, 2 = after c
 - **B. Google Sheet via Apps Script** – paste `apps-script/Code.gs` in a Google Sheet (Extensions > Apps Script), deploy as Web app (Anyone), put URL + Token in the app. One tab per dataset + `_Snapshot` for restore (no passwords/photos). Runs on button press or automatically every 7 days while an admin has the app open.
 - **C. CSV** per dataset.
 An admin banner appears when the last backup is older than 7 days.
+
+## Round 3 additions (PCRA / ICRA, visits, central data)
+- **Checklist visits**: each unit has "ครั้งที่ 1, 2, …" (+ เพิ่มครั้งที่), each with date, time and inspector; stats/dashboard use the latest visit; history kept.
+- **Photos**: 3 per item per visit (before / during / after correction), stored in IndexedDB, compressed (800 px).
+- **N/A**: scores 0, counts as *assessed*, but is excluded from the % (numerator and denominator).
+- **PCRA / ICRA forms** (category 7): Yes/No/N/A ticks, remarks, drawn signatures with name/phone/date-time, draft → final (locked, admin can reopen), PDF export (browser print → Save as PDF), backed up to the Google Sheet (`mpForms`, `mpFormAnswers` tabs + central sync).
+- **Construction & Renovation Monitor** on the main Dashboard: items 7.1–7.6 + PCRA/ICRA compliance (Yes ÷ (Yes+No)), target >90 %.
+- **Central data (Admin sees every unit)**: Backup page → copy the *team connection code*; each user pastes it in Settings. Record-level, last-writer-wins sync through the Apps Script (re-paste `apps-script/Code.gs` v2 and Deploy → New version). Users/passwords are not synced.
