@@ -1041,6 +1041,25 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .sf-prog { display: grid; gap: 4px; }
 .sf-by summary { cursor: pointer; font-size: 13px; color: var(--muted); }
 
+/* dashboard tools: period buttons + clock */
+.dash-tools { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; margin-left: auto; margin-right: 14px; }
+.dash-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.per-group { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--card); }
+.per-btn { border: 0; background: transparent; color: var(--text); padding: 7px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.per-btn + .per-btn { border-left: 1px solid var(--border); }
+.per-btn.active { background: var(--green); color: #fff; font-weight: 700; }
+.per-btn:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+.dash-clock { font-weight: 700; color: var(--heading); font-variant-numeric: tabular-nums; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; background: var(--card); white-space: nowrap; }
+.per-range { text-align: right; }
+.donut-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 14px; align-items: center; }
+@media (max-width: 760px) { .donut-grid { grid-template-columns: 1fr; } }
+.donut-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.donut-col .donut { width: 100%; max-width: 300px; height: auto; aspect-ratio: 1; }
+.mon-legend.center { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font-size: 12.5px; }
+.mon-legend.center li { white-space: nowrap; flex: 0 0 30%; text-align: center; }
+.score-col { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; border-left: 1px dashed var(--border); padding: 8px 4px 8px 14px; }
+.score-big { font-size: 46px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+
 </style>
 </head>
 <body>
@@ -1886,8 +1905,14 @@ function mpStatsFromRecs(recs, unitIds) {
   };
 }
 /** each unit's latest visit */
-function mpStats(unitIds) {
-  return mpStatsFromRecs(unitIds.map((u) => mpRecord(u)).filter(Boolean), unitIds);
+function mpStats(unitIds, range) {
+  return mpStatsFromRecs(unitIds.map((u) => mpRecordIn(u, range)).filter(Boolean), unitIds);
+}
+/** latest visit of a unit, optionally only visits dated inside range {from,to} (ISO dates, inclusive) */
+function mpRecordIn(unitId, range) {
+  if (!range) return mpRecord(unitId);
+  const v = mpVisits(unitId).filter((r) => r.date && r.date >= range.from && r.date <= range.to);
+  return v[v.length - 1] || null;
 }
 const mpFmtPct = (p) => (p === null ? "–" : p.toFixed(1) + "%");
 function mpFmtDT(date, time) {
@@ -3195,23 +3220,42 @@ function mpLoadDemoForms() {
  * Target line: 90 %.
  */
 const MP_TARGET = 90;
+/** dashboard period filter: null = all time, else "year" | "month" | "week" | "day" */
+const MpPeriod = { kind: null };
+function mpPeriodRange() {
+  if (!MpPeriod.kind) return null;
+  const now = new Date();
+  const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const y = now.getFullYear(), m = now.getMonth();
+  if (MpPeriod.kind === "year") return { from: `${y}-01-01`, to: `${y}-12-31` };
+  if (MpPeriod.kind === "month") return { from: iso(new Date(y, m, 1)), to: iso(new Date(y, m + 1, 0)) };
+  if (MpPeriod.kind === "week") { const dow = (now.getDay() + 6) % 7; const a = new Date(y, m, now.getDate() - dow), b = new Date(y, m, now.getDate() - dow + 6); return { from: iso(a), to: iso(b) }; }
+  return { from: iso(now), to: iso(now) };
+}
+const mpInRange = (date, r) => !r || (!!date && date >= r.from && date <= r.to);
+const mpPeriodLabel = () => {
+  const r = mpPeriodRange();
+  if (!r) return mt("ทุกช่วงเวลา", "All time");
+  return r.from === r.to ? mpFmtDate(r.from) : `${mpFmtDate(r.from)} – ${mpFmtDate(r.to)}`;
+};
 const MpMonUI = { unit: "ALL", table: false };
 
 /** a unit counts as "construction / renovation" when it has a PCRA/ICRA form or any scored (non-N/A) item 7.x */
-function mpIsConstruction(u, forms) {
-  if ((forms || DB.get("mpForms", [])).some((f) => f.unitId === u.id)) return true;
-  const rec = mpRecord(u.id);
+function mpIsConstruction(u, forms, range) {
+  if ((forms || DB.get("mpForms", [])).some((f) => f.unitId === u.id && mpInRange(f.fields && f.fields.date, range))) return true;
+  const rec = mpRecordIn(u.id, range);
   return !!rec && mpItemsOfCat(7).some((it) => typeof (rec.scores || {})[it.id] === "number");
 }
 const mpShort = (t, n) => (t.length > (n || 46) ? t.slice(0, n || 46) + "…" : t);
 const MP_RISK_CLS = { critical: "critical", high: "serious", medium: "warning", low: "good" };
 
 function mpMonData() {
+  const range = mpPeriodRange();
   const allUnits = DB.get("mpUnits", []);
-  const forms = DB.get("mpForms", []);
-  const units = allUnits.filter((u) => mpIsConstruction(u, forms));
+  const forms = DB.get("mpForms", []).filter((f) => mpInRange(f.fields && f.fields.date, range));
+  const units = allUnits.filter((u) => mpIsConstruction(u, forms, range));
   const rows = units.map((u) => {
-    const rec = mpRecord(u.id);
+    const rec = mpRecordIn(u.id, range);
     const S = rec ? mpStatsFromRecs([rec], [u.id]) : null;
     const c7 = S ? S.cats[6] : null;
     const fl = (type) => {
@@ -3235,7 +3279,7 @@ function mpMonData() {
   const add = (bag, date, y) => { if (date && y !== null && y !== undefined) (bag[date] = bag[date] || []).push(y); };
   units.forEach((u) => {
     if (MpMonUI.unit !== "ALL" && MpMonUI.unit !== u.id) return;
-    mpVisits(u.id).forEach((r) => {
+    mpVisits(u.id).filter((r) => mpInRange(r.date, range)).forEach((r) => {
       const S = mpStatsFromRecs([r], [u.id]);
       add(ev.item, r.date, S.cats[6].pct); add(ev.all, r.date, S.cats[6].pct);
     });
@@ -3302,6 +3346,8 @@ function mpDonutSvg(parts) {
 
 
 /** donut of 7.x risk levels – lives at the top of the dashboard; hover shows which unit / items */
+/** safety colour of a % score: red <70, orange <85, green >=85 (always shown with icon + label elsewhere) */
+function mpScoreColor(pct) { return pct === null ? "var(--muted)" : pct < 70 ? "var(--st-critical)" : pct < 85 ? "var(--st-serious)" : "var(--st-good)"; }
 function mpRenderDashDonut(host) {
   if (!host) return;
   const D = mpMonData();
@@ -3312,10 +3358,23 @@ function mpRenderDashDonut(host) {
     return { v: D.risk[id], color, label, tip: `${label} · ${D.risk[id]} ${mt("ข้อ", "items")}${detail ? "\n" + detail : ""}` };
   });
   const legend = parts.map((p) => `<li data-tip="${mpEsc(p.tip)}"><i style="background:${p.color}"></i>${p.label} <b>${p.v}</b></li>`).join("");
-  host.innerHTML = `<div class="card" style="height:100%;margin:0;">
+  const range = mpPeriodRange();
+  const S = mpStats(DB.get("mpUnits", []).map((u) => u.id), range);
+  const ov = mpOverallStatusOf(S.pct);
+  host.innerHTML = `<div class="card donut-card" style="height:100%;margin:0;">
     <h3 style="margin:0 0 2px;">${mt("ระดับความเสี่ยง ก่อสร้าง / ปรับปรุง", "Construction / renovation risk level")}</h3>
-    <div class="desc" style="margin:0 0 8px;">${mt("ข้อ 7.1–7.6 ตรวจล่าสุด · เฉพาะหน่วยงานที่มีงานก่อสร้างหรือ Renovation (", "Items 7.1–7.6, latest visit · only units with construction / renovation (")}${D.allUnits.length}${mt(" หน่วย) · เลื่อนเมาส์ดูอาคารและข้อที่พบ", " units) · hover for unit and items")}</div>
-    <div class="mon-donut">${mpDonutSvg(parts)}<ul class="mon-legend">${legend}</ul></div></div>`;
+    <div class="desc" style="margin:0 0 6px;">${mt("ข้อ 7.1–7.6 ตรวจล่าสุด · เฉพาะหน่วยงานที่มีงานก่อสร้าง / Renovation (", "Items 7.1–7.6, latest visit · only units with construction / renovation (")}${D.allUnits.length}${mt(" หน่วย) · เลื่อนเมาส์ดูอาคารและข้อที่พบ", " units) · hover for unit and items")}</div>
+    <div class="donut-grid">
+      <div class="donut-col">${mpDonutSvg(parts)}<ul class="mon-legend h center">${legend}</ul></div>
+      <div class="score-col" data-goto-risk="1" title="${mt("ดูรายละเอียด Inspection Risk Summary", "Open Inspection Risk Summary")}">
+        <div class="mon-t">Inspection Risk Summary</div>
+        <div class="score-big" style="color:${mpScoreColor(S.pct)}">${mpFmtPct(S.pct)}</div>
+        <div>${mpChip(ov)}</div>
+        <div class="muted-s">${mt("ทุกหน่วยงาน (ตรวจล่าสุด)", "All units (latest visit)")} · ${S.done}/${S.total} ${mt("ข้อ", "items")}</div>
+        <div class="muted-s">${mt("แดง <70% · ส้ม <85% · เขียว ≥85%", "red <70% · orange <85% · green ≥85%")}</div>
+      </div>
+    </div></div>`;
+  const go = host.querySelector("[data-goto-risk]"); if (go) go.addEventListener("click", () => navigate("mp_risk"));
   if (!host._tips) { mpWireTips(host); host._tips = true; }
 }
 function mpMonRefresh() {
@@ -3401,7 +3460,8 @@ function mpRiskStackRow(label, risk, pct, extraTip, link) {
 
 function renderDashMasterPlan(host) {
   if (!host) return;
-  const plans = DB.get("mpPlans", []);
+  const range = mpPeriodRange();
+  const plans = DB.get("mpPlans", []).filter((p) => !range || ((p.start || "0000") <= range.to && (p.end || "9999") >= range.from));
   const units = DB.get("mpUnits", []);
   const total = plans.length;
   const cnt = { done: 0, doing: 0, todo: 0 };
@@ -3409,12 +3469,12 @@ function renderDashMasterPlan(host) {
   const overdue = plans.filter((p) => mpPlanOverdue(p));
   const achieve = total ? (cnt.done / total) * 100 : null;
   const progress = total ? ((cnt.done + cnt.doing * 0.5) / total) * 100 : null;
-  const S = mpStats(units.map((u) => u.id));
+  const S = mpStats(units.map((u) => u.id), range);
   const ov = mpOverallStatusOf(S.pct);
-  const unitStats = units.map((u) => { const us = mpStats([u.id]); return { u, risk: us.risk, pct: us.pct, S: us }; });
+  const unitStats = units.map((u) => { const us = mpStats([u.id], range); return { u, risk: us.risk, pct: us.pct, S: us }; });
   const scopeUnits = MpDashUI.scope === "ALL" ? units : units.filter((u) => u.id === MpDashUI.scope);
   if (MpDashUI.scope !== "ALL" && !scopeUnits.length) MpDashUI.scope = "ALL";
-  const SC = mpStats(scopeUnits.map((u) => u.id));
+  const SC = mpStats(scopeUnits.map((u) => u.id), range);
   const cats = SC.cats.slice().sort(mpRiskOrder);
   const unitRank = unitStats.slice().sort(mpRiskOrder);
   const planBar = [["done", "var(--st-good)", mt("เสร็จสิ้น", "Done")], ["doing", "var(--st-warning)", mt("กำลังดำเนินการ", "In progress")], ["todo", "var(--muted)", mt("รอดำเนินการ", "Pending")]]
@@ -3433,8 +3493,8 @@ function renderDashMasterPlan(host) {
         </div>
         <div class="card" style="margin:0;">
           <div class="toolbar" style="margin-bottom:4px;"><h3 style="margin:0;">Inspection Risk Summary</h3><button class="btn ghost small" data-goto="mp_risk">${mt("เปิดสรุป", "Open")} →</button></div>
-          <div style="display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;"><span class="big">${mpFmtPct(S.pct)}</span><span>${mpChip(ov)}</span></div>
-          <div class="muted-s" style="margin:4px 0 8px;">${mt("ทุกหน่วยงาน (ตรวจล่าสุด)", "All units (latest visit)")} · ${S.done}/${S.total} ${mt("ข้อประเมินแล้ว", "assessed")} · N/A ${S.na}</div>
+          <div style="display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;"><span class="big" style="color:${mpScoreColor(S.pct)}">${mpFmtPct(S.pct)}</span><span>${mpChip(ov)}</span></div>
+          <div class="muted-s" style="margin:4px 0 8px;">${mt("ทุกหน่วยงาน (ตรวจล่าสุด)", "All units (latest visit)")} · ${mpPeriodLabel()} · ${S.done}/${S.total} ${mt("ข้อประเมินแล้ว", "assessed")} · N/A ${S.na}</div>
           <div class="rk-sum">${MP_RISK.map((r) => `<div class="rk-chip" data-tip="${mpRiskLabel(r.id)}: ${S.risk[r.id]}"><i style="color:${mpRiskColor(r.id)}">${r.icon}</i> ${mpRiskLabel(r.id)}<b>${S.risk[r.id]}</b></div>`).join("")}</div>
         </div>
       </div>
@@ -4470,6 +4530,7 @@ function renderTopbar() {
       <h2>${title}</h2>
       <div class="subtitle">${subtitle}</div>
     </div>
+    ${State.view === "dashboard" ? dashToolsHtml() : ""}
     ${
       showBuildingPicker
         ? `<div class="building-select">
@@ -4483,6 +4544,7 @@ function renderTopbar() {
     }
   `;
 
+  if (State.view === "dashboard") wireDashTools();
   if (showBuildingPicker) {
     const picker = document.getElementById("building-picker");
     picker.value = State.activeBuilding;
@@ -5740,6 +5802,40 @@ function mpRenderSyncSettings(el) {
   });
   const now = el.querySelector("#sy-now"); if (now) now.addEventListener("click", async () => { await SyncMgr.run(); rerender(); renderView(); });
   const off = el.querySelector("#sy-off"); if (off) off.addEventListener("click", () => { SyncMgr.disconnect(); rerender(); });
+}
+
+
+// ------------------------------------------- dashboard period buttons + live clock ---
+let dashClockTimer = null;
+function dashClockText() {
+  const d = new Date();
+  const lang = DB.get("lang", "th") === "en" ? "en-GB" : "th-TH";
+  return d.toLocaleDateString(lang, { weekday: "short", day: "numeric", month: "short", year: "numeric" }) + " · " + d.toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+}
+function dashToolsHtml() {
+  const b = (k, th, en) => `<button type="button" class="per-btn ${MpPeriod.kind === k ? "active" : ""}" data-period="${k}" aria-pressed="${MpPeriod.kind === k}">${mt(th, en)}</button>`;
+  return `<div class="dash-tools">
+    <div class="dash-row">
+      <div class="per-group" role="group" aria-label="${mt("ช่วงเวลา ปี / เดือน", "Period year / month")}">${b("year", "ปี", "Year")}${b("month", "เดือน", "Month")}</div>
+      <div class="per-group" role="group" aria-label="${mt("ช่วงเวลา สัปดาห์ / วัน", "Period week / day")}">${b("week", "สัปดาห์", "Week")}${b("day", "วัน", "Day")}</div>
+      <div class="dash-clock" id="dash-clock" aria-live="off">${dashClockText()}</div>
+    </div>
+    <div class="per-range muted-s" id="per-range">${mt("ช่วงข้อมูล", "Range")}: ${mpPeriodLabel()}</div>
+  </div>`;
+}
+function wireDashTools() {
+  document.querySelectorAll("[data-period]").forEach((btn) => btn.addEventListener("click", () => {
+    MpPeriod.kind = MpPeriod.kind === btn.dataset.period ? null : btn.dataset.period;   // click again = all time
+    document.querySelectorAll("[data-period]").forEach((x) => { const on = x.dataset.period === MpPeriod.kind; x.classList.toggle("active", on); x.setAttribute("aria-pressed", on); });
+    const r = document.getElementById("per-range"); if (r) r.textContent = `${mt("ช่วงข้อมูล", "Range")}: ${mpPeriodLabel()}`;
+    renderView();
+  }));
+  clearInterval(dashClockTimer);
+  dashClockTimer = setInterval(() => {
+    const el = document.getElementById("dash-clock");
+    if (!el) { clearInterval(dashClockTimer); return; }
+    el.textContent = dashClockText();
+  }, 1000);
 }
 
 </script>
