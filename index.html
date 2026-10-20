@@ -1008,9 +1008,10 @@ body.theme-dark { --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70;
 body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 
 /* dashboard: top row, master plan, safety board */
-.dash-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 14px; margin-bottom: 14px; align-items: stretch; }
+.dash-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .7fr) minmax(0, 1.75fr); gap: 14px; margin-bottom: 14px; align-items: stretch; }
 .dash-top.one { grid-template-columns: 1fr; }
-@media (max-width: 1100px) { .dash-top { grid-template-columns: 1fr; } }
+@media (max-width: 1280px) { .dash-top { grid-template-columns: 1fr 1fr; } .dash-top #dash-safety { grid-column: 1 / -1; } }
+@media (max-width: 720px) { .dash-top { grid-template-columns: 1fr; } }
 .mon-grid3.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); }
 .big { font-size: 30px; font-weight: 700; color: var(--heading); line-height: 1.1; }
 .rk-row { display: grid; grid-template-columns: minmax(110px, 220px) 1fr 62px; gap: 10px; align-items: center; padding: 4px 0; font-size: 13px; }
@@ -1023,11 +1024,11 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .rk-find { cursor: help; }
 .safety { display: flex; flex-direction: column; gap: 10px; border: 2px solid var(--st-good); }
 .sf-head { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--st-good); padding-bottom: 8px; }
-.sf-logo { width: 74px; height: 74px; border-radius: 50%; border: 2px solid var(--series-1); background: #fff; display: flex; align-items: center; justify-content: center; padding: 8px; flex: none; }
+.sf-logo { width: 150px; height: 62px; border-radius: 8px; border: 1px solid var(--border); background: #fff; display: flex; align-items: center; justify-content: center; padding: 6px 10px; flex: none; }
 .sf-logo img { max-width: 100%; max-height: 100%; }
 .sf-title { flex: 1; text-align: center; display: flex; flex-direction: column; color: var(--st-good); }
 .sf-title b { font-size: 24px; line-height: 1.2; } .sf-title span { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
-.sf-badge svg { width: 58px; height: 58px; display: block; }
+.sf-badge svg { width: 84px; height: 84px; display: block; }
 .sf-scope { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .sf-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-weight: 700; font-size: 16px; }
 .sf-row small { display: block; font-size: 11.5px; letter-spacing: .5px; opacity: .85; }
@@ -1059,6 +1060,44 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .mon-legend.center li { white-space: nowrap; flex: 0 0 30%; text-align: center; }
 .score-col { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; border-left: 1px dashed var(--border); padding: 8px 4px 8px 14px; }
 .score-big { font-size: 46px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+
+.score-card { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; cursor: pointer; }
+.score-card .score-big { font-size: 54px; }
+.score-key { font-size: 12px; color: var(--muted); }
+.mon-donut-slot { margin-top: 14px; border-top: 1px dashed var(--border); padding-top: 12px; }
+.mon-donut-slot .donut { max-width: 250px; }
+.mon-mid { display: flex; flex-direction: column; }
+
+/* hover: boxes lift and get a theme-coloured edge (content side + sidebar) */
+:root { --edge: var(--green); }
+.card, .stat-card, .unit-card, .mon-box, .rk-chip, .sig-box, .option-card, .form-row-item, .nav-item, .brand-logo, .user-chip, .icon-chip, .brand {
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease;
+}
+.card:hover, .stat-card:hover, .unit-card:hover, .mon-box:hover, .rk-chip:hover, .sig-box:hover, .option-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--edge);
+  box-shadow: 0 0 0 1px var(--edge), 0 10px 22px rgba(0, 0, 0, 0.13);
+}
+.mon-box:hover, .modal .card:hover { transform: translateY(-2px); }
+.nav-item:hover, .brand-logo:hover, .user-chip:hover, .icon-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 1px var(--gold), 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+.nav-item { border-radius: 8px; }
+@media (prefers-reduced-motion: reduce) {
+  .card:hover, .stat-card:hover, .unit-card:hover, .mon-box:hover, .rk-chip:hover, .sig-box:hover, .option-card:hover, .nav-item:hover, .brand-logo:hover, .user-chip:hover, .icon-chip:hover { transform: none; }
+}
+
+.rk-row.compact { grid-template-columns: 1fr auto; gap: 3px 10px; padding: 6px 0; }
+.rk-row.compact .stack-track { grid-column: 1 / -1; grid-row: 2; min-height: 18px; }
+.rk-row.compact .rk-val { grid-row: 1; grid-column: 2; }
+.rk-row.compact .rk-label { grid-row: 1; grid-column: 1; }
+.mon-grid3.two { align-items: start; }
+.sf-title b { font-size: 21px; } .sf-title span { font-size: 16px; }
+.mon-donut-slot .donut { max-width: 210px; }
+.sf-two .sf-box { width: 25px; height: 34px; font-size: 18px; }
+.sf-two .sf-row { font-size: 15px; flex-wrap: nowrap; }
+.sf-two .sf-num > span { margin-left: 2px; font-size: 13px; }
 
 </style>
 </head>
@@ -3348,9 +3387,9 @@ function mpDonutSvg(parts) {
 /** donut of 7.x risk levels – lives at the top of the dashboard; hover shows which unit / items */
 /** safety colour of a % score: red <70, orange <85, green >=85 (always shown with icon + label elsewhere) */
 function mpScoreColor(pct) { return pct === null ? "var(--muted)" : pct < 70 ? "var(--st-critical)" : pct < 85 ? "var(--st-serious)" : "var(--st-good)"; }
-function mpRenderDashDonut(host) {
+function mpRenderDashDonut(host, D) {
   if (!host) return;
-  const D = mpMonData();
+  D = D || mpMonData();
   const defs = [["critical", "var(--st-critical)"], ["high", "var(--st-serious)"], ["medium", "var(--st-warning)"], ["low", "var(--st-good)"], ["na", "var(--muted)"]];
   const parts = defs.map(([id, color]) => {
     const label = id === "na" ? "N/A" : `${mpRiskMeta(id).icon} ${mpRiskLabel(id)}`;
@@ -3358,29 +3397,11 @@ function mpRenderDashDonut(host) {
     return { v: D.risk[id], color, label, tip: `${label} · ${D.risk[id]} ${mt("ข้อ", "items")}${detail ? "\n" + detail : ""}` };
   });
   const legend = parts.map((p) => `<li data-tip="${mpEsc(p.tip)}"><i style="background:${p.color}"></i>${p.label} <b>${p.v}</b></li>`).join("");
-  const range = mpPeriodRange();
-  const S = mpStats(DB.get("mpUnits", []).map((u) => u.id), range);
-  const ov = mpOverallStatusOf(S.pct);
-  host.innerHTML = `<div class="card donut-card" style="height:100%;margin:0;">
-    <h3 style="margin:0 0 2px;">${mt("ระดับความเสี่ยง ก่อสร้าง / ปรับปรุง", "Construction / renovation risk level")}</h3>
-    <div class="desc" style="margin:0 0 6px;">${mt("ข้อ 7.1–7.6 ตรวจล่าสุด · เฉพาะหน่วยงานที่มีงานก่อสร้าง / Renovation (", "Items 7.1–7.6, latest visit · only units with construction / renovation (")}${D.allUnits.length}${mt(" หน่วย) · เลื่อนเมาส์ดูอาคารและข้อที่พบ", " units) · hover for unit and items")}</div>
-    <div class="donut-grid">
-      <div class="donut-col">${mpDonutSvg(parts)}<ul class="mon-legend h center">${legend}</ul></div>
-      <div class="score-col" data-goto-risk="1" title="${mt("ดูรายละเอียด Inspection Risk Summary", "Open Inspection Risk Summary")}">
-        <div class="mon-t">Inspection Risk Summary</div>
-        <div class="score-big" style="color:${mpScoreColor(S.pct)}">${mpFmtPct(S.pct)}</div>
-        <div>${mpChip(ov)}</div>
-        <div class="muted-s">${mt("ทุกหน่วยงาน (ตรวจล่าสุด)", "All units (latest visit)")} · ${S.done}/${S.total} ${mt("ข้อ", "items")}</div>
-        <div class="muted-s">${mt("แดง <70% · ส้ม <85% · เขียว ≥85%", "red <70% · orange <85% · green ≥85%")}</div>
-      </div>
-    </div></div>`;
-  const go = host.querySelector("[data-goto-risk]"); if (go) go.addEventListener("click", () => navigate("mp_risk"));
-  if (!host._tips) { mpWireTips(host); host._tips = true; }
+  host.innerHTML = `<div class="mon-t" style="text-align:center;">${mt("ระดับความเสี่ยง ก่อสร้าง / ปรับปรุง (ข้อ 7.1–7.6)", "Construction / renovation risk level (items 7.1–7.6)")}</div>
+    <div class="donut-col">${mpDonutSvg(parts)}<ul class="mon-legend h center">${legend}</ul>
+    <div class="muted-s" style="text-align:center;">${mt("เลื่อนเมาส์ดูอาคารและข้อที่พบ", "Hover for the unit and items found")}</div></div>`;
 }
-function mpMonRefresh() {
-  renderConstructionMonitor(document.getElementById("mon-host"));
-  mpRenderDashDonut(document.getElementById("dash-donut"));
-}
+function mpMonRefresh() { renderConstructionMonitor(document.getElementById("mon-host")); }
 
 function renderConstructionMonitor(host) {
   if (!host) return;
@@ -3429,13 +3450,14 @@ function renderConstructionMonitor(host) {
       <div class="mon-grid3 two">
         <div class="mon-box"><div class="mon-t">${mt("คะแนนข้อ 7.1–7.6 ตามวันที่ตรวจ (%)", "Items 7.1–7.6 score by inspection date (%)")}</div>
           ${MpMonUI.table ? "" : mpLineChartSvg([{ name: mt("ข้อ 7.1–7.6", "Items 7.1–7.6"), color: "var(--series-1)", pts: D.itemPts }], { label: "7.x" })}</div>
-        <div class="mon-box"><div class="mon-t">${mt("รายหน่วยงาน", "By unit")}</div>${tbl}</div>
+        <div class="mon-box mon-mid"><div class="mon-t">${mt("รายหน่วยงาน", "By unit")}</div>${tbl}<div id="mon-donut" class="mon-donut-slot"></div></div>
         <div class="mon-box"><div class="mon-t">Follow up · ${mt("ผลติดตามรวม (7.x + PCRA/ICRA)", "Combined follow-up (7.x + PCRA/ICRA)")}</div>
           ${MpMonUI.table ? "" : mpLineChartSvg([{ name: mt("ติดตามรวม", "Follow-up"), color: "var(--series-2)", pts: D.allPts }], { target: MP_TARGET, label: "follow up" })}
           <ul class="mon-legend h"><li><i style="background:var(--series-2)"></i>${mt("ผลติดตามรวม", "Combined result")}</li><li><i class="dash"></i>${mt("เป้าหมาย", "Target")} &gt;${MP_TARGET}%</li></ul></div>
       </div>
       ${MpMonUI.table ? tableView : ""}
     </div>`;
+  if (!MpMonUI.table) mpRenderDashDonut(host.querySelector("#mon-donut"), D);
   document.getElementById("mon-unit").addEventListener("change", (e) => { MpMonUI.unit = e.target.value; mpMonRefresh(); });
   document.getElementById("mon-toggle").addEventListener("click", () => { MpMonUI.table = !MpMonUI.table; mpMonRefresh(); });
   if (!host._tips) { mpWireTips(host); host._tips = true; }
@@ -3446,14 +3468,14 @@ const MpDashUI = { scope: "ALL" };
 /** severity order: most critical first, then high, medium, low; ties -> lower % first */
 const mpRiskOrder = (a, b) => (b.risk.critical - a.risk.critical) || (b.risk.high - a.risk.high) || (b.risk.medium - a.risk.medium) || (b.risk.low - a.risk.low) || ((a.pct === null ? 101 : a.pct) - (b.pct === null ? 101 : b.pct));
 
-function mpRiskStackRow(label, risk, pct, extraTip, link) {
+function mpRiskStackRow(label, risk, pct, extraTip, link, compact) {
   const n = risk.critical + risk.high + risk.medium + risk.low;
   const segs = MP_RISK.map((r) => {
     const k = risk[r.id]; if (!k) return "";
     return `<div class="seg" style="flex:${k};background:${mpRiskColor(r.id)};" data-tip="${mpEsc(label)}\n${r.icon} ${mpRiskLabel(r.id)}: ${k} ${mt("ข้อ", "items")} (${((k / n) * 100).toFixed(0)}%)${extraTip ? "\n" + mpEsc(extraTip) : ""}">${k >= 2 ? `<b>${k}</b>` : ""}</div>`;
   }).join("");
   const st = mpStatusOf(pct);
-  return `<div class="rk-row"><div class="rk-label" title="${mpEsc(label)}">${link ? `<a href="#" data-goto-unit="${link}">${mpEsc(label)}</a>` : mpEsc(label)}</div>
+  return `<div class="rk-row${compact ? " compact" : ""}"><div class="rk-label" title="${mpEsc(label)}">${link ? `<a href="#" data-goto-unit="${link}">${mpEsc(label)}</a>` : mpEsc(label)}</div>
     <div class="stack-track">${n ? segs : `<span class="muted-s">${mt("ยังไม่ประเมิน / N/A", "Not assessed / N/A")}</span>`}</div>
     <div class="rk-val">${pct === null ? "–" : pct.toFixed(0) + "%"}${st ? ` <i style="color:var(--st-${st.cls})" title="${mt(st.th, st.en)}">${st.icon}</i>` : ""}</div></div>`;
 }
@@ -3476,7 +3498,6 @@ function renderDashMasterPlan(host) {
   if (MpDashUI.scope !== "ALL" && !scopeUnits.length) MpDashUI.scope = "ALL";
   const SC = mpStats(scopeUnits.map((u) => u.id), range);
   const cats = SC.cats.slice().sort(mpRiskOrder);
-  const unitRank = unitStats.slice().sort(mpRiskOrder);
   const planBar = [["done", "var(--st-good)", mt("เสร็จสิ้น", "Done")], ["doing", "var(--st-warning)", mt("กำลังดำเนินการ", "In progress")], ["todo", "var(--muted)", mt("รอดำเนินการ", "Pending")]]
     .map(([k, c, l]) => cnt[k] ? `<div class="seg" style="flex:${cnt[k]};background:${c};" data-tip="${l}: ${cnt[k]} / ${total}"><b>${cnt[k]}</b></div>` : "").join("");
   const lateList = overdue.slice(0, 4).map((p) => `<li><span style="color:var(--st-critical)">▲</span> ${mpEsc(p.step.trim())}<div class="muted-s">${mpEsc(p.owner || "–")} · ${mt("กำหนด", "due")} ${mpFmtDate(p.end)}</div></li>`).join("");
@@ -3506,18 +3527,48 @@ function renderDashMasterPlan(host) {
           <button class="btn ghost small" data-goto="mp_check">${mt("เปิด Checklist", "Open")} →</button></div>
         </div>
         <div class="rk-legend mon-legend h">${MP_RISK.map((r) => `<li><i style="background:${mpRiskColor(r.id)}"></i>${r.icon} ${mpRiskLabel(r.id)}</li>`).join("")}</div>
-        <div class="mon-grid">
-          <div><div class="mon-t">${MpDashUI.scope === "ALL" ? mt("ตามหมวด · รวมทุกหน่วยงาน", "By category · all units") : mt("ตามหมวด · ", "By category · ") + mpEsc(scopeUnits[0].name)}</div>
-            ${cats.map((c) => mpRiskStackRow(mpCatName(c), c.risk, c.pct, "")).join("")}</div>
-          <div><div class="mon-t">${mt("แยกหน่วยงาน (เรียงตามความเสี่ยง)", "By unit (ranked by risk)")}</div>
-            ${unitRank.length ? unitRank.map((x) => mpRiskStackRow(x.u.name, x.risk, x.pct, x.S.cats.slice().sort(mpRiskOrder).filter((c) => c.risk.critical + c.risk.high).slice(0, 3).map((c) => `${mpCatName(c)}: ✖${c.risk.critical} ▲${c.risk.high}`).join("\n"), x.u.id)).join("") : `<div class="empty-state">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}</div>
+        <div>
+          <div class="mon-t">${MpDashUI.scope === "ALL" ? mt("ตามหมวด · รวมทุกหน่วยงาน", "By category · all units") : mt("ตามหมวด · ", "By category · ") + mpEsc(scopeUnits[0].name)}</div>
+          ${cats.map((c) => mpRiskStackRow(mpCatName(c), c.risk, c.pct, "")).join("")}
         </div>
       </div>
     </div>`;
   host.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto)));
-  host.querySelectorAll("[data-goto-unit]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); MpCheckUI.unitId = a.dataset.gotoUnit; MpCheckUI.visit = null; navigate("mp_check"); }));
   host.querySelector("#dmp-scope").addEventListener("change", (e) => { MpDashUI.scope = e.target.value; renderDashMasterPlan(host); });
   if (!host._tips) { mpWireTips(host); host._tips = true; }
+}
+
+/** top row: unit ranking by risk (with %) */
+function mpRenderDashRank(host) {
+  if (!host) return;
+  const range = mpPeriodRange();
+  const units = DB.get("mpUnits", []);
+  const rank = units.map((u) => { const us = mpStats([u.id], range); return { u, risk: us.risk, pct: us.pct, S: us }; }).sort(mpRiskOrder);
+  host.innerHTML = `<div class="card" style="height:100%;margin:0;">
+    <div class="toolbar" style="margin-bottom:2px;"><h3 style="margin:0;">${mt("แยกหน่วยงาน (เรียงตามความเสี่ยง)", "By unit (ranked by risk)")}</h3><button class="btn ghost small" data-goto="mp_check">${mt("Checklist", "Checklist")} →</button></div>
+    <div class="desc" style="margin:0 0 6px;">${mt("วิกฤต → ต่ำ · % = คะแนนที่ได้ (ไม่รวม N/A)", "critical → low · % = score (N/A excluded)")}</div>
+    <div class="rk-legend mon-legend h">${MP_RISK.map((r) => `<li><i style="background:${mpRiskColor(r.id)}"></i>${r.icon} ${mpRiskLabel(r.id)}</li>`).join("")}</div>
+    ${rank.length ? rank.map((x) => mpRiskStackRow(x.u.name, x.risk, x.pct, x.S.cats.slice().sort(mpRiskOrder).filter((c) => c.risk.critical + c.risk.high).slice(0, 3).map((c) => `${mpCatName(c)}: ✖${c.risk.critical} ▲${c.risk.high}`).join("\n"), x.u.id, true)).join("") : `<div class="empty-state">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}</div>`;
+  host.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto)));
+  host.querySelectorAll("[data-goto-unit]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); MpCheckUI.unitId = a.dataset.gotoUnit; MpCheckUI.visit = null; navigate("mp_check"); }));
+  if (!host._tips) { mpWireTips(host); host._tips = true; }
+}
+/** top row: the overall Inspection Risk Summary score as its own box */
+function mpRenderDashScore(host) {
+  if (!host) return;
+  const range = mpPeriodRange();
+  const S = mpStats(DB.get("mpUnits", []).map((u) => u.id), range);
+  const ov = mpOverallStatusOf(S.pct);
+  host.innerHTML = `<div class="card score-card" data-goto-risk="1" tabindex="0" role="button" style="height:100%;margin:0;" title="${mt("ดูรายละเอียด Inspection Risk Summary", "Open Inspection Risk Summary")}">
+    <div class="mon-t">Inspection Risk Summary</div>
+    <div class="score-big" style="color:${mpScoreColor(S.pct)}">${mpFmtPct(S.pct)}</div>
+    <div>${mpChip(ov)}</div>
+    <div class="muted-s">${mt("ทุกหน่วยงาน (ตรวจล่าสุด)", "All units (latest visit)")}<br/>${mpPeriodLabel()}<br/>${S.done}/${S.total} ${mt("ข้อประเมินแล้ว", "items assessed")} · N/A ${S.na}</div>
+    <div class="score-key"><span style="color:var(--st-critical)">■</span> &lt;70% <span style="color:var(--st-serious)">■</span> &lt;85% <span style="color:var(--st-good)">■</span> ≥85%</div></div>`;
+  const go = host.querySelector("[data-goto-risk]");
+  const open = () => navigate("mp_risk");
+  go.addEventListener("click", open);
+  go.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
 }
 
 // ================================================= SAFETY FIRST board ===
@@ -3552,7 +3603,12 @@ function renderSafetyBoard(host) {
     <div class="sf-head">
       <div class="sf-logo"><img src="${LOGO_DATA_URI}" alt="Bhiraj Buri Group" /></div>
       <div class="sf-title"><b>${mt("สถิติความปลอดภัย", "Safety statistics")}</b><span>SAFETY FIRST</span></div>
-      <div class="sf-badge" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="none" stroke="var(--st-good)" stroke-width="3"/><path d="M20 12h8v8h8v8h-8v8h-8v-8h-8v-8h8z" fill="var(--st-good)"/></svg></div>
+      <div class="sf-badge" role="img" aria-label="${mt("ปลอดภัยไว้ก่อน SAFETY FIRST", "Safety first")}"><svg viewBox="0 0 100 100">
+        <defs><path id="sf-top" d="M 17,50 A 33,33 0 0 1 83,50"/><path id="sf-bot" d="M 11,50 A 39,39 0 0 0 89,50"/></defs>
+        <circle cx="50" cy="50" r="47" fill="#fff" stroke="var(--st-good)" stroke-width="3"/><circle cx="50" cy="50" r="28" fill="none" stroke="var(--st-good)" stroke-width="1.5"/>
+        <text font-size="10.5" font-weight="700" fill="var(--st-good)" text-anchor="middle"><textPath href="#sf-top" startOffset="50%">${mt("ปลอดภัยไว้ก่อน", "SAFETY")}</textPath></text>
+        <text font-size="9.5" font-weight="700" fill="var(--st-good)" text-anchor="middle" letter-spacing="1"><textPath href="#sf-bot" startOffset="50%">SAFETY FIRST</textPath></text>
+        <path d="M43 30h14v13h13v14H57v13H43V57H30V43h13z" fill="var(--st-good)"/></svg></div>
     </div>
     <div class="sf-scope"><select id="sf-scope" aria-label="${mt("ขอบเขต", "Scope")}"><option value="ALL" ${scope === "ALL" ? "selected" : ""}>${mt("ทั้งเครือ BBG", "Whole BBG group")}</option>${blds.map((b) => `<option value="${b.id}" ${scope === b.id ? "selected" : ""}>${mpEsc(b.name)}</option>`).join("")}</select>
       <span class="muted-s">${mt("นับตั้งแต่", "Counting from")} ${mpFmtDate(MP_SAFETY.start)} · ${mt("คำนวณอัตโนมัติจาก CAPA / Incident", "auto-calculated from CAPA / Incident")}</span></div>
@@ -4723,7 +4779,7 @@ function renderDashboard(root) {
   MpSafeUI.scope = null;
   root.innerHTML = `
     <div class="dash-top ${showMp ? "" : "one"}">
-      ${showMp ? `<div id="dash-donut"></div>` : ""}
+      ${showMp ? `<div id="dash-rank"></div><div id="dash-score"></div>` : ""}
       <div id="dash-safety"></div>
     </div>
     ${showMp ? `<div id="dash-mp"></div><div id="mon-host" style="margin-top:14px;"></div>` : ""}
@@ -4732,7 +4788,8 @@ function renderDashboard(root) {
   `;
   renderSafetyBoard(document.getElementById("dash-safety"));
   if (showMp) {
-    mpRenderDashDonut(document.getElementById("dash-donut"));
+    mpRenderDashRank(document.getElementById("dash-rank"));
+    mpRenderDashScore(document.getElementById("dash-score"));
     renderDashMasterPlan(document.getElementById("dash-mp"));
     renderConstructionMonitor(document.getElementById("mon-host"));
   }
