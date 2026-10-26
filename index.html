@@ -1123,6 +1123,20 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .acc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media (max-width: 1100px) { .acc-grid { grid-template-columns: 1fr; } }
 .acc-scroll { max-height: 420px; overflow: auto; }
+/* after-editing chart inside the Overview box */
+.score-card { justify-content: flex-start; }
+.score-card .score-big { font-size: clamp(38px, 3.6vw, 52px); }
+.aft-box { align-self: stretch; text-align: left; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 2px; }
+.aft-leg { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11.5px; color: var(--muted); margin: 2px 0 4px; } .aft-leg i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 4px; }
+.aft-row { padding: 5px 0 6px; }
+.aft-top { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.aft-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aft-pct { font-weight: 700; white-space: nowrap; font-size: 12.5px; }
+.aft-pct.blink { animation: segBlink 2.6s ease-in-out infinite; }
+.aft-row .stack-track { min-height: 16px; margin: 3px 0; }
+.aft-cnt { font-size: 12px; }
+.aft-upd { font-size: 11.5px; line-height: 1.35; }
+@media (prefers-reduced-motion: reduce) { .aft-pct.blink { animation: none; } }
 
 </style>
 </head>
@@ -2752,7 +2766,8 @@ function renderMpChecklistBody(unit) {
   const save = (fn, itemId) => { const r = getRec(); fn(r); delete r.demo; if (itemId) mpStampItem(r, itemId); mpSaveRecord(r); if (itemId) paintStamp(itemId); return r; };
   body.querySelectorAll("[data-score]").forEach((sel) => sel.addEventListener("change", () => {
     const id = sel.dataset.score;
-    const r = save((x) => { if (sel.value === "") delete x.scores[id]; else x.scores[id] = sel.value === "na" ? "na" : Number(sel.value); }, id);
+    const r = save((x) => { const prev = x.scores[id]; if (prev !== undefined) { x.base = x.base || {}; if (!(id in x.base)) x.base[id] = prev; }   /* remember the first finding for before/after */
+      if (sel.value === "") delete x.scores[id]; else x.scores[id] = sel.value === "na" ? "na" : Number(sel.value); }, id);
     const v = r.scores[id];
     const rk = typeof v === "number" ? mpRiskOfScore(v) : null;
     const row = body.querySelector(`[data-row="${id}"]`);
@@ -3563,6 +3578,12 @@ function mpLastUpdate(unitIds) {
   });
   return best;
 }
+/** "before editing": the first visit, with each item at the value first recorded for it */
+function mpBaselineStats(unitId) {
+  const first = mpVisits(unitId)[0];
+  if (!first) return null;
+  return mpStatsFromRecs([Object.assign({}, first, { scores: Object.assign({}, first.scores, first.base || {}) })], [unitId]);
+}
 const mpIsStale = (last) => !!last && (Date.now() - new Date(last.at).getTime()) / 86400000 > MP_STALE_DAYS;
 /** blink only when nothing was updated for a month AND the score is in the red / orange zone */
 const mpBlinkNow = (pct, last) => mpIsStale(last) && pct !== null && pct < 85;
@@ -3647,20 +3668,51 @@ function mpRenderDashRank(host) {
   const range = mpPeriodRange();
   const units = DB.get("mpUnits", []);
   const sel = mpDashScopeUnits();
-  const rank = sel.map((u) => { const us = mpStats([u.id], range); return { u, risk: us.risk, pct: us.pct, S: us, last: mpLastUpdate([u.id]) }; }).sort(mpRiskOrder);
+  const rank = sel.map((u) => { const us = mpBaselineStats(u.id) || mpStats([u.id], range); return { u, risk: us.risk, pct: us.pct, S: us }; }).sort(mpRiskOrder);
   const one = MpDashUI.scope !== "ALL" && rank.length === 1;
   const topCats = one ? rank[0].S.cats.slice().sort(mpRiskOrder).slice(0, 4) : [];
   host.innerHTML = `<div class="card" style="height:100%;margin:0;">
     <div class="toolbar" style="margin-bottom:2px;"><h3 style="margin:0;">${mt("แยกหน่วยงาน (เรียงตามความเสี่ยง)", "By unit (ranked by risk)")}</h3><button class="btn ghost small" data-goto="mp_check">${mt("Checklist", "Checklist")} →</button></div>
-    <div class="desc" style="margin:0 0 6px;">${mt("วิกฤต → ต่ำ · % = คะแนนที่ได้ (ไม่รวม N/A)", "critical → low · % = score (N/A excluded)")}</div>
+    <div class="desc" style="margin:0 0 6px;">${mt("ก่อนแก้ไข (ที่พบครั้งแรก) · วิกฤต → ต่ำ · % = คะแนนที่ได้ (ไม่รวม N/A)", "Before editing (first findings) · critical → low · % = score (N/A excluded)")}</div>
     <div class="rk-legend mon-legend h">${MP_RISK.map((r) => `<li><i style="background:${mpRiskColor(r.id)}"></i>${r.icon} ${mpRiskLabel(r.id)}</li>`).join("")}</div>
-    ${rank.length ? rank.map((x) => mpRiskStackRow(x.u.name, x.risk, x.pct, x.S.cats.slice().sort(mpRiskOrder).filter((c) => c.risk.critical + c.risk.high).slice(0, 3).map((c) => `${mpCatName(c)}: ✖${c.risk.critical} ▲${c.risk.high}`).join("\n"), x.u.id, true, false, { upd: mpUpdLine(x.last), blink: mpBlinkNow(x.pct, x.last) })).join("") : `<div class="empty-state">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}
+    ${rank.length ? rank.map((x) => mpRiskStackRow(x.u.name, x.risk, x.pct, x.S.cats.slice().sort(mpRiskOrder).filter((c) => c.risk.critical + c.risk.high).slice(0, 3).map((c) => `${mpCatName(c)}: ✖${c.risk.critical} ▲${c.risk.high}`).join("\n"), x.u.id, true, false)).join("") : `<div class="empty-state">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}
     ${one ? `<div class="mon-t" style="margin-top:8px;">${mt("หมวดที่เสี่ยงสูงสุด", "Highest-risk categories")}</div>${topCats.map((c) => mpRiskStackRow(mpCatName(c), c.risk, c.pct, "", null, true)).join("")}` : ""}</div>`;
   host.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto)));
   host.querySelectorAll("[data-goto-unit]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); MpCheckUI.unitId = a.dataset.gotoUnit; MpCheckUI.visit = null; navigate("mp_check"); }));
   if (!host._tips) { mpWireTips(host); host._tips = true; }
 }
 /** top row: the overall Inspection Risk Summary score as its own box */
+/** "after editing" per unit: open red / orange items, share already corrected, who edited last */
+function mpAfterChart(units, range) {
+  const rows = units.map((u) => {
+    const b = mpBaselineStats(u.id), a = mpStats([u.id], range), last = mpLastUpdate([u.id]);
+    return { u, b: b || a, a, last };
+  }).sort((x, y) => mpRiskOrder({ risk: x.b.risk, pct: x.b.pct }, { risk: y.b.risk, pct: y.b.pct }));
+  const adm = Auth.isAdmin(State.user);
+  const html = rows.map(({ u, b, a, last }) => {
+    const bc = b.risk.critical, bh = b.risk.high, ac = a.risk.critical, ah = a.risk.high;
+    const bt = bc + bh, at = ac + ah;
+    const noData = !a.done;
+    const fixed = bt ? Math.max(0, ((bt - at) / bt) * 100) : null;
+    const edited = bc !== ac || bh !== ah;
+    const blink = mpBlinkNow(a.pct, last);
+    const seg = (n, color, lbl) => n ? `<div class="seg${blink && color !== "var(--st-good)" ? " blink" : ""}" style="flex:${n};background:${color};" data-tip="${mpEsc(u.name)}\n${lbl}: ${n}"><b>${n}</b></div>` : "";
+    const bar = noData ? `<span class="muted-s">${mt("ไม่มีข้อมูลในช่วงนี้", "no data in this period")}</span>`
+      : (bt || at) ? seg(ac, mpRiskColor("critical"), "✖ " + mt("วิกฤต (ยังไม่แก้)", "critical (open)")) + seg(ah, mpRiskColor("high"), "▲ " + mt("สูง (ยังไม่แก้)", "high (open)")) + seg(Math.max(0, bt - at), "var(--st-good)", "✔ " + mt("แก้ไขแล้ว", "corrected"))
+      : `<span class="muted-s">✔ ${mt("ไม่มีข้อเสี่ยงสูง/วิกฤต", "no high / critical items")}</span>`;
+    const cnt = noData ? "" : edited
+      ? `✖ ${bc}→<b>${ac}</b> · ▲ ${bh}→<b>${ah}</b>`
+      : `✖ <b>${ac}</b> · ▲ <b>${ah}</b> <span class="muted-s">(${mt("ยังไม่มีการแก้ไข", "not edited yet")})</span>`;
+    return `<div class="aft-row"><div class="aft-top"><span class="aft-name" title="${mpEsc(u.name)}">${mpEsc(u.name)}</span>
+        <span class="aft-pct${blink ? " blink" : ""}" ${blink ? `style="color:${mpScoreColor(a.pct)}"` : ""}>${noData || fixed === null ? "" : mt("แก้ไขแล้ว ", "corrected ") + fixed.toFixed(0) + "%"}</span></div>
+      <div class="stack-track">${bar}</div>
+      <div class="aft-cnt">${cnt}</div>
+      <div class="aft-upd muted-s">${mpUpdLine(last)}</div></div>`;
+  }).join("");
+  return `<div class="aft-box"><div class="mon-t" style="text-align:left;">${mt("หลังการแก้ไข · ข้อสีแดง / สีส้มที่เหลือ", "After editing · open red / orange items")}</div>
+    <div class="aft-leg"><span><i style="background:${mpRiskColor("critical")}"></i>✖ ${mpRiskLabel("critical")}</span><span><i style="background:${mpRiskColor("high")}"></i>▲ ${mpRiskLabel("high")}</span><span><i style="background:var(--st-good)"></i>✔ ${mt("แก้ไขแล้ว", "corrected")}</span></div>
+    ${html || `<div class="muted-s">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}</div>`;
+}
 function mpRenderDashScore(host) {
   if (!host) return;
   const range = mpPeriodRange();
@@ -3676,6 +3728,7 @@ function mpRenderDashScore(host) {
     <div>${mpChip(ov)}</div>
     <div class="muted-s">${scopeLbl} (${mt("ตรวจล่าสุด", "latest visit")})<br/>${mpPeriodLabel()}<br/>${S.done}/${S.total} ${mt("ข้อประเมินแล้ว", "items assessed")} · N/A ${S.na}</div>
     <div class="score-upd">${mpUpdLine(last)}</div>
+    ${mpAfterChart(su, range)}
     <div class="score-key"><span style="color:var(--st-critical)">■</span> &lt;70% <span style="color:var(--st-serious)">■</span> &lt;85% <span style="color:var(--st-good)">■</span> ≥85%</div></div>`;
   const go = host.querySelector("[data-goto-risk]");
   const open = () => navigate("mp_risk");
