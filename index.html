@@ -3577,6 +3577,7 @@ function mpDashScopeUnits() {
   return MpDashUI.scope === "ALL" ? units : units.filter((u) => u.id === MpDashUI.scope);
 }
 function mpDashRefresh() {
+  if (document.getElementById("dash-safety")) renderSafetyBoard(document.getElementById("dash-safety"));
   mpRenderDashRank(document.getElementById("dash-rank"));
   mpRenderDashScore(document.getElementById("dash-score"));
   renderDashMasterPlan(document.getElementById("dash-mp"));
@@ -3754,10 +3755,12 @@ const MP_SAFETY = { start: "2026-01-01", target: 365 };
 const MpSafeUI = { scope: null };
 const mpDayNum = (iso) => { const [y, m, d] = iso.split("-").map(Number); return Math.round(Date.UTC(y, m - 1, d) / 86400000); };
 function mpIsAccident(c) { return c.type === "incident" || (!c.type && /incident|accident|อุบัติเหตุ/i.test(c.source || "")); }
-function mpSafetyStats(buildingIds) {
+/** unitIds: accidents recorded against those units; null = every accident (whole group, incl. ones with no unit) */
+function mpSafetyStats(unitIds) {
   const today = todayISO();
   const t0 = mpDayNum(today), s0 = mpDayNum(MP_SAFETY.start);
-  const dates = DB.get("capas", []).filter((c) => buildingIds.includes(c.buildingId) && mpIsAccident(c))
+  const bIds = accessibleBuildings().map((b) => b.id);
+  const dates = DB.get("capas", []).filter((c) => bIds.includes(c.buildingId) && mpIsAccident(c) && (!unitIds || unitIds.includes(c.unitId)))
     .map((c) => c.occurredDate || c.openedDate).filter((d) => d && d >= MP_SAFETY.start && d <= today).sort();
   if (!dates.length) { const d = Math.max(0, t0 - s0 + 1); return { last: null, days: d, best: d, count: 0 }; }
   let best = 0, prev = s0;
@@ -3769,14 +3772,14 @@ const mpBoxes = (n, min) => String(Math.max(0, n)).padStart(min || 3, "0").split
 
 function renderSafetyBoard(host) {
   if (!host) return;
-  const blds = accessibleBuildings();
-  const scope = MpSafeUI.scope || State.activeBuilding || "ALL";
-  const ids = scope === "ALL" ? blds.map((b) => b.id) : [scope];
-  const S = mpSafetyStats(ids);
-  const name = scope === "ALL" ? mt("ทั้งเครือ BBG", "Whole BBG group") : ((blds.find((b) => b.id === scope) || {}).name || "");
+  const units = DB.get("mpUnits", []);
+  mpDashScopeUnits();                       // normalises MpDashUI.scope
+  const scope = MpDashUI.scope;
+  const S = mpSafetyStats(scope === "ALL" ? null : [scope]);
+  const name = scope === "ALL" ? mt("ทั้งเครือ BBG", "Whole BBG group") : ((units.find((u) => u.id === scope) || {}).name || "");
   const pct = Math.min(100, (S.days / MP_SAFETY.target) * 100);
   const hit = S.days >= MP_SAFETY.target;
-  const rows = blds.map((b) => { const x = mpSafetyStats([b.id]); return `<tr><td>${mpEsc(b.name)}</td><td class="num"><b>${x.days}</b></td><td>${x.last ? mpFmtDate(x.last) : "–"}</td><td class="num">${x.best}</td><td class="num">${x.count}</td></tr>`; }).join("");
+  const rows = units.map((b) => { const x = mpSafetyStats([b.id]); return `<tr><td>${mpEsc(b.name)}</td><td class="num"><b>${x.days}</b></td><td>${x.last ? mpFmtDate(x.last) : "–"}</td><td class="num">${x.best}</td><td class="num">${x.count}</td></tr>`; }).join("");
   host.innerHTML = `<div class="card safety" style="height:100%;margin:0;">
     <div class="sf-head">
       <div class="sf-logo"><img src="${LOGO_DATA_URI}" alt="Bhiraj Buri Group" /></div>
@@ -3788,7 +3791,7 @@ function renderSafetyBoard(host) {
         <text font-size="9.5" font-weight="700" fill="var(--st-good)" text-anchor="middle" letter-spacing="1"><textPath href="#sf-bot" startOffset="50%">SAFETY FIRST</textPath></text>
         <path d="M43 30h14v13h13v14H57v13H43V57H30V43h13z" fill="var(--st-good)"/></svg></div>
     </div>
-    <div class="sf-scope"><select id="sf-scope" aria-label="${mt("ขอบเขต", "Scope")}"><option value="ALL" ${scope === "ALL" ? "selected" : ""}>${mt("ทั้งเครือ BBG", "Whole BBG group")}</option>${blds.map((b) => `<option value="${b.id}" ${scope === b.id ? "selected" : ""}>${mpEsc(b.name)}</option>`).join("")}</select>
+    <div class="sf-scope"><select id="sf-scope" aria-label="${mt("ขอบเขต", "Scope")}"><option value="ALL" ${scope === "ALL" ? "selected" : ""}>${mt("ทั้งเครือ BBG", "Whole BBG group")}</option>${units.map((u) => `<option value="${u.id}" ${scope === u.id ? "selected" : ""}>${mpEsc(u.name)}</option>`).join("")}</select>
       <span class="muted-s">${mt("นับตั้งแต่", "Counting from")} ${mpFmtDate(MP_SAFETY.start)} · ${mt("คำนวณอัตโนมัติจาก CAPA / Incident", "auto-calculated from CAPA / Incident")}</span></div>
     <div class="sf-row sf-red"><div>${mt("เกิดอุบัติเหตุครั้งสุดท้ายเมื่อ", "Last accident occurred")}<small>LAST ACCIDENT OCCURRED</small></div>
       <div class="sf-date" data-tip="${mpEsc(name)}">${S.last ? mpFmtDate(S.last) : "– " + mt("ไม่มี", "none")}</div></div>
@@ -3799,10 +3802,14 @@ function renderSafetyBoard(host) {
     <div class="sf-row sf-green"><div>${mt("สถิติสูงสุดที่ไม่มีอุบัติเหตุ", "Best record without accident")}<small>THE BEST RECORD</small></div><div class="sf-num">${mpBoxes(S.best)}<span>${mt("วัน", "days")}<small>DAYS</small></span></div></div>
     <div class="sf-prog" data-tip="${mpEsc(name)}\n${S.days}/${MP_SAFETY.target} ${mt("วัน", "days")}"><div class="stack-track"><div class="seg" style="flex:${Math.max(pct, 0.5)};background:var(--st-good);"></div><div style="flex:${Math.max(100 - pct, 0)}"></div></div>
       <span class="muted-s">${hit ? "✔ " + mt("ถึงเป้าหมายแล้ว", "Target reached") : `${pct.toFixed(0)}% ${mt("ของเป้าหมาย", "of target")}`} · ${name} · ${mt("อุบัติเหตุ", "accidents")} ${S.count}</span></div>
-    <details class="sf-by"><summary>${mt("แยกรายหน่วยงาน (อาคาร / BU)", "By unit (building / BU)")}</summary>
+    <details class="sf-by"><summary>${mt("แยกรายหน่วยงาน", "By unit")}</summary>
       <table class="mon-table"><thead><tr><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("วันปลอดอุบัติเหตุ", "Days safe")}</th><th>${mt("ครั้งล่าสุด", "Last")}</th><th>${mt("สูงสุด", "Best")}</th><th>${mt("ครั้ง", "No.")}</th></tr></thead><tbody>${rows}</tbody></table></details>
   </div>`;
-  host.querySelector("#sf-scope").addEventListener("change", (e) => { MpSafeUI.scope = e.target.value; renderSafetyBoard(host); });
+  host.querySelector("#sf-scope").addEventListener("change", (e) => {
+    MpDashUI.scope = e.target.value;                         // one unit scope for the whole dashboard
+    const top = document.getElementById("dash-unit"); if (top) top.value = e.target.value;
+    mpDashRefresh(); renderSafetyBoard(host);
+  });
   if (!host._tips) { mpWireTips(host); host._tips = true; }
 }
 
@@ -4957,7 +4964,6 @@ function renderDashboard(root) {
         ${kpis.length === 0 ? `<div class="empty-state">${t("dash_kpi_empty")}</div>` : ""}
       </div>`;
 
-  MpSafeUI.scope = null;
   root.innerHTML = `
     <div class="dash-top ${showMp ? "" : "one"}">
       ${showMp ? `<div id="dash-rank"></div><div id="dash-score"></div>` : ""}
@@ -5523,7 +5529,7 @@ function renderCAPA(root) {
     </div>
     <div class="card">
       <table>
-        <thead><tr><th>เรื่อง</th><th>ประเภท</th><th>วันที่เกิดเหตุ</th><th>ที่มา</th><th>เจ้าของ</th><th>เปิดเมื่อ</th><th>กำหนดปิด</th><th>สถานะ</th><th></th></tr></thead>
+        <thead><tr><th>เรื่อง</th><th>ประเภท</th><th>หน่วยงาน</th><th>วันที่เกิดเหตุ</th><th>ที่มา</th><th>เจ้าของ</th><th>เปิดเมื่อ</th><th>กำหนดปิด</th><th>สถานะ</th><th></th></tr></thead>
         <tbody>
           ${
             capas.length
@@ -5534,6 +5540,7 @@ function renderCAPA(root) {
               <tr>
                 <td>${c.title}</td>
                 <td>${mpIsAccident(c) ? '<span class="st-chip"><i style="color:var(--st-critical)">✖</i>Incident</span>' : c.type === "nearmiss" ? "Near-miss" : "CAPA"}</td>
+                <td>${c.unitId ? mpEsc((DB.get("mpUnits", []).find((u) => u.id === c.unitId) || {}).name || "-") : "-"}</td>
                 <td>${c.occurredDate || "-"}</td>
                 <td>${c.source || "-"}</td>
                 <td>${c.owner || "-"}</td>
@@ -5587,6 +5594,7 @@ function openCapaForm(buildingId) {
       <div class="field"><label>ที่มา</label><input type="text" id="f-source" placeholder="Audit / Incident / Near-miss ฯลฯ" /></div>
       <div class="field"><label>เจ้าของ</label><input type="text" id="f-owner" /></div>
     </div>
+    <div class="field"><label>หน่วยงาน (ใช้แยกสถิติความปลอดภัยรายหน่วยงาน)</label><select id="f-unit"><option value="">— ไม่ระบุ (นับเฉพาะภาพรวมทั้งเครือ) —</option>${DB.get("mpUnits", []).map((u) => `<option value="${u.id}">${mpEsc(u.name)}</option>`).join("")}</select></div>
     <div class="form-row">
       <div class="field"><label>วันที่เกิดเหตุ (ใช้คำนวณสถิติความปลอดภัย)</label><input type="date" id="f-occ" value="${todayISO()}" /></div>
       <div class="field"><label>วันที่เปิด</label><input type="date" id="f-opened" value="${todayISO()}" /></div>
@@ -5608,6 +5616,7 @@ function openCapaForm(buildingId) {
       title,
       type: modal.querySelector("#f-type").value,
       occurredDate: modal.querySelector("#f-occ").value,
+      unitId: modal.querySelector("#f-unit").value,
       source: modal.querySelector("#f-source").value.trim(),
       owner: modal.querySelector("#f-owner").value.trim(),
       openedDate: modal.querySelector("#f-opened").value,
@@ -5970,7 +5979,7 @@ const DATASETS = {
   capas: {
     label: "CAPA / Incident",
     headers: [
-      { key: "buildingName", label: "อาคาร" }, { key: "title", label: "เรื่อง" }, { key: "type", label: "ประเภท" }, { key: "occurredDate", label: "วันที่เกิดเหตุ" }, { key: "source", label: "ที่มา" },
+      { key: "buildingName", label: "อาคาร" }, { key: "unitName", label: "หน่วยงาน" }, { key: "title", label: "เรื่อง" }, { key: "type", label: "ประเภท" }, { key: "occurredDate", label: "วันที่เกิดเหตุ" }, { key: "source", label: "ที่มา" },
       { key: "owner", label: "เจ้าของ" }, { key: "openedDate", label: "เปิดเมื่อ" }, { key: "dueDate", label: "กำหนดปิด" },
       { key: "status", label: "สถานะ" }
     ],
@@ -5979,6 +5988,7 @@ const DATASETS = {
       const labels = { open: "เปิด", in_progress: "กำลังดำเนินการ", closed: "ปิดแล้ว" };
       return DB.get("capas", []).map((c) => ({
         buildingName: (buildings.find((b) => b.id === c.buildingId) || {}).name || c.buildingId,
+        unitName: ((DB.get("mpUnits", []).find((u) => u.id === c.unitId)) || {}).name || "",
         title: c.title, type: c.type === "incident" ? "Incident" : c.type === "nearmiss" ? "Near-miss" : "CAPA", occurredDate: c.occurredDate || "", source: c.source, owner: c.owner, openedDate: c.openedDate, dueDate: c.dueDate,
         status: labels[c.status] || c.status
       }));
