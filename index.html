@@ -1109,6 +1109,21 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .sf-two .sf-row { font-size: 15px; flex-wrap: nowrap; }
 .sf-two .sf-num > span { margin-left: 2px; font-size: 13px; }
 
+/* ---- who / when stamps, stale-data blinking ---- */
+.chk-stamp { grid-column: 1 / -1; font-size: 12px; color: var(--text); padding: 5px 8px; min-height: 28px; border: 1px dashed var(--border); border-radius: 6px; background: var(--bg-soft, transparent); overflow-wrap: anywhere; }
+.chk-score .chk-stamp { margin-top: 6px; }
+@keyframes segBlink { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+.stack-track .seg.blink { animation: segBlink 2.6s ease-in-out infinite; }
+.rk-val.blink { animation: segBlink 2.6s ease-in-out infinite; }
+.rk-row.compact .rk-upd { grid-column: 1 / -1; grid-row: 3; font-size: 11.5px; line-height: 1.35; }
+.rk-upd .stale-flag, .score-upd .stale-flag { color: var(--st-critical); font-weight: 700; display: inline-block; }
+.score-upd { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+@media (prefers-reduced-motion: reduce) { .stack-track .seg.blink, .rk-val.blink { animation: none; } }
+/* access log */
+.acc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 1100px) { .acc-grid { grid-template-columns: 1fr; } }
+.acc-scroll { max-height: 420px; overflow: auto; }
+
 </style>
 </head>
 <body>
@@ -1561,7 +1576,7 @@ const DB = {
    * On each write we stamp changed records with `_u` (ISO time) and remember deletions as tombstones,
    * so all existing code that calls DB.set(name, array) becomes sync-aware without further changes.
    */
-  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms"],
+  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog"],
   _stable(r) {
     const c = Object.assign({}, r); delete c._u; return JSON.stringify(c);
   },
@@ -1607,7 +1622,7 @@ const DB = {
     if (this.get("mpForms", null) === null) this.set("mpForms", [], { raw: true });
   },
   resetAll() {
-    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "syncCfg", "syncMeta", "syncTomb", "session"].forEach((k) =>
+    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "syncCfg", "syncMeta", "syncTomb", "session"].forEach((k) =>
       localStorage.removeItem(this._key(k))
     );
     this.ensureSeeded();
@@ -1648,6 +1663,7 @@ const Auth = {
       return { ok: false, error: "บัญชีนี้ยังรอการอนุมัติจากผู้ดูแลระบบ กรุณาติดต่อผู้ดูแลระบบ" };
     }
     const session = { id: match.id, username: match.username, name: match.name, role: match.role, buildingIds: match.buildingIds };
+    session.logId = Auth.logIn(session);
     DB.set("session", session);
     return { ok: true, user: session };
   },
@@ -1671,7 +1687,28 @@ const Auth = {
     DB.set("users", users);
     return { ok: true };
   },
+  /** access log: one row per sign-in, closed when the user signs out (shown to admins only) */
+  logIn(session) {
+    try {
+      const logs = DB.get("accessLog", []);
+      const id = uid("al");
+      logs.push({ id, user: session.username, name: session.name || "", role: session.role || "", inAt: new Date().toISOString(), outAt: "" });
+      if (logs.length > 1500) logs.splice(0, logs.length - 1500);
+      DB.set("accessLog", logs);
+      return id;
+    } catch (e) { return ""; }
+  },
+  logOut() {
+    try {
+      const s = DB.get("session", null);
+      if (!s || !s.logId) return;
+      const logs = DB.get("accessLog", []);
+      const r = logs.find((x) => x.id === s.logId);
+      if (r && !r.outAt) { r.outAt = new Date().toISOString(); DB.set("accessLog", logs); }
+    } catch (e) { /* ignore */ }
+  },
   logout() {
+    Auth.logOut();
     localStorage.removeItem(DB_PREFIX + "session");
   },
   isAdmin(user) {
@@ -1894,9 +1931,25 @@ function mpNowHM() {
 function mpNewRecord(unitId, visit) {
   return { id: unitId + ":" + visit, unitId, visit, date: todayISO(), time: mpNowHM(), inspector: "", scores: {}, notes: {}, by: State.user ? State.user.username : "" };
 }
+/** who is signed in (display name) */
+const mpUserLabel = () => (State.user ? State.user.name || State.user.username : "");
+/** "26 ต.ค. 2569 14:14" from an ISO timestamp */
+function mpFmtWhen(iso) {
+  if (!iso) return "–";
+  const d = new Date(iso);
+  if (isNaN(d)) return "–";
+  const p = (n) => String(n).padStart(2, "0");
+  return mpFmtDate(`${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
+}
+/** remember who changed an item and when (only the latest editor is kept) */
+function mpStampItem(rec, itemId) {
+  rec.meta = rec.meta || {};
+  rec.meta[itemId] = { by: mpUserLabel(), at: new Date().toISOString() };
+}
 function mpSaveRecord(rec) {
   rec.id = rec.unitId + ":" + rec.visit;
-  if (State.user) rec.by = State.user.username;
+  rec.at = new Date().toISOString();
+  if (State.user) { rec.by = State.user.username; rec.byName = mpUserLabel(); }
   const all = DB.get("mpScores", []);
   const idx = all.findIndex((r) => r.id === rec.id);
   if (idx >= 0) all[idx] = rec; else all.push(rec);
@@ -2473,7 +2526,7 @@ function mpShowPhoto(data, caption) {
     <div class="actions"><button class="btn ghost" id="ph-close">${mt("ปิด", "Close")}</button></div>`);
   m.querySelector("#ph-close").addEventListener("click", closeModal);
 }
-function mpWirePhotos(body, unit, visit) {
+function mpWirePhotos(body, unit, visit, opts) {
   if (!MpImg.available()) {
     body.querySelectorAll(".ph-slot").forEach((s) => { s.classList.add("disabled"); s.title = mt("เบราว์เซอร์นี้ไม่รองรับการเก็บรูป", "Photo storage not supported in this browser"); });
     return;
@@ -2491,7 +2544,7 @@ function mpWirePhotos(body, unit, visit) {
     const el = inp.closest(".ph-slot");
     const key = MpImg.key(unit.id, visit, el.dataset.phItem, el.dataset.phSlot);
     MpImg.compress(inp.files[0])
-      .then((data) => MpImg.put(key, data).then(() => mpPaintSlot(el, data)))
+      .then((data) => MpImg.put(key, data).then(() => { mpPaintSlot(el, data); if (opts && opts.touch) opts.touch(el.dataset.phItem); }))
       .catch(() => alert(mt("ไม่สามารถบันทึกรูปนี้ได้", "Could not save this photo")));
     inp.value = "";
   });
@@ -2500,7 +2553,7 @@ function mpWirePhotos(body, unit, visit) {
     if (!el) return;
     const slot = el.dataset.phSlot;
     if (e.target.closest(".ph-x")) {
-      MpImg.del(MpImg.key(unit.id, visit, el.dataset.phItem, slot)).then(() => mpPaintSlot(el, null));
+      MpImg.del(MpImg.key(unit.id, visit, el.dataset.phItem, slot)).then(() => { mpPaintSlot(el, null); if (opts && opts.touch) opts.touch(el.dataset.phItem); });
     } else if (e.target.closest(".ph-img")) {
       const src = el.querySelector(".ph-img img").src;
       mpShowPhoto(src, `${unit.name} · ${mt("ครั้งที่", "Visit")} ${visit} · ${el.dataset.phItem} · ${mt(MP_PHOTO_LABEL[slot].th, MP_PHOTO_LABEL[slot].en)}`);
@@ -2595,6 +2648,15 @@ function renderMpChecklistBody(unit) {
     `<option value="na" ${cur === "na" ? "selected" : ""}>N/A · ${mt("ไม่เกี่ยวข้อง = 0 (ไม่คิด %)", "n/a = 0 (not in %)")}</option>`;
   const riskCell = (cur) => cur === "na" ? `<span class="st-chip muted">N/A · ${mt("ประเมินแล้ว", "assessed")}</span>` : typeof cur === "number" ? mpRiskChip(mpRiskOfScore(cur)) : "";
 
+  const isAdm = Auth.isAdmin(State.user);   // only admins see who changed what
+  const stampBy = (m) => m && m.by ? `<span title="${mt("แก้ไขล่าสุดโดย", "Last edited by")}">👤 ${mpEsc(m.by)}</span>` : `<span class="muted-s">${mt("ยังไม่มีผู้แก้ไข", "no edits yet")}</span>`;
+  const stampAt = (m) => m && m.at ? `<span title="${mt("วันที่/เวลาแก้ไขล่าสุด", "Last edited at")}">🕒 ${mpFmtWhen(m.at)}</span>` : `<span class="muted-s">–</span>`;
+  const paintStamp = (id) => {
+    if (!isAdm) return;
+    const m = (getRec().meta || {})[id];
+    const a = body.querySelector(`[data-stamp-by="${id}"]`), b = body.querySelector(`[data-stamp-at="${id}"]`);
+    if (a) a.innerHTML = stampBy(m); if (b) b.innerHTML = stampAt(m);
+  };
   const cats = MP_CATEGORIES.map((c) => {
     const items = mpItemsOfCat(c.id).map((it) => {
       const cur = rec0.scores[it.id];
@@ -2608,10 +2670,11 @@ function renderMpChecklistBody(unit) {
             ${it.law ? `<div><b>${mt("อ้างอิง", "Reference")}:</b> ${mpEsc(it.law)}</div>` : ""}</details>` : ""}
           <input type="text" class="chk-note" data-note="${it.id}" placeholder="${mt("ข้อสังเกต / สิ่งที่ต้องแก้ไข (ถ้ามี)", "Finding / action needed (optional)")}" value="${mpEsc(rec0.notes[it.id] || "")}" />
         </div>
-        <div class="chk-photos">${[1, 2, 3].map((n) => mpPhotoSlotHtml(it.id, n)).join("")}</div>
+        <div class="chk-photos">${[1, 2, 3].map((n) => mpPhotoSlotHtml(it.id, n)).join("")}${isAdm ? `<div class="chk-stamp by" data-stamp-by="${it.id}">${stampBy(rec0.meta && rec0.meta[it.id])}</div>` : ""}</div>
         <div class="chk-score">
           <select data-score="${it.id}" aria-label="${mt("คะแนนข้อ", "Score for item")} ${it.id}">${opts(cur)}</select>
           <div class="chk-risk" data-risk="${it.id}">${riskCell(cur)}</div>
+          ${isAdm ? `<div class="chk-stamp at" data-stamp-at="${it.id}">${stampAt(rec0.meta && rec0.meta[it.id])}</div>` : ""}
         </div>
       </div>`;
     }).join("");
@@ -2667,7 +2730,7 @@ function renderMpChecklistBody(unit) {
     if (ic) { const st = mpStatusOf(all.pct); ic.innerHTML = st ? `<i style="color:var(--st-${st.cls})">${st.icon}</i>` : "<i>○</i>"; }
   };
   refresh();
-  mpWirePhotos(body, unit, cv);
+  mpWirePhotos(body, unit, cv, { touch: (id) => { const r = getRec(); mpStampItem(r, id); mpSaveRecord(r); paintStamp(id); } });
   if (typeof mpRenderFormsPanel === "function") mpRenderFormsPanel(document.getElementById("forms-panel"), unit);
 
   body.querySelectorAll("details.chk-cat[data-cat]").forEach((d) => d.addEventListener("toggle", () => { MpCheckUI.open[unit.id + ":" + d.dataset.cat] = d.open; }));
@@ -2686,10 +2749,10 @@ function renderMpChecklistBody(unit) {
     document.getElementById("forms-panel").scrollIntoView({ behavior: "smooth", block: "start" });
   }));
 
-  const save = (fn) => { const r = getRec(); fn(r); delete r.demo; mpSaveRecord(r); return r; };
+  const save = (fn, itemId) => { const r = getRec(); fn(r); delete r.demo; if (itemId) mpStampItem(r, itemId); mpSaveRecord(r); if (itemId) paintStamp(itemId); return r; };
   body.querySelectorAll("[data-score]").forEach((sel) => sel.addEventListener("change", () => {
     const id = sel.dataset.score;
-    const r = save((x) => { if (sel.value === "") delete x.scores[id]; else x.scores[id] = sel.value === "na" ? "na" : Number(sel.value); });
+    const r = save((x) => { if (sel.value === "") delete x.scores[id]; else x.scores[id] = sel.value === "na" ? "na" : Number(sel.value); }, id);
     const v = r.scores[id];
     const rk = typeof v === "number" ? mpRiskOfScore(v) : null;
     const row = body.querySelector(`[data-row="${id}"]`);
@@ -2699,7 +2762,7 @@ function renderMpChecklistBody(unit) {
     refresh();
   }));
   body.querySelectorAll("[data-note]").forEach((inp) => inp.addEventListener("change", () => {
-    save((x) => { if (inp.value.trim()) x.notes[inp.dataset.note] = inp.value.trim(); else delete x.notes[inp.dataset.note]; });
+    save((x) => { if (inp.value.trim()) x.notes[inp.dataset.note] = inp.value.trim(); else delete x.notes[inp.dataset.note]; }, inp.dataset.note);
   }));
   document.getElementById("mp-date").addEventListener("change", (e) => save((x) => { x.date = e.target.value; }));
   document.getElementById("mp-time").addEventListener("change", (e) => { save((x) => { x.time = e.target.value; }); body.querySelector(`.visit-tab[data-visit="${cv}"] small`).textContent = mpFmtDT(getRec().date, getRec().time); });
@@ -3489,16 +3552,39 @@ function mpDashRefresh() {
 /** severity order: most critical first, then high, medium, low; ties -> lower % first */
 const mpRiskOrder = (a, b) => (b.risk.critical - a.risk.critical) || (b.risk.high - a.risk.high) || (b.risk.medium - a.risk.medium) || (b.risk.low - a.risk.low) || ((a.pct === null ? 101 : a.pct) - (b.pct === null ? 101 : b.pct));
 
-function mpRiskStackRow(label, risk, pct, extraTip, link, compact, wide) {
+/** newest save among the given units' checklist visits and forms: {at, by} */
+const MP_STALE_DAYS = 30;
+function mpLastUpdate(unitIds) {
+  let best = null;
+  DB.get("mpScores", []).concat(DB.get("mpForms", [])).forEach((r) => {
+    if (!r || !unitIds.includes(r.unitId)) return;
+    const at = r.at || r._u || r.finalAt || r.createdAt;
+    if (at && (!best || at > best.at)) best = { at, by: r.byName || r.by || "" };
+  });
+  return best;
+}
+const mpIsStale = (last) => !!last && (Date.now() - new Date(last.at).getTime()) / 86400000 > MP_STALE_DAYS;
+/** blink only when nothing was updated for a month AND the score is in the red / orange zone */
+const mpBlinkNow = (pct, last) => mpIsStale(last) && pct !== null && pct < 85;
+/** "who / when" line: names are for admins only, everybody sees the time and the stale warning */
+function mpUpdLine(last) {
+  if (!last) return `<span class="muted-s">${mt("ยังไม่มีการบันทึกข้อมูล", "No data saved yet")}</span>`;
+  const adm = Auth.isAdmin(State.user);
+  return `<span>${mt("อัปเดตล่าสุด", "Last update")}: ${adm && last.by ? "👤 " + mpEsc(last.by) + " · " : ""}🕒 ${mpFmtWhen(last.at)}</span>` +
+    (mpIsStale(last) ? ` <b class="stale-flag">⚠ ${mt("ไม่มีการอัปเดตเกิน 1 เดือน", "no update for over 1 month")}</b>` : "");
+}
+
+function mpRiskStackRow(label, risk, pct, extraTip, link, compact, wide, o) {
+  o = o || {};
   const n = risk.critical + risk.high + risk.medium + risk.low;
   const segs = MP_RISK.map((r) => {
     const k = risk[r.id]; if (!k) return "";
-    return `<div class="seg" style="flex:${k};background:${mpRiskColor(r.id)};" data-tip="${mpEsc(label)}\n${r.icon} ${mpRiskLabel(r.id)}: ${k} ${mt("ข้อ", "items")} (${((k / n) * 100).toFixed(0)}%)${extraTip ? "\n" + mpEsc(extraTip) : ""}">${k >= 2 ? `<b>${k}</b>` : ""}</div>`;
+    return `<div class="seg${o.blink && (r.id === "critical" || r.id === "high") ? " blink" : ""}" style="flex:${k};background:${mpRiskColor(r.id)};" data-tip="${mpEsc(label)}\n${r.icon} ${mpRiskLabel(r.id)}: ${k} ${mt("ข้อ", "items")} (${((k / n) * 100).toFixed(0)}%)${extraTip ? "\n" + mpEsc(extraTip) : ""}">${k >= 2 ? `<b>${k}</b>` : ""}</div>`;
   }).join("");
   const st = mpStatusOf(pct);
   return `<div class="rk-row${compact ? " compact" : ""}${wide ? " wide" : ""}"><div class="rk-label" title="${mpEsc(label)}">${link ? `<a href="#" data-goto-unit="${link}">${mpEsc(label)}</a>` : mpEsc(label)}</div>
-    <div class="stack-track">${n ? segs : `<span class="muted-s">${mt("ยังไม่ประเมิน / N/A", "Not assessed / N/A")}</span>`}</div>
-    <div class="rk-val">${pct === null ? "–" : pct.toFixed(0) + "%"}${st ? ` <i style="color:var(--st-${st.cls})" title="${mt(st.th, st.en)}">${st.icon}</i>` : ""}</div></div>`;
+    <div class="stack-track">${n ? segs : `<span class="muted-s">${mt("ยังไม่ประเมิน / N/A", "Not assessed / N/A")}</span>`}</div>${o.upd ? `<div class="rk-upd muted-s">${o.upd}</div>` : ""}
+    <div class="rk-val${o.blink ? " blink" : ""}"${o.blink ? ` style="color:${mpScoreColor(pct)}"` : ""}>${pct === null ? "–" : pct.toFixed(0) + "%"}${st ? ` <i style="color:var(--st-${st.cls})" title="${mt(st.th, st.en)}">${st.icon}</i>` : ""}</div></div>`;
 }
 
 function renderDashMasterPlan(host) {
@@ -3561,14 +3647,14 @@ function mpRenderDashRank(host) {
   const range = mpPeriodRange();
   const units = DB.get("mpUnits", []);
   const sel = mpDashScopeUnits();
-  const rank = sel.map((u) => { const us = mpStats([u.id], range); return { u, risk: us.risk, pct: us.pct, S: us }; }).sort(mpRiskOrder);
+  const rank = sel.map((u) => { const us = mpStats([u.id], range); return { u, risk: us.risk, pct: us.pct, S: us, last: mpLastUpdate([u.id]) }; }).sort(mpRiskOrder);
   const one = MpDashUI.scope !== "ALL" && rank.length === 1;
   const topCats = one ? rank[0].S.cats.slice().sort(mpRiskOrder).slice(0, 4) : [];
   host.innerHTML = `<div class="card" style="height:100%;margin:0;">
     <div class="toolbar" style="margin-bottom:2px;"><h3 style="margin:0;">${mt("แยกหน่วยงาน (เรียงตามความเสี่ยง)", "By unit (ranked by risk)")}</h3><button class="btn ghost small" data-goto="mp_check">${mt("Checklist", "Checklist")} →</button></div>
     <div class="desc" style="margin:0 0 6px;">${mt("วิกฤต → ต่ำ · % = คะแนนที่ได้ (ไม่รวม N/A)", "critical → low · % = score (N/A excluded)")}</div>
     <div class="rk-legend mon-legend h">${MP_RISK.map((r) => `<li><i style="background:${mpRiskColor(r.id)}"></i>${r.icon} ${mpRiskLabel(r.id)}</li>`).join("")}</div>
-    ${rank.length ? rank.map((x) => mpRiskStackRow(x.u.name, x.risk, x.pct, x.S.cats.slice().sort(mpRiskOrder).filter((c) => c.risk.critical + c.risk.high).slice(0, 3).map((c) => `${mpCatName(c)}: ✖${c.risk.critical} ▲${c.risk.high}`).join("\n"), x.u.id, true)).join("") : `<div class="empty-state">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}
+    ${rank.length ? rank.map((x) => mpRiskStackRow(x.u.name, x.risk, x.pct, x.S.cats.slice().sort(mpRiskOrder).filter((c) => c.risk.critical + c.risk.high).slice(0, 3).map((c) => `${mpCatName(c)}: ✖${c.risk.critical} ▲${c.risk.high}`).join("\n"), x.u.id, true, false, { upd: mpUpdLine(x.last), blink: mpBlinkNow(x.pct, x.last) })).join("") : `<div class="empty-state">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}
     ${one ? `<div class="mon-t" style="margin-top:8px;">${mt("หมวดที่เสี่ยงสูงสุด", "Highest-risk categories")}</div>${topCats.map((c) => mpRiskStackRow(mpCatName(c), c.risk, c.pct, "", null, true)).join("")}` : ""}</div>`;
   host.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto)));
   host.querySelectorAll("[data-goto-unit]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); MpCheckUI.unitId = a.dataset.gotoUnit; MpCheckUI.visit = null; navigate("mp_check"); }));
@@ -3582,11 +3668,14 @@ function mpRenderDashScore(host) {
   const S = mpStats(su.map((u) => u.id), range);
   const ov = mpOverallStatusOf(S.pct);
   const scopeLbl = MpDashUI.scope === "ALL" ? mt("ทุกหน่วยงาน", "All units") : mpEsc(su[0].name);
+  const last = mpLastUpdate(su.map((u) => u.id));
+  const blink = mpBlinkNow(S.pct, last);
   host.innerHTML = `<div class="card score-card" data-goto-risk="1" tabindex="0" role="button" style="height:100%;margin:0;--sc:${mpScoreColor(S.pct)};" title="${mt("ดูรายละเอียด Inspection Risk Summary", "Open Inspection Risk Summary")}">
     <h3 class="score-title">Overview Risk Level Organization (%)</h3>
-    <div class="score-big blink" style="color:${mpScoreColor(S.pct)}">${mpFmtPct(S.pct)}</div>
+    <div class="score-big${blink ? " blink" : ""}" style="color:${mpScoreColor(S.pct)}">${mpFmtPct(S.pct)}</div>
     <div>${mpChip(ov)}</div>
     <div class="muted-s">${scopeLbl} (${mt("ตรวจล่าสุด", "latest visit")})<br/>${mpPeriodLabel()}<br/>${S.done}/${S.total} ${mt("ข้อประเมินแล้ว", "items assessed")} · N/A ${S.na}</div>
+    <div class="score-upd">${mpUpdLine(last)}</div>
     <div class="score-key"><span style="color:var(--st-critical)">■</span> &lt;70% <span style="color:var(--st-serious)">■</span> &lt;85% <span style="color:var(--st-good)">■</span> ≥85%</div></div>`;
   const go = host.querySelector("[data-goto-risk]");
   const open = () => navigate("mp_risk");
@@ -3988,7 +4077,7 @@ const BackupMgr = {
 };
 
 const APPS_SCRIPT_CODE = `/**
- * PSD eNGINNo QSHE Management - Google Sheet backend  (script version 2)
+ * PSD eNGINNo QSHE Management - Google Sheet backend  (script version 3)
  *  - backup tabs + _Snapshot (restore)
  *  - central data sync (tabs d_*), so Admin sees everything entered on every computer
  *  - photo storage (tab _photos)
@@ -3996,10 +4085,10 @@ const APPS_SCRIPT_CODE = `/**
  * (Execute as: Me, Who has access: Anyone).  After editing: Deploy > Manage deployments > New version.
  */
 const TOKEN = '__TOKEN__';   // must equal the Token in the app
-const VERSION = 2;
+const VERSION = 3;
 const CHUNK = 45000;         // one cell holds at most 50,000 characters
 const MAXCH = 8;             // max cells per record / photo
-const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms'];
+const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog'];
 
 function doPost(e) {
   try {
@@ -4196,7 +4285,7 @@ function renderBackup(root) {
         <input type="text" id="sy-code-show" readonly value="${mpEsc(SyncMgr.makeCode(c.url, c.token))}" /></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn small" id="sy-copy">${mt("คัดลอกรหัส", "Copy code")}</button>
         ${SyncMgr.enabled() ? `<button class="btn ghost small" id="sy-run">${mt("ซิงก์ตอนนี้", "Sync now")}</button>` : `<button class="btn small" id="sy-start">${mt("เปิดซิงก์บนเครื่องนี้", "Turn on sync on this computer")}</button>`}</div>
-        <div class="mp-banner" style="margin-top:10px;">ⓘ ${mt("เครื่องแรกที่เปิดซิงก์ควรเป็นเครื่องที่มีข้อมูลจริงอยู่ · ต้องวางโค้ด Apps Script เวอร์ชันใหม่ (Code.gs v2) แล้ว Deploy → New version ก่อน · หากสองคนแก้รายการเดียวกันพร้อมกัน ฉบับที่บันทึกทีหลังจะทับ", "The first computer to turn sync on should be the one holding the real data · paste the new Apps Script (Code.gs v2) and Deploy → New version first · if two people edit the same record at once, the later save wins")}</div>`
+        <div class="mp-banner" style="margin-top:10px;">ⓘ ${mt("เครื่องแรกที่เปิดซิงก์ควรเป็นเครื่องที่มีข้อมูลจริงอยู่ · ต้องวางโค้ด Apps Script เวอร์ชันใหม่ (Code.gs v3) แล้ว Deploy → New version ก่อน · หากสองคนแก้รายการเดียวกันพร้อมกัน ฉบับที่บันทึกทีหลังจะทับ", "The first computer to turn sync on should be the one holding the real data · paste the new Apps Script (Code.gs v3) and Deploy → New version first · if two people edit the same record at once, the later save wins")}</div>`
       : `<div class="empty-state">${mt("ตั้งค่า Google Sheet (หัวข้อ B ด้านล่าง) ก่อน แล้วรหัสเชื่อมต่อจะปรากฏที่นี่", "Set up the Google Sheet (section B below) first – the connection code appears here")}</div>`}
     </div>
 
@@ -4454,7 +4543,10 @@ function startApp(user) {
 function logout() {
   Auth.logout();
   State.user = null;
-  location.reload();
+  // give the central sync a moment to publish the sign-out, then reload
+  let p = Promise.resolve();
+  try { if (typeof SyncMgr !== "undefined" && SyncMgr.enabled()) p = Promise.race([SyncMgr.run(), new Promise((r) => setTimeout(r, 2500))]); } catch (e) { /* ignore */ }
+  p.catch(() => {}).then(() => location.reload());
 }
 
 // -------------------------------------------------------------- shell ---
@@ -5610,6 +5702,63 @@ function renderUsers(root) {
     })
   );
   document.getElementById("add-user-btn").addEventListener("click", () => openUserForm(null));
+  const accHost = document.createElement("div"); accHost.id = "acc-host"; root.appendChild(accHost);
+  renderAccessSection(accHost);
+}
+
+/** Admin-only: sign-in / sign-out history and the latest data edits */
+const AccUI = { user: "ALL", limit: 100 };
+function renderAccessSection(host) {
+  const logs = DB.get("accessLog", []).slice().sort((x, y) => (y.inAt || "").localeCompare(x.inAt || ""));
+  const names = [...new Set(logs.map((l) => l.user))].sort();
+  if (AccUI.user !== "ALL" && !names.includes(AccUI.user)) AccUI.user = "ALL";
+  const shown = logs.filter((l) => AccUI.user === "ALL" || l.user === AccUI.user);
+  const dur = (l) => {
+    if (!l.outAt) return "";
+    const m = Math.round((new Date(l.outAt) - new Date(l.inAt)) / 60000);
+    if (isNaN(m) || m < 0) return "";
+    return m >= 60 ? `${Math.floor(m / 60)} ${mt("ชม.", "h")} ${m % 60} ${mt("น.", "min")}` : `${m} ${mt("นาที", "min")}`;
+  };
+  const perUser = names.map((n) => {
+    const mine = logs.filter((l) => l.user === n);
+    const outs = mine.filter((l) => l.outAt).map((l) => l.outAt).sort();
+    return { n, name: (mine[0] && mine[0].name) || "", cnt: mine.length, lastIn: mine[0] && mine[0].inAt, lastOut: outs[outs.length - 1] || "" };
+  });
+  // latest edit per checklist item (who / when), newest first
+  const units = DB.get("mpUnits", []);
+  const edits = [];
+  DB.get("mpScores", []).forEach((r) => {
+    const u = units.find((x) => x.id === r.unitId);
+    Object.keys(r.meta || {}).forEach((id) => { const m = r.meta[id]; if (m && m.at) edits.push({ unit: u ? u.name : r.unitId, visit: r.visit, id, by: m.by, at: m.at }); });
+  });
+  edits.sort((x, y) => y.at.localeCompare(x.at));
+  host.innerHTML = `
+    <div class="card" style="margin-top:14px;">
+      <div class="toolbar" style="margin-bottom:6px;">
+        <div><h3 style="margin:0;">${mt("ประวัติการเข้า–ออกระบบ (เฉพาะผู้ดูแลระบบ)", "Sign-in / sign-out history (admins only)")}</h3>
+          <div class="desc" style="margin:2px 0 0;">${mt("บันทึกทุกครั้งที่เข้าสู่ระบบและออกจากระบบ · ถ้าปิดหน้าต่างโดยไม่กด “ออกจากระบบ” จะไม่มีเวลาออก", "Every sign-in and sign-out is recorded · closing the window without signing out leaves the sign-out time empty")}</div></div>
+        <select id="acc-user" aria-label="${mt("กรองผู้ใช้", "Filter user")}"><option value="ALL">${mt("ทุกผู้ใช้", "All users")}</option>${names.map((n) => `<option value="${mpEsc(n)}" ${AccUI.user === n ? "selected" : ""}>${mpEsc(n)}</option>`).join("")}</select>
+      </div>
+      <div class="acc-grid">
+        <div><div class="mon-t">${mt("สรุปรายผู้ใช้", "By user")}</div>
+          <table><thead><tr><th>${mt("ผู้ใช้", "User")}</th><th>${mt("เข้าล่าสุด", "Last in")}</th><th>${mt("ออกล่าสุด", "Last out")}</th><th>${mt("ครั้ง", "Times")}</th></tr></thead><tbody>
+          ${perUser.length ? perUser.map((p) => `<tr><td>${mpEsc(p.n)}<div class="muted-s">${mpEsc(p.name)}</div></td><td>${mpFmtWhen(p.lastIn)}</td><td>${p.lastOut ? mpFmtWhen(p.lastOut) : "–"}</td><td>${p.cnt}</td></tr>`).join("") : `<tr><td colspan="4" class="muted-s">${mt("ยังไม่มีบันทึก — จะเริ่มบันทึกตั้งแต่การเข้าสู่ระบบครั้งถัดไป", "Nothing yet — recording starts from the next sign-in")}</td></tr>`}
+          </tbody></table></div>
+        <div><div class="mon-t">${mt("การเข้า–ออกล่าสุด", "Recent sessions")} (${Math.min(shown.length, AccUI.limit)}/${shown.length})</div>
+          <div class="acc-scroll"><table><thead><tr><th>${mt("ผู้ใช้", "User")}</th><th>${mt("เข้าสู่ระบบ", "Signed in")}</th><th>${mt("ออกจากระบบ", "Signed out")}</th><th>${mt("ระยะเวลา", "Duration")}</th></tr></thead><tbody>
+          ${shown.slice(0, AccUI.limit).map((l) => `<tr><td>${mpEsc(l.user)}</td><td>${mpFmtWhen(l.inAt)}</td><td>${l.outAt ? mpFmtWhen(l.outAt) : `<span class="muted-s">${mt("ยังไม่ออก / ปิดหน้าต่าง", "no sign-out")}</span>`}</td><td>${dur(l)}</td></tr>`).join("")}
+          </tbody></table></div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <h3 style="margin-bottom:2px;">${mt("การแก้ไขข้อมูล Checklist ล่าสุด", "Latest Checklist edits")}</h3>
+      <div class="desc">${mt("แสดงผู้แก้ไขและวันเวลาล่าสุดของแต่ละข้อ (เก็บเฉพาะครั้งล่าสุด) · 30 รายการล่าสุด", "Latest editor and time per item (only the most recent is kept) · newest 30")}</div>
+      <div class="acc-scroll"><table><thead><tr><th>${mt("วันเวลา", "When")}</th><th>${mt("ผู้แก้ไข", "Editor")}</th><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("ครั้งที่", "Visit")}</th><th>${mt("ข้อ", "Item")}</th></tr></thead><tbody>
+      ${edits.length ? edits.slice(0, 30).map((e) => `<tr><td>${mpFmtWhen(e.at)}</td><td>${mpEsc(e.by || "–")}</td><td>${mpEsc(e.unit)}</td><td>${e.visit}</td><td>${mpEsc(e.id)}</td></tr>`).join("") : `<tr><td colspan="5" class="muted-s">${mt("ยังไม่มีการแก้ไขที่บันทึกผู้แก้ — จะเริ่มบันทึกตั้งแต่การแก้ไขครั้งถัดไป", "No attributed edits yet — recording starts with the next edit")}</td></tr>`}
+      </tbody></table></div>
+    </div>`;
+  const sel = host.querySelector("#acc-user");
+  if (sel) sel.addEventListener("change", () => { AccUI.user = sel.value; renderAccessSection(host); });
 }
 
 function openUserForm(existing, isApproval) {
