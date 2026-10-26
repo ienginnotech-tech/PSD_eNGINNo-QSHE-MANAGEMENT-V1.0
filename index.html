@@ -1137,6 +1137,12 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .aft-cnt { font-size: 12px; }
 .aft-upd { font-size: 11.5px; line-height: 1.35; }
 @media (prefers-reduced-motion: reduce) { .aft-pct.blink { animation: none; } }
+/* left "before" and middle "after" lists share header height and row height so rows line up */
+.dash-hd { height: 142px; overflow: hidden; }
+.dash-top .rk-row.compact, .dash-top .aft-row { height: 100px; box-sizing: border-box; overflow: hidden; }
+.dash-top .rk-row.compact { align-content: start; }
+.dash-top .rk-row.compact .rk-upd { font-size: 11.5px; }
+.aft-box { border-top: 0; padding-top: 0; margin-top: 0; }
 
 </style>
 </head>
@@ -3671,11 +3677,11 @@ function mpRenderDashRank(host) {
   const rank = sel.map((u) => { const us = mpBaselineStats(u.id) || mpStats([u.id], range); return { u, risk: us.risk, pct: us.pct, S: us }; }).sort(mpRiskOrder);
   const one = MpDashUI.scope !== "ALL" && rank.length === 1;
   const topCats = one ? rank[0].S.cats.slice().sort(mpRiskOrder).slice(0, 4) : [];
-  host.innerHTML = `<div class="card" style="height:100%;margin:0;">
+  host.innerHTML = `<div class="card" style="height:100%;margin:0;"><div class="dash-hd">
     <div class="toolbar" style="margin-bottom:2px;"><h3 style="margin:0;">${mt("แยกหน่วยงาน (เรียงตามความเสี่ยง)", "By unit (ranked by risk)")}</h3><button class="btn ghost small" data-goto="mp_check">${mt("Checklist", "Checklist")} →</button></div>
     <div class="desc" style="margin:0 0 6px;">${mt("ก่อนแก้ไข (ที่พบครั้งแรก) · วิกฤต → ต่ำ · % = คะแนนที่ได้ (ไม่รวม N/A)", "Before editing (first findings) · critical → low · % = score (N/A excluded)")}</div>
-    <div class="rk-legend mon-legend h">${MP_RISK.map((r) => `<li><i style="background:${mpRiskColor(r.id)}"></i>${r.icon} ${mpRiskLabel(r.id)}</li>`).join("")}</div>
-    ${rank.length ? rank.map((x) => mpRiskStackRow(x.u.name, x.risk, x.pct, x.S.cats.slice().sort(mpRiskOrder).filter((c) => c.risk.critical + c.risk.high).slice(0, 3).map((c) => `${mpCatName(c)}: ✖${c.risk.critical} ▲${c.risk.high}`).join("\n"), x.u.id, true, false)).join("") : `<div class="empty-state">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}
+    <div class="rk-legend mon-legend h">${MP_RISK.map((r) => `<li><i style="background:${mpRiskColor(r.id)}"></i>${r.icon} ${mpRiskLabel(r.id)}</li>`).join("")}</div></div>
+    ${rank.length ? rank.map((x) => mpRiskStackRow(x.u.name, x.risk, x.pct, x.S.cats.slice().sort(mpRiskOrder).filter((c) => c.risk.critical + c.risk.high).slice(0, 3).map((c) => `${mpCatName(c)}: ✖${c.risk.critical} ▲${c.risk.high}`).join("\n"), x.u.id, true, false, { upd: `${mt("ประเมิน", "Assessed")} ${x.S.done} ${mt("ข้อ", "items")} · N/A ${x.S.na}` })).join("") : `<div class="empty-state">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}
     ${one ? `<div class="mon-t" style="margin-top:8px;">${mt("หมวดที่เสี่ยงสูงสุด", "Highest-risk categories")}</div>${topCats.map((c) => mpRiskStackRow(mpCatName(c), c.risk, c.pct, "", null, true)).join("")}` : ""}</div>`;
   host.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto)));
   host.querySelectorAll("[data-goto-unit]").forEach((a) => a.addEventListener("click", (e) => { e.preventDefault(); MpCheckUI.unitId = a.dataset.gotoUnit; MpCheckUI.visit = null; navigate("mp_check"); }));
@@ -3709,31 +3715,22 @@ function mpAfterChart(units, range) {
       <div class="aft-cnt">${cnt}</div>
       <div class="aft-upd muted-s">${mpUpdLine(last)}</div></div>`;
   }).join("");
-  return `<div class="aft-box"><div class="mon-t" style="text-align:left;">${mt("หลังการแก้ไข · ข้อสีแดง / สีส้มที่เหลือ", "After editing · open red / orange items")}</div>
-    <div class="aft-leg"><span><i style="background:${mpRiskColor("critical")}"></i>✖ ${mpRiskLabel("critical")}</span><span><i style="background:${mpRiskColor("high")}"></i>▲ ${mpRiskLabel("high")}</span><span><i style="background:var(--st-good)"></i>✔ ${mt("แก้ไขแล้ว", "corrected")}</span></div>
+  return `<div class="aft-box">
     ${html || `<div class="muted-s">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}</div>`;
 }
 function mpRenderDashScore(host) {
   if (!host) return;
   const range = mpPeriodRange();
   const su = mpDashScopeUnits();
-  const S = mpStats(su.map((u) => u.id), range);
-  const ov = mpOverallStatusOf(S.pct);
-  const scopeLbl = MpDashUI.scope === "ALL" ? mt("ทุกหน่วยงาน", "All units") : mpEsc(su[0].name);
-  const last = mpLastUpdate(su.map((u) => u.id));
-  const blink = mpBlinkNow(S.pct, last);
-  host.innerHTML = `<div class="card score-card" data-goto-risk="1" tabindex="0" role="button" style="height:100%;margin:0;--sc:${mpScoreColor(S.pct)};" title="${mt("ดูรายละเอียด Inspection Risk Summary", "Open Inspection Risk Summary")}">
-    <h3 class="score-title">Overview Risk Level Organization (%)</h3>
-    <div class="score-big${blink ? " blink" : ""}" style="color:${mpScoreColor(S.pct)}">${mpFmtPct(S.pct)}</div>
-    <div>${mpChip(ov)}</div>
-    <div class="muted-s">${scopeLbl} (${mt("ตรวจล่าสุด", "latest visit")})<br/>${mpPeriodLabel()}<br/>${S.done}/${S.total} ${mt("ข้อประเมินแล้ว", "items assessed")} · N/A ${S.na}</div>
-    <div class="score-upd">${mpUpdLine(last)}</div>
-    ${mpAfterChart(su, range)}
-    <div class="score-key"><span style="color:var(--st-critical)">■</span> &lt;70% <span style="color:var(--st-serious)">■</span> &lt;85% <span style="color:var(--st-good)">■</span> ≥85%</div></div>`;
-  const go = host.querySelector("[data-goto-risk]");
-  const open = () => navigate("mp_risk");
-  go.addEventListener("click", open);
-  go.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } });
+  host.innerHTML = `<div class="card" style="height:100%;margin:0;">
+    <div class="dash-hd">
+      <div class="toolbar" style="margin-bottom:2px;"><h3 style="margin:0;">${mt("หลังการแก้ไข (ข้อแดง / ส้มที่เหลือ)", "After editing (open red / orange)")}</h3><button class="btn ghost small" data-goto="mp_risk">${mt("สรุป", "Summary")} →</button></div>
+      <div class="desc" style="margin:0 0 6px;">${mt("แท่งเต็ม = ข้อแดง+ส้มที่พบครั้งแรก · แสดงผู้อัปเดต/วันเวลา", "Full bar = red + orange found first · last editor / time")}</div>
+      <div class="rk-legend mon-legend h"><li><i style="background:${mpRiskColor("critical")}"></i>✖ ${mpRiskLabel("critical")}</li><li><i style="background:${mpRiskColor("high")}"></i>▲ ${mpRiskLabel("high")}</li><li><i style="background:var(--st-good)"></i>✔ ${mt("แก้ไขแล้ว", "corrected")}</li></div>
+    </div>
+    ${mpAfterChart(su, range)}</div>`;
+  host.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto)));
+  if (!host._tips) { mpWireTips(host); host._tips = true; }
 }
 
 // ================================================= SAFETY FIRST board ===
