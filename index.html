@@ -1143,6 +1143,17 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .dash-top .rk-row.compact { align-content: start; }
 .dash-top .rk-row.compact .rk-upd { font-size: 11.5px; }
 .aft-box { border-top: 0; padding-top: 0; margin-top: 0; }
+/* compact lists, safety board fills the row height without a big empty gap */
+.dash-hd { height: 100px; }
+.dash-top .rk-row.compact, .dash-top .aft-row { height: 58px; padding: 3px 0; }
+.rk-row.compact .rk-upd { grid-row: 3; }
+.aft-line { display: flex; gap: 8px; align-items: baseline; font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aft-row .stack-track { min-height: 14px; margin: 2px 0; }
+#dash-safety .safety { height: 100%; justify-content: space-between; margin: 0; }
+.dash-top .rk-row.compact .rk-upd, .dash-top .aft-line { line-height: 1.25; }
+.dash-hd { height: 92px; }
+.dash-top .rk-row.compact, .dash-top .aft-row { height: 66px; }
+.aft-line { white-space: normal; flex-wrap: wrap; gap: 0 8px; }
 
 </style>
 </head>
@@ -3593,6 +3604,12 @@ function mpBaselineStats(unitId) {
 const mpIsStale = (last) => !!last && (Date.now() - new Date(last.at).getTime()) / 86400000 > MP_STALE_DAYS;
 /** blink only when nothing was updated for a month AND the score is in the red / orange zone */
 const mpBlinkNow = (pct, last) => mpIsStale(last) && pct !== null && pct < 85;
+/** one-line form for the compact lists: 👤 name · 🕒 time (+ ⚠ when stale) */
+function mpUpdShort(last) {
+  if (!last) return mt("ยังไม่มีข้อมูล", "no data");
+  const adm = Auth.isAdmin(State.user);
+  return `${adm && last.by ? "👤 " + mpEsc(last.by) + " · " : ""}🕒 ${mpFmtWhen(last.at)}` + (mpIsStale(last) ? ` <b class="stale-flag" title="${mt("ไม่มีการอัปเดตเกิน 1 เดือน", "no update for over 1 month")}">⚠ &gt;1 ${mt("เดือน", "mo")}</b>` : "");
+}
 /** "who / when" line: names are for admins only, everybody sees the time and the stale warning */
 function mpUpdLine(last) {
   if (!last) return `<span class="muted-s">${mt("ยังไม่มีการบันทึกข้อมูล", "No data saved yet")}</span>`;
@@ -3679,7 +3696,7 @@ function mpRenderDashRank(host) {
   const topCats = one ? rank[0].S.cats.slice().sort(mpRiskOrder).slice(0, 4) : [];
   host.innerHTML = `<div class="card" style="height:100%;margin:0;"><div class="dash-hd">
     <div class="toolbar" style="margin-bottom:2px;"><h3 style="margin:0;">${mt("แยกหน่วยงาน (เรียงตามความเสี่ยง)", "By unit (ranked by risk)")}</h3><button class="btn ghost small" data-goto="mp_check">${mt("Checklist", "Checklist")} →</button></div>
-    <div class="desc" style="margin:0 0 6px;">${mt("ก่อนแก้ไข (ที่พบครั้งแรก) · วิกฤต → ต่ำ · % = คะแนนที่ได้ (ไม่รวม N/A)", "Before editing (first findings) · critical → low · % = score (N/A excluded)")}</div>
+    <div class="desc" style="margin:0 0 6px;">${mt("ก่อนแก้ไข (พบครั้งแรก) · % = คะแนน", "Before editing (first findings) · % = score")}</div>
     <div class="rk-legend mon-legend h">${MP_RISK.map((r) => `<li><i style="background:${mpRiskColor(r.id)}"></i>${r.icon} ${mpRiskLabel(r.id)}</li>`).join("")}</div></div>
     ${rank.length ? rank.map((x) => mpRiskStackRow(x.u.name, x.risk, x.pct, x.S.cats.slice().sort(mpRiskOrder).filter((c) => c.risk.critical + c.risk.high).slice(0, 3).map((c) => `${mpCatName(c)}: ✖${c.risk.critical} ▲${c.risk.high}`).join("\n"), x.u.id, true, false, { upd: `${mt("ประเมิน", "Assessed")} ${x.S.done} ${mt("ข้อ", "items")} · N/A ${x.S.na}` })).join("") : `<div class="empty-state">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}
     ${one ? `<div class="mon-t" style="margin-top:8px;">${mt("หมวดที่เสี่ยงสูงสุด", "Highest-risk categories")}</div>${topCats.map((c) => mpRiskStackRow(mpCatName(c), c.risk, c.pct, "", null, true)).join("")}` : ""}</div>`;
@@ -3708,12 +3725,11 @@ function mpAfterChart(units, range) {
       : `<span class="muted-s">✔ ${mt("ไม่มีข้อเสี่ยงสูง/วิกฤต", "no high / critical items")}</span>`;
     const cnt = noData ? "" : edited
       ? `✖ ${bc}→<b>${ac}</b> · ▲ ${bh}→<b>${ah}</b>`
-      : `✖ <b>${ac}</b> · ▲ <b>${ah}</b> <span class="muted-s">(${mt("ยังไม่มีการแก้ไข", "not edited yet")})</span>`;
+      : `✖ <b>${ac}</b> · ▲ <b>${ah}</b> <span class="muted-s">(${mt("ยังไม่แก้ไข", "not edited")})</span>`;
     return `<div class="aft-row"><div class="aft-top"><span class="aft-name" title="${mpEsc(u.name)}">${mpEsc(u.name)}</span>
         <span class="aft-pct${blink ? " blink" : ""}" ${blink ? `style="color:${mpScoreColor(a.pct)}"` : ""}>${noData || fixed === null ? "" : mt("แก้ไขแล้ว ", "corrected ") + fixed.toFixed(0) + "%"}</span></div>
       <div class="stack-track">${bar}</div>
-      <div class="aft-cnt">${cnt}</div>
-      <div class="aft-upd muted-s">${mpUpdLine(last)}</div></div>`;
+      <div class="aft-line">${cnt ? `<span>${cnt}</span>` : ""}<span class="muted-s">${mpUpdShort(last)}</span></div></div>`;
   }).join("");
   return `<div class="aft-box">
     ${html || `<div class="muted-s">${mt("ยังไม่มีหน่วยงาน", "No units")}</div>`}</div>`;
@@ -3725,7 +3741,7 @@ function mpRenderDashScore(host) {
   host.innerHTML = `<div class="card" style="height:100%;margin:0;">
     <div class="dash-hd">
       <div class="toolbar" style="margin-bottom:2px;"><h3 style="margin:0;">${mt("หลังการแก้ไข (ข้อแดง / ส้มที่เหลือ)", "After editing (open red / orange)")}</h3><button class="btn ghost small" data-goto="mp_risk">${mt("สรุป", "Summary")} →</button></div>
-      <div class="desc" style="margin:0 0 6px;">${mt("แท่งเต็ม = ข้อแดง+ส้มที่พบครั้งแรก · แสดงผู้อัปเดต/วันเวลา", "Full bar = red + orange found first · last editor / time")}</div>
+      <div class="desc" style="margin:0 0 6px;">${mt("แท่งเต็ม = ข้อแดง+ส้มที่พบครั้งแรก", "Full bar = red + orange found first")}</div>
       <div class="rk-legend mon-legend h"><li><i style="background:${mpRiskColor("critical")}"></i>✖ ${mpRiskLabel("critical")}</li><li><i style="background:${mpRiskColor("high")}"></i>▲ ${mpRiskLabel("high")}</li><li><i style="background:var(--st-good)"></i>✔ ${mt("แก้ไขแล้ว", "corrected")}</li></div>
     </div>
     ${mpAfterChart(su, range)}</div>`;
