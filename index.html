@@ -3536,7 +3536,7 @@ function renderConstructionMonitor(host) {
       <td class="num">${r.pcra.n ? `${r.pcra.n}<span class="muted-s"> · ${sc(r.pcra.pct)}</span>` : "–"}</td>
       <td class="num">${r.icra.n ? `${r.icra.n}<span class="muted-s"> · ${sc(r.icra.pct)}</span>` : "–"}</td>
       <td class="num rk-find" data-tip="${mpEsc(riskTip(r))}">${nRisk ? `<b style="color:var(--st-${r.crit ? "critical" : "warning"})">${r.crit ? "✖" : "◆"} ${nRisk}</b>` : `<span style="color:var(--st-good)">✔ 0</span>`}</td>
-      <td class="num"><b>${sc(r.combined)}</b></td><td>${stChip(r.combined)}</td></tr>`;
+      <td class="num"><b>${r.combined === null || r.combined === undefined ? "–" : r.combined.toFixed(1) + "%"}</b></td><td>${stChip(r.combined)}</td></tr>`;
   }).join("");
   const tbl = `<div class="mon-tablewrap"><table class="mon-table"><thead><tr><th>${mt("หน่วยงาน", "Unit")}</th><th>% 7.x</th><th>PCRA</th><th>ICRA</th><th>${mt("ความเสี่ยง", "Risks")}</th><th>${mt("รวม", "Combined")}</th><th>${mt("สถานะ", "Status")}</th></tr></thead><tbody>${list || `<tr><td colspan="7" class="empty-state">${mt("ยังไม่มีหน่วยงานที่มีงานก่อสร้าง / Renovation", "No unit with construction / renovation yet")}</td></tr>`}</tbody></table></div>
     <div class="muted-s" style="margin-top:6px;">${mt("แสดงเฉพาะหน่วยงานที่มี PCRA/ICRA หรือมีคะแนนข้อ 7.x · เลื่อนเมาส์บนช่อง “ความเสี่ยง” เพื่อดูรายละเอียด", "Only units with a PCRA/ICRA or a scored item 7.x · hover the “Risks” cell for details")}</div>`;
@@ -3629,7 +3629,7 @@ function mpRiskStackRow(label, risk, pct, extraTip, link, compact, wide, o) {
   const st = mpStatusOf(pct);
   return `<div class="rk-row${compact ? " compact" : ""}${wide ? " wide" : ""}"><div class="rk-label" title="${mpEsc(label)}">${link ? `<a href="#" data-goto-unit="${link}">${mpEsc(label)}</a>` : mpEsc(label)}</div>
     <div class="stack-track">${n ? segs : `<span class="muted-s">${mt("ยังไม่ประเมิน / N/A", "Not assessed / N/A")}</span>`}</div>${o.upd ? `<div class="rk-upd muted-s">${o.upd}</div>` : ""}
-    <div class="rk-val${o.blink ? " blink" : ""}"${o.blink ? ` style="color:${mpScoreColor(pct)}"` : ""}>${pct === null ? "–" : pct.toFixed(compact ? 1 : 0) + "%"}${st ? ` <i style="color:var(--st-${st.cls})" title="${mt(st.th, st.en)}">${st.icon}</i>` : ""}</div></div>`;
+    <div class="rk-val${o.blink ? " blink" : ""}"${o.blink ? ` style="color:${mpScoreColor(pct)}"` : ""}>${pct === null ? "–" : pct.toFixed(1) + "%"}${st ? ` <i style="color:var(--st-${st.cls})" title="${mt(st.th, st.en)}">${st.icon}</i>` : ""}</div></div>`;
 }
 
 function renderDashMasterPlan(host) {
