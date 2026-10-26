@@ -3629,7 +3629,7 @@ function mpRiskStackRow(label, risk, pct, extraTip, link, compact, wide, o) {
   const st = mpStatusOf(pct);
   return `<div class="rk-row${compact ? " compact" : ""}${wide ? " wide" : ""}"><div class="rk-label" title="${mpEsc(label)}">${link ? `<a href="#" data-goto-unit="${link}">${mpEsc(label)}</a>` : mpEsc(label)}</div>
     <div class="stack-track">${n ? segs : `<span class="muted-s">${mt("ยังไม่ประเมิน / N/A", "Not assessed / N/A")}</span>`}</div>${o.upd ? `<div class="rk-upd muted-s">${o.upd}</div>` : ""}
-    <div class="rk-val${o.blink ? " blink" : ""}"${o.blink ? ` style="color:${mpScoreColor(pct)}"` : ""}>${pct === null ? "–" : pct.toFixed(0) + "%"}${st ? ` <i style="color:var(--st-${st.cls})" title="${mt(st.th, st.en)}">${st.icon}</i>` : ""}</div></div>`;
+    <div class="rk-val${o.blink ? " blink" : ""}"${o.blink ? ` style="color:${mpScoreColor(pct)}"` : ""}>${pct === null ? "–" : pct.toFixed(compact ? 1 : 0) + "%"}${st ? ` <i style="color:var(--st-${st.cls})" title="${mt(st.th, st.en)}">${st.icon}</i>` : ""}</div></div>`;
 }
 
 function renderDashMasterPlan(host) {
@@ -3728,7 +3728,7 @@ function mpAfterChart(units, range) {
       ? `✖ ${bc}→<b>${ac}</b> · ▲ ${bh}→<b>${ah}</b>`
       : `✖ <b>${ac}</b> · ▲ <b>${ah}</b> <span class="muted-s">(${mt("ยังไม่แก้ไข", "not edited")})</span>`;
     return `<div class="aft-row"><div class="aft-top"><span class="aft-name" title="${mpEsc(u.name)}">${mpEsc(u.name)}</span>
-        <span class="aft-pct${blink ? " blink" : ""}" ${blink ? `style="color:${mpScoreColor(a.pct)}"` : ""}>${noData || fixed === null ? "" : mt("แก้ไขแล้ว ", "corrected ") + fixed.toFixed(0) + "%"}</span></div>
+        <span class="aft-pct${blink ? " blink" : ""}" ${blink ? `style="color:${mpScoreColor(a.pct)}"` : ""}>${noData || fixed === null ? "" : mt("แก้ไขแล้ว ", "corrected ") + fixed.toFixed(1) + "%"}</span></div>
       <div class="stack-track">${bar}</div>
       <div class="aft-line">${cnt ? `<span>${cnt}</span>` : ""}<span class="muted-s">${mpUpdShort(last)}</span></div></div>`;
   }).join("");
