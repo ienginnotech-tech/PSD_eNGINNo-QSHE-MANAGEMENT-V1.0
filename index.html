@@ -1169,6 +1169,8 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .sev.sev2{background:var(--st-warning);color:#222}.sev.sev3{background:var(--st-critical)}
 @media (max-width:700px){.drr-grid{grid-template-columns:1fr}}
 
+.mon-table .ctr,.mon-table th.ctr{text-align:center}
+
 </style>
 </head>
 <body>
@@ -3925,7 +3927,7 @@ const DRR_WW_CRIT = {
 };
 const DRR_WW_SITES = { OUS: "ข", "PARK X EKKAMAI": "ค", "BEAT Discovery": "ค", "SLS (Sunny)": "ง" };
 
-const DrrUI = { tab: {}, year: new Date().getFullYear(), site: "ALL", q: "", ts: "ts2" };
+const DrrUI = { tab: {}, year: new Date().getFullYear(), month: "ALL", site: "ALL", q: "", ts: "ts2" };
 
 // ------------------------------------------------------------------ data helpers ---
 const drrEsc = (s) => mpEsc(s === null || s === undefined ? "" : String(s));
@@ -3935,7 +3937,7 @@ const drrYearOf = (r) => Number(String((r.d || {}).date || "").slice(0, 4)) || 0
 const drrMonthOf = (r) => Number(String((r.d || {}).date || "").slice(5, 7)) || 0;
 function drrAll(report) { return DB.get("drrRecords", []).filter((r) => r.report === report); }
 function drrScoped(report) {
-  return drrAll(report).filter((r) => drrYearOf(r) === DrrUI.year && (DrrUI.site === "ALL" || (r.d.site || "") === DrrUI.site));
+  return drrAll(report).filter((r) => drrYearOf(r) === DrrUI.year && (DrrUI.month === "ALL" || drrMonthOf(r) === Number(DrrUI.month)) && (DrrUI.site === "ALL" || (r.d.site || "") === DrrUI.site));
 }
 function drrYears() {
   const ys = new Set([new Date().getFullYear()]);
@@ -3965,7 +3967,7 @@ function drrNextNo(report, year) {
   const n = drrAll(report).filter((r) => drrYearOf(r) === year).map((r) => parseInt(String(r.d.no || "").slice(0, 3), 10)).filter((x) => !isNaN(x));
   return String((n.length ? Math.max(...n) : 0) + 1).padStart(3, "0") + "/" + year;
 }
-function drrCfg() { return Object.assign({ foodTarget: Object.assign({}, DRR_FOOD_TARGET), twTargets: {}, wwTypes: {} }, DB.get("drrCfg", {})); }
+function drrCfg() { return Object.assign({ foodTarget: Object.assign({}, DRR_FOOD_TARGET), twTargets: {}, lpTargets: {}, wwTypes: {} }, DB.get("drrCfg", {})); }
 
 // ------------------------------------------------------------------ evaluation ---
 /** food: true = pass, false = fail, null = not tested */
@@ -4041,6 +4043,7 @@ function drrToolbar(rep, extraHtml) {
   return `<div class="drr-bar">
     <div class="drr-tabs" role="tablist">${[["overview", mt("ภาพรวม", "Overview")], ["data", mt("ข้อมูล / ลงข้อมูล", "Records / entry")]].map(([k, l]) => `<button type="button" role="tab" class="per-btn ${(DrrUI.tab[rep] || "overview") === k ? "active" : ""}" data-drr-tab="${k}">${l}</button>`).join("")}</div>
     <label class="dash-unit"><span>${mt("ปี", "Year")}</span><select id="drr-year">${yrs.map((y) => `<option value="${y}" ${y === DrrUI.year ? "selected" : ""}>${y + (DB.get("lang", "th") === "th" ? 543 : 0)}</option>`).join("")}</select></label>
+    <label class="dash-unit"><span>${mt("เดือน", "Month")}</span><select id="drr-month"><option value="ALL">${mt("ทุกเดือน", "All months")}</option>${DRR_MONTHS.map((m, i) => `<option value="${i + 1}" ${String(DrrUI.month) === String(i + 1) ? "selected" : ""}>${m}</option>`).join("")}</select></label>
     <label class="dash-unit"><span>${mt("หน่วยงาน", "Unit")}</span><select id="drr-site"><option value="ALL">${mt("ทุกหน่วยงาน", "All units")}</option>${sites.map((s) => `<option value="${drrEsc(s)}" ${DrrUI.site === s ? "selected" : ""}>${drrEsc(s)}</option>`).join("")}</select></label>
     <span style="flex:1"></span>${extraHtml || ""}
   </div>`;
@@ -4048,6 +4051,7 @@ function drrToolbar(rep, extraHtml) {
 function drrWireBar(root, rep, rerender) {
   root.querySelectorAll("[data-drr-tab]").forEach((b) => b.addEventListener("click", () => { DrrUI.tab[rep] = b.dataset.drrTab; rerender(); }));
   root.querySelector("#drr-year").addEventListener("change", (e) => { DrrUI.year = Number(e.target.value); rerender(); });
+  root.querySelector("#drr-month").addEventListener("change", (e) => { DrrUI.month = e.target.value; rerender(); });
   root.querySelector("#drr-site").addEventListener("change", (e) => { DrrUI.site = e.target.value; rerender(); });
 }
 /** horizontal stacked bar made of {label,value,color} parts */
@@ -4281,11 +4285,10 @@ function renderDrrIncident(root, rep) {
     ${[1, 2, 3].map((n) => { const k = recs.filter((r) => String(r.d.severity) === String(n)).length; return `<div class="rk-row wide" style="grid-template-columns:clamp(110px,30%,200px) minmax(0,1fr) 40px;"><div class="rk-label">${DRR_SEVERITY[n][0]}</div><div class="stack-track"><div class="seg" style="flex:${k || 0.001};background:${["var(--st-good)", "var(--st-warning)", "var(--st-critical)"][n - 1]};min-width:${k ? 20 : 0}px;" data-tip="${DRR_SEVERITY[n][1]}: ${k}"><b>${k || ""}</b></div><div style="flex:${Math.max(0, recs.length - k)}"></div></div><div class="rk-val">${k}</div></div>`; }).join("")}
     <div class="mon-t" style="margin-top:10px;">${mt("เปิด / ปิดเรื่อง แยกตามหน่วยงาน", "Open / closed by unit")}</div>
     ${matrix.map((x) => { const o = recs.filter((r) => (r.d[dimKey] || "–") === x.s && r.d.status !== "closed").length; return `<div class="rk-row wide" style="grid-template-columns:clamp(110px,30%,200px) minmax(0,1fr) 60px;"><div class="rk-label">${drrEsc(x.s)}</div>${drrStack([{ l: "Closed", v: x.tot - o, c: "var(--st-good)" }, { l: "Open", v: o, c: "var(--st-serious)" }], x.s)}<div class="rk-val muted-s">${o} open</div></div>`; }).join("")}</div></div>`;
-  if (rep === "tw") html += drrTownshipTargets(recs);
+  html += drrTargets(rep, recs);
   body.innerHTML = html;
   mpWireTips(body);
-  const tg = body.querySelectorAll("[data-tw-target]");
-  tg.forEach((i) => i.addEventListener("change", () => { const cfg = drrCfg(); cfg.twTargets[i.dataset.twTarget] = drrNum(i.value); DB.set("drrCfg", cfg); rerender(); }));
+  body.querySelectorAll("[data-tgt]").forEach((i) => i.addEventListener("change", () => { const cfg = drrCfg(), key = rep + "Targets"; cfg[key][i.dataset.tgt] = drrNum(i.value); DB.set("drrCfg", cfg); rerender(); }));
 }
 /** Township "เป้าหมาย" table: indicator, previous year, target, current year, difference */
 const DRR_TW_IND = [
@@ -4295,18 +4298,18 @@ const DRR_TW_IND = [
   { id: "sab", th: "จำนวนการก่อวินาศกรรม / การก่อการร้าย", types: ["Sabotage"], metric: "count", dt: 0 },
   { id: "food", th: "จำนวนการปนเปื้อนสารพิษในอาหาร", types: ["Food Contamination"], metric: "count", dt: 0 }
 ];
-function drrTownshipTargets(recs) {
-  const cfg = drrCfg();
+function drrTargets(rep, recs) {
+  const cfg = drrCfg(), tgtMap = cfg[rep + "Targets"] || {};
   const rows = DRR_TW_IND.map((ind) => {
     const hit = recs.filter((r) => ind.types.includes(r.d.type));
     const cur = ind.metric === "count" ? hit.length : hit.reduce((a, r) => a + (Number(r.d.loss) || 0), 0);
-    const tgt = cfg.twTargets[ind.id] !== undefined && cfg.twTargets[ind.id] !== null ? cfg.twTargets[ind.id] : ind.dt;
+    const tgt = tgtMap[ind.id] !== undefined && tgtMap[ind.id] !== null ? tgtMap[ind.id] : (rep === "tw" ? ind.dt : 0);
     const diff = cur - tgt, ok = cur <= tgt;
-    return `<tr><td>${ind.th}<div class="muted-s">${ind.types.join(", ")}</div></td><td class="num"><input type="number" step="any" data-tw-target="${ind.id}" value="${tgt}" style="width:90px;" ${Auth.isAdmin(State.user) ? "" : "disabled"} /></td><td class="num"><b>${drrFmt(cur)}</b></td><td class="num" style="color:var(--st-${ok ? "good" : "critical"})">${diff > 0 ? "+" : ""}${drrFmt(diff)}</td><td>${ok ? `<span class="st-chip"><i style="color:var(--st-good)">✔</i>${mt("ไม่เกินเป้า", "On target")}</span>` : `<span class="st-chip"><i style="color:var(--st-critical)">✖</i>${mt("เกินเป้า", "Over target")}</span>`}</td></tr>`;
+    return `<tr><td>${ind.th}<div class="muted-s">${ind.types.join(", ")}</div></td><td class="ctr"><input type="number" step="any" data-tgt="${ind.id}" value="${tgt}" style="width:90px;text-align:center;" ${Auth.isAdmin(State.user) ? "" : "disabled"} /></td><td class="ctr"><b>${drrFmt(cur)}</b></td><td class="ctr" style="color:var(--st-${ok ? "good" : "critical"})">${diff > 0 ? "+" : ""}${drrFmt(diff)}</td><td class="ctr">${ok ? `<span class="st-chip"><i style="color:var(--st-good)">✔</i>${mt("ไม่เกินเป้า", "On target")}</span>` : `<span class="st-chip"><i style="color:var(--st-critical)">✖</i>${mt("เกินเป้า", "Over target")}</span>`}</td></tr>`;
   }).join("");
   return `<div class="card" style="margin-top:14px;"><h3>${mt("การดำเนินการตามแผนการจัดการด้านการรักษาความปลอดภัย — เป้าหมายปี", "Security management targets — year")} ${DrrUI.year + 543}</h3>
-    <div class="desc">${mt("ค่าเป้าหมายตั้งต้นมาจากไฟล์ Excel (แก้ไขได้โดยผู้ดูแลระบบ) · การจัดกลุ่มประเภทอุบัติการณ์ต่อตัวชี้วัดเป็นการตีความของระบบ ตรวจสอบกับทีม QSHE", "Default targets come from the Excel file (admins can edit) · the mapping from incident types to indicators is the app's interpretation — please confirm with the QSHE team")}</div>
-    <table class="mon-table"><thead><tr><th>${mt("ตัวชี้วัด", "Indicator")}</th><th>${mt("ค่าเป้าหมาย", "Target")}</th><th>${mt("ผลปัจจุบัน", "Actual")}</th><th>${mt("ส่วนต่าง", "Diff.")}</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    <div class="desc">${rep === "tw" ? mt("ค่าเป้าหมายตั้งต้นมาจากไฟล์ Excel (แก้ไขได้โดยผู้ดูแลระบบ) · การจัดกลุ่มประเภทอุบัติการณ์ต่อตัวชี้วัดเป็นการตีความของระบบ ตรวจสอบกับทีม QSHE", "Default targets come from the Excel file (admins can edit) · mapping of incident types to indicators is the app's interpretation — confirm with the QSHE team") : mt("ค่าเป้าหมายตั้งต้นเป็น 0 (ผู้ดูแลระบบแก้ไขได้) · การจัดกลุ่มประเภทอุบัติการณ์ต่อตัวชี้วัดเป็นการตีความของระบบ ตรวจสอบกับทีม QSHE", "Default targets are 0 (admins can edit) · mapping of incident types to indicators is the app's interpretation — confirm with the QSHE team")}</div>
+    <table class="mon-table"><thead><tr><th>${mt("ตัวชี้วัด", "Indicator")}</th><th class="ctr">${mt("ค่าเป้าหมาย", "Target")}</th><th class="ctr">${mt("ผลปัจจุบัน", "Actual")}</th><th class="ctr">${mt("ส่วนต่าง", "Diff.")}</th><th class="ctr">${mt("ผลลัพธ์", "Result")}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 // ================================================================ 3 FOOD TESTING ===
@@ -4390,7 +4393,7 @@ function drrTs2Auto(site, ym) {
 function renderDrrTs(root) {
   const rep = "ts", tab = DrrUI.tab[rep] || "overview", rerender = () => renderDrrTs(root);
   const sub = DrrUI.ts === "ts1" ? "ts1" : "ts2";
-  const recs = drrAll(sub).filter((r) => drrYearOf(r) === DrrUI.year && (DrrUI.site === "ALL" || r.d.site === DrrUI.site));
+  const recs = drrAll(sub).filter((r) => drrYearOf(r) === DrrUI.year && (DrrUI.month === "ALL" || drrMonthOf(r) === Number(DrrUI.month)) && (DrrUI.site === "ALL" || r.d.site === DrrUI.site));
   const extra = `<div class="per-group" role="group">${[["ts1", "ทส.1 " + mt("(รายวัน)", "(daily)")], ["ts2", "ทส.2 " + mt("(รายเดือน)", "(monthly)")]].map(([k, l]) => `<button type="button" class="per-btn ${sub === k ? "active" : ""}" data-ts="${k}">${l}</button>`).join("")}</div>`;
   root.innerHTML = drrToolbar(rep, extra + drrActionButtons(rep, sub)) + `<div id="drr-body"></div>`;
   drrWireBar(root, rep, rerender);
@@ -4420,14 +4423,14 @@ function renderDrrTs(root) {
     return;
   }
   const sites = DrrUI.site === "ALL" ? Object.keys(DRR_WW_SITES) : [DrrUI.site];
-  const month = DrrUI.tsMonth || new Date().toISOString().slice(0, 7);
-  const ym = `${DrrUI.year}-${month.slice(5, 7)}`;
+  const mm = DrrUI.month !== "ALL" ? String(DrrUI.month).padStart(2, "0") : String(new Date().getMonth() + 1).padStart(2, "0");
+  const ym = `${DrrUI.year}-${mm}`;
   body.innerHTML = note + `<div class="card"><div class="toolbar"><h3 style="margin:0;">${mt("รายงานสรุป ทส.2 ประจำเดือน", "Monthly ทส.2 summary")} · <select id="ts-month">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => `<option value="${String(m).padStart(2, "0")}" ${ym.slice(5) === String(m).padStart(2, "0") ? "selected" : ""}>${DRR_MONTHS[m - 1]}</option>`).join("")}</select></h3></div>
     <div class="desc">${mt("ตัวเลขดึงอัตโนมัติจาก ทส.1 และผลน้ำทิ้งในรายงานข้อ 4 · กด “บันทึกรายงานเดือนนี้” เพื่อเก็บเป็นรายการ ทส.2 และ “พิมพ์” เพื่อออกเป็น PDF", "Figures are pulled from ทส.1 and the effluent results of report 4 · “Save this month” stores the ทส.2 record, “Print” gives a PDF")}</div>
     ${sites.map((s) => { const a = drrTs2Auto(s, ym); const saved = drrAll("ts2").find((r) => r.d.site === s && String(r.d.date).slice(0, 7) === ym); const w = a.ww ? drrWwSample(a.ww.d) : null;
       return `<div class="card" style="margin:10px 0;"><div class="toolbar" style="margin-bottom:6px;"><b>${drrEsc(s)}</b><span>${saved ? `<span class="st-chip"><i style="color:var(--st-good)">✔</i>${mt("บันทึกแล้ว", "saved")}</span>` : `<span class="muted-s">${mt("ยังไม่บันทึก", "not saved")}</span>`} <button class="btn ghost small" data-ts2-save="${drrEsc(s)}">${mt("บันทึกรายงานเดือนนี้", "Save this month")}</button> <button class="btn ghost small" data-ts2-edit="${drrEsc(s)}">${mt("กรอกผู้รายงาน / การส่ง", "Reporter / filing")}</button> <button class="btn small" data-ts2-print="${drrEsc(s)}">${mt("พิมพ์", "Print")}</button></span></div>
       <div class="grid cols-4">${drrTile(mt("วันที่บันทึก ทส.1", "ทส.1 days"), a.days, "")}${drrTile(mt("น้ำเสียเข้า (ลบ.ม.)", "In (m³)"), drrFmt(a.inflow, 1), "")}${drrTile(mt("น้ำทิ้ง (ลบ.ม.)", "Out (m³)"), drrFmt(a.outflow, 1), "")}${drrTile(mt("ผลน้ำทิ้ง", "Effluent"), w ? (w.pass ? "✔ " + mt("ผ่าน", "OK") : "✖ " + mt("เกินเกณฑ์", "Exceeds")) : "–", w ? (w.pass ? "" : w.fail.join(", ")) : mt("ยังไม่มีผลตรวจเดือนนี้", "no sampling this month"), w ? (w.pass ? "var(--st-good)" : "var(--st-critical)") : "")}</div></div>`; }).join("")}</div>`;
-  body.querySelector("#ts-month").addEventListener("change", (e) => { DrrUI.tsMonth = `${DrrUI.year}-${e.target.value}`; rerender(); });
+  body.querySelector("#ts-month").addEventListener("change", (e) => { DrrUI.month = String(Number(e.target.value)); rerender(); });
   const mk = (s) => { const a = drrTs2Auto(s, ym); const ex = drrAll("ts2").find((r) => r.d.site === s && String(r.d.date).slice(0, 7) === ym); return { ex, a, d: Object.assign({ date: ym + "-01", site: s }, ex ? ex.d : {}, { days: a.days }) }; };
   body.querySelectorAll("[data-ts2-save]").forEach((b) => b.addEventListener("click", () => { const { ex, d } = mk(b.dataset.ts2Save); drrSave({ id: ex ? ex.id : uid("drr"), report: "ts2", d }); toast(mt("บันทึกแล้ว", "Saved")); rerender(); }));
   body.querySelectorAll("[data-ts2-edit]").forEach((b) => b.addEventListener("click", () => { const { ex, d } = mk(b.dataset.ts2Edit); DrrUI.ts = "ts2"; drrOpenForm("ts", ex || { id: uid("drr"), report: "ts2", d }, rerender); }));
