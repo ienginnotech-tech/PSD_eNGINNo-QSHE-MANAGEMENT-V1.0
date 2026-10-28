@@ -1177,6 +1177,9 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .drr-ts1 th{font-size:11px;text-align:center;white-space:normal}.drr-ts1 td{font-size:12px}
 .link-btn{background:none;border:0;color:var(--primary,#1a6b3c);cursor:pointer;font:inherit;text-decoration:underline}
 
+.dash-top .safety { justify-content: space-between; gap: 8px; }
+.dash-top .safety .sf-head { padding-bottom: 12px; }
+
 </style>
 </head>
 <body>
@@ -3729,7 +3732,10 @@ function renderDashMasterPlan(host) {
           <div class="rk-sum">${MP_RISK.map((r) => `<div class="rk-chip" data-tip="${mpRiskLabel(r.id)}: ${S.risk[r.id]}"><i style="color:${mpRiskColor(r.id)}">${r.icon}</i> ${mpRiskLabel(r.id)}<b>${S.risk[r.id]}</b></div>`).join("")}</div>
         </div>
       </div>
-      <div class="card" style="margin-top:14px;">
+    </div>`;
+  const chkHost = document.getElementById("dash-chk");
+  if (chkHost) chkHost.innerHTML = `
+      <div class="card" style="margin:0;">
         <div class="toolbar" style="margin-bottom:6px;">
           <div><h3 style="margin:0;">Risk Assessment Checklist · ${mt("8 หมวด เรียงตามความเสี่ยง วิกฤต → ต่ำ", "8 categories ranked by risk, critical → low")}</h3>
             <div class="desc" style="margin:2px 0 0;">${mt("แท่งสี = จำนวนข้อตามระดับความเสี่ยง · % = คะแนนที่ได้ (ไม่รวม N/A) · เลื่อนเมาส์ดูรายละเอียด", "Colored bar = items per risk level · % = score (N/A excluded) · hover for details")}</div></div>
@@ -3740,10 +3746,8 @@ function renderDashMasterPlan(host) {
           <div class="mon-t">${mt("ตามหมวด · ", "By category · ")}${scopeLbl}</div>
           ${cats.map((c) => mpRiskStackRow(mpCatName(c), c.risk, c.pct, "", null, false, true)).join("")}
         </div>
-      </div>
-    </div>`;
-  host.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto)));
-  if (!host._tips) { mpWireTips(host); host._tips = true; }
+      </div>`;
+  [host, chkHost].forEach((h) => { if (!h) return; h.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto))); if (!h._tips) { mpWireTips(h); h._tips = true; } });
 }
 
 /** top row: unit ranking by risk (with %) */
@@ -5976,11 +5980,12 @@ function renderDashboard(root) {
       </div>`;
 
   root.innerHTML = `
+    ${showMp ? `<div id="dash-mp" style="margin-bottom:14px;"></div>` : ""}
     <div class="dash-top ${showMp ? "" : "one"}">
       ${showMp ? `<div id="dash-rank"></div><div id="dash-score"></div>` : ""}
       <div id="dash-safety"></div>
     </div>
-    ${showMp ? `<div id="dash-mp"></div><div id="mon-host" style="margin-top:14px;"></div>` : ""}
+    ${showMp ? `<div id="dash-chk"></div><div id="mon-host" style="margin-top:14px;"></div>` : ""}
     <div class="grid cols-${statCards.length}" style="margin-top:14px;">${statCards.join("")}</div>
     <div class="grid ${visMods.length ? "cols-2" : "cols-1"}">${modCard}${kpiCard}</div>
   `;
