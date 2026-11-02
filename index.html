@@ -1180,6 +1180,15 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .dash-top .safety { justify-content: space-between; gap: 8px; }
 .dash-top .safety .sf-head { padding-bottom: 12px; }
 
+.chk-fix { margin-top: 6px; width: 100%; font-size: 13px; padding: 6px 8px; border: 1px solid var(--border); border-left: 3px solid var(--st-good); border-radius: 6px; background: var(--card); color: var(--text); font-family: inherit; }
+.chk-warn { font-size: 12.5px; margin-top: 4px; }
+.chk-warn:empty { display: none; }
+.chk-warn.bad { color: var(--st-critical); font-weight: 700; }
+.chk-warn.ok { color: var(--st-good); }
+.chk-warn.flash { animation: warnFlash 1.2s ease 2; }
+@keyframes warnFlash { 50% { background: var(--st-critical); color: #fff; } }
+.ph-slot.need .ph-add { border: 2px dashed var(--st-critical); color: var(--st-critical); }
+
 </style>
 </head>
 <body>
@@ -2628,6 +2637,7 @@ function mpWirePhotos(body, unit, visit, opts) {
   const slots = () => [...body.querySelectorAll(".ph-slot")];
   const paintAll = () => MpImg.forUnit(unit.id, visit).then((all) => {
     slots().forEach((el) => { const d = all[el.dataset.phItem + "|" + el.dataset.phSlot]; if (d) mpPaintSlot(el, d); });
+    if (opts && opts.painted) opts.painted();
   }).catch(() => {});
   paintAll();
   // photos taken on other computers
@@ -2763,6 +2773,8 @@ function renderMpChecklistBody(unit) {
             ${it.ctx ? `<div><b>${mt("บริบทการตรวจ", "Context")}:</b> ${mpEsc(it.ctx)}</div>` : ""}
             ${it.law ? `<div><b>${mt("อ้างอิง", "Reference")}:</b> ${mpEsc(it.law)}</div>` : ""}</details>` : ""}
           <input type="text" class="chk-note" data-note="${it.id}" placeholder="${mt("ข้อสังเกต / สิ่งที่ต้องแก้ไข (ถ้ามี)", "Finding / action needed (optional)")}" value="${mpEsc(rec0.notes[it.id] || "")}" />
+          <input type="text" class="chk-fix" data-fix="${it.id}" placeholder="${mt("รายละเอียดการแก้ไข (ต้องมี + รูปที่ 3 หลังแก้ไข ก่อนปรับคะแนนใหม่)", "Correction details (required with photo 3 'after fix' before re-scoring)")}" value="${mpEsc((rec0.fixes || {})[it.id] || "")}" />
+          <div class="chk-warn" data-warn="${it.id}"></div>
         </div>
         <div class="chk-photos">${[1, 2, 3].map((n) => mpPhotoSlotHtml(it.id, n)).join("")}${isAdm ? `<div class="chk-stamp by" data-stamp-by="${it.id}">${stampBy(rec0.meta && rec0.meta[it.id])}</div>` : ""}</div>
         <div class="chk-score">
@@ -2824,7 +2836,24 @@ function renderMpChecklistBody(unit) {
     if (ic) { const st = mpStatusOf(all.pct); ic.innerHTML = st ? `<i style="color:var(--st-${st.cls})">${st.icon}</i>` : "<i>○</i>"; }
   };
   refresh();
-  mpWirePhotos(body, unit, cv, { touch: (id) => { const r = getRec(); mpStampItem(r, id); mpSaveRecord(r); paintStamp(id); } });
+  const afterSlot = (id) => body.querySelector(`.ph-slot[data-ph-item="${id}"][data-ph-slot="3"]`);
+  /** per-row notice: correction text and the "after fix" photo (photo 3) must come together */
+  const updateWarn = (id) => {
+    const el = body.querySelector(`[data-warn="${id}"]`); if (!el) return;
+    const r = getRec(), fix = ((r.fixes || {})[id] || "").trim(), slot = afterSlot(id);
+    const photo = !!(slot && slot.classList.contains("has")), canPhoto = MpImg.available();
+    const changed = !!(r.base && id in r.base && r.base[id] !== r.scores[id]);
+    const need = !!fix || photo || changed;
+    const msgs = [];
+    if (need && canPhoto && !photo) msgs.push(mt("ยังไม่ได้แนบรูปหลังแก้ไข (รูปที่ 3)", "Photo 3 (after fix) is missing"));
+    if (need && !fix) msgs.push(mt("ยังไม่ได้ระบุรายละเอียดการแก้ไข", "Correction details are missing"));
+    el.className = "chk-warn" + (msgs.length ? " bad" : need ? " ok" : "");
+    el.innerHTML = msgs.length ? `⚠ ${msgs.join(" · ")}` : need ? `✔ ${mt("มีรายละเอียดและรูปหลังแก้ไขครบ", "Correction details and after-fix photo complete")}` : "";
+    if (slot) slot.classList.toggle("need", need && canPhoto && !photo);
+  };
+  const updateAllWarn = () => body.querySelectorAll("[data-warn]").forEach((e) => updateWarn(e.dataset.warn));
+  mpWirePhotos(body, unit, cv, { touch: (id) => { const r = getRec(); mpStampItem(r, id); mpSaveRecord(r); paintStamp(id); updateWarn(id); }, painted: updateAllWarn });
+  updateAllWarn();
   if (typeof mpRenderFormsPanel === "function") mpRenderFormsPanel(document.getElementById("forms-panel"), unit);
 
   body.querySelectorAll("details.chk-cat[data-cat]").forEach((d) => d.addEventListener("toggle", () => { MpCheckUI.open[unit.id + ":" + d.dataset.cat] = d.open; }));
@@ -2844,7 +2873,7 @@ function renderMpChecklistBody(unit) {
   }));
 
   const save = (fn, itemId) => { const r = getRec(); fn(r); delete r.demo; if (itemId) mpStampItem(r, itemId); mpSaveRecord(r); if (itemId) paintStamp(itemId); return r; };
-  body.querySelectorAll("[data-score]").forEach((sel) => sel.addEventListener("change", () => {
+  const applyScore = (sel) => {
     const id = sel.dataset.score;
     const r = save((x) => { const prev = x.scores[id]; if (prev !== undefined) { x.base = x.base || {}; if (!(id in x.base)) x.base[id] = prev; }   /* remember the first finding for before/after */
       if (sel.value === "") delete x.scores[id]; else x.scores[id] = sel.value === "na" ? "na" : Number(sel.value); }, id);
@@ -2854,7 +2883,28 @@ function renderMpChecklistBody(unit) {
     if (rk) row.style.setProperty("--rk", mpRiskColor(rk)); else row.style.removeProperty("--rk");
     body.querySelector(`[data-risk="${id}"]`).innerHTML = riskCell(v);
     const banner = body.querySelector(".mp-banner"); if (banner) banner.remove();
-    refresh();
+    refresh(); updateWarn(id);
+  };
+  body.querySelectorAll("[data-score]").forEach((sel) => sel.addEventListener("change", async () => {
+    const id = sel.dataset.score, prev = getRec().scores[id];
+    const nv = sel.value === "" ? undefined : sel.value === "na" ? "na" : Number(sel.value);
+    if (prev === undefined || nv === prev) { applyScore(sel); return; }
+    // re-scoring an item that already has a score: needs correction details AND the "after fix" photo
+    const fix = ((getRec().fixes || {})[id] || "").trim();
+    let photo = true;
+    if (MpImg.available()) { try { photo = !!(await MpImg.get(MpImg.key(unit.id, cv, id, 3))); } catch (e) { photo = false; } }
+    if (fix && photo) { applyScore(sel); return; }
+    sel.value = prev === "na" ? "na" : String(prev);                 // keep the old score
+    const miss = [!fix ? mt("รายละเอียดการแก้ไข", "correction details") : "", !photo ? mt("รูปที่ 3 (หลังแก้ไข)", "photo 3 (after fix)") : ""].filter(Boolean).join(mt(" และ ", " and "));
+    toast(`${id}: ${mt("ปรับคะแนนใหม่ไม่ได้ — ต้องมี", "Cannot re-score — required:")} ${miss}`);
+    const w = body.querySelector(`[data-warn="${id}"]`);
+    w.className = "chk-warn bad flash"; w.innerHTML = `⚠ ${mt("ปรับคะแนนใหม่ไม่ได้ — ต้องมี", "Cannot re-score — required:")} ${miss}`;
+    const slot = afterSlot(id); if (slot && !photo) slot.classList.add("need");
+    if (!fix) { const f = body.querySelector(`[data-fix="${id}"]`); if (f) f.focus(); }
+  }));
+  body.querySelectorAll("[data-fix]").forEach((inp) => inp.addEventListener("change", () => {
+    save((x) => { x.fixes = x.fixes || {}; if (inp.value.trim()) x.fixes[inp.dataset.fix] = inp.value.trim(); else delete x.fixes[inp.dataset.fix]; }, inp.dataset.fix);
+    updateWarn(inp.dataset.fix);
   }));
   body.querySelectorAll("[data-note]").forEach((inp) => inp.addEventListener("change", () => {
     save((x) => { if (inp.value.trim()) x.notes[inp.dataset.note] = inp.value.trim(); else delete x.notes[inp.dataset.note]; }, inp.dataset.note);
@@ -2868,7 +2918,7 @@ function renderMpChecklistBody(unit) {
   document.getElementById("mp-unit-edit").addEventListener("click", () => openMpUnitForm(unit.id));
   document.getElementById("mp-visit-clear").addEventListener("click", async () => {
     if (!confirm(mt(`ล้างคะแนนและรูปทั้งหมดของครั้งที่ ${cv} หรือไม่?`, `Clear all scores and photos of visit ${cv}?`))) return;
-    const r = getRec(); r.scores = {}; r.notes = {}; delete r.demo; mpSaveRecord(r);
+    const r = getRec(); r.scores = {}; r.notes = {}; r.fixes = {}; delete r.demo; mpSaveRecord(r);
     if (MpImg.available()) await MpImg.delPrefix(`${unit.id}|${cv}|`).catch(() => {});
     toast(mt("ล้างคะแนนแล้ว", "Scores cleared"));
     renderMpCheck(root);
