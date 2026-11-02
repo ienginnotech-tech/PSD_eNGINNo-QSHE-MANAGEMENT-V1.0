@@ -4975,9 +4975,9 @@ function drrMwaEval(p, v) {
   return "ok";
 }
 function drrMwaSample(d) {
-  const v = d.v || {}, out = { tested: 0, bad: [], low: [] };
-  DRR_MWA_PARAMS.forEach((p) => { const e = drrMwaEval(p, v[p.k]); if (e === null) return; out.tested++; if (e === "bad") out.bad.push(p.short); if (e === "low") out.low.push(p.short); });
-  out.pass = out.tested > 0 && !out.bad.length;
+  const v = d.v || {}, out = { tested: 0, ok: 0, bad: [], low: [] };
+  DRR_MWA_PARAMS.forEach((p) => { const e = drrMwaEval(p, v[p.k]); if (e === null) return; out.tested++; if (e === "ok") out.ok++; if (e === "bad") out.bad.push(p.short); if (e === "low") out.low.push(p.short); });
+  out.pass = out.tested > 0 && !out.bad.length && !out.low.length;
   return out;
 }
 const drrMwaColor = (e) => (e === "bad" ? "var(--st-critical)" : e === "low" ? "var(--st-serious)" : "inherit");
@@ -5012,7 +5012,7 @@ function drrMwaWire(modal) {
       modal.querySelector(`[data-mwr="${p.k}"]`).innerHTML = e === null ? "" : e === "ok" ? `<span class="st-chip"><i style="color:var(--st-good)">✔</i></span>` : e === "low" ? `<span class="st-chip"><i style="color:var(--st-serious)">▼</i>${mt("ต่ำกว่าเกณฑ์", "Below")}</span>` : `<span class="st-chip"><i style="color:var(--st-critical)">✖</i>${mt("เกินเกณฑ์", "Exceeds")}</span>`;
     });
     const s = drrMwaSample({ v });
-    modal.querySelector("[data-mwsum]").innerHTML = s.tested ? (s.pass ? `✔ ${mt("ผ่านเกณฑ์มาตรฐาน กปน. ทุกค่า", "Meets the MWA standard")}${s.low.length ? " · ▼ " + s.low.join(", ") : ""}` : `✖ ${mt("เกินเกณฑ์", "Exceeds")}: ${s.bad.join(", ")}`) : "";
+    modal.querySelector("[data-mwsum]").innerHTML = s.tested ? (s.pass ? `✔ ${mt("ผ่านเกณฑ์มาตรฐาน กปน. ทุกค่า", "Meets the MWA standard")} (${s.ok}/${s.tested})` : `✖ ${mt("ไม่ผ่าน", "Not passed")} ${s.ok}/${s.tested}: ${s.bad.concat(s.low.map((x) => x + " ▼")).join(", ")}`) : "";
   };
   modal.querySelectorAll("[data-mw]").forEach((i) => i.addEventListener("input", upd)); upd();
 }
@@ -5036,23 +5036,28 @@ function drrMwaOpen(site, y, m, rerender) {
 function drrMwaSheets(out) {
   const ks = DRR_MWA_PARAMS.map((p) => p.k);
   out.push({ key: "mwa", title: "MWA_RawWater", columns: ["id", "date", "year", "month", "site", "lab", "result", "exceeded", "belowRange"].concat(ks, ["editedBy", "editedAt"]),
-    rows: drrAll("mwa").sort((a, b) => (a.d.date || "").localeCompare(b.d.date || "") || (a.d.site || "").localeCompare(b.d.site || "")).map((r) => { const s = drrMwaSample(r.d); return [r.id, r.d.date, drrYearOf(r), drrMonthOf(r), r.d.site, r.d.lab || "", s.tested ? (s.pass ? "Pass" : "Exceeds") : "-", s.bad.join("; "), s.low.join("; ")].concat(ks.map((k) => (r.d.v || {})[k] ?? ""), [r.byName || r.by || "", r.at || ""]); }) });
+    rows: drrAll("mwa").sort((a, b) => (a.d.date || "").localeCompare(b.d.date || "") || (a.d.site || "").localeCompare(b.d.site || "")).map((r) => { const s = drrMwaSample(r.d); return [r.id, r.d.date, drrYearOf(r), drrMonthOf(r), r.d.site, r.d.lab || "", s.tested ? (s.pass ? "Pass" : "Not pass") : "-", s.bad.join("; "), s.low.join("; ")].concat(ks.map((k) => (r.d.v || {})[k] ?? ""), [r.byName || r.by || "", r.at || ""]); }) });
 }
 
 function drrMwaChlorine(sites, y) {
-  const W = 560, H = 190, L = 34, R = 10, T = 12, B = 24, mx = 0.6;
-  const x = (m) => L + ((m - 1) / 11) * (W - L - R), yy = (v) => T + (1 - Math.min(v, mx) / mx) * (H - T - B);
+  const W = 560, H = 200, L = 34, R = 14, T = 12, B = 24, mx = 0.6, n = sites.length;
+  const x = (m, si) => L + 8 + ((m - 1) / 11) * (W - L - R - 16) + (si - (n - 1) / 2) * 5, yy = (v) => T + (1 - Math.min(v, mx) / mx) * (H - T - B);
   let g = `<rect x="${L}" y="${yy(0.5)}" width="${W - L - R}" height="${yy(0.2) - yy(0.5)}" fill="var(--st-good)" opacity=".12"/>`;
   [0, 0.2, 0.4, 0.5, 0.6].forEach((t) => { g += `<line x1="${L}" x2="${W - R}" y1="${yy(t)}" y2="${yy(t)}" stroke="var(--border)" stroke-width="1"/><text x="${L - 4}" y="${yy(t) + 3}" text-anchor="end" font-size="9" fill="var(--muted)">${t}</text>`; });
-  DRR_MONTHS.forEach((mn, i) => { g += `<text x="${x(i + 1)}" y="${H - 8}" text-anchor="middle" font-size="9" fill="var(--muted)">${mn}</text>`; });
+  DRR_MONTHS.forEach((mn, i) => { g += `<text x="${x(i + 1, (n - 1) / 2)}" y="${H - 8}" text-anchor="middle" font-size="9" fill="var(--muted)">${mn}</text>`; });
+  const shape = (si, cx, cy, col, tip) => { const c = `fill="${col}" stroke="var(--surface,#fff)" stroke-width="1.5" data-tip="${drrEsc(tip)}"`; return si % 4 === 0 ? `<circle cx="${cx}" cy="${cy}" r="4.5" ${c}/>` : si % 4 === 1 ? `<rect x="${cx - 4}" y="${cy - 4}" width="8" height="8" ${c}/>` : si % 4 === 2 ? `<polygon points="${cx},${cy - 5} ${cx + 5},${cy + 4} ${cx - 5},${cy + 4}" ${c}/>` : `<polygon points="${cx},${cy - 5} ${cx + 5},${cy} ${cx},${cy + 5} ${cx - 5},${cy}" ${c}/>`; };
+  const rows = [];
   sites.forEach((s, si) => {
-    const pts = []; for (let m = 1; m <= 12; m++) { const r = drrMwaRec(s, y, m); const n = r ? drrNum((r.d.v || {}).chlorine) : null; if (n !== null) pts.push([m, n]); }
+    const pts = [], vals = []; for (let m = 1; m <= 12; m++) { const r = drrMwaRec(s, y, m); const v = r ? drrNum((r.d.v || {}).chlorine) : null; vals.push(v); if (v !== null) pts.push([m, v]); }
+    rows.push([s, vals]);
     const col = DRR_SERIES[si % 5];
-    if (pts.length > 1) g += `<polyline fill="none" stroke="${col}" stroke-width="2" points="${pts.map((p) => x(p[0]) + "," + yy(p[1])).join(" ")}"/>`;
-    pts.forEach((p) => { g += `<circle cx="${x(p[0])}" cy="${yy(p[1])}" r="4" fill="${col}" stroke="var(--surface,#fff)" stroke-width="2" data-tip="${drrEsc(s)} · ${DRR_MONTHS[p[0] - 1]}\n${p[1]} mg/L"/>`; });
+    if (pts.length > 1) g += `<polyline fill="none" stroke="${col}" stroke-width="2" ${si % 2 ? 'stroke-dasharray="5 3"' : ""} points="${pts.map((p) => x(p[0], si) + "," + yy(p[1])).join(" ")}"/>`;
+    pts.forEach((p) => { g += shape(si, x(p[0], si), yy(p[1]), col, `${s} · ${DRR_MONTHS[p[0] - 1]}\n${p[1]} mg/L`); });
   });
-  const legend = sites.map((s, si) => `<span style="display:inline-flex;align-items:center;gap:5px;margin-right:12px;"><i style="width:14px;height:3px;background:${DRR_SERIES[si % 5]};display:inline-block"></i>${drrEsc(s)}</span>`).join("");
-  return `<div class="muted-s" style="margin-bottom:4px;">${legend}<span>▭ ${mt("แถบเขียว = เกณฑ์ 0.2 – 0.5 มก./ล.", "green band = 0.2 – 0.5 mg/L")}</span></div><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;max-height:230px" role="img" aria-label="Residual chlorine trend">${g}</svg>`;
+  const sym = ["●", "■", "▲", "◆"];
+  const legend = sites.map((s, si) => `<span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;"><b style="color:${DRR_SERIES[si % 5]}">${sym[si % 4]}</b>${drrEsc(s)}</span>`).join("");
+  const tbl = `<div style="overflow-x:auto;margin-top:6px;"><table class="mon-table drr-heat" style="font-size:.78rem"><thead><tr><th style="text-align:left">${mt("หน่วยงาน", "Unit")}</th>${DRR_MONTHS.map((m) => `<th>${m}</th>`).join("")}</tr></thead><tbody>${rows.map(([s, vals], si) => `<tr><td style="text-align:left"><b style="color:${DRR_SERIES[si % 5]}">${sym[si % 4]}</b> ${drrEsc(s)}</td>${vals.map((v) => `<td style="color:${v === null ? "var(--muted)" : v < 0.2 ? "var(--st-serious)" : v > 0.5 ? "var(--st-critical)" : "inherit"};font-weight:${v !== null && (v < 0.2 || v > 0.5) ? 700 : 400}">${v === null ? "·" : v}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+  return `<div class="muted-s" style="margin-bottom:4px;">${legend}<span>▭ ${mt("แถบเขียว = เกณฑ์ 0.2 – 0.5 มก./ล.", "green band = 0.2 – 0.5 mg/L")}</span></div><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;max-height:240px" role="img" aria-label="Residual chlorine trend">${g}</svg>${tbl}`;
 }
 
 function renderDrrMwa(root) {
@@ -5069,13 +5074,13 @@ function renderDrrMwa(root) {
       const s = drrMwaSample(r.d);
       return [DRR_MONTHS[drrMonthOf(r) - 1] + " " + (drrYearOf(r) + (DB.get("lang", "th") === "th" ? 543 : 0)), drrEsc(r.d.site),
         ...DRR_MWA_PARAMS.map((p) => { const v = (r.d.v || {})[p.k]; const e = drrMwaEval(p, v); return v === undefined ? "" : `<span style="color:${drrMwaColor(e)};font-weight:${e === "bad" || e === "low" ? 700 : 400}">${drrEsc(p.t === "nd" ? (e === "ok" ? "ND" : v) : p.t === "odor" ? (e === "ok" ? "✔" : v) : v)}</span>`; }),
-        s.tested ? (s.pass ? `<span class="st-chip"><i style="color:var(--st-good)">✔</i>${mt("ผ่าน", "Pass")}</span>` : `<span class="st-chip" title="${drrEsc(s.bad.join(", "))}"><i style="color:var(--st-critical)">✖</i>${mt("เกินเกณฑ์", "Exceeds")}</span>`) : "–"];
+        s.tested ? (s.pass ? `<span class="st-chip"><i style="color:var(--st-good)">✔</i>${mt("ผ่าน", "Pass")} ${s.ok}/${s.tested}</span>` : `<span class="st-chip" title="${drrEsc(s.bad.concat(s.low).join(", "))}"><i style="color:var(${s.bad.length ? "--st-critical" : "--st-serious"})">${s.bad.length ? "✖" : "▼"}</i>${mt("ไม่ผ่าน", "Not passed")} ${s.ok}/${s.tested}</span>`) : "–"];
     });
     drrWireTable(body, rep, rerender); return;
   }
   const sites = DrrUI.site === "ALL" ? drrMwaSites() : [DrrUI.site];
   const months = DrrUI.month === "ALL" ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] : [Number(DrrUI.month)];
-  const tested = recs.filter((r) => drrMwaSample(r.d).tested), okN = tested.filter((r) => drrMwaSample(r.d).pass).length;
+  const tested = recs.filter((r) => drrMwaSample(r.d).tested), okN = tested.reduce((a, r) => a + drrMwaSample(r.d).ok, 0), parN = tested.reduce((a, r) => a + drrMwaSample(r.d).tested, 0);
   const badVals = tested.reduce((a, r) => a + drrMwaSample(r.d).bad.length, 0), lowVals = tested.reduce((a, r) => a + drrMwaSample(r.d).low.length, 0);
   const nowM = new Date().getFullYear() === y ? new Date().getMonth() + 1 : 12;
   const missing = []; sites.forEach((s) => { for (let m = 1; m <= nowM; m++) if (!drrMwaRec(s, y, m) && (DrrUI.month === "ALL" || Number(DrrUI.month) === m)) missing.push([s, m]); });
@@ -5084,13 +5089,13 @@ function renderDrrMwa(root) {
     if (!r) return `<td class="num"><button class="icon-btn" data-mwa-open="${drrEsc(s)}|${m}" title="${mt("ลงข้อมูล", "Enter data")}">+</button></td>`;
     const sm = drrMwaSample(r.d);
     const tip = `${s} ${DRR_MONTHS[m - 1]}\n` + DRR_MWA_PARAMS.map((p) => { const v = (r.d.v || {})[p.k]; const e = drrMwaEval(p, v); return e === null ? null : `${p.short}: ${v} (${p.std}) ${e === "ok" ? "✔" : e === "low" ? "▼" : "✖"}`; }).filter(Boolean).join("\n");
-    const mark = !sm.tested ? "·" : sm.pass ? (sm.low.length ? "▼" : "✔") : "✖";
-    return `<td class="num" data-tip="${drrEsc(tip)}" style="cursor:pointer;color:var(--st-${!sm.tested ? "good" : sm.pass ? (sm.low.length ? "serious" : "good") : "critical"});font-weight:700" data-mwa-open="${drrEsc(s)}|${m}">${mark}</td>`;
+    const mark = !sm.tested ? "·" : sm.pass ? "✔" : sm.bad.length ? "✖" : "▼";
+    return `<td class="num" data-tip="${drrEsc(tip)}" style="cursor:pointer;color:var(--st-${!sm.tested ? "good" : sm.pass ? "good" : sm.bad.length ? "critical" : "serious"});font-weight:700" data-mwa-open="${drrEsc(s)}|${m}">${mark}</td>`;
   };
   const sheet = (s) => `<div class="card" style="margin-top:14px;"><h3>${drrEsc(s)} · ${mt("ผลตรวจรายเดือนเทียบมาตรฐานคุณภาพน้ำประปา กปน.", "Monthly results vs the MWA tap-water standard")}</h3><div style="overflow-x:auto"><table class="mon-table drr-heat"><thead><tr><th style="text-align:left">${mt("ดัชนีคุณภาพน้ำ", "Index")}</th><th>${mt("หน่วย", "Unit")}</th><th>${mt("เกณฑ์สูงสุด", "Limit")}</th>${months.map((m) => `<th><a href="#" class="link-btn" data-mwa-open="${drrEsc(s)}|${m}" title="${mt("เปิด / ลงข้อมูลเดือนนี้", "Open / enter this month")}">${DRR_MONTHS[m - 1]}</a></th>`).join("")}</tr></thead><tbody>
     ${DRR_MWA_PARAMS.map((p, i) => `<tr><td style="text-align:left">${i + 1}. ${p.name}</td><td class="muted-s">${p.unit}</td><td>${p.std}</td>${months.map((m) => { const r = drrMwaRec(s, y, m); const v = r ? (r.d.v || {})[p.k] : undefined; if (v === undefined) return `<td class="muted-s">·</td>`; const e = drrMwaEval(p, v); return `<td style="color:${drrMwaColor(e)};font-weight:${e === "bad" || e === "low" ? 700 : 400}">${drrEsc(p.t === "nd" && e === "ok" ? "ND" : p.t === "odor" && e === "ok" ? "✔" : v)}</td>`; }).join("")}</tr>`).join("")}</tbody></table></div></div>`;
-  body.innerHTML = `<div class="grid cols-4" style="margin-bottom:14px;">${drrTile(mt("ผลตรวจที่บันทึก", "Results recorded"), tested.length, mt("หน่วยงาน × เดือน", "unit × month"))}${drrTile(mt("ผ่านมาตรฐาน กปน.", "Meets MWA standard"), tested.length ? ((okN / tested.length) * 100).toFixed(1) + "%" : "–", `${okN}/${tested.length}`, tested.length && okN / tested.length < 0.9 ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("ค่าที่เกินเกณฑ์", "Values exceeding"), badVals, mt("รายการ", "items"), badVals ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("คลอรีนต่ำกว่า 0.2", "Chlorine below 0.2"), lowVals, mt("ครั้ง", "times"), lowVals ? "var(--st-serious)" : "var(--st-good)")}</div>
-    <div class="grid cols-2"><div class="card"><h3>${mt("สถานะรายเดือน (✔ ผ่าน · ▼ คลอรีนต่ำ · ✖ เกินเกณฑ์ · + ยังไม่ลงข้อมูล)", "Monthly status (✔ pass · ▼ low chlorine · ✖ exceeded · + not entered)")}</h3><div style="overflow-x:auto"><table class="mon-table drr-heat"><thead><tr><th style="text-align:left">${mt("หน่วยงาน", "Unit")}</th>${DRR_MONTHS.map((m) => `<th>${m}</th>`).join("")}</tr></thead><tbody>${sites.map((s) => `<tr><td style="text-align:left">${drrEsc(s)}</td>${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => cell(s, m)).join("")}</tr>`).join("")}</tbody></table></div>
+  body.innerHTML = `<div class="grid cols-4" style="margin-bottom:14px;">${drrTile(mt("ผลตรวจที่บันทึก", "Results recorded"), tested.length, mt("หน่วยงาน × เดือน", "unit × month"))}${drrTile(mt("ผ่านมาตรฐาน กปน. (นับตามพารามิเตอร์)", "Meets MWA standard (by parameter)"), parN ? ((okN / parN) * 100).toFixed(1) + "%" : "–", `${okN}/${parN} ${mt("พารามิเตอร์ที่ตรวจ", "tested parameters")}`, parN && okN / parN < 0.9 ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("ค่าที่เกินเกณฑ์", "Values exceeding"), badVals, mt("รายการ", "items"), badVals ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("คลอรีนต่ำกว่า 0.2 (ไม่ผ่าน)", "Chlorine below 0.2 (fail)"), lowVals, mt("ครั้ง", "times"), lowVals ? "var(--st-serious)" : "var(--st-good)")}</div>
+    <div class="grid cols-2"><div class="card"><h3>${mt("สถานะรายเดือน (✔ ผ่าน · ▼ คลอรีนต่ำกว่าเกณฑ์ = ไม่ผ่าน · ✖ เกินเกณฑ์ · + ยังไม่ลงข้อมูล)", "Monthly status (✔ pass · ▼ chlorine below limit = fail · ✖ exceeded · + not entered)")}</h3><div style="overflow-x:auto"><table class="mon-table drr-heat"><thead><tr><th style="text-align:left">${mt("หน่วยงาน", "Unit")}</th>${DRR_MONTHS.map((m) => `<th>${m}</th>`).join("")}</tr></thead><tbody>${sites.map((s) => `<tr><td style="text-align:left">${drrEsc(s)}</td>${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => cell(s, m)).join("")}</tr>`).join("")}</tbody></table></div>
     <div class="muted-s" style="margin-top:6px;">${missing.length ? `${mt("ยังไม่ได้ลงข้อมูล", "Not yet entered")}: ` + missing.slice(0, 12).map(([s, m]) => `<a href="#" class="link-btn" data-mwa-open="${drrEsc(s)}|${m}">${drrEsc(s)} ${DRR_MONTHS[m - 1]}</a>`).join(" · ") + (missing.length > 12 ? " …" : "") : "✔ " + mt("ลงข้อมูลครบถึงเดือนปัจจุบัน", "Complete up to the current month")}</div></div>
     <div class="card"><h3>${mt("แนวโน้มคลอรีนอิสระคงเหลือ (มก./ล.)", "Residual chlorine trend (mg/L)")}</h3>${drrMwaChlorine(sites, y)}</div></div>
     ${sites.map(sheet).join("")}`;
