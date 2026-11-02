@@ -1225,6 +1225,12 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 
         <div class="auth-divider"><span>หรือ</span></div>
         <button class="btn-outline-dark block" id="show-register-btn" type="button">ลงทะเบียนผู้ใช้ใหม่</button>
+        <div style="text-align:center;margin-top:12px;"><a href="#" id="login-connect" style="color:#9fb4c8;font-size:.82rem;" onclick="return false">เครื่องใหม่? เชื่อมต่อ Google Sheet เพื่อดึงรายชื่อผู้ใช้</a></div>
+        <div id="login-connect-box" class="hidden" style="margin-top:10px;">
+          <div class="field-dark"><label>รหัสเชื่อมต่อทีม (QSHE1.…)</label><input type="text" id="login-connect-code" placeholder="วางรหัสที่ได้จากผู้ดูแลระบบ" /></div>
+          <button class="btn-outline-dark block" id="login-connect-go" type="button">เชื่อมต่อ</button>
+          <div id="login-connect-msg" style="color:#9fb4c8;font-size:.8rem;margin-top:6px;"></div>
+        </div>
       </div>
 
       <!-- ---- Register card ---- -->
@@ -1679,7 +1685,7 @@ const DB = {
    * On each write we stamp changed records with `_u` (ISO time) and remember deletions as tombstones,
    * so all existing code that calls DB.set(name, array) becomes sync-aware without further changes.
    */
-  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords", "auditLog"],
+  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords", "auditLog", "users"],
   _stable(r) {
     const c = Object.assign({}, r); delete c._u; return JSON.stringify(c);
   },
@@ -1793,14 +1799,59 @@ function todayISO() {
  * (API + hashed passwords + sessions) before using it beyond a demo.
  */
 
+
+/** compact synchronous SHA-256 (hex) – used to store salted password hashes instead of plain text */
+function sha256Hex(msg) {
+  const rr = (v, n) => (v >>> n) | (v << (32 - n));
+  const bytes = unescape(encodeURIComponent(String(msg)));
+  const l = bytes.length;
+  const w = [];
+  for (let i = 0; i < l; i++) w[i >> 2] |= bytes.charCodeAt(i) << (24 - (i % 4) * 8);
+  w[l >> 2] |= 0x80 << (24 - (l % 4) * 8);
+  w[(((l + 8) >> 6) << 4) + 15] = l * 8;
+  const K = [], H = [];
+  const isP = (n) => { for (let i = 2; i * i <= n; i++) if (n % i === 0) return false; return true; };
+  for (let c = 2, n = 0; n < 64; c++) if (isP(c)) { if (n < 8) H[n] = (Math.pow(c, 1 / 2) * 4294967296) | 0; K[n++] = (Math.pow(c, 1 / 3) * 4294967296) | 0; }
+  for (let j = 0; j < w.length; j += 16) {
+    const a = H.slice(0), W = [];
+    for (let i = 0; i < 64; i++) {
+      if (i < 16) W[i] = w[j + i] | 0;
+      else {
+        const g0 = W[i - 15], g1 = W[i - 2];
+        W[i] = (W[i - 16] + (rr(g0, 7) ^ rr(g0, 18) ^ (g0 >>> 3)) + W[i - 7] + (rr(g1, 17) ^ rr(g1, 19) ^ (g1 >>> 10))) | 0;
+      }
+      const e = a[4], A = a[0];
+      const t1 = (a[7] + (rr(e, 6) ^ rr(e, 11) ^ rr(e, 25)) + ((e & a[5]) ^ (~e & a[6])) + K[i] + W[i]) | 0;
+      const t2 = ((rr(A, 2) ^ rr(A, 13) ^ rr(A, 22)) + ((A & a[1]) ^ (A & a[2]) ^ (a[1] & a[2]))) | 0;
+      a.unshift((t1 + t2) | 0); a[4] = (a[4] + t1) | 0; a.pop();
+    }
+    for (let i = 0; i < 8; i++) H[i] = (H[i] + a[i]) | 0;
+  }
+  return H.map((v) => ("00000000" + (v >>> 0).toString(16)).slice(-8)).join("");
+}
+
 const Auth = {
+  newSalt() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36); },
+  hashPw(salt, pw) { return sha256Hex(salt + "|" + pw); },
+  /** put a password on a user record as salt+hash (never plain text) */
+  setPassword(u, pw) { u.salt = Auth.newSalt(); u.passHash = Auth.hashPw(u.salt, pw); delete u.password; return u; },
+  checkPassword(u, pw) { return u.passHash ? Auth.hashPw(u.salt || "", pw) === u.passHash : (u.password !== undefined && u.password === pw); },
+  /** convert legacy plain-text passwords to hashes. Local only (raw) so it never overrides what the centre holds. */
+  migrateUsers() {
+    try {
+      const users = DB.get("users", []);
+      let ch = false;
+      users.forEach((u) => { if (u && u.password !== undefined) { if (!u.passHash) Auth.setPassword(u, String(u.password)); else delete u.password; ch = true; } });
+      if (ch) DB.set("users", users, { raw: true });
+    } catch (e) { /* ignore */ }
+  },
   currentUser() {
     return DB.get("session", null);
   },
   login(username, password) {
     const users = DB.get("users", []);
     const match = users.find(
-      (u) => u.username.toLowerCase() === String(username).trim().toLowerCase() && u.password === password
+      (u) => u.username.toLowerCase() === String(username).trim().toLowerCase() && Auth.checkPassword(u, password)
     );
     if (!match) return { ok: false, error: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" };
     if (match.status === "pending") {
@@ -1819,15 +1870,14 @@ const Auth = {
     if (users.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
       return { ok: false, error: "มีชื่อผู้ใช้นี้อยู่แล้วในระบบ" };
     }
-    users.push({
+    users.push(Auth.setPassword({
       id: uid("u"),
       username,
-      password,
       name,
       role: "pending",
       status: "pending",
       buildingIds: buildingId ? [buildingId] : []
-    });
+    }, password));
     DB.set("users", users);
     return { ok: true };
   },
@@ -4876,7 +4926,7 @@ function renderDrrTs(root) {
  *  - record level, last writer wins (compared by the `_u` time stamp that DB.set puts on records)
  *  - deletions travel as tombstones
  *  - photos are uploaded to the sheet (tab _photos) and fetched on demand
- *  - users / passwords are NOT synced
+ *  - users ARE synced so Admin sees every account; passwords travel only as salted SHA-256 hashes (never plain text)
  * Connection: the Admin copies a "team connection code" (URL + token) from the Backup page and
  * each user pastes it once in Settings.
  */
@@ -5097,7 +5147,7 @@ const SyncMgr = {
 
 const BACKUP_DAYS = 7;
 const BACKUP_KEYS = ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "drrRecords", "drrCfg", "lang", "uiPrefs", "moduleVisibility"];
-// "users" is only in the JSON file backup (it holds passwords). Never sent to Google Sheets.
+// "users" travels in the JSON backup and (as salted hashes, no plain passwords) through sync; the readable users tab never shows passwords.
 
 const BackupMgr = {
   cfg() { return Object.assign({ url: "", token: "", auto: true }, DB.get("backupCfg", {})); },
@@ -5181,9 +5231,9 @@ const BackupMgr = {
   async publishTables(manual) {
     const c = this.cfg();
     if (!this.validUrl(c.url) || !c.token) { if (manual) throw new Error(mt("ยังไม่ได้ตั้งค่า Google Sheet", "Google Sheet is not set up")); return false; }
-    const t = this.tables(); delete t.users;
+    const t = this.tables();
     const res = await this.call({ action: "tables", by: State.user ? State.user.username : "", tables: t });
-    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v7 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v7 and deploy a new version") : (res.error || "failed"));
+    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v8 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v8 and deploy a new version") : (res.error || "failed"));
     this.saveMeta({ tablesAt: new Date().toISOString(), tablesStatus: "ok" });
     localStorage.removeItem(DB._key("pubDirty"));
     return true;
@@ -5239,10 +5289,10 @@ const APPS_SCRIPT_CODE = `/**
  * (Execute as: Me, Who has access: Anyone).  After editing: Deploy > Manage deployments > New version.
  */
 const TOKEN = '__TOKEN__';   // must equal the Token in the app
-const VERSION = 7;
+const VERSION = 8;
 const CHUNK = 45000;         // one cell holds at most 50,000 characters
 const MAXCH = 8;             // max cells per record / photo
-const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords', 'auditLog'];
+const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords', 'auditLog', 'users'];
 
 function doPost(e) {
   try {
@@ -5481,7 +5531,7 @@ function renderBackup(root) {
 
     <div class="card" id="sync-card">
       <h3>★ ${mt("ข้อมูลกลาง — ให้ Admin เห็นข้อมูลของทุกหน่วยงาน", "Central data — so Admin sees every unit's data")}</h3>
-      <div class="desc">${mt("ปกติข้อมูลเก็บในเบราว์เซอร์ของแต่ละเครื่อง ถ้าเปิดซิงก์ ข้อมูลที่กรอกจะส่งขึ้น Google Sheet และดึงลงทุกเครื่องอัตโนมัติ (เมื่อมีการแก้ไขและทุก 2 นาที) · ผู้ใช้/รหัสผ่านไม่ถูกซิงก์", "Normally data stays in each computer's browser. With sync on, entries go to the Google Sheet and are pulled to every computer automatically (on change and every 2 minutes) · users / passwords are not synced")}</div>
+      <div class="desc">${mt("ปกติข้อมูลเก็บในเบราว์เซอร์ของแต่ละเครื่อง ถ้าเปิดซิงก์ ข้อมูลที่กรอกจะส่งขึ้น Google Sheet และดึงลงทุกเครื่องอัตโนมัติ (เมื่อมีการแก้ไขและทุก 2 นาที) · รายชื่อผู้ใช้ซิงก์ด้วย (รหัสผ่านเป็นแฮช)", "Normally data stays in each computer's browser. With sync on, entries go to the Google Sheet and are pulled to every computer automatically (on change and every 2 minutes) · the user list syncs too (passwords as hashes)")}</div>
       ${BackupMgr.validUrl(c.url) && c.token ? `
         <div class="field"><label>${mt("รหัสเชื่อมต่อทีม (ส่งให้ผู้ใช้วางในเมนู ตั้งค่า)", "Team connection code (share with users – they paste it in Settings)")}</label>
         <input type="text" id="sy-code-show" readonly value="${mpEsc(SyncMgr.makeCode(c.url, c.token))}" /></div>
@@ -5633,6 +5683,7 @@ const State = {
 // ---------------------------------------------------------------- boot ---
 document.addEventListener("DOMContentLoaded", () => {
   DB.ensureSeeded();
+  Auth.migrateUsers();
   applyUiPrefs();
   const session = Auth.currentUser();
   if (session) {
@@ -5671,6 +5722,20 @@ function showLogin() {
     loginCard.classList.add("hidden");
     registerCard.classList.remove("hidden");
   });
+  const lc = document.getElementById("login-connect");
+  if (lc) {
+    const box = document.getElementById("login-connect-box");
+    lc.addEventListener("click", () => box.classList.toggle("hidden"));
+    document.getElementById("login-connect-go").addEventListener("click", async () => {
+      const msg = document.getElementById("login-connect-msg");
+      try {
+        msg.textContent = "กำลังเชื่อมต่อ…";
+        await SyncMgr.connect(document.getElementById("login-connect-code").value);
+        const n = DB.get("users", []).length;
+        msg.textContent = SyncMgr.meta().status === "error" ? "เชื่อมต่อไม่สำเร็จ: " + (SyncMgr.meta().lastError || "") : "เชื่อมต่อแล้ว — พบผู้ใช้ " + n + " บัญชี ลองเข้าสู่ระบบได้เลย";
+      } catch (e) { msg.textContent = e.message || String(e); }
+    });
+  }
   document.getElementById("show-login-btn").addEventListener("click", () => {
     registerCard.classList.add("hidden");
     loginCard.classList.remove("hidden");
@@ -7070,23 +7135,22 @@ function openUserForm(existing, isApproval) {
         name,
         role,
         status,
-        buildingIds: checked.length ? checked : ["ALL"],
-        password: password ? password : existing.password
+        buildingIds: checked.length ? checked : ["ALL"]
       };
+      if (password) Auth.setPassword(all[idx], password);
     } else {
       if (all.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
         alert("มีชื่อผู้ใช้นี้อยู่แล้ว");
         return;
       }
-      all.push({
+      all.push(Auth.setPassword({
         id: uid("u"),
         username,
-        password: password || "changeme",
         name,
         role,
         status,
         buildingIds: checked.length ? checked : ["ALL"]
-      });
+      }, password || "changeme"));
     }
     DB.set("users", all);
     closeModal();
