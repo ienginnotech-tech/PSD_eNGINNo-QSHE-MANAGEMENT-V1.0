@@ -1206,6 +1206,14 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .psd-cols input,.psd-cols select,.psd-grid input,.psd-grid select{min-width:0;width:100%;box-sizing:border-box}
 .psd-row input,.psd-row select{min-width:0}
 
+.dash-qi{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:18px;align-items:start}
+.dash-qi-r{border-left:1px solid var(--border);padding-left:18px;min-width:0}
+.ir-minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px}
+.ir-mini{border:1px solid var(--border);border-radius:10px;padding:6px 10px;min-width:0}
+.sf-scope select{margin-right:6px}
+@media(max-width:1100px){.dash-qi{grid-template-columns:1fr}.dash-qi-r{border-left:0;padding-left:0;border-top:1px solid var(--border);padding-top:12px}}
+.dash-top2{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px}@media(max-width:1000px){.dash-top2{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -3812,6 +3820,7 @@ function mpDashScopeUnits() {
 }
 function mpDashRefresh() {
   if (document.getElementById("dash-safety")) renderSafetyBoard(document.getElementById("dash-safety"));
+  if (document.getElementById("dash-ir")) renderIrDashCard(document.getElementById("dash-ir"));
   mpRenderDashRank(document.getElementById("dash-rank"));
   mpRenderDashScore(document.getElementById("dash-score"));
   renderDashMasterPlan(document.getElementById("dash-mp"));
@@ -3887,21 +3896,21 @@ function renderDashMasterPlan(host) {
   const lateList = overdue.slice(0, 4).map((p) => `<li><span style="color:var(--st-critical)">▲</span> ${mpEsc(p.step.trim())}<div class="muted-s">${mpEsc(p.owner || "–")} · ${mt("กำหนด", "due")} ${mpFmtDate(p.end)}</div></li>`).join("");
   host.innerHTML = `
     <div class="mp-dash">
-      <div class="grid cols-2" style="margin-bottom:0;">
-        <div class="card" style="margin:0;">
+      <div class="grid dash-top2" style="margin-bottom:0;">
+        <div class="card" style="margin:0;"><div class="dash-qi"><div>
           <div class="toolbar" style="margin-bottom:4px;"><h3 style="margin:0;">QSHE Action Plan 2026-2027</h3><button class="btn ghost small" data-goto="mp_plan">${mt("เปิดแผน", "Open")} →</button></div>
           <div style="display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;"><div><span class="big">${achieve === null ? "–" : achieve.toFixed(0) + "%"}</span> <span class="muted-s">% Achieve plan (${mt("เสร็จสิ้น", "done")} ${cnt.done}/${total})</span></div>
             <div class="muted-s">${mt("ความคืบหน้าถ่วงน้ำหนัก", "Weighted progress")} ${progress === null ? "–" : progress.toFixed(0) + "%"}</div></div>
           <div class="stack-track" style="margin:8px 0;">${total ? planBar : ""}</div>
           <div class="mon-legend h"><li><i style="background:var(--st-good)"></i>${mt("เสร็จสิ้น", "Done")} ${cnt.done}</li><li><i style="background:var(--st-warning)"></i>${mt("กำลังดำเนินการ", "In progress")} ${cnt.doing}</li><li><i style="background:var(--muted)"></i>${mt("รอดำเนินการ", "Pending")} ${cnt.todo}</li></div>
           ${overdue.length ? `<div class="mon-t" style="margin-top:10px;">${mt("เกินกำหนด", "Overdue")} ${overdue.length}</div><ul class="dash-list">${lateList}</ul>` : `<div class="muted-s" style="margin-top:10px;">✔ ${mt("ไม่มีแผนเกินกำหนด", "No overdue plans")}</div>`}
-        </div>
-        <div class="card" style="margin:0;">
+        </div><div class="dash-qi-r">
           <div class="toolbar" style="margin-bottom:4px;"><h3 style="margin:0;">Inspection Risk Summary</h3><button class="btn ghost small" data-goto="mp_risk">${mt("เปิดสรุป", "Open")} →</button></div>
           <div style="display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;"><span class="big" style="color:${mpScoreColor(S.pct)}">${mpFmtPct(S.pct)}</span><span>${mpChip(ov)}</span></div>
           <div class="muted-s" style="margin:4px 0 8px;">${scopeLbl} (${mt("ตรวจล่าสุด", "latest visit")}) · ${mpPeriodLabel()} · ${S.done}/${S.total} ${mt("ข้อประเมินแล้ว", "assessed")} · N/A ${S.na}</div>
           <div class="rk-sum">${MP_RISK.map((r) => `<div class="rk-chip" data-tip="${mpRiskLabel(r.id)}: ${S.risk[r.id]}"><i style="color:${mpRiskColor(r.id)}">${r.icon}</i> ${mpRiskLabel(r.id)}<b>${S.risk[r.id]}</b></div>`).join("")}</div>
-        </div>
+        </div></div></div>
+        <div id="dash-ir"></div>
       </div>
     </div>`;
   const chkHost = document.getElementById("dash-chk");
@@ -3918,6 +3927,7 @@ function renderDashMasterPlan(host) {
           ${cats.map((c) => mpRiskStackRow(mpCatName(c), c.risk, c.pct, "", null, false, true)).join("")}
         </div>
       </div>`;
+  renderIrDashCard(host.querySelector("#dash-ir"));
   [host, chkHost].forEach((h) => { if (!h) return; h.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto))); if (!h._tips) { mpWireTips(h); h._tips = true; } });
 }
 
@@ -4007,14 +4017,11 @@ const mpBoxes = (n, min) => String(Math.max(0, n)).padStart(min || 3, "0").split
 
 function renderSafetyBoard(host) {
   if (!host) return;
-  const units = DB.get("mpUnits", []);
-  mpDashScopeUnits();                       // normalises MpDashUI.scope
-  const scope = MpDashUI.scope;
-  const S = mpSafetyStats(scope === "ALL" ? null : [scope]);
-  const name = scope === "ALL" ? mt("ทั้งเครือ BBG", "Whole BBG group") : ((units.find((u) => u.id === scope) || {}).name || "");
+  const S = irScopeStats(IrSafeUI.group, IrSafeUI.site);
+  const name = irScopeLabel();
   const pct = Math.min(100, (S.days / MP_SAFETY.target) * 100);
   const hit = S.days >= MP_SAFETY.target;
-  const rows = units.map((b) => { const x = mpSafetyStats([b.id]); return `<tr><td>${mpEsc(b.name)}</td><td class="num"><b>${x.days}</b></td><td>${x.last ? mpFmtDate(x.last) : "–"}</td><td class="num">${x.best}</td><td class="num">${x.count}</td></tr>`; }).join("");
+  const rows = irUnitRows().map((b) => { const x = b.st; return `<tr><td>${mpEsc(b.name)}${IrSafeUI.group === "ALL" ? `<div class="muted-s">${IR_GROUPS[b.group][0]}</div>` : ""}</td><td class="num"><b>${x.days}</b></td><td>${x.last ? mpFmtDate(x.last) : "–"}</td><td class="num">${x.best}</td><td class="num">${x.count}</td></tr>`; }).join("");
   host.innerHTML = `<div class="card safety" style="height:100%;margin:0;">
     <div class="sf-head">
       <div class="sf-logo"><img src="${LOGO_DATA_URI}" alt="Bhiraj Buri Group" /></div>
@@ -4026,7 +4033,7 @@ function renderSafetyBoard(host) {
         <text font-size="9.5" font-weight="700" fill="var(--st-good)" text-anchor="middle" letter-spacing="1"><textPath href="#sf-bot" startOffset="50%">SAFETY FIRST</textPath></text>
         <path d="M43 30h14v13h13v14H57v13H43V57H30V43h13z" fill="var(--st-good)"/></svg></div>
     </div>
-    <div class="sf-scope"><select id="sf-scope" aria-label="${mt("ขอบเขต", "Scope")}"><option value="ALL" ${scope === "ALL" ? "selected" : ""}>${mt("ทั้งเครือ BBG", "Whole BBG group")}</option>${units.map((u) => `<option value="${u.id}" ${scope === u.id ? "selected" : ""}>${mpEsc(u.name)}</option>`).join("")}</select>
+    <div class="sf-scope">${irScopeSelectsHtml()}
       <span class="muted-s">${mt("นับตั้งแต่", "Counting from")} ${mpFmtDate(MP_SAFETY.start)} · ${mt("คำนวณอัตโนมัติจากจำนวน IR (Live & Play / Township)", "auto-calculated from IR (Live & Play / Township)")}</span></div>
     <div class="sf-row sf-red"><div>${mt("เกิดอุบัติเหตุครั้งสุดท้ายเมื่อ", "Last accident occurred")}<small>LAST ACCIDENT OCCURRED</small></div>
       <div class="sf-date" data-tip="${mpEsc(name)}">${S.last ? mpFmtDate(S.last) : "– " + mt("ไม่มี", "none")}</div></div>
@@ -4040,11 +4047,7 @@ function renderSafetyBoard(host) {
     <details class="sf-by"><summary>${mt("แยกรายหน่วยงาน", "By unit")}</summary>
       <table class="mon-table"><thead><tr><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("วันปลอดอุบัติเหตุ", "Days safe")}</th><th>${mt("ครั้งล่าสุด", "Last")}</th><th>${mt("สูงสุด", "Best")}</th><th>${mt("ครั้ง", "No.")}</th></tr></thead><tbody>${rows}</tbody></table></details>
   </div>`;
-  host.querySelector("#sf-scope").addEventListener("change", (e) => {
-    MpDashUI.scope = e.target.value;                         // one unit scope for the whole dashboard
-    const top = document.getElementById("dash-unit"); if (top) top.value = e.target.value;
-    mpDashRefresh(); renderSafetyBoard(host);
-  });
+  irWireScope(host, irRefreshDash);
   if (!host._tips) { mpWireTips(host); host._tips = true; }
 }
 
@@ -5381,7 +5384,7 @@ function renderIncidents(root) {
   const yrs = [...new Set(all.map((r) => Number(r.d.date.slice(0, 4))).concat(new Date().getFullYear()))].sort((a, b) => b - a);
   const lp = recs.filter((r) => r.report === "lp"), tw = recs.filter((r) => r.report === "tw");
   const acc = recs.filter((r) => irIsAcc(r, types)), open = recs.filter((r) => r.d.status !== "closed");
-  const S = mpSafetyStats(null);
+  const S = irScopeStats("ALL", "ALL");
   const sev3 = recs.filter((r) => String(r.d.severity) === "3").length;
   const mon = (list, m) => list.filter((r) => Number(r.d.date.slice(5, 7)) === m).length;
   const MON = (cls, list, label) => `<tr><td style="text-align:left">${label}</td>${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => { const n = mon(list, m); return `<td class="num" style="${n ? "font-weight:700" : "color:var(--muted)"}">${n || "·"}</td>`; }).join("")}<td class="num"><b>${list.length}</b></td></tr>`;
@@ -5413,6 +5416,81 @@ function renderIncidents(root) {
   root.querySelector("#ir-csv").onclick = () => ExportUtil.exportCSV(recs.slice().sort((a, b) => a.d.date.localeCompare(b.d.date)).map((r) => ({ report: r.report === "lp" ? "Live & Play" : "Township", no: r.d.no || "", date: r.d.date, site: r.d.site || "", type: r.d.type || "", severity: r.d.severity || "", status: r.d.status || "", counted: irIsAcc(r, types) ? "yes" : "" })), ["report", "no", "date", "site", "type", "severity", "status", "counted"].map((k) => ({ key: k, label: k })), `IR_${IrUI.year}`);
   root.querySelectorAll("[data-ir-type]").forEach((c) => { c.onchange = () => { const set = new Set(irAccTypes()); c.checked ? set.add(c.dataset.irType) : set.delete(c.dataset.irType); irSaveTypes([...set]); toast(mt("บันทึกแล้ว — บอร์ดความปลอดภัยคำนวณใหม่", "Saved — safety board recalculated")); rerender(); }; });
   renderCAPA(root.querySelector("#ir-capa"));
+}
+
+// ======================================================= dashboard: scope + statistics card ===
+const IrSafeUI = { group: "ALL", site: "ALL" };
+const IR_GROUPS = { ALL: ["BBG Group", "BBG Group"], lp: ["Live & Play", "Live & Play"], tw: ["Township", "Township"] };
+const irSiteName = (r) => { const s = String(r.d.site || "").trim(); return r.report === "lp" ? s.replace(/\s*\(.*?\)\s*/g, "").trim() : s; };
+function irScopeRecs(group, site) { return irAll().filter((r) => (group === "ALL" || r.report === group) && (site === "ALL" || irSiteName(r) === site)); }
+function irSites(group) { return [...new Set(irAll().filter((r) => group === "ALL" || r.report === group).map(irSiteName).filter(Boolean))].sort(); }
+/** accidents / days safe / best record / open-closed for a set of IR records (same rules as the board) */
+function irStats(recs, withLegacy) {
+  const today = todayISO(), start = MP_SAFETY.start, types = irAccTypes();
+  const t0 = mpDayNum(today), s0 = mpDayNum(start);
+  const inRange = recs.filter((r) => r.d.date >= start && r.d.date <= today);
+  let dates = inRange.filter((r) => irIsAcc(r, types)).map((r) => r.d.date);
+  if (withLegacy) { const bIds = accessibleBuildings().map((b) => b.id); dates = dates.concat(DB.get("capas", []).filter((c) => bIds.includes(c.buildingId) && mpIsAccident(c)).map((c) => c.occurredDate || c.openedDate).filter((d) => d && d >= start && d <= today)); }
+  dates.sort();
+  const open = inRange.filter((r) => r.d.status !== "closed").length;
+  const base = { total: inRange.length, open, closed: inRange.length - open };
+  if (!dates.length) { const d = Math.max(0, t0 - s0 + 1); return Object.assign(base, { last: null, days: d, best: d, count: 0 }); }
+  let best = 0, prev = s0;
+  dates.forEach((d) => { const n = mpDayNum(d); best = Math.max(best, n - prev); prev = n; });
+  const days = t0 - prev;
+  return Object.assign(base, { last: dates[dates.length - 1], days, best: Math.max(best, days), count: dates.length });
+}
+const irScopeStats = (group, site) => irStats(irScopeRecs(group, site), group === "ALL" && site === "ALL");
+const irScopeLabel = () => IrSafeUI.site !== "ALL" ? `${IR_GROUPS[IrSafeUI.group][0]} · ${IrSafeUI.site}` : IR_GROUPS[IrSafeUI.group][0];
+/** rows for "by unit" tables: groups when BBG, else the sub-units of the chosen group */
+function irUnitRows() {
+  const g = IrSafeUI.group, s = IrSafeUI.site;
+  if (s !== "ALL") return [{ name: s, group: g, st: irScopeStats(g, s) }];
+  if (g === "ALL") return ["lp", "tw"].flatMap((k) => irSites(k).map((n) => ({ name: n, group: k, st: irScopeStats(k, n) })));
+  return irSites(g).map((n) => ({ name: n, group: g, st: irScopeStats(g, n) }));
+}
+/** the two selects shown in the safety board (BBG Group / Live & Play / Township, then its sub-units) */
+function irScopeSelectsHtml() {
+  const g = IrSafeUI.group;
+  return `<select id="sf-group" aria-label="${mt("กลุ่ม", "Group")}">${Object.keys(IR_GROUPS).map((k) => `<option value="${k}" ${g === k ? "selected" : ""}>${IR_GROUPS[k][0]}</option>`).join("")}</select>
+    ${g !== "ALL" ? `<select id="sf-site" aria-label="${mt("หน่วยงานย่อย", "Sub-unit")}"><option value="ALL">${mt("ทุกหน่วยงานย่อย", "All sub-units")}</option>${irSites(g).map((n) => `<option value="${mpEsc(n)}" ${IrSafeUI.site === n ? "selected" : ""}>${mpEsc(n)}</option>`).join("")}</select>` : ""}`;
+}
+function irWireScope(host, refresh) {
+  const g = host.querySelector("#sf-group"), s = host.querySelector("#sf-site");
+  if (g) g.onchange = () => { IrSafeUI.group = g.value; IrSafeUI.site = "ALL"; refresh(); };
+  if (s) s.onchange = () => { IrSafeUI.site = s.value; refresh(); };
+}
+function irRefreshDash() { renderSafetyBoard(document.getElementById("dash-safety")); renderIrDashCard(document.getElementById("dash-ir")); }
+
+function renderIrDashCard(host) {
+  if (!host) return;
+  const E = mpEsc, S = irScopeStats(IrSafeUI.group, IrSafeUI.site), rows = irUnitRows();
+  const recs = irScopeRecs(IrSafeUI.group, IrSafeUI.site), types = irAccTypes(), yr = Number(todayISO().slice(0, 4));
+  const ir = [], ac = [];
+  for (let m = 1; m <= 12; m++) { const l = recs.filter((r) => Number(r.d.date.slice(0, 4)) === yr && Number(r.d.date.slice(5, 7)) === m); ir.push(l.length); ac.push(l.filter((r) => irIsAcc(r, types)).length); }
+  const W = 520, H = 150, L = 26, B = 20, T = 8, mx = Math.max(4, ...ir), bw = (W - L - 6) / 12, y = (v) => T + (1 - v / mx) * (H - T - B);
+  let g = [0, 0.5, 1].map((f) => { const v = Math.round(mx * f); return `<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--border)"/><text x="${L - 4}" y="${y(v) + 3}" text-anchor="end" font-size="9" fill="var(--muted)">${v}</text>`; }).join("");
+  for (let i = 0; i < 12; i++) {
+    const x0 = L + 3 + i * bw;
+    g += `<rect x="${x0 + 2}" y="${y(ir[i])}" width="${bw / 2 - 3}" height="${Math.max(0, H - B - y(ir[i]))}" rx="3" fill="var(--series-1)" data-tip="${DRR_MONTHS[i]}: IR ${ir[i]}"/>`;
+    g += `<rect x="${x0 + bw / 2 - 1}" y="${y(ac[i])}" width="${bw / 2 - 3}" height="${Math.max(0, H - B - y(ac[i]))}" rx="3" fill="var(--st-critical)" data-tip="${DRR_MONTHS[i]}: ${mt("อุบัติเหตุ", "accidents")} ${ac[i]}"/>`;
+    g += `<text x="${x0 + bw / 2}" y="${H - 6}" text-anchor="middle" font-size="9" fill="var(--muted)">${DRR_MONTHS[i]}</text>`;
+    if (ir[i]) g += `<text x="${x0 + bw / 4 + 1}" y="${y(ir[i]) - 2}" text-anchor="middle" font-size="8.5" fill="var(--text)">${ir[i]}</text>`;
+    if (ac[i]) g += `<text x="${x0 + bw * 0.75 - 1}" y="${y(ac[i]) - 2}" text-anchor="middle" font-size="8.5" font-weight="700" fill="var(--st-critical)">${ac[i]}</text>`;
+  }
+  const mini = (label, val, sub, col) => `<div class="ir-mini"><div class="muted-s">${label}</div><div class="big" style="font-size:1.5rem;${col ? "color:" + col : ""}">${val}</div>${sub ? `<div class="muted-s">${sub}</div>` : ""}</div>`;
+  host.innerHTML = `<div class="card" style="margin:0;height:100%;">
+    <div class="toolbar" style="margin-bottom:4px;"><h3 style="margin:0;">${mt("สถิติอุบัติเหตุ (IR)", "Accident statistics (IR)")}</h3><button class="btn ghost small" data-goto="capa">${mt("เปิดสรุป IR", "Open IR summary")} →</button></div>
+    <div class="muted-s" style="margin-bottom:8px;">${E(irScopeLabel())} · ${mt("นับตั้งแต่", "since")} ${mpFmtDate(MP_SAFETY.start)} · ${mt("สอดคล้องกับบอร์ดสถิติความปลอดภัย", "in line with the Safety statistics board")}</div>
+    <div class="ir-minis">${mini(mt("อุบัติเหตุ (ครั้ง)", "Accidents"), S.count, "", S.count ? "var(--st-critical)" : "var(--st-good)")}${mini(mt("IR ทั้งหมด", "Total IR"), S.total)}${mini("Open", S.open, "", S.open ? "var(--st-serious)" : "var(--st-good)")}${mini("Closed", S.closed, "", "var(--st-good)")}</div>
+    <div class="ir-minis" style="margin-top:6px;">${mini(mt("เกิดเหตุล่าสุด", "Last accident"), S.last ? mpFmtDate(S.last) : "–", "")}${mini(mt("ปลอดอุบัติเหตุ (วัน)", "Days safe"), S.days, "", "var(--st-good)")}${mini(mt("สถิติสูงสุด (วัน)", "Best record (days)"), S.best, "", "var(--st-good)")}</div>
+    <div class="mon-t" style="margin-top:10px;">${mt("จำนวนครั้งรายเดือน ", "Per month ")}${yr + (DB.get("lang", "th") === "th" ? 543 : 0)} <span class="muted-s" style="font-weight:400"><i style="background:var(--series-1);display:inline-block;width:10px;height:10px;border-radius:2px"></i> IR &nbsp;<i style="background:var(--st-critical);display:inline-block;width:10px;height:10px;border-radius:2px"></i> ${mt("อุบัติเหตุ", "accidents")}</span></div>
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;max-height:140px" role="img" aria-label="IR per month">${g}</svg>
+    <div class="mon-t" style="margin-top:8px;">${mt("แยกตามอาคาร / หน่วยงาน", "By building / unit")}</div>
+    <div class="acc-scroll" style="max-height:150px;overflow:auto"><table class="mon-table"><thead><tr><th>${mt("อาคาร / หน่วยงาน", "Building / unit")}</th><th>${mt("อุบัติเหตุ", "Acc.")}</th><th>${mt("ล่าสุด", "Last")}</th><th>${mt("ปลอดภัย (วัน)", "Days safe")}</th><th>${mt("สูงสุด", "Best")}</th><th>Open</th><th>Closed</th></tr></thead><tbody>
+    ${rows.map((x) => `<tr><td>${E(x.name)}${IrSafeUI.group === "ALL" ? `<div class="muted-s">${IR_GROUPS[x.group][0]}</div>` : ""}</td><td class="num"><b style="color:${x.st.count ? "var(--st-critical)" : "inherit"}">${x.st.count}</b></td><td style="white-space:nowrap">${x.st.last ? mpFmtDate(x.st.last) : "–"}</td><td class="num"><b>${x.st.days}</b></td><td class="num">${x.st.best}</td><td class="num" style="${x.st.open ? "color:var(--st-serious);font-weight:700" : ""}">${x.st.open}</td><td class="num">${x.st.closed}</td></tr>`).join("") || `<tr><td colspan="7" class="muted-s">${mt("ยังไม่มี IR", "No IR yet")}</td></tr>`}</tbody></table></div></div>`;
+  host.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto)));
+  if (!host._tips) { mpWireTips(host); host._tips = true; }
 }
 
 /**
