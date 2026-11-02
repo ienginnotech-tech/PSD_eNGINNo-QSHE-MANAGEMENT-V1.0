@@ -1390,7 +1390,7 @@ const I18N = {
     nav_drive_group: "ขับเคลื่อนผลลัพธ์",
     nav_okr: "OKR รายไตรมาส",
     nav_kpi: "KPI",
-    nav_capa: "CAPA / Incident",
+    nav_capa: "Incident (IR) / CAPA",
     nav_psd: "PSD — การวิเคราะห์และแก้ไข",
     nav_admin_group: "ผู้ดูแลระบบ",
     nav_buildings: "อาคาร / BU",
@@ -1454,8 +1454,8 @@ const I18N = {
     sub_okr: "Objective and Key Results ต่ออาคาร/หน่วยธุรกิจ",
     title_kpi: "ตัวชี้วัด KPI",
     sub_kpi: "ติดตามผลเชิงคุณภาพรายด้าน",
-    title_capa: "CAPA / Incident Log",
-    sub_capa: "บันทึกและติดตามการแก้ไข-ป้องกัน",
+    title_capa: "สรุป Incident (IR) และ CAPA",
+    sub_capa: "จำนวน IR จาก Live & Play / Township data record report — ใช้คำนวณบอร์ดสถิติความปลอดภัย",
     title_psd: "PSD — การวิเคราะห์และแก้ไข (Corrective & Root Cause Analysis)",
     sub_psd: "รายการที่ไม่ผ่านจาก Data Record Report พร้อมฟอร์มวิเคราะห์สาเหตุ (5M1E) แผนแก้ไข และรูปก่อน/หลัง",
     title_buildings: "อาคาร / หน่วยธุรกิจ (BU)",
@@ -1515,7 +1515,7 @@ const I18N = {
     nav_drive_group: "Drive Results",
     nav_okr: "Quarterly OKR",
     nav_kpi: "KPI",
-    nav_capa: "CAPA / Incident",
+    nav_capa: "Incident (IR) / CAPA",
     nav_psd: "PSD — Corrective & Root Cause Analysis",
     nav_admin_group: "Administration",
     nav_buildings: "Buildings / BU",
@@ -1579,8 +1579,8 @@ const I18N = {
     sub_okr: "Objectives and Key Results per building/BU",
     title_kpi: "KPI Tracking",
     sub_kpi: "Track qualitative results by pillar",
-    title_capa: "CAPA / Incident Log",
-    sub_capa: "Log and track corrective/preventive actions",
+    title_capa: "Incident (IR) summary & CAPA",
+    sub_capa: "IR counts from the Live & Play / Township data record reports — feeds the Safety statistics board",
     title_psd: "PSD — Corrective & Root Cause Analysis",
     sub_psd: "Failing items from the Data Record Reports with a root-cause (5M1E) form, action plan and before/after photos",
     title_buildings: "Buildings / Business Units (BU)",
@@ -3996,7 +3996,7 @@ function mpSafetyStats(unitIds) {
   const t0 = mpDayNum(today), s0 = mpDayNum(MP_SAFETY.start);
   const bIds = accessibleBuildings().map((b) => b.id);
   const dates = DB.get("capas", []).filter((c) => bIds.includes(c.buildingId) && mpIsAccident(c) && (!unitIds || unitIds.includes(c.unitId)))
-    .map((c) => c.occurredDate || c.openedDate).filter((d) => d && d >= MP_SAFETY.start && d <= today).sort();
+    .map((c) => c.occurredDate || c.openedDate).concat(typeof irAccidentDates === "function" ? irAccidentDates(unitIds) : []).filter((d) => d && d >= MP_SAFETY.start && d <= today).sort();
   if (!dates.length) { const d = Math.max(0, t0 - s0 + 1); return { last: null, days: d, best: d, count: 0 }; }
   let best = 0, prev = s0;
   dates.forEach((d) => { const n = mpDayNum(d); best = Math.max(best, n - prev); prev = n; });
@@ -4027,7 +4027,7 @@ function renderSafetyBoard(host) {
         <path d="M43 30h14v13h13v14H57v13H43V57H30V43h13z" fill="var(--st-good)"/></svg></div>
     </div>
     <div class="sf-scope"><select id="sf-scope" aria-label="${mt("ขอบเขต", "Scope")}"><option value="ALL" ${scope === "ALL" ? "selected" : ""}>${mt("ทั้งเครือ BBG", "Whole BBG group")}</option>${units.map((u) => `<option value="${u.id}" ${scope === u.id ? "selected" : ""}>${mpEsc(u.name)}</option>`).join("")}</select>
-      <span class="muted-s">${mt("นับตั้งแต่", "Counting from")} ${mpFmtDate(MP_SAFETY.start)} · ${mt("คำนวณอัตโนมัติจาก CAPA / Incident", "auto-calculated from CAPA / Incident")}</span></div>
+      <span class="muted-s">${mt("นับตั้งแต่", "Counting from")} ${mpFmtDate(MP_SAFETY.start)} · ${mt("คำนวณอัตโนมัติจากจำนวน IR (Live & Play / Township)", "auto-calculated from IR (Live & Play / Township)")}</span></div>
     <div class="sf-row sf-red"><div>${mt("เกิดอุบัติเหตุครั้งสุดท้ายเมื่อ", "Last accident occurred")}<small>LAST ACCIDENT OCCURRED</small></div>
       <div class="sf-date" data-tip="${mpEsc(name)}">${S.last ? mpFmtDate(S.last) : "– " + mt("ไม่มี", "none")}</div></div>
     <div class="sf-two">
@@ -5337,6 +5337,85 @@ function psdSheets(out) {
 }
 
 /**
+ * incidents.js
+ * "CAPA / Incident" page = Incident (IR) summary built from the Live & Play and Township incident
+ * data record reports. The same IR records feed the dashboard "Safety statistics" board
+ * (last accident date, days without accident, best record) through irAccidentDates().
+ * Which incident types count as an "accident" is set by the admin (record cfg-safety, synced).
+ */
+const IR_DEFAULT_ACC = ["Staff Accident", "Casual Staff Accident", "Contractor Accident", "Non-Staff Accident", "Fire Incident"];
+const IrUI = { year: new Date().getFullYear(), month: "ALL", site: "ALL" };
+const irNorm = (s) => String(s || "").toLowerCase().replace(/\(.*?\)/g, "").replace(/[^a-z0-9ก-๙]/g, "");
+
+function irAccTypes() {
+  const c = DB.get("drrRecords", []).find((r) => r.id === "cfg-safety");
+  return c && Array.isArray(c.d.types) ? c.d.types : IR_DEFAULT_ACC;
+}
+const irAll = () => DB.get("drrRecords", []).filter((r) => (r.report === "lp" || r.report === "tw") && r.d && r.d.date);
+const irIsAcc = (r, types) => (types || irAccTypes()).includes(r.d.type);
+/** does an IR record belong to one of the Master-Plan units (matched by name)? */
+function irMatchUnit(r, unitIds) {
+  const s = irNorm(r.d.site); if (!s) return false;
+  return DB.get("mpUnits", []).some((u) => unitIds.includes(u.id) && (() => { const n = irNorm(u.name); return n === s || (s.length > 3 && (n.includes(s) || s.includes(n))); })());
+}
+/** dates of IR accidents for the safety board; unitIds null = every IR (whole group) */
+function irAccidentDates(unitIds) {
+  const types = irAccTypes();
+  return irAll().filter((r) => irIsAcc(r, types) && (!unitIds || irMatchUnit(r, unitIds))).map((r) => r.d.date);
+}
+
+function irSaveTypes(types) {
+  const all = DB.get("drrRecords", []), i = all.findIndex((r) => r.id === "cfg-safety");
+  const rec = { id: "cfg-safety", report: "cfg", d: { types }, by: State.user ? State.user.username : "", byName: mpUserLabel(), at: new Date().toISOString() };
+  if (i >= 0) all[i] = rec; else all.push(rec);
+  DB.set("drrRecords", all);
+}
+
+function renderIncidents(root) {
+  const E = drrEsc, adm = Auth.isAdmin(State.user), types = irAccTypes();
+  const rerender = () => renderIncidents(root);
+  const all = irAll();
+  const inScope = (r) => Number(r.d.date.slice(0, 4)) === IrUI.year && (IrUI.month === "ALL" || Number(r.d.date.slice(5, 7)) === Number(IrUI.month)) && (IrUI.site === "ALL" || r.d.site === IrUI.site);
+  const recs = all.filter(inScope);
+  const sites = [...new Set(all.map((r) => r.d.site).filter(Boolean))].sort();
+  const yrs = [...new Set(all.map((r) => Number(r.d.date.slice(0, 4))).concat(new Date().getFullYear()))].sort((a, b) => b - a);
+  const lp = recs.filter((r) => r.report === "lp"), tw = recs.filter((r) => r.report === "tw");
+  const acc = recs.filter((r) => irIsAcc(r, types)), open = recs.filter((r) => r.d.status !== "closed");
+  const S = mpSafetyStats(null);
+  const sev3 = recs.filter((r) => String(r.d.severity) === "3").length;
+  const mon = (list, m) => list.filter((r) => Number(r.d.date.slice(5, 7)) === m).length;
+  const MON = (cls, list, label) => `<tr><td style="text-align:left">${label}</td>${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => { const n = mon(list, m); return `<td class="num" style="${n ? "font-weight:700" : "color:var(--muted)"}">${n || "·"}</td>`; }).join("")}<td class="num"><b>${list.length}</b></td></tr>`;
+  // by site
+  const siteRows = [...new Set(recs.map((r) => r.d.site || "–"))].sort().map((s) => { const l = recs.filter((r) => (r.d.site || "–") === s); return { s, n: l.length, a: l.filter((r) => irIsAcc(r, types)).length, o: l.filter((r) => r.d.status !== "closed").length, h: l.filter((r) => String(r.d.severity) === "3").length }; }).sort((a, b) => b.n - a.n);
+  // by type
+  const typeRows = DRR_INCIDENT_TYPES.map((t) => ({ t: t[0], th: t[1], lp: lp.filter((r) => r.d.type === t[0]).length, tw: tw.filter((r) => r.d.type === t[0]).length })).filter((x) => x.lp + x.tw).sort((a, b) => b.lp + b.tw - a.lp - a.tw);
+  const allTypes = DRR_INCIDENT_TYPES.map((t) => t[0]);
+  const recent = recs.slice().sort((a, b) => b.d.date.localeCompare(a.d.date)).slice(0, 40);
+  root.innerHTML = `<div class="drr-bar">
+      <label class="dash-unit"><span>${mt("ปี", "Year")}</span><select id="ir-year">${yrs.map((y) => `<option value="${y}" ${y === IrUI.year ? "selected" : ""}>${y + (DB.get("lang", "th") === "th" ? 543 : 0)}</option>`).join("")}</select></label>
+      <label class="dash-unit"><span>${mt("เดือน", "Month")}</span><select id="ir-month"><option value="ALL">${mt("ทุกเดือน", "All months")}</option>${DRR_MONTHS.map((m, i) => `<option value="${i + 1}" ${String(IrUI.month) === String(i + 1) ? "selected" : ""}>${m}</option>`).join("")}</select></label>
+      <label class="dash-unit"><span>${mt("หน่วยงาน", "Unit")}</span><select id="ir-site"><option value="ALL">${mt("ทุกหน่วยงาน", "All units")}</option>${sites.map((s) => `<option value="${E(s)}" ${IrUI.site === s ? "selected" : ""}>${E(s)}</option>`).join("")}</select></label>
+      <span style="flex:1"></span><button class="btn ghost small" id="ir-csv">${mt("ส่งออก CSV", "Export CSV")}</button><button class="btn ghost small" data-go="drr_lp">Live &amp; Play ›</button><button class="btn ghost small" data-go="drr_tw">Township ›</button></div>
+    <div class="grid cols-4" style="margin-bottom:14px;">${drrTile(mt("จำนวน IR ทั้งหมด", "Total IR"), recs.length, `Live &amp; Play ${lp.length} · Township ${tw.length}`)}${drrTile(mt("นับเป็นอุบัติเหตุ (เข้าบอร์ด)", "Counted as accident (board)"), acc.length, mt("ตามประเภทที่กำหนดด้านล่าง", "by the types set below"), acc.length ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("IR ที่ยังเปิดอยู่", "Open IR"), open.length, `${mt("รุนแรง (3)", "Severity 3")}: ${sev3}`, open.length ? "var(--st-serious)" : "var(--st-good)")}${drrTile(mt("วันปลอดอุบัติเหตุ (ทั้งเครือ)", "Days without accident (group)"), S.days, S.last ? mt("ล่าสุด ", "Last ") + mpFmtDate(S.last) : mt("ยังไม่มีอุบัติเหตุ", "No accident yet"), "var(--st-good)")}</div>
+    <div class="card"><h3>${mt("จำนวน IR รายเดือน", "IR per month")}</h3><div style="overflow-x:auto"><table class="mon-table drr-heat"><thead><tr><th style="text-align:left">${mt("แหล่งข้อมูล", "Source")}</th>${DRR_MONTHS.map((m) => `<th>${m}</th>`).join("")}<th>${mt("รวม", "Total")}</th></tr></thead><tbody>${MON("lp", lp, "Live &amp; Play")}${MON("tw", tw, "Township")}${MON("acc", acc, `<b>${mt("นับเป็นอุบัติเหตุ", "Counted accidents")}</b>`)}</tbody></table></div></div>
+    <div class="grid cols-2" style="margin-top:14px;">
+      <div class="card"><h3>${mt("สรุปตามหน่วยงาน", "By unit")}</h3><table class="mon-table"><thead><tr><th>${mt("หน่วยงาน", "Unit")}</th><th>IR</th><th>${mt("อุบัติเหตุ", "Accident")}</th><th>${mt("เปิดอยู่", "Open")}</th><th>${mt("รุนแรง (3)", "Sev. 3")}</th></tr></thead><tbody>${siteRows.map((x) => `<tr><td>${E(x.s)}</td><td class="num"><b>${x.n}</b></td><td class="num">${x.a || "·"}</td><td class="num">${x.o || "·"}</td><td class="num" style="${x.h ? "color:var(--st-critical);font-weight:700" : ""}">${x.h || "·"}</td></tr>`).join("") || `<tr><td colspan="5" class="muted-s">${mt("ไม่มี IR ในช่วงที่เลือก", "No IR in this period")}</td></tr>`}</tbody></table></div>
+      <div class="card"><h3>${mt("สรุปตามประเภท IR · เลือกประเภทที่นับเป็น “อุบัติเหตุ” ของบอร์ด", "By IR type · choose the types that count as an “accident” on the board")}</h3>
+        <div class="acc-scroll" style="max-height:340px"><table class="mon-table"><thead><tr><th>${adm ? mt("นับ", "Count") : ""}</th><th>${mt("ประเภท", "Type")}</th><th>L&amp;P</th><th>TW</th></tr></thead><tbody>${allTypes.map((t) => { const x = typeRows.find((y) => y.t === t) || { lp: 0, tw: 0 }; return `<tr><td>${adm ? `<input type="checkbox" data-ir-type="${E(t)}" ${types.includes(t) ? "checked" : ""}/>` : types.includes(t) ? "✔" : ""}</td><td>${E(t)}</td><td class="num">${x.lp || "·"}</td><td class="num">${x.tw || "·"}</td></tr>`; }).join("")}</tbody></table></div>
+        <div class="muted-s" style="margin-top:6px;">${adm ? mt("ติ๊ก/เอาออกแล้วบอร์ดสถิติความปลอดภัยในแดชบอร์ดคำนวณใหม่ทันที", "Tick / untick – the Safety statistics board recalculates immediately") : mt("ผู้ดูแลระบบเป็นผู้กำหนดประเภทที่นับ", "Set by the administrator")}</div></div></div>
+    <div class="card" style="margin-top:14px;"><h3>${mt("IR ล่าสุด", "Latest IR")} (${recent.length}/${recs.length})</h3><div class="acc-scroll" style="max-height:420px"><table class="mon-table"><thead><tr><th>No.</th><th>${mt("วันที่", "Date")}</th><th>${mt("รายงาน", "Report")}</th><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("ประเภท", "Type")}</th><th>${mt("รุนแรง", "Sev.")}</th><th>${mt("สถานะ", "Status")}</th><th>${mt("เข้าบอร์ด", "On board")}</th></tr></thead><tbody>
+      ${recent.map((r) => `<tr><td>${E(r.d.no || "")}</td><td>${mpFmtDate(r.d.date)}</td><td>${r.report === "lp" ? "Live &amp; Play" : "Township"}</td><td>${E(r.d.site)}</td><td>${E(r.d.type)}</td><td class="num">${E(r.d.severity || "")}</td><td>${drrStatusChip(r.d.status)}</td><td class="num">${irIsAcc(r, types) ? `<span style="color:var(--st-critical)">✖ ${mt("นับ", "counted")}</span>` : "·"}</td></tr>`).join("") || `<tr><td colspan="8" class="muted-s">${mt("ไม่มี IR", "No IR")}</td></tr>`}</tbody></table></div></div>
+    <div class="card" style="margin-top:14px;"><h3>${mt("CAPA / Near-miss ที่บันทึกเอง (นอกเหนือจาก IR)", "Manually logged CAPA / near-miss (in addition to IR)")}</h3><div id="ir-capa"></div></div>`;
+  root.querySelector("#ir-year").onchange = (e) => { IrUI.year = Number(e.target.value); rerender(); };
+  root.querySelector("#ir-month").onchange = (e) => { IrUI.month = e.target.value; rerender(); };
+  root.querySelector("#ir-site").onchange = (e) => { IrUI.site = e.target.value; rerender(); };
+  root.querySelectorAll("[data-go]").forEach((b) => { b.onclick = () => navigate(b.dataset.go); });
+  root.querySelector("#ir-csv").onclick = () => ExportUtil.exportCSV(recs.slice().sort((a, b) => a.d.date.localeCompare(b.d.date)).map((r) => ({ report: r.report === "lp" ? "Live & Play" : "Township", no: r.d.no || "", date: r.d.date, site: r.d.site || "", type: r.d.type || "", severity: r.d.severity || "", status: r.d.status || "", counted: irIsAcc(r, types) ? "yes" : "" })), ["report", "no", "date", "site", "type", "severity", "status", "counted"].map((k) => ({ key: k, label: k })), `IR_${IrUI.year}`);
+  root.querySelectorAll("[data-ir-type]").forEach((c) => { c.onchange = () => { const set = new Set(irAccTypes()); c.checked ? set.add(c.dataset.irType) : set.delete(c.dataset.irType); irSaveTypes([...set]); toast(mt("บันทึกแล้ว — บอร์ดความปลอดภัยคำนวณใหม่", "Saved — safety board recalculated")); rerender(); }; });
+  renderCAPA(root.querySelector("#ir-capa"));
+}
+
+/**
  * sync.js
  * Central data sync through the same Google Apps Script web app used for backup.
  * Why: data is otherwise kept in each browser's own storage, so an Admin on another computer
@@ -6222,7 +6301,7 @@ function startApp(user) {
   MpImg.migrate().catch(() => {});
   renderShell();
   navigate("dashboard");
-  SyncMgr.onChange(() => { if (["dashboard", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd"].includes(State.view) && !document.getElementById("modal-overlay") && !document.activeElement?.closest?.("input,textarea,select")) renderView(); });
+  SyncMgr.onChange(() => { if (["dashboard", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd", "capa"].includes(State.view) && !document.getElementById("modal-overlay") && !document.activeElement?.closest?.("input,textarea,select")) renderView(); });
   SyncMgr.start();
   BackupMgr.autoCheck();
   BackupMgr.startTimer();
@@ -6402,7 +6481,7 @@ function renderTopbar() {
   const title = titleKey ? t(titleKey) : "";
   const subtitle = subKey ? t(subKey) : "";
   const buildings = accessibleBuildings();
-  const showBuildingPicker = !["buildings", "users", "backup", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd"].includes(State.view);
+  const showBuildingPicker = !["buildings", "users", "backup", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd", "capa"].includes(State.view);
 
   document.getElementById("topbar").innerHTML = `
     <div>
@@ -6462,7 +6541,7 @@ function renderViewInner(root) {
     case "culture": return renderModuleView(root, State.view);
     case "okr": return renderOKR(root);
     case "kpi": return renderKPI(root);
-    case "capa": return renderCAPA(root);
+    case "capa": return renderIncidents(root);
     case "psd": return renderPsd(root);
     case "buildings": return renderBuildings(root);
     case "users": return renderUsers(root);
