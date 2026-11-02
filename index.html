@@ -1189,6 +1189,23 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 @keyframes warnFlash { 50% { background: var(--st-critical); color: #fff; } }
 .ph-slot.need .ph-add { border: 2px dashed var(--st-critical); color: var(--st-critical); }
 
+/* PSD analysis form */
+.psd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.psd-grid .wide{grid-column:span 2}
+.psd-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px}
+.psd-h{font-weight:700;font-size:.8rem;margin:12px 0 5px;color:var(--heading)}
+.psd-5m,.psd-2c{display:grid;grid-template-columns:1fr 1fr;gap:8px}.psd-m{font-size:.72rem;font-weight:700;margin-bottom:2px}
+.modal textarea{width:100%;box-sizing:border-box}
+.psd-row{display:grid;grid-template-columns:34px 120px 1fr 90px 28px;gap:6px;margin-bottom:6px;align-items:center}
+.psd-row.c{grid-template-columns:1fr 1fr 90px 28px}
+.psd-st{border:1px solid var(--border);border-radius:6px;background:var(--card);font-weight:700;cursor:pointer;height:34px}
+.psd-ph{display:flex;gap:8px;margin-top:4px}.psd-slot{position:relative;display:flex;align-items:center;justify-content:center;width:100px;height:74px;border:1.5px dashed var(--border);border-radius:8px;cursor:pointer;font-size:.72rem;color:var(--muted);overflow:hidden;text-align:center}
+.psd-slot img{width:100%;height:100%;object-fit:cover}.psd-slot.has{border-style:solid}.psd-slot.disabled{opacity:.5;pointer-events:none}
+.psd-x{position:absolute;top:2px;right:2px;border:0;border-radius:50%;width:20px;height:20px;background:rgba(0,0,0,.6);color:#fff;cursor:pointer}
+@media(max-width:820px){.psd-cols,.psd-grid{grid-template-columns:1fr}.psd-grid .wide{grid-column:auto}}
+.psd-cols>div,.psd-2c>div,.psd-5m>div,.psd-grid>.field{min-width:0}
+.psd-cols input,.psd-cols select,.psd-grid input,.psd-grid select{min-width:0;width:100%;box-sizing:border-box}
+.psd-row input,.psd-row select{min-width:0}
+
 </style>
 </head>
 <body>
@@ -1374,6 +1391,7 @@ const I18N = {
     nav_okr: "OKR รายไตรมาส",
     nav_kpi: "KPI",
     nav_capa: "CAPA / Incident",
+    nav_psd: "PSD — การวิเคราะห์และแก้ไข",
     nav_admin_group: "ผู้ดูแลระบบ",
     nav_buildings: "อาคาร / BU",
     nav_users: "ผู้ใช้งาน",
@@ -1438,6 +1456,8 @@ const I18N = {
     sub_kpi: "ติดตามผลเชิงคุณภาพรายด้าน",
     title_capa: "CAPA / Incident Log",
     sub_capa: "บันทึกและติดตามการแก้ไข-ป้องกัน",
+    title_psd: "PSD — การวิเคราะห์และแก้ไข (Corrective & Root Cause Analysis)",
+    sub_psd: "รายการที่ไม่ผ่านจาก Data Record Report พร้อมฟอร์มวิเคราะห์สาเหตุ (5M1E) แผนแก้ไข และรูปก่อน/หลัง",
     title_buildings: "อาคาร / หน่วยธุรกิจ (BU)",
     sub_buildings: "จัดการรายชื่ออาคารหรือหน่วยธุรกิจในระบบ",
     title_users: "ผู้ใช้งานระบบ",
@@ -1496,6 +1516,7 @@ const I18N = {
     nav_okr: "Quarterly OKR",
     nav_kpi: "KPI",
     nav_capa: "CAPA / Incident",
+    nav_psd: "PSD — Corrective & Root Cause Analysis",
     nav_admin_group: "Administration",
     nav_buildings: "Buildings / BU",
     nav_users: "Users",
@@ -1560,6 +1581,8 @@ const I18N = {
     sub_kpi: "Track qualitative results by pillar",
     title_capa: "CAPA / Incident Log",
     sub_capa: "Log and track corrective/preventive actions",
+    title_psd: "PSD — Corrective & Root Cause Analysis",
+    sub_psd: "Failing items from the Data Record Reports with a root-cause (5M1E) form, action plan and before/after photos",
     title_buildings: "Buildings / Business Units (BU)",
     sub_buildings: "Manage the list of buildings or business units",
     title_users: "System Users",
@@ -1691,7 +1714,7 @@ const DB = {
    * On each write we stamp changed records with `_u` (ISO time) and remember deletions as tombstones,
    * so all existing code that calls DB.set(name, array) becomes sync-aware without further changes.
    */
-  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords", "auditLog", "users"],
+  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords", "auditLog", "users", "psdAnalyses"],
   _stable(r) {
     const c = Object.assign({}, r); delete c._u; return JSON.stringify(c);
   },
@@ -1701,6 +1724,7 @@ const DB = {
     if (name === "mpScores") { const u = (this.get("mpUnits", []).find((x) => x.id === r.unitId) || {}).name || r.unitId; return `${u} · ครั้งที่ ${r.visit}`; }
     if (name === "mpForms") return `${r.type || "Form"} · ${(this.get("mpUnits", []).find((x) => x.id === r.unitId) || {}).name || r.unitId || ""}`;
     if (name === "drrRecords") { const d = r.d || {}; return `${r.report || ""} · ${d.site || ""} ${d.date || ""} ${d.no || d.shop || ""}`.trim(); }
+    if (name === "psdAnalyses") return `${r.no || ""} ${r.title || ""}`.trim();
     return r.name || r.title || r.objective || r.step || r.id;
   },
   _audit(name, prev, pm, value, gone) {
@@ -1778,7 +1802,7 @@ const DB = {
     if (this.get("mpForms", null) === null) this.set("mpForms", [], { raw: true });
   },
   resetAll() {
-    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "auditLog", "drrRecords", "drrCfg", "syncCfg", "syncMeta", "syncTomb", "session"].forEach((k) =>
+    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "auditLog", "drrRecords", "drrCfg", "psdAnalyses", "syncCfg", "syncMeta", "syncTomb", "session"].forEach((k) =>
       localStorage.removeItem(this._key(k))
     );
     this.ensureSeeded();
@@ -4554,6 +4578,7 @@ function drrBuildSheets() {
     rows: drrAll("ww").sort((a, b) => (a.d.date || "").localeCompare(b.d.date || "")).map((r) => { const s = drrWwSample(r.d); return [r.id, r.d.date, r.d.site, r.d.btype, s.tested ? (s.pass ? "Pass" : "Exceeds") : "-", s.fail.join("; ")].concat(DRR_WW_PARAMS.map((p) => (r.d.inf || {})[p.k] ?? ""), DRR_WW_PARAMS.map((p) => (r.d.eff || {})[p.k] ?? ""), [r.byName || r.by || "", r.at || ""]); }) });
   drrTsSheets(out);
   drrMwaSheets(out);
+  if (typeof psdSheets === "function") psdSheets(out);
   return out;
 }
 async function drrPushSheets(manual) {
@@ -5105,6 +5130,213 @@ function renderDrrMwa(root) {
 }
 
 /**
+ * psd.js
+ * "PSD — การวิเคราะห์และแก้ไข (Corrective & Root Cause Analysis)".
+ *  - lists every Data Record Report item that did NOT pass (open incidents, failed food samples,
+ *    effluent over limit, MWA tap-water not passed, abnormal equipment in ทส.1)
+ *  - one click creates the analysis form (5M1E root cause, plan, before/after photos, controls)
+ *  - analyses are stored in the synced collection `psdAnalyses`; photos in MpImg (key psd|<id>|before|1 …)
+ */
+const PsdUI = { year: new Date().getFullYear(), rep: "ALL", status: "ALL", q: "" };
+const PSD_REPS = { lp: "Live & Play", tw: "Township", food: "External Food", ww: "Waste water", mwa: "MWA Raw Water", ts1: "ทส.1 (Equipment)", manual: "—" };
+const PSD_ST = { open: ["ยังไม่วิเคราะห์", "Not analysed", "var(--st-critical)", "✖"], doing: ["กำลังดำเนินการ", "In progress", "var(--st-serious)", "▼"], closed: ["ปิดแล้ว", "Closed", "var(--st-good)", "✔"] };
+const PSD_5M = [["man", "MAN", "👤", "สาเหตุจากบุคลากร…"], ["machine", "MACHINE", "⚙️", "สาเหตุจากเครื่องจักร…"], ["method", "METHOD", "📋", "สาเหตุจากวิธีการ…"], ["material", "MATERIAL", "📦", "สาเหตุจากวัสดุ…"], ["env", "ENV", "🌿", "สาเหตุจากสภาพแวดล้อม…"], ["measure", "MEASUREMENT", "📊", "สาเหตุจากการวัด…"]];
+const PSD_CATS = ["MACHINE", "MAN", "METHOD", "MATERIAL", "ENV", "MEASUREMENT"];
+const psdChip = (st) => { const s = PSD_ST[st] || PSD_ST.open; return `<span class="st-chip"><i style="color:${s[2]}">${s[3]}</i>${mt(s[0], s[1])}</span>`; };
+
+/** every report item that did not pass -> [{key, rep, rid, site, date, title, detail}] */
+function psdFindings() {
+  const out = [], y = PsdUI.year;
+  const inYear = (d) => Number(String(d || "").slice(0, 4)) === y;
+  DB.get("drrRecords", []).forEach((r) => {
+    const d = r.d || {};
+    if (!inYear(d.date)) return;
+    const base = { rep: r.report, rid: r.id, site: d.site || "", date: d.date };
+    if ((r.report === "lp" || r.report === "tw") && d.status !== "closed") out.push(Object.assign(base, { key: r.report + "|" + r.id, title: `${d.no || ""} ${d.type || ""}`.trim(), detail: [d.detail, d.rootCause ? "Root cause: " + d.rootCause : ""].filter(Boolean).join("\n") }));
+    else if (r.report === "food") { const s = drrFoodSample(d); if (s.tested && !s.pass) out.push(Object.assign(base, { key: "food|" + r.id, title: `${d.shop || ""} ${d.menu || ""}`.trim(), detail: mt("ผลตรวจอาหารไม่ผ่าน: ", "Food test failed: ") + s.fails.join(", ") })); }
+    else if (r.report === "ww") { const s = drrWwSample(d); if (s.tested && !s.pass) out.push(Object.assign(base, { key: "ww|" + r.id, title: mt("น้ำทิ้งเกินเกณฑ์", "Effluent over limit"), detail: mt("น้ำทิ้งเกินเกณฑ์: ", "Effluent exceeds: ") + s.fail.join(", ") })); }
+    else if (r.report === "mwa") {
+      const s = drrMwaSample(d);
+      if (s.tested && !s.pass) out.push(Object.assign(base, { key: "mwa|" + r.id, title: mt("คุณภาพน้ำประปาไม่ผ่านเกณฑ์ กปน.", "Tap water not meeting MWA"), detail: [s.bad.length ? mt("เกินเกณฑ์: ", "Exceeds: ") + s.bad.join(", ") : "", s.low.length ? mt("ต่ำกว่าเกณฑ์: ", "Below limit: ") + s.low.join(", ") : ""].filter(Boolean).join("\n") }));
+    }
+  });
+  // ทส.1: abnormal equipment, one item per unit and month
+  const months = new Set(); DB.get("drrRecords", []).filter((r) => r.report === "ts1" && inYear(r.d.date)).forEach((r) => months.add(r.d.site + "|" + String(r.d.date).slice(0, 7)));
+  months.forEach((sm) => {
+    const [site, ym] = sm.split("|"), s = drrTsSummary(site, ym);
+    const bad = DRR_TS_EQ.filter((e) => s.eq[e.k] && s.eq[e.k].state === "bad");
+    if (bad.length) out.push({ key: `ts1|${site}|${ym}`, rep: "ts1", rid: "", site, date: ym + "-01", title: mt("อุปกรณ์ผิดปกติ ", "Abnormal equipment ") + ym, detail: bad.map((e) => `${e.th || e.k}: ${s.eq[e.k].bad.join(", ")}`).join("\n") });
+  });
+  return out.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+}
+const psdAll = () => DB.get("psdAnalyses", []);
+const psdFor = (key) => psdAll().find((a) => a.src && a.src.key === key);
+
+function psdSave(rec) {
+  rec.by = State.user ? State.user.username : ""; rec.byName = mpUserLabel(); rec.at = new Date().toISOString();
+  const all = psdAll(), i = all.findIndex((x) => x.id === rec.id);
+  if (i >= 0) all[i] = rec; else all.push(rec);
+  DB.set("psdAnalyses", all);
+}
+function psdNextNo() {
+  const y = new Date().getFullYear(), n = psdAll().filter((a) => String(a.no || "").endsWith("/" + y)).map((a) => parseInt(String(a.no).replace(/^PSD-/, ""), 10)).filter((x) => !isNaN(x));
+  return "PSD-" + String((n.length ? Math.max(...n) : 0) + 1).padStart(3, "0") + "/" + y;
+}
+function psdUnits() { return [...new Set(drrSiteList("ww").concat(DB.get("mpUnits", []).map((u) => u.name), Object.values(DB.get("buildings", [])).map((b) => b.name)).filter(Boolean))]; }
+
+// ----------------------------------------------------------------------------- the form ---
+function psdOpenForm(finding, rec, after) {
+  const isNew = !rec;
+  const d = rec ? JSON.parse(JSON.stringify(rec)) : {
+    id: uid("psd"), no: psdNextNo(), status: "open", date: todayISO(),
+    src: finding ? { key: finding.key, rep: finding.rep, rid: finding.rid } : { key: "", rep: "manual", rid: "" },
+    title: finding ? finding.title : "", system: finding ? PSD_REPS[finding.rep] : "", location: finding ? finding.site : "", bu: finding ? finding.site : "",
+    issue: finding ? finding.detail : "", process: "", rca: {}, scope: "", resp: {}, plan: [{ st: "P", cat: "MACHINE", sol: "", resp: "" }], ctrl: [{ prob: "", act: "", resp: "" }], sign: { issue: mpUserLabel(), check: "", approve: "" }
+  };
+  const E = drrEsc, val = (o, k) => E((o || {})[k] || "");
+  const units = psdUnits();
+  const planRow = (p) => `<div class="psd-row" data-plan><button type="button" class="psd-st" data-st="${p.st}" title="P=Plan · D=Doing · C=Closed">${p.st}</button><select data-cat>${PSD_CATS.map((c) => `<option ${p.cat === c ? "selected" : ""}>${c}</option>`).join("")}</select><input data-sol placeholder="Solution…" value="${E(p.sol)}"/><input data-resp placeholder="Resp." value="${E(p.resp)}"/><button type="button" class="icon-btn danger" data-rm>×</button></div>`;
+  const ctrlRow = (c) => `<div class="psd-row c" data-ctrl><input data-prob placeholder="Problem…" value="${E(c.prob)}"/><input data-act placeholder="Action/Criteria…" value="${E(c.act)}"/><input data-resp placeholder="Resp." value="${E(c.resp)}"/><button type="button" class="icon-btn danger" data-rm>×</button></div>`;
+  const ph = (kind) => `<div class="psd-ph" data-kind="${kind}">${[1, 2].map((n) => `<label class="psd-slot" data-n="${n}"><input type="file" accept="image/*" hidden /><span>+ ${kind === "before" ? mt("ก่อนแก้ไข", "Before") : mt("หลังแก้ไข", "After")} ${n}</span></label>`).join("")}</div>`;
+  const modal = openModal(`<h3>PSD — ${mt("การวิเคราะห์และแก้ไข", "Corrective & Root Cause Analysis")} <span class="muted-s" style="font-weight:400">${E(d.no)}</span></h3>
+    ${d.src.key ? `<div class="mp-banner" style="margin:0 0 10px;">ⓘ ${mt("อ้างอิงรายงาน", "Source report")}: ${E(PSD_REPS[d.src.rep] || d.src.rep)} · ${E(d.location)} · ${E(d.title)}</div>` : ""}
+    <div class="psd-grid">
+      <div class="field wide"><label>${mt("หัวข้อ / ชื่อเรื่อง", "Title")} *</label><input id="psd-title" value="${E(d.title)}"/></div>
+      <div class="field"><label>${mt("วันที่", "Date")}</label><input id="psd-date" type="date" value="${E(d.date)}"/></div>
+      <div class="field"><label>${mt("สถานะ", "Status")}</label><select id="psd-status">${Object.keys(PSD_ST).map((k) => `<option value="${k}" ${d.status === k ? "selected" : ""}>${mt(PSD_ST[k][0], PSD_ST[k][1])}</option>`).join("")}</select></div>
+      <div class="field"><label>System</label><input id="psd-system" placeholder="Air condition / EE / BAS…" value="${E(d.system)}"/></div>
+      <div class="field"><label>Location</label><input id="psd-location" placeholder="อาคาร / Zone…" value="${E(d.location)}"/></div>
+      <div class="field"><label>BU / Organization</label><select id="psd-bu"><option value="">— ${mt("เลือกหน่วยงาน", "Select unit")} —</option>${units.map((u) => `<option ${d.bu === u ? "selected" : ""}>${E(u)}</option>`).join("")}</select></div>
+    </div>
+    <div class="psd-cols">
+      <div>
+        <div class="psd-h" style="color:var(--st-warning)">1. Issue Problem / รายละเอียดของปัญหา</div><textarea id="psd-issue" rows="4" placeholder="อธิบายปัญหาโดยละเอียด อ้างอิงตัวเลข/วันที่/ค่าผิดปกติ…">${E(d.issue)}</textarea>
+        <div class="psd-h">2. How to process / วิธีดำเนินการแก้ไขเบื้องต้น</div><textarea id="psd-process" rows="3" placeholder="1. …&#10;2. …">${E(d.process)}</textarea>
+        <div class="psd-h">3. Root Cause Analysis (5M1E)</div>
+        <div class="psd-5m">${PSD_5M.map(([k, n, ic, pl]) => `<div><div class="psd-m">${ic} ${n}</div><textarea data-rca="${k}" rows="3" placeholder="${pl}">${val(d.rca, k)}</textarea></div>`).join("")}</div>
+        <div class="psd-h">4. Scope &amp; Limitations / ขอบเขตและข้อจำกัด</div><textarea id="psd-scope" rows="3" placeholder="1. …&#10;2. …">${E(d.scope)}</textarea>
+        <div class="psd-h">5. Responsible Person / ผู้รับผิดชอบ</div>
+        <div class="psd-2c">${[["mgmt", "Management/Operation"], ["spec", "Specialist/Consultant"], ["proj", "Project/Site"], ["support", "Support Team / Supervisor"], ["tech", "Technician"]].map(([k, l]) => `<div><label class="muted-s">${l}</label><input data-resp-p="${k}" placeholder="ชื่อ…" value="${val(d.resp, k)}"/></div>`).join("")}</div>
+      </div>
+      <div>
+        <div class="psd-h" style="color:var(--st-good)">6. Improve / Troubleshooting Plan</div>
+        <div id="psd-plan">${d.plan.map(planRow).join("")}</div><button type="button" class="btn ghost small" id="psd-add-plan">+ ${mt("เพิ่มแผนงาน", "Add plan")}</button>
+        <div class="psd-h">🖼 ${mt("รูป BEFORE / AFTER", "Photos BEFORE / AFTER")}</div>
+        <div class="psd-2c"><div><label class="muted-s">BEFORE (${mt("ก่อน", "before")}) — 2 ${mt("รูป", "photos")}</label>${ph("before")}</div><div><label class="muted-s">AFTER (${mt("หลัง", "after")}) — 2 ${mt("รูป", "photos")}</label>${ph("after")}</div></div>
+        <div class="psd-h">7. Operation Controlling / การควบคุมกระบวนการ</div>
+        <div id="psd-ctrl">${d.ctrl.map(ctrlRow).join("")}</div><button type="button" class="btn ghost small" id="psd-add-ctrl">+ ${mt("เพิ่มการควบคุม", "Add control")}</button>
+        <div class="psd-2c" style="grid-template-columns:repeat(3,1fr);margin-top:12px;">${[["issue", "ISSUE BY"], ["check", "CHECK BY"], ["approve", "APPROVE BY"]].map(([k, l]) => `<div><label class="muted-s">${l}</label><input data-sign="${k}" placeholder="ชื่อ…" value="${val(d.sign, k)}"/></div>`).join("")}</div>
+      </div>
+    </div>
+    <div class="actions">${!isNew ? `<button class="btn danger" id="psd-del" style="margin-right:auto;">${mt("ลบ", "Delete")}</button>` : ""}<button class="btn ghost" id="psd-cancel">Cancel</button><button class="btn ghost" id="psd-pdf">Export PDF View</button><button class="btn" id="psd-save">Save PSD Analysis</button></div>`);
+  modal.querySelector(".modal").style.maxWidth = "1040px";
+  // dynamic rows
+  const wireRows = () => {
+    modal.querySelectorAll("[data-rm]").forEach((b) => { b.onclick = () => b.parentElement.remove(); });
+    modal.querySelectorAll(".psd-st").forEach((b) => { b.onclick = () => { const n = { P: "D", D: "C", C: "P" }[b.dataset.st]; b.dataset.st = n; b.textContent = n; }; });
+  };
+  wireRows();
+  modal.querySelector("#psd-add-plan").onclick = () => { modal.querySelector("#psd-plan").insertAdjacentHTML("beforeend", planRow({ st: "P", cat: "MACHINE", sol: "", resp: "" })); wireRows(); };
+  modal.querySelector("#psd-add-ctrl").onclick = () => { modal.querySelector("#psd-ctrl").insertAdjacentHTML("beforeend", ctrlRow({ prob: "", act: "", resp: "" })); wireRows(); };
+  // photos
+  const key = (kind, n) => MpImg.key("psd", d.id, kind, n);
+  const paint = (slot, data) => { slot.innerHTML = data ? `<img src="${data}" alt=""/><button type="button" class="psd-x" title="${mt("ลบรูป", "Remove")}">×</button><input type="file" accept="image/*" hidden />` : `<input type="file" accept="image/*" hidden /><span>+ ${slot.parentElement.dataset.kind === "before" ? mt("ก่อนแก้ไข", "Before") : mt("หลังแก้ไข", "After")} ${slot.dataset.n}</span>`; slot.classList.toggle("has", !!data); };
+  const photos = {};
+  if (MpImg.available()) {
+    modal.querySelectorAll(".psd-slot").forEach((slot) => {
+      const kind = slot.parentElement.dataset.kind, n = slot.dataset.n, k = key(kind, n);
+      MpImg.get(k).then((x) => { if (x) { photos[k] = x; paint(slot, x); } }).catch(() => {});
+      slot.addEventListener("click", async (e) => {
+        if (e.target.closest(".psd-x")) { e.preventDefault(); await MpImg.del(k); delete photos[k]; paint(slot, null); return; }
+        if (slot.classList.contains("has")) { e.preventDefault(); window.open(photos[k], "_blank"); }
+      });
+      slot.addEventListener("change", async (e) => {
+        const f = e.target.files && e.target.files[0]; if (!f) return;
+        try { const data = await MpImg.compress(f); await MpImg.put(k, data); photos[k] = data; paint(slot, data); } catch (err) { alert(mt("ไม่สามารถบันทึกรูปนี้ได้", "Could not save this photo")); }
+      });
+    });
+  } else modal.querySelectorAll(".psd-slot").forEach((s) => s.classList.add("disabled"));
+  const collect = () => {
+    const g = (s) => modal.querySelector(s).value.trim();
+    const o = Object.assign({}, d, { title: g("#psd-title"), date: g("#psd-date"), status: g("#psd-status"), system: g("#psd-system"), location: g("#psd-location"), bu: g("#psd-bu"), issue: g("#psd-issue"), process: g("#psd-process"), scope: g("#psd-scope"), rca: {}, resp: {}, sign: {} });
+    modal.querySelectorAll("[data-rca]").forEach((i) => { o.rca[i.dataset.rca] = i.value.trim(); });
+    modal.querySelectorAll("[data-resp-p]").forEach((i) => { o.resp[i.dataset.respP] = i.value.trim(); });
+    modal.querySelectorAll("[data-sign]").forEach((i) => { o.sign[i.dataset.sign] = i.value.trim(); });
+    o.plan = [...modal.querySelectorAll("[data-plan]")].map((r) => ({ st: r.querySelector(".psd-st").dataset.st, cat: r.querySelector("[data-cat]").value, sol: r.querySelector("[data-sol]").value.trim(), resp: r.querySelector("[data-resp]").value.trim() })).filter((p) => p.sol || p.resp);
+    o.ctrl = [...modal.querySelectorAll("[data-ctrl]")].map((r) => ({ prob: r.querySelector("[data-prob]").value.trim(), act: r.querySelector("[data-act]").value.trim(), resp: r.querySelector("[data-resp]").value.trim() })).filter((c) => c.prob || c.act || c.resp);
+    return o;
+  };
+  modal.querySelector("#psd-cancel").onclick = closeModal;
+  const del = modal.querySelector("#psd-del");
+  if (del) del.onclick = () => { if (!confirm(mt("ลบการวิเคราะห์นี้หรือไม่?", "Delete this analysis?"))) return; DB.set("psdAnalyses", psdAll().filter((a) => a.id !== d.id)); ["before", "after"].forEach((kd) => [1, 2].forEach((n) => MpImg.del(key(kd, n)).catch(() => {}))); closeModal(); toast(mt("ลบแล้ว", "Deleted")); after(); };
+  modal.querySelector("#psd-pdf").onclick = () => psdPrint(collect(), photos);
+  modal.querySelector("#psd-save").onclick = () => {
+    const o = collect();
+    if (!o.title) { alert(mt("กรุณาระบุหัวข้อ", "Please enter a title")); return; }
+    psdSave(o); closeModal(); toast(mt("บันทึกแล้ว", "Saved")); after();
+  };
+}
+
+function psdPrint(a, photos) {
+  const E = drrEsc, nl = (s) => E(s).replace(/\n/g, "<br/>");
+  const img = (kind) => [1, 2].map((n) => { const x = photos[MpImg.key("psd", a.id, kind, n)]; return x ? `<img src="${x}" style="max-width:48%;max-height:150px;border:1px solid #999;margin:2px"/>` : ""; }).join("");
+  const css = `@page{size:A4 portrait;margin:12mm} body{font-family:"Sarabun","Noto Sans Thai",Arial,sans-serif;color:#000;font-size:12.5px} h1{font-size:17px;margin:0 0 4px} table{border-collapse:collapse;width:100%;margin-bottom:8px} td,th{border:1px solid #444;padding:4px 6px;vertical-align:top;text-align:left} th{background:#e8eef7} .h{font-weight:700;background:#dfe9dc}`;
+  const rows = (arr, cols) => arr.length ? arr.map((r) => `<tr>${cols.map((c) => `<td>${E(r[c])}</td>`).join("")}</tr>`).join("") : `<tr><td colspan="${cols.length}">-</td></tr>`;
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${E(a.no)}</title><style>${css}</style></head><body>
+    <h1>PSD — Corrective &amp; Root Cause Analysis</h1>
+    <table><tr><td class="h">No.</td><td>${E(a.no)}</td><td class="h">Date</td><td>${E(mpFmtDate(a.date))}</td><td class="h">Status</td><td>${E(mt(...(PSD_ST[a.status] || PSD_ST.open).slice(0, 2)))}</td></tr>
+    <tr><td class="h">Title</td><td colspan="5">${E(a.title)}</td></tr><tr><td class="h">System</td><td>${E(a.system)}</td><td class="h">Location</td><td>${E(a.location)}</td><td class="h">BU</td><td>${E(a.bu)}</td></tr></table>
+    <table><tr><td class="h">1. Issue Problem</td></tr><tr><td>${nl(a.issue) || "-"}</td></tr><tr><td class="h">2. How to process</td></tr><tr><td>${nl(a.process) || "-"}</td></tr></table>
+    <table><tr><td class="h" colspan="2">3. Root Cause Analysis (5M1E)</td></tr>${[0, 2, 4].map((i) => `<tr>${[i, i + 1].map((j) => `<td style="width:50%"><b>${PSD_5M[j][1]}</b><br/>${nl((a.rca || {})[PSD_5M[j][0]]) || "-"}</td>`).join("")}</tr>`).join("")}</table>
+    <table><tr><td class="h">4. Scope &amp; Limitations</td></tr><tr><td>${nl(a.scope) || "-"}</td></tr></table>
+    <table><tr><td class="h" colspan="5">5. Responsible Person</td></tr><tr>${["mgmt:Management/Operation", "spec:Specialist/Consultant", "proj:Project/Site", "support:Support/Supervisor", "tech:Technician"].map((x) => { const [k, l] = x.split(":"); return `<td><b>${l}</b><br/>${E((a.resp || {})[k]) || "-"}</td>`; }).join("")}</tr></table>
+    <table><tr><th>P/D/C</th><th>Category</th><th>6. Improve / Troubleshooting Plan</th><th>Resp.</th></tr>${rows(a.plan || [], ["st", "cat", "sol", "resp"])}</table>
+    <table><tr><th style="width:50%">BEFORE</th><th>AFTER</th></tr><tr><td>${img("before") || "-"}</td><td>${img("after") || "-"}</td></tr></table>
+    <table><tr><th>Problem</th><th>7. Action / Criteria</th><th>Resp.</th></tr>${rows(a.ctrl || [], ["prob", "act", "resp"])}</table>
+    <table><tr><th>ISSUE BY</th><th>CHECK BY</th><th>APPROVE BY</th></tr><tr><td style="height:46px">${E((a.sign || {}).issue)}</td><td>${E((a.sign || {}).check)}</td><td>${E((a.sign || {}).approve)}</td></tr></table></body></html>`;
+  drrPrintFrame(html);
+}
+
+// ----------------------------------------------------------------------------- the page ---
+function renderPsd(root) {
+  const rerender = () => renderPsd(root);
+  const finds = psdFindings();
+  const stOf = (f) => { const a = psdFor(f.key); return a ? a.status : "open"; };
+  const shown = finds.filter((f) => (PsdUI.rep === "ALL" || f.rep === PsdUI.rep) && (PsdUI.status === "ALL" || stOf(f) === PsdUI.status) && (!PsdUI.q || JSON.stringify(f).toLowerCase().includes(PsdUI.q.toLowerCase())));
+  const cnt = (s) => finds.filter((f) => stOf(f) === s).length;
+  const keys = new Set(finds.map((f) => f.key));
+  const others = psdAll().filter((a) => !keys.has((a.src || {}).key) && (PsdUI.status === "ALL" || a.status === PsdUI.status) && (!PsdUI.q || JSON.stringify(a).toLowerCase().includes(PsdUI.q.toLowerCase())));
+  const yrs = drrYears();
+  root.innerHTML = `<div class="drr-bar">
+      <label class="dash-unit"><span>${mt("ปี", "Year")}</span><select id="psd-year">${yrs.map((y) => `<option value="${y}" ${y === PsdUI.year ? "selected" : ""}>${y + (DB.get("lang", "th") === "th" ? 543 : 0)}</option>`).join("")}</select></label>
+      <label class="dash-unit"><span>${mt("รายงาน", "Report")}</span><select id="psd-rep"><option value="ALL">${mt("ทุกรายงาน", "All reports")}</option>${["lp", "tw", "food", "ww", "mwa", "ts1"].map((k) => `<option value="${k}" ${PsdUI.rep === k ? "selected" : ""}>${PSD_REPS[k]}</option>`).join("")}</select></label>
+      <label class="dash-unit"><span>${mt("สถานะ", "Status")}</span><select id="psd-st"><option value="ALL">${mt("ทั้งหมด", "All")}</option>${Object.keys(PSD_ST).map((k) => `<option value="${k}" ${PsdUI.status === k ? "selected" : ""}>${mt(PSD_ST[k][0], PSD_ST[k][1])}</option>`).join("")}</select></label>
+      <input id="psd-q" type="search" placeholder="${mt("ค้นหา…", "Search…")}" value="${drrEsc(PsdUI.q)}" style="max-width:200px"/>
+      <span style="flex:1"></span><button class="btn small" id="psd-new">+ ${mt("สร้างฟอร์มใหม่", "New analysis")}</button></div>
+    <div class="grid cols-4" style="margin-bottom:14px;">${drrTile(mt("รายการที่ไม่ผ่าน", "Items not passing"), finds.length, mt("จาก Data Record Report", "from the Data Record Reports"))}${drrTile(mt("ยังไม่วิเคราะห์", "Not analysed"), cnt("open"), "", cnt("open") ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("กำลังดำเนินการ", "In progress"), cnt("doing"), "", cnt("doing") ? "var(--st-serious)" : "var(--st-good)")}${drrTile(mt("ปิดแล้ว", "Closed"), cnt("closed"), "", "var(--st-good)")}</div>
+    <div class="card"><h3>${mt("รายการที่ไม่ผ่านจาก Data Record Report — สร้างฟอร์มวิเคราะห์และแก้ไข", "Items not passing in the Data Record Reports — create the analysis form")}</h3>
+    <div class="acc-scroll" style="max-height:520px;"><table class="mon-table"><thead><tr><th>${mt("รายงาน", "Report")}</th><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("วันที่", "Date")}</th><th>${mt("รายการ / ปัญหา", "Item / problem")}</th><th>${mt("สถานะ", "Status")}</th><th></th></tr></thead><tbody>
+    ${shown.map((f, i) => { const a = psdFor(f.key); return `<tr><td>${E_(PSD_REPS[f.rep])}</td><td>${E_(f.site)}</td><td>${f.rep === "ts1" ? E_(f.date.slice(0, 7)) : mpFmtDate(f.date)}</td><td><b>${E_(f.title)}</b><div class="muted-s" style="white-space:pre-line">${E_(f.detail)}</div></td><td>${psdChip(a ? a.status : "open")}${a ? `<div class="muted-s">${E_(a.no)}</div>` : ""}</td><td style="white-space:nowrap"><button class="btn small ${a ? "ghost" : ""}" data-psd-f="${i}">${a ? mt("เปิดฟอร์ม", "Open") : mt("สร้างฟอร์มวิเคราะห์", "Create analysis")}</button></td></tr>`; }).join("") || `<tr><td colspan="6" class="muted-s">${finds.length ? mt("ไม่มีรายการตามตัวกรอง", "Nothing matches the filter") : "✔ " + mt("ไม่มีรายการที่ไม่ผ่านในปีนี้", "No failing items this year")}</td></tr>`}</tbody></table></div></div>
+    <div class="card" style="margin-top:14px;"><h3>${mt("การวิเคราะห์อื่น ๆ (สร้างเอง / รายการต้นทางผ่านแล้ว)", "Other analyses (manual / source now passing)")}</h3>
+    <table class="mon-table"><thead><tr><th>No.</th><th>${mt("หัวข้อ", "Title")}</th><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("วันที่", "Date")}</th><th>${mt("สถานะ", "Status")}</th>${Auth.isAdmin(State.user) ? `<th>${mt("แก้ไขล่าสุดโดย", "Last edited by")}</th>` : ""}<th></th></tr></thead><tbody>
+    ${others.map((a) => `<tr><td>${E_(a.no)}</td><td>${E_(a.title)}<div class="muted-s">${E_(PSD_REPS[(a.src || {}).rep] || "")}</div></td><td>${E_(a.bu || a.location)}</td><td>${mpFmtDate(a.date)}</td><td>${psdChip(a.status)}</td>${Auth.isAdmin(State.user) ? `<td class="muted-s">${E_(a.byName || a.by)}</td>` : ""}<td><button class="icon-btn" data-psd-a="${a.id}">${mt("เปิด", "Open")}</button></td></tr>`).join("") || `<tr><td colspan="7" class="muted-s">${mt("ยังไม่มีรายการ", "None yet")}</td></tr>`}</tbody></table></div>`;
+  root.querySelector("#psd-year").onchange = (e) => { PsdUI.year = Number(e.target.value); rerender(); };
+  root.querySelector("#psd-rep").onchange = (e) => { PsdUI.rep = e.target.value; rerender(); };
+  root.querySelector("#psd-st").onchange = (e) => { PsdUI.status = e.target.value; rerender(); };
+  const q = root.querySelector("#psd-q"); q.oninput = () => { PsdUI.q = q.value; clearTimeout(PsdUI._t); PsdUI._t = setTimeout(() => { rerender(); const n = document.getElementById("psd-q"); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 250); };
+  root.querySelector("#psd-new").onclick = () => psdOpenForm(null, null, rerender);
+  root.querySelectorAll("[data-psd-f]").forEach((b) => { b.onclick = () => { const f = shown[Number(b.dataset.psdF)]; psdOpenForm(f, psdFor(f.key), rerender); }; });
+  root.querySelectorAll("[data-psd-a]").forEach((b) => { b.onclick = () => psdOpenForm(null, psdAll().find((a) => a.id === b.dataset.psdA), rerender); });
+}
+const E_ = (s) => drrEsc(s);
+
+function psdSheets(out) {
+  const ed = (r) => [r.byName || r.by || "", r.at || ""];
+  out.push({ key: "psd", title: "PSD_Analysis", columns: ["id", "no", "date", "status", "sourceReport", "sourceKey", "title", "system", "location", "bu", "issue", "process", "man", "machine", "method", "material", "env", "measurement", "scope", "mgmt", "specialist", "project", "support", "technician", "plan", "controls", "issueBy", "checkBy", "approveBy", "editedBy", "editedAt"],
+    rows: psdAll().sort((a, b) => (a.date || "").localeCompare(b.date || "")).map((a) => { const rc = a.rca || {}, rs = a.resp || {}, sg = a.sign || {}; return [a.id, a.no, a.date, a.status, (a.src || {}).rep || "", (a.src || {}).key || "", a.title, a.system, a.location, a.bu, a.issue, a.process, rc.man, rc.machine, rc.method, rc.material, rc.env, rc.measure, a.scope, rs.mgmt, rs.spec, rs.proj, rs.support, rs.tech, (a.plan || []).map((p) => `[${p.st}] ${p.cat}: ${p.sol} (${p.resp})`).join(" | "), (a.ctrl || []).map((c) => `${c.prob} -> ${c.act} (${c.resp})`).join(" | "), sg.issue, sg.check, sg.approve].map((v) => (v === undefined || v === null ? "" : v)).concat(ed(a)); }) });
+}
+
+/**
  * sync.js
  * Central data sync through the same Google Apps Script web app used for backup.
  * Why: data is otherwise kept in each browser's own storage, so an Admin on another computer
@@ -5334,7 +5566,7 @@ const SyncMgr = {
  */
 
 const BACKUP_DAYS = 7;
-const BACKUP_KEYS = ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "drrRecords", "drrCfg", "lang", "uiPrefs", "moduleVisibility"];
+const BACKUP_KEYS = ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "drrRecords", "drrCfg", "psdAnalyses", "lang", "uiPrefs", "moduleVisibility"];
 // "users" travels in the JSON backup and (as salted hashes, no plain passwords) through sync; the readable users tab never shows passwords.
 
 const BackupMgr = {
@@ -5421,7 +5653,7 @@ const BackupMgr = {
     if (!this.validUrl(c.url) || !c.token) { if (manual) throw new Error(mt("ยังไม่ได้ตั้งค่า Google Sheet", "Google Sheet is not set up")); return false; }
     const t = this.tables();
     const res = await this.call({ action: "tables", by: State.user ? State.user.username : "", tables: t });
-    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v9 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v9 and deploy a new version") : (res.error || "failed"));
+    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v10 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v10 and deploy a new version") : (res.error || "failed"));
     this.saveMeta({ tablesAt: new Date().toISOString(), tablesStatus: "ok" });
     localStorage.removeItem(DB._key("pubDirty"));
     return true;
@@ -5477,10 +5709,10 @@ const APPS_SCRIPT_CODE = `/**
  * (Execute as: Me, Who has access: Anyone).  After editing: Deploy > Manage deployments > New version.
  */
 const TOKEN = '__TOKEN__';   // must equal the Token in the app
-const VERSION = 9;
+const VERSION = 10;
 const CHUNK = 45000;         // one cell holds at most 50,000 characters
 const MAXCH = 8;             // max cells per record / photo
-const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords', 'auditLog', 'users'];
+const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords', 'auditLog', 'users', 'psdAnalyses'];
 
 function doPost(e) {
   try {
@@ -5664,7 +5896,7 @@ function tables_(ss, p) {
  * Controls: only whitelisted report keys, bounded size, one writer at a time (lock),
  * each tab is rewritten in full from the app's synced data (d_drrRecords stays the source of truth),
  * every write is logged in _Log. Do not type into R_* tabs - changes there are overwritten. */
-var REPORT_KEYS = { lp: 'R_LivePlay_Incidents', tw: 'R_Township_Incidents', food: 'R_Food_Testing', ww: 'R_Wastewater', ts1: 'R_TS1_Daily', ts2: 'R_TS2_Monthly', tsprof: 'R_TS_SiteProfile', mwa: 'R_MWA_RawWater' };
+var REPORT_KEYS = { lp: 'R_LivePlay_Incidents', tw: 'R_Township_Incidents', food: 'R_Food_Testing', ww: 'R_Wastewater', ts1: 'R_TS1_Daily', ts2: 'R_TS2_Monthly', tsprof: 'R_TS_SiteProfile', mwa: 'R_MWA_RawWater', psd: 'R_PSD_Analysis' };
 var REPORT_MAX_ROWS = 5000, REPORT_MAX_COLS = 60, REPORT_MAX_CELL = 2000;
 function reportSheet_(ss, p) {
   var list = p.reports || [], done = [], total = 0;
@@ -5990,7 +6222,7 @@ function startApp(user) {
   MpImg.migrate().catch(() => {});
   renderShell();
   navigate("dashboard");
-  SyncMgr.onChange(() => { if (["dashboard", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa"].includes(State.view) && !document.getElementById("modal-overlay") && !document.activeElement?.closest?.("input,textarea,select")) renderView(); });
+  SyncMgr.onChange(() => { if (["dashboard", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd"].includes(State.view) && !document.getElementById("modal-overlay") && !document.activeElement?.closest?.("input,textarea,select")) renderView(); });
   SyncMgr.start();
   BackupMgr.autoCheck();
   BackupMgr.startTimer();
@@ -6049,7 +6281,8 @@ const NAV_ITEMS = [
     items: [
       { id: "okr", labelKey: "nav_okr" },
       { id: "kpi", labelKey: "nav_kpi" },
-      { id: "capa", labelKey: "nav_capa" }
+      { id: "capa", labelKey: "nav_capa" },
+      { id: "psd", labelKey: "nav_psd" }
     ]
   },
   {
@@ -6153,6 +6386,7 @@ function renderTopbar() {
     okr: ["title_okr", "sub_okr"],
     kpi: ["title_kpi", "sub_kpi"],
     capa: ["title_capa", "sub_capa"],
+    psd: ["title_psd", "sub_psd"],
     buildings: ["title_buildings", "sub_buildings"],
     users: ["title_users", "sub_users"],
     mp_plan: ["title_mp_plan", "sub_mp_plan"],
@@ -6168,7 +6402,7 @@ function renderTopbar() {
   const title = titleKey ? t(titleKey) : "";
   const subtitle = subKey ? t(subKey) : "";
   const buildings = accessibleBuildings();
-  const showBuildingPicker = !["buildings", "users", "backup", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa"].includes(State.view);
+  const showBuildingPicker = !["buildings", "users", "backup", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd"].includes(State.view);
 
   document.getElementById("topbar").innerHTML = `
     <div>
@@ -6229,6 +6463,7 @@ function renderViewInner(root) {
     case "okr": return renderOKR(root);
     case "kpi": return renderKPI(root);
     case "capa": return renderCAPA(root);
+    case "psd": return renderPsd(root);
     case "buildings": return renderBuildings(root);
     case "users": return renderUsers(root);
     case "drr_lp": case "drr_tw": case "drr_food": case "drr_ww": case "drr_ts": case "drr_mwa": return renderDrr(root, State.view);
@@ -7187,7 +7422,7 @@ function renderUsers(root) {
 
 /** Admin-only: sign-in / sign-out history and the latest data edits */
 const AccUI = { user: "ALL", limit: 100, audUser: "ALL", audMod: "ALL" };
-const AUD_MODS = { mpScores: "Risk Assessment Checklist", mpUnits: "หน่วยงาน (Checklist)", mpPlans: "QSHE Action Plan", mpForms: "PCRA / ICRA", drrRecords: "Data Record Report", capas: "CAPA / Incident", okrs: "OKR", kpis: "KPI", buildings: "อาคาร / BU", processStatus: "SSPPC Modules" };
+const AUD_MODS = { mpScores: "Risk Assessment Checklist", mpUnits: "หน่วยงาน (Checklist)", mpPlans: "QSHE Action Plan", mpForms: "PCRA / ICRA", drrRecords: "Data Record Report", capas: "CAPA / Incident", psdAnalyses: "PSD วิเคราะห์และแก้ไข", okrs: "OKR", kpis: "KPI", buildings: "อาคาร / BU", processStatus: "SSPPC Modules" };
 function renderAccessSection(host) {
   const logs = DB.get("accessLog", []).slice().sort((x, y) => (y.inAt || "").localeCompare(x.inAt || ""));
   const names = [...new Set(logs.map((l) => l.user))].sort();
