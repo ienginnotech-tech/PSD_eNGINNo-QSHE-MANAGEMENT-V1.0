@@ -1679,9 +1679,47 @@ const DB = {
    * On each write we stamp changed records with `_u` (ISO time) and remember deletions as tombstones,
    * so all existing code that calls DB.set(name, array) becomes sync-aware without further changes.
    */
-  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords"],
+  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords", "auditLog"],
   _stable(r) {
     const c = Object.assign({}, r); delete c._u; return JSON.stringify(c);
+  },
+  /** who changed what (kept for admins): one entry per user + record, merged while edits continue within 10 minutes */
+  _auditLabel(name, r, rep) {
+    if (!r) return "";
+    if (name === "mpScores") { const u = (this.get("mpUnits", []).find((x) => x.id === r.unitId) || {}).name || r.unitId; return `${u} · ครั้งที่ ${r.visit}`; }
+    if (name === "mpForms") return `${r.type || "Form"} · ${(this.get("mpUnits", []).find((x) => x.id === r.unitId) || {}).name || r.unitId || ""}`;
+    if (name === "drrRecords") { const d = r.d || {}; return `${r.report || ""} · ${d.site || ""} ${d.date || ""} ${d.no || d.shop || ""}`.trim(); }
+    return r.name || r.title || r.objective || r.step || r.id;
+  },
+  _audit(name, prev, pm, value, gone) {
+    const u = typeof State !== "undefined" && State.user ? State.user : null;
+    if (!u) return;
+    const pById = {}; prev.forEach((r) => { if (r && r.id) pById[r.id] = r; });
+    const ev = [];
+    value.forEach((r) => {
+      if (!r || !r.id) return;
+      if (pm[r.id] === undefined) ev.push({ act: "add", r, detail: name === "mpScores" ? Object.keys(r.meta || {}) : [] });
+      else if (pm[r.id] !== this._stable(r)) {
+        const detail = [];
+        if (name === "mpScores") { const o = (pById[r.id] || {}).meta || {}; Object.keys(r.meta || {}).forEach((k) => { if (JSON.stringify(r.meta[k]) !== JSON.stringify(o[k])) detail.push(k); }); }
+        ev.push({ act: "edit", r, detail });
+      }
+    });
+    gone.forEach((r) => ev.push({ act: "delete", r }));
+    if (!ev.length) return;
+    const log = this.get("auditLog", []), now = Date.now(), iso = new Date(now).toISOString();
+    const who = u.username, whoName = u.name || u.username;
+    ev.slice(0, 40).forEach((e) => {
+      const last = [...log].reverse().find((x) => x.by === who && x.c === name && x.rid === e.r.id);
+      if (last && now - new Date(last.at).getTime() < 600000 && e.act !== "delete" && last.act !== "delete") {
+        last.at = iso; last.cnt = (last.cnt || 1) + 1; last.label = this._auditLabel(name, e.r) || last.label;
+        if (e.detail && e.detail.length) last.detail = [...new Set((last.detail || []).concat(e.detail))].slice(-14);
+        return;
+      }
+      log.push({ id: "au" + now.toString(36) + Math.random().toString(36).slice(2, 7), at: iso, by: who, byName: whoName, c: name, rid: e.r.id, act: e.act, label: this._auditLabel(name, e.r), detail: e.detail || [], cnt: 1 });
+    });
+    if (log.length > 3000) log.splice(0, log.length - 3000);
+    this.set("auditLog", log, { noAudit: true });
   },
   set(name, value, opts) {
     try {
@@ -1697,6 +1735,9 @@ const DB = {
           if (pm[r.id] === undefined || pm[r.id] !== this._stable(r)) r._u = now;
         });
         const gone = prev.filter((r) => r && r.id && !keep[r.id]);
+        if (!(opts && opts.noAudit) && name !== "accessLog" && name !== "auditLog") {
+          try { this._audit(name, prev, pm, value, gone); } catch (e) { /* the audit trail must never block saving */ }
+        }
         if (gone.length) {
           const t = this.get("syncTomb", []);
           gone.forEach((r) => t.push({ c: name, id: r.id, _u: now }));
@@ -1725,7 +1766,7 @@ const DB = {
     if (this.get("mpForms", null) === null) this.set("mpForms", [], { raw: true });
   },
   resetAll() {
-    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords", "drrCfg", "syncCfg", "syncMeta", "syncTomb", "session"].forEach((k) =>
+    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "auditLog", "drrRecords", "drrCfg", "syncCfg", "syncMeta", "syncTomb", "session"].forEach((k) =>
       localStorage.removeItem(this._key(k))
     );
     this.ensureSeeded();
@@ -4937,6 +4978,8 @@ const SyncMgr = {
       res = await this.call({ action: "sync", since, changes, deletes: tomb });
       if (!res.ok) throw new Error(res.error === "unknown action" ? mt("สคริปต์ Apps Script เป็นเวอร์ชันเก่า — วางโค้ดใหม่และ Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste the new code and deploy a new version") : res.error || "sync failed");
       this.applyRemote(res);
+      const recv = Object.keys(res.changes || {}).some((k) => (res.changes[k] || []).length) || (res.deletes || []).length > 0;
+      if (any || recv || tomb.length) BackupMgr.schedulePublish();
       // tombstones that were delivered can go
       DB.set("syncTomb", DB.get("syncTomb", []).filter((t) => t._u > started), { raw: true });
       this.saveMeta({ since: res.serverTime, lastPush: started, lastAt: new Date().toISOString(), status: "ok", lastError: "" });
@@ -5134,6 +5177,30 @@ const BackupMgr = {
     this.saveMeta({ sheetAt: new Date().toISOString(), sheetStatus: res.unconfirmed ? "unconfirmed" : "ok", sheetReason: reason || "manual" });
     return res;
   },
+  /** refresh the readable tabs of the Google Sheet (no snapshot, no users) - used after every sync so nobody has to press "backup" */
+  async publishTables(manual) {
+    const c = this.cfg();
+    if (!this.validUrl(c.url) || !c.token) { if (manual) throw new Error(mt("ยังไม่ได้ตั้งค่า Google Sheet", "Google Sheet is not set up")); return false; }
+    const t = this.tables(); delete t.users;
+    const res = await this.call({ action: "tables", by: State.user ? State.user.username : "", tables: t });
+    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v7 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v7 and deploy a new version") : (res.error || "failed"));
+    this.saveMeta({ tablesAt: new Date().toISOString(), tablesStatus: "ok" });
+    localStorage.removeItem(DB._key("pubDirty"));
+    return true;
+  },
+  /** called after every sync that sent or received changes; publishes at most once a minute */
+  schedulePublish() {
+    localStorage.setItem(DB._key("pubDirty"), "1");
+    if (this._pubT) return;
+    const last = this.meta().tablesAt ? new Date(this.meta().tablesAt).getTime() : 0;
+    const wait = Math.max(3000, 60000 - (Date.now() - last));
+    this._pubT = setTimeout(async () => {
+      this._pubT = null;
+      if (localStorage.getItem(DB._key("pubDirty")) !== "1") return;
+      try { await this.publishTables(false); } catch (e) { this.saveMeta({ tablesStatus: "error: " + (e.message || e) }); }
+      if (State.view === "backup") renderView();
+    }, wait);
+  },
   async autoCheck() {
     if (!State.user || !Auth.isAdmin(State.user)) return;
     const c = this.cfg();
@@ -5163,7 +5230,7 @@ const BackupMgr = {
 };
 
 const APPS_SCRIPT_CODE = `/**
- * PSD eNGINNo QSHE Management - Google Sheet backend  (script version 5)
+ * PSD eNGINNo QSHE Management - Google Sheet backend  (script version 7)
  *  - backup tabs + _Snapshot (restore)
  *  - central data sync (tabs d_*), so Admin sees everything entered on every computer
  *  - photo storage (tab _photos)
@@ -5172,10 +5239,10 @@ const APPS_SCRIPT_CODE = `/**
  * (Execute as: Me, Who has access: Anyone).  After editing: Deploy > Manage deployments > New version.
  */
 const TOKEN = '__TOKEN__';   // must equal the Token in the app
-const VERSION = 5;
+const VERSION = 7;
 const CHUNK = 45000;         // one cell holds at most 50,000 characters
 const MAXCH = 8;             // max cells per record / photo
-const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords'];
+const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords', 'auditLog'];
 
 function doPost(e) {
   try {
@@ -5186,6 +5253,7 @@ function doPost(e) {
       case 'ping': return out_({ ok: true, sheet: ss.getName(), version: VERSION });
       case 'latest': return out_(readSnapshot_(ss));
       case 'save': return out_(save_(ss, p));
+      case 'tables': return out_(withLock_(function () { return tables_(ss, p); }));
       case 'sync': return out_(withLock_(function () { return sync_(ss, p); }));
       case 'photoPut': return out_(withLock_(function () { return photoPut_(ss, p); }));
       case 'photoGet': return out_(photoGet_(ss, p));
@@ -5340,6 +5408,20 @@ function photoDel_(ss, p) {
   return { ok: true };
 }
 
+/* ---------- live tables (version 7): the readable tabs are refreshed after every sync, without touching _Snapshot ---------- */
+var TABLE_NAMES_OK = /^[A-Za-z0-9_]{1,40}$/;
+function tables_(ss, p) {
+  var names = Object.keys(p.tables || {}), n = 0;
+  names.forEach(function (k) {
+    if (!TABLE_NAMES_OK.test(k) || k.charAt(0) === '_' || k.indexOf('d_') === 0 || k.indexOf('R_') === 0) return;   // never overwrite internal tabs
+    var t = p.tables[k];
+    if (!t || !t.headers || t.headers.length > REPORT_MAX_COLS) return;
+    t.rows = (t.rows || []).slice(0, 20000);
+    writeTable_(ss, k, t); n++;
+  });
+  return { ok: true, tables: n, at: new Date().toISOString() };
+}
+
 /* ---------- DATA RECORD REPORT: readable tabs (version 4) ----------
  * Controls: only whitelisted report keys, bounded size, one writer at a time (lock),
  * each tab is rewritten in full from the app's synced data (d_drrRecords stays the source of truth),
@@ -5404,6 +5486,7 @@ function renderBackup(root) {
         <div class="field"><label>${mt("รหัสเชื่อมต่อทีม (ส่งให้ผู้ใช้วางในเมนู ตั้งค่า)", "Team connection code (share with users – they paste it in Settings)")}</label>
         <input type="text" id="sy-code-show" readonly value="${mpEsc(SyncMgr.makeCode(c.url, c.token))}" /></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn small" id="sy-copy">${mt("คัดลอกรหัส", "Copy code")}</button>
+        <div class="muted-s" style="width:100%;">${mt("ตารางอ่านง่ายใน Google Sheet อัปเดตอัตโนมัติหลังซิงก์ทุกครั้ง · ล่าสุด", "Readable tables in the Google Sheet refresh automatically after every sync · last")}: ${fmt(m.tablesAt)}${m.tablesStatus && m.tablesStatus !== "ok" ? ` · <span style="color:var(--st-critical)">${mpEsc(m.tablesStatus)}</span>` : ""}</div>
         ${SyncMgr.enabled() ? `<button class="btn ghost small" id="sy-run">${mt("ซิงก์ตอนนี้", "Sync now")}</button>` : `<button class="btn small" id="sy-start">${mt("เปิดซิงก์บนเครื่องนี้", "Turn on sync on this computer")}</button>`}</div>
         <div class="mp-banner" style="margin-top:10px;">ⓘ ${mt("เครื่องแรกที่เปิดซิงก์ควรเป็นเครื่องที่มีข้อมูลจริงอยู่ · ต้องวางโค้ด Apps Script เวอร์ชันใหม่ (Code.gs v3) แล้ว Deploy → New version ก่อน · หากสองคนแก้รายการเดียวกันพร้อมกัน ฉบับที่บันทึกทีหลังจะทับ", "The first computer to turn sync on should be the one holding the real data · paste the new Apps Script (Code.gs v3) and Deploy → New version first · if two people edit the same record at once, the later save wins")}</div>`
       : `<div class="empty-state">${mt("ตั้งค่า Google Sheet (หัวข้อ B ด้านล่าง) ก่อน แล้วรหัสเชื่อมต่อจะปรากฏที่นี่", "Set up the Google Sheet (section B below) first – the connection code appears here")}</div>`}
@@ -5422,7 +5505,7 @@ function renderBackup(root) {
     </div>
 
     <div class="card">
-      <h3>B. Google Sheet (Apps Script) — ${mt("อัตโนมัติทุก 7 วัน หรือกดปุ่ม", "automatic every 7 days or on demand")}</h3>
+      <h3>B. Google Sheet (Apps Script) — ${mt("สำรอง/กู้คืน (อัตโนมัติทุก 7 วัน หรือกดปุ่ม)", "backup / restore (automatic every 7 days or on demand)")}</h3>
       <div class="desc">${mt("ส่งข้อมูลไปเก็บใน Google Sheet ของคุณเอง: 1 ชีตต่อชุดข้อมูล + ชีต _Snapshot สำหรับกู้คืน (ไม่รวมรหัสผ่านผู้ใช้และรูปภาพ) การสำรองอัตโนมัติทำงานเมื่อมี Admin เปิดแอปอยู่", "Sends data to your own Google Sheet: one tab per dataset plus a _Snapshot tab for restore (no user passwords, no photos). The automatic run happens while an admin has the app open.")}</div>
       <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="field"><label>Apps Script Web App URL</label><input type="text" id="bk-url" placeholder="https://script.google.com/macros/s/.../exec" value="${mpEsc(c.url)}" /></div>
@@ -6849,7 +6932,8 @@ function renderUsers(root) {
 }
 
 /** Admin-only: sign-in / sign-out history and the latest data edits */
-const AccUI = { user: "ALL", limit: 100 };
+const AccUI = { user: "ALL", limit: 100, audUser: "ALL", audMod: "ALL" };
+const AUD_MODS = { mpScores: "Risk Assessment Checklist", mpUnits: "หน่วยงาน (Checklist)", mpPlans: "QSHE Action Plan", mpForms: "PCRA / ICRA", drrRecords: "Data Record Report", capas: "CAPA / Incident", okrs: "OKR", kpis: "KPI", buildings: "อาคาร / BU", processStatus: "SSPPC Modules" };
 function renderAccessSection(host) {
   const logs = DB.get("accessLog", []).slice().sort((x, y) => (y.inAt || "").localeCompare(x.inAt || ""));
   const names = [...new Set(logs.map((l) => l.user))].sort();
@@ -6874,6 +6958,12 @@ function renderAccessSection(host) {
     Object.keys(r.meta || {}).forEach((id) => { const m = r.meta[id]; if (m && m.at) edits.push({ unit: u ? u.name : r.unitId, visit: r.visit, id, by: m.by, at: m.at }); });
   });
   edits.sort((x, y) => y.at.localeCompare(x.at));
+  const audAll = DB.get("auditLog", []).slice().sort((x, y) => (y.at || "").localeCompare(x.at || ""));
+  const audNames = [...new Set(audAll.map((l) => l.by))].sort();
+  if (AccUI.audUser !== "ALL" && !audNames.includes(AccUI.audUser)) AccUI.audUser = "ALL";
+  const audShown = audAll.filter((l) => (AccUI.audUser === "ALL" || l.by === AccUI.audUser) && (AccUI.audMod === "ALL" || l.c === AccUI.audMod));
+  const wk = new Date(Date.now() - 7 * 864e5).toISOString();
+  const audSum = audNames.slice(0, 8).map((n) => { const mine = audAll.filter((l) => l.by === n); return { n, last: mine[0] && mine[0].at, c7: mine.filter((l) => l.at >= wk).reduce((a, l) => a + (l.cnt || 1), 0) }; });
   host.innerHTML = `
     <div class="card" style="margin-top:14px;">
       <div class="toolbar" style="margin-bottom:6px;">
@@ -6893,12 +6983,30 @@ function renderAccessSection(host) {
       </div>
     </div>
     <div class="card" style="margin-top:14px;">
+      <div class="toolbar" style="margin-bottom:6px;">
+        <div><h3 style="margin:0;">${mt("ประวัติการทำงาน / แก้ไขข้อมูล (เฉพาะผู้ดูแลระบบ)", "Activity log – who changed what (admins only)")}</h3>
+          <div class="desc" style="margin:2px 0 0;">${mt("บันทึกทุกการเพิ่ม แก้ไข ลบ ข้อมูลของผู้ใช้ทุกคน รวมผู้ดูแลระบบคนอื่น · แก้ต่อเนื่องในรายการเดียวกันภายใน 10 นาทีจะรวมเป็นแถวเดียว (แสดงจำนวนครั้ง)", "Every add / edit / delete by every user, including other admins · repeated edits of one record within 10 minutes are merged into one row (with a count)")}</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="aud-user" aria-label="${mt("กรองผู้ใช้", "Filter user")}"><option value="ALL">${mt("ทุกผู้ใช้", "All users")}</option>${audNames.map((n) => `<option value="${mpEsc(n)}" ${AccUI.audUser === n ? "selected" : ""}>${mpEsc(n)}</option>`).join("")}</select>
+        <select id="aud-mod" aria-label="${mt("กรองหมวด", "Filter module")}"><option value="ALL">${mt("ทุกหมวด", "All modules")}</option>${Object.keys(AUD_MODS).map((k) => `<option value="${k}" ${AccUI.audMod === k ? "selected" : ""}>${AUD_MODS[k]}</option>`).join("")}</select>
+        <button class="btn ghost small" id="aud-csv">${mt("ส่งออก CSV", "Export CSV")}</button></div>
+      </div>
+      <div class="grid cols-4" style="margin-bottom:10px;">${audNames.length ? audSum.map((x) => `<div class="stat-card"><div class="label">${mpEsc(x.n)}</div><div class="value" style="font-size:20px;">${x.c7}</div><div class="sub">${mt("การแก้ไขใน 7 วัน · ล่าสุด", "edits in 7 days · last")} ${x.last ? mpFmtWhen(x.last) : "–"}</div></div>`).join("") : ""}</div>
+      <div class="acc-scroll"><table><thead><tr><th>${mt("วันเวลา", "When")}</th><th>${mt("ผู้ใช้", "User")}</th><th>${mt("การกระทำ", "Action")}</th><th>${mt("หมวด", "Module")}</th><th>${mt("รายการ", "Record")}</th><th>${mt("รายละเอียด", "Detail")}</th></tr></thead><tbody>
+      ${audShown.length ? audShown.slice(0, 150).map((l) => `<tr><td>${mpFmtWhen(l.at)}</td><td>${mpEsc(l.byName || l.by)}<div class="muted-s">${mpEsc(l.by)}</div></td><td><span class="st-chip"><i style="color:var(--st-${l.act === "delete" ? "critical" : l.act === "add" ? "good" : "warning"})">${l.act === "delete" ? "✖" : l.act === "add" ? "＋" : "✎"}</i>${l.act === "delete" ? mt("ลบ", "Delete") : l.act === "add" ? mt("เพิ่ม", "Add") : mt("แก้ไข", "Edit")}</span></td><td>${mpEsc(AUD_MODS[l.c] || l.c)}</td><td>${mpEsc(l.label || l.rid)}</td><td class="muted-s">${(l.detail || []).length ? mt("ข้อ", "items") + " " + mpEsc(l.detail.join(", ")) : ""}${l.cnt > 1 ? ` ×${l.cnt}` : ""}</td></tr>`).join("") : `<tr><td colspan="6" class="muted-s">${mt("ยังไม่มีบันทึก — จะเริ่มบันทึกตั้งแต่การแก้ไขครั้งถัดไป (ข้อมูลของคนอื่นจะมาเมื่อเครื่องนั้นซิงก์)", "Nothing yet — recording starts with the next change (other users' entries arrive when their computers sync)")}</td></tr>`}
+      </tbody></table></div>
+    </div>
+    <div class="card" style="margin-top:14px;">
       <h3 style="margin-bottom:2px;">${mt("การแก้ไขข้อมูล Checklist ล่าสุด", "Latest Checklist edits")}</h3>
       <div class="desc">${mt("แสดงผู้แก้ไขและวันเวลาล่าสุดของแต่ละข้อ (เก็บเฉพาะครั้งล่าสุด) · 30 รายการล่าสุด", "Latest editor and time per item (only the most recent is kept) · newest 30")}</div>
       <div class="acc-scroll"><table><thead><tr><th>${mt("วันเวลา", "When")}</th><th>${mt("ผู้แก้ไข", "Editor")}</th><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("ครั้งที่", "Visit")}</th><th>${mt("ข้อ", "Item")}</th></tr></thead><tbody>
       ${edits.length ? edits.slice(0, 30).map((e) => `<tr><td>${mpFmtWhen(e.at)}</td><td>${mpEsc(e.by || "–")}</td><td>${mpEsc(e.unit)}</td><td>${e.visit}</td><td>${mpEsc(e.id)}</td></tr>`).join("") : `<tr><td colspan="5" class="muted-s">${mt("ยังไม่มีการแก้ไขที่บันทึกผู้แก้ — จะเริ่มบันทึกตั้งแต่การแก้ไขครั้งถัดไป", "No attributed edits yet — recording starts with the next edit")}</td></tr>`}
       </tbody></table></div>
     </div>`;
+  const aud = host.querySelector("#aud-user"), audM = host.querySelector("#aud-mod");
+  if (aud) aud.addEventListener("change", () => { AccUI.audUser = aud.value; renderAccessSection(host); });
+  if (audM) audM.addEventListener("change", () => { AccUI.audMod = audM.value; renderAccessSection(host); });
+  const ac = host.querySelector("#aud-csv");
+  if (ac) ac.addEventListener("click", () => ExportUtil.exportCSV(audShown.map((l) => ({ at: l.at, user: l.by, name: l.byName || "", action: l.act, module: AUD_MODS[l.c] || l.c, record: l.label || l.rid, detail: (l.detail || []).join(" "), count: l.cnt || 1 })), ["at", "user", "name", "action", "module", "record", "detail", "count"].map((k) => ({ key: k, label: k })), "activity_log"));
   const sel = host.querySelector("#acc-user");
   if (sel) sel.addEventListener("change", () => { AccUI.user = sel.value; renderAccessSection(host); });
 }
