@@ -1868,12 +1868,41 @@ function sha256Hex(msg) {
   return H.map((v) => ("00000000" + (v >>> 0).toString(16)).slice(-8)).join("");
 }
 
+/** accounts issued by the administrator (salted hashes only, no plain text). Applied once per CRED_VER on every machine, then synced. */
+const CRED_VER = 1;
+const SEED_ACCOUNTS = [
+  { username: "Oneudomsuk", name: "อานันท์ ประดับมุข", building: "007", salt: "seed-oneudomsuk", hash: "d85247b03bbdccebbeb6993059874a7ffa9fef8c1b5363c53d9662387a3a81aa" },
+  { username: "Parkxekkamai", name: "อนุรักษ์ จุลนันท์", building: "003", salt: "seed-parkxekkamai", hash: "541f09b086feea5056608cf61ff67a3cc7f2cac5707b7717347e7badb192441e" },
+  { username: "Sunny", name: "สมิทธ์", building: "008", salt: "seed-sunny", hash: "8782af83542bd78452d0dbbbdde218539b9b2f30db5bd590151cfbbf2f720c10" },
+  { username: "Beatdiscovery", name: "จตุพล โคตรคำ", building: "004", salt: "seed-beatdiscovery", hash: "c566abd018136e22fc7d26fa19008e35b42f6b4ff6a26d6f94bb57710c2e4d16" },
+  { username: "Samagarden", name: "วิษณุ จรจิตร", building: "001", salt: "seed-samagarden", hash: "b7a37e7e5b1a798e93120a1015261d363d66ced3e1cf320864318c5bf2d4d11a" },
+  { username: "Beatactive", name: "ธนภร คชเสนี", building: "002", salt: "seed-beatactive", hash: "ed514629114e3c72b5c4f6c3e7728b8e61a9c81e0f5cf180e74f8e85340a3baa" },
+  { username: "Hotel23", name: "อัคคพงษ์ ประสพจันทร์", building: "005", salt: "seed-hotel23", hash: "5b68d8b559c897fdf3cdbbd35455dcd1f5def0e758cfd595d70a01f045f46676" }
+
+];
+
 const Auth = {
   newSalt() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36); },
   hashPw(salt, pw) { return sha256Hex(salt + "|" + pw); },
   /** put a password on a user record as salt+hash (never plain text) */
   setPassword(u, pw) { u.salt = Auth.newSalt(); u.passHash = Auth.hashPw(u.salt, pw); delete u.password; return u; },
   checkPassword(u, pw) { return u.passHash ? Auth.hashPw(u.salt || "", pw) === u.passHash : (u.password !== undefined && u.password === pw); },
+  /** make sure the issued accounts exist, are active and carry the issued password (once per CRED_VER) */
+  ensureAccounts() {
+    try {
+      const users = DB.get("users", []);
+      let ch = false;
+      SEED_ACCOUNTS.forEach((a) => {
+        let u = users.find((x) => String(x.username).toLowerCase() === a.username.toLowerCase());
+        if (!u) { u = { id: "u-" + a.username.toLowerCase(), username: a.username, name: a.name, role: "user", buildingIds: [a.building] }; users.push(u); }
+        else if ((u.credVer || 0) >= CRED_VER) return;
+        u.salt = a.salt; u.passHash = a.hash; delete u.password; u.status = "active"; u.credVer = CRED_VER;
+        if (!u.buildingIds || !u.buildingIds.length) u.buildingIds = [a.building];
+        ch = true;
+      });
+      if (ch) DB.set("users", users);
+    } catch (e) { /* ignore */ }
+  },
   /** convert legacy plain-text passwords to hashes. Local only (raw) so it never overrides what the centre holds. */
   migrateUsers() {
     try {
@@ -1887,6 +1916,7 @@ const Auth = {
     return DB.get("session", null);
   },
   login(username, password) {
+    Auth.ensureAccounts();
     const users = DB.get("users", []);
     const match = users.find(
       (u) => u.username.toLowerCase() === String(username).trim().toLowerCase() && Auth.checkPassword(u, password)
@@ -6261,6 +6291,7 @@ const State = {
 document.addEventListener("DOMContentLoaded", () => {
   DB.ensureSeeded();
   Auth.migrateUsers();
+  Auth.ensureAccounts();
   applyUiPrefs();
   const session = Auth.currentUser();
   if (session) {
