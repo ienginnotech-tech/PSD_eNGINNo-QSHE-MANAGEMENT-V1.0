@@ -1323,6 +1323,13 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 @media (max-width: 1000px) { .dash-top2 > #dash-ir .ir-units { max-height: 260px !important; } }
 @media (min-width: 1001px) { .dash-top2 > #dash-ir { position: relative; min-height: 560px; } .dash-top2 > #dash-ir > .card { position: absolute; inset: 0; overflow: hidden; } .dash-top2 > #dash-ir .ir-units { min-height: 0; overflow: auto; } }
 
+/* bottom row: unit ranking (top) + after-fix (below) on the left, injured body parts on the right */
+.dash-top:not(.one) { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); }
+.dash-lcol2 { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.dash-lcol2 > div { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.dash-lcol2 > div > .card { flex: 1 1 auto; height: auto !important; }
+@media (max-width: 1280px) { .dash-top:not(.one) { grid-template-columns: 1fr; } }
+
 </style>
 </head>
 <body>
@@ -8141,7 +8148,7 @@ function renderDashboard(root) {
   root.innerHTML = `
     ${showMp ? `<div id="dash-mp" style="margin-bottom:14px;"></div>` : ""}
     <div class="dash-top ${showMp ? "" : "one"}">
-      ${showMp ? `<div id="dash-rank"></div><div id="dash-score"></div>` : `<div id="dash-safety"></div>`}
+      ${showMp ? `<div class="dash-lcol2"><div id="dash-rank"></div><div id="dash-score"></div></div>` : `<div id="dash-safety"></div>`}
       <div id="dash-body"></div>
     </div>
     ${showMp ? `<div id="dash-chk"></div><div id="mon-host" style="margin-top:14px;"></div>` : ""}
