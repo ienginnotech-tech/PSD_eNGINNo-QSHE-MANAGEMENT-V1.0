@@ -1214,6 +1214,60 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 @media(max-width:1100px){.dash-qi{grid-template-columns:1fr}.dash-qi-r{border-left:0;padding-left:0;border-top:1px solid var(--border);padding-top:12px}}
 .dash-top2{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px}@media(max-width:1000px){.dash-top2{grid-template-columns:1fr}}
 
+/* ===== 3D QSHE (V1.01) ===== */
+.ver-up { margin-left: 6px; padding: 1px 6px; border-radius: 8px; background: #f59e0b; color: #1c1917; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.mode-sw { display: inline-flex; border: 1px solid var(--border, #cbd5e1); border-radius: 10px; overflow: hidden; margin-left: 12px; flex-shrink: 0; }
+.mode-sw button { border: 0; background: transparent; padding: 7px 16px; font-weight: 700; cursor: pointer; color: inherit; font-family: inherit; }
+.mode-sw button.on { background: #ea580c; color: #fff; }
+.v3d { --bg: #0b1220; --pn: #111a2d; --ln: #1f2d48; --tx: #e2e8f0; --mu: #94a3b8; background: var(--bg); color: var(--tx); border-radius: 12px; padding: 10px; }
+.v3d-kpis { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 10px; }
+.v3d-kpi { background: var(--pn); border: 1px solid var(--ln); border-radius: 10px; padding: 8px 10px; border-left: 3px solid #38bdf8; }
+.v3d-kpi.ok { border-left-color: #22c55e; } .v3d-kpi.warn { border-left-color: #f59e0b; } .v3d-kpi.crit { border-left-color: #ef4444; }
+.v3d-kpi span { display: block; font-size: 11px; color: var(--mu); } .v3d-kpi b { font-size: 22px; }
+.v3d-main { display: grid; grid-template-columns: 220px minmax(0, 1fr) 340px; gap: 10px; height: calc(100vh - 230px); min-height: 520px; }
+.v3d-left, .v3d-right { background: var(--pn); border: 1px solid var(--ln); border-radius: 10px; overflow: auto; padding: 8px; }
+.v3d-h { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--mu); margin: 8px 4px 6px; }
+.v3d-b, .v3d-f { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; background: transparent; border: 1px solid transparent; color: var(--tx); border-radius: 8px; padding: 6px 8px; cursor: pointer; font-family: inherit; }
+.v3d-b:hover, .v3d-f:hover { background: #17233c; } .v3d-b.sel, .v3d-f.sel { background: #1e3a5f; border-color: #38bdf8; }
+.v3d-b i { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; } .v3d-b small { display: block; color: var(--mu); font-size: 11px; }
+.v3d-f { justify-content: space-between; font-size: 12px; padding: 4px 8px; } .v3d-f span { color: var(--mu); font-size: 11px; text-align: right; }
+.v3d-blk { font-size: 11px; color: #38bdf8; margin: 6px 4px 2px; }
+.v3d-legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11px; color: var(--mu); padding: 0 4px; margin-bottom: 6px; } .v3d-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; }
+.v3d-stage { position: relative; background: var(--bg); border: 1px solid var(--ln); border-radius: 10px; overflow: hidden; min-width: 0; }
+.v3d-stage canvas { width: 100%; height: 100%; display: block; cursor: grab; }
+.v3d-labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.v3d-lbl { position: absolute; left: 0; top: 0; display: none; align-items: center; gap: 5px; background: #0f1b33; border: 1px solid #f59e0b; color: #fff; border-radius: 8px; padding: 2px 8px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.v3d-lbl i { width: 8px; height: 8px; border-radius: 50%; } .v3d-lbl.sel { border-color: #38bdf8; background: #12305a; }
+.v3d-lbl em { font-style: normal; font-size: 10px; padding: 0 5px; border-radius: 6px; } .v3d-lbl em.c { background: #7f1d1d; } .v3d-lbl em.w { background: #78350f; }
+.v3d-tip { position: absolute; display: none; background: #0f1b33ee; border: 1px solid var(--ln); color: #fff; border-radius: 8px; padding: 6px 10px; font-size: 12px; pointer-events: none; max-width: 220px; z-index: 3; } .v3d-tip span { color: var(--mu); }
+.v3d-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--mu); padding: 20px; z-index: 2; }
+.v3d-tools { position: absolute; right: 10px; top: 10px; display: flex; flex-direction: column; gap: 6px; z-index: 3; }
+.v3d-tools button { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--ln); background: #0f1b33; color: #fff; font-size: 16px; cursor: pointer; } .v3d-tools button.on { border-color: #f59e0b; color: #f59e0b; }
+.v3d-hint { position: absolute; left: 10px; bottom: 8px; font-size: 11px; color: var(--mu); pointer-events: none; max-width: 80%; }
+.v3d-ph { padding: 6px 4px 0; } .v3d-ph h3 { margin: 0; font-size: 17px; } .v3d-ph small, .v3d-ph p { color: var(--mu); font-size: 12px; }
+.v3d-ptitle { display: flex; gap: 10px; align-items: center; } .v3d-dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
+.v3d-img { width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; margin-top: 8px; }
+.v3d-flr { background: #12305a; border: 1px solid #38bdf8; border-radius: 8px; padding: 6px 10px; font-size: 12px; margin: 6px 0; }
+.v3d-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0; } .v3d-tabs button { background: #17233c; border: 1px solid var(--ln); color: var(--tx); border-radius: 14px; padding: 3px 10px; font-size: 12px; cursor: pointer; font-family: inherit; } .v3d-tabs button.on { background: #ea580c; border-color: #ea580c; }
+.v3d-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 8px; } .v3d-grid > div { background: #17233c; border-radius: 8px; padding: 6px 10px; } .v3d-grid span { display: block; font-size: 11px; color: var(--mu); } .v3d-grid b { font-size: 18px; }
+.v3d-bars > div { display: grid; grid-template-columns: 1fr 70px 34px; gap: 6px; align-items: center; font-size: 11px; margin: 3px 0; } .v3d-bars i { height: 7px; background: #1f2d48; border-radius: 4px; overflow: hidden; } .v3d-bars u { display: block; height: 100%; }
+.v3d-sub { font-size: 11px; color: var(--mu); margin: 8px 0 4px; }
+.v3d-li { display: flex; align-items: center; gap: 6px; background: #17233c; border-radius: 8px; padding: 5px 8px; margin: 4px 0; font-size: 12px; } .v3d-li > span { flex: 1; min-width: 0; } .v3d-li small { color: var(--mu); }
+.v3d-li select { background: #0f1b33; color: #fff; border: 1px solid var(--ln); border-radius: 6px; font-size: 11px; }
+.v3d-chip { padding: 0 7px; border-radius: 8px; font-size: 11px; font-weight: 700; } .v3d-chip.ok { background: #14532d; } .v3d-chip.warn { background: #78350f; } .v3d-chip.crit { background: #7f1d1d; }
+.v3d-mini { background: #1e3a5f; color: #fff; border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 8px; font-size: 11px; cursor: pointer; font-family: inherit; }
+.v3d-act { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; } .v3d-act.foot { border-top: 1px solid var(--ln); padding-top: 8px; }
+.v3d .btn { font-family: inherit; } .v3d .btn.ghost { color: var(--tx); border-color: var(--ln); }
+.v3d-t { width: 100%; border-collapse: collapse; font-size: 12px; } .v3d-t th { text-align: left; color: var(--mu); font-weight: 600; padding: 4px; } .v3d-t td { padding: 5px 4px; border-top: 1px solid var(--ln); } .v3d-t tr[data-pick] { cursor: pointer; } .v3d-t tr[data-pick]:hover { background: #17233c; }
+.v3d .muted-s { color: var(--mu); font-size: 12px; }
+.v3s-card { border: 1px solid var(--border, #cbd5e1); border-radius: 10px; padding: 8px 12px; margin-bottom: 8px; } .v3s-card summary { cursor: pointer; }
+.v3s-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; } .v3s-grid label, .v3s-fl { display: flex; flex-direction: column; font-size: 12px; gap: 3px; }
+.v3s-grid input, .v3s-fl textarea { padding: 6px 8px; border: 1px solid var(--border, #cbd5e1); border-radius: 6px; font-family: inherit; }
+.v3s-fl textarea { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+.v3s-gen { font-size: 12px; margin: 6px 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; } .v3s-gen input[type=number] { width: 56px; }
+.v3s-img { display: flex; align-items: center; gap: 10px; margin: 8px 0; } .v3s-img img { height: 70px; border-radius: 6px; }
+@media (max-width: 1100px) { .v3d-main { grid-template-columns: 1fr; height: auto; } .v3d-stage { height: 60vh; } .v3d-kpis { grid-template-columns: repeat(3, 1fr); } .v3s-grid { grid-template-columns: 1fr; } }
+
 </style>
 </head>
 <body>
@@ -1402,6 +1456,11 @@ const I18N = {
     nav_psd: "PSD — การวิเคราะห์และแก้ไข",
     nav_admin_group: "ผู้ดูแลระบบ",
     nav_buildings: "อาคาร / BU",
+    nav_v3d_setup: "ตั้งค่าโมเดล 3D",
+    title_v3d: "3D QSHE — โมเดลอาคาร",
+    sub_v3d: "คลิกอาคาร/ชั้น เพื่อทำงาน Checklist · IR · PSD · Data Record Report · Action Plan ผ่านภาพ 3D",
+    title_v3d_setup: "ตั้งค่าโมเดล 3D",
+    sub_v3d_setup: "กำหนดอาคาร ชั้น ห้อง และอัปโหลดภาพ 3D",
     nav_users: "ผู้ใช้งาน",
     nav_masterplan_group: "MASTER PLAN ACTIVITY",
     nav_risk_group: "Risk Assessment",
@@ -1527,6 +1586,11 @@ const I18N = {
     nav_psd: "PSD — Corrective & Root Cause Analysis",
     nav_admin_group: "Administration",
     nav_buildings: "Buildings / BU",
+    nav_v3d_setup: "3D model setup",
+    title_v3d: "3D QSHE — Building model",
+    sub_v3d: "Click a building / floor to work with Checklist · IR · PSD · Data Record Reports · Action Plan in 3D",
+    title_v3d_setup: "3D model setup",
+    sub_v3d_setup: "Define buildings, floors, rooms and upload 3D pictures",
     nav_users: "Users",
     nav_masterplan_group: "MASTER PLAN ACTIVITY",
     nav_risk_group: "Risk Assessment",
@@ -1709,7 +1773,7 @@ const DB_PREFIX = "qshe_";
  */
 const Scope = {
   _c: null,
-  COLLS: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpUnits", "mpScores", "mpForms", "drrRecords", "psdAnalyses"],
+  COLLS: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpUnits", "mpScores", "mpForms", "drrRecords", "psdAnalyses", "v3dBuildings"],
   CODE_ALIASES: { "001": ["sama garden", "sama"], "002": ["beat active"], "003": ["park x ekkamai", "ekm", "ekkamai"], "004": ["beat discovery"], "005": ["hotel23", "hotel 23"], "007": ["one udomsuk", "ous", "udomsuk"], "008": ["sls", "sunny", "sunny life style"] },
   scoped(name) { return this.COLLS.indexOf(name) >= 0; },
   reset() { this._c = null; },
@@ -1758,6 +1822,7 @@ const Scope = {
       case "mpUnits": return c.uset.has(r.id);
       case "mpScores": case "mpForms": return c.uset.has(r.unitId);
       case "drrRecords": { const d = r.d || {}; return r.report === "cfg" || this.nameOk(d.site) || r.by === c.uname; }
+      case "v3dBuildings": return this.nameOk(r.name) || this.nameOk(r.unitName);
       case "psdAnalyses": return this.nameOk(r.bu) || this.nameOk(r.location) || this.nameOk(r.site) || r.by === c.uname;
     }
     return true;
@@ -1791,7 +1856,7 @@ const DB = {
    * On each write we stamp changed records with `_u` (ISO time) and remember deletions as tombstones,
    * so all existing code that calls DB.set(name, array) becomes sync-aware without further changes.
    */
-  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords", "auditLog", "users", "psdAnalyses"],
+  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords", "auditLog", "users", "psdAnalyses", "v3dBuildings"],
   _stable(r) {
     const c = Object.assign({}, r); delete c._u; return JSON.stringify(c);
   },
@@ -1876,6 +1941,7 @@ const DB = {
   },
   ensureSeeded() {
     if (this.get("users", null) === null) this.set("users", SEED.users);
+    if (typeof v3dEnsure === "function") v3dEnsure();
     if (this.get("buildings", null) === null) this.set("buildings", SEED.buildings, { raw: true });
     if (this.get("processStatus", null) === null) this.set("processStatus", SEED.processStatus, { raw: true });
     if (this.get("okrs", null) === null) this.set("okrs", SEED.okrs, { raw: true });
@@ -1887,7 +1953,7 @@ const DB = {
     if (this.get("mpForms", null) === null) this.set("mpForms", [], { raw: true });
   },
   resetAll() {
-    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "auditLog", "drrRecords", "drrCfg", "psdAnalyses", "syncCfg", "syncMeta", "syncTomb", "session"].forEach((k) =>
+    ["users", "buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "auditLog", "drrRecords", "drrCfg", "psdAnalyses", "v3dBuildings", "syncCfg", "syncMeta", "syncTomb", "session"].forEach((k) =>
       localStorage.removeItem(this._key(k))
     );
     this.ensureSeeded();
@@ -5601,6 +5667,655 @@ function renderIrDashCard(host) {
 }
 
 /**
+ * qshe3d.js  —  "3D QSHE" view (V1.01)
+ *  - page `v3d`        : 3D model of every building; click a building / floor to work with its QSHE data
+ *                        (Checklist, Incident IR, PSD, Data Record Reports, Action Plan) without leaving the 3D page.
+ *  - page `v3d_setup`  : admin page to define buildings, blocks, floors, rooms and to upload a 3D picture.
+ *  - Data: synced collection `v3dBuildings` (layout only). No existing QSHE data is changed by this file:
+ *    everything on the 3D page is READ from the same collections the back office uses, and edits go through the
+ *    same forms/functions as the back office.
+ *  - three.js is loaded on demand from a CDN the first time the 3D page is opened.
+ */
+const V3D_THREE_URL = "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+
+// ---------------------------------------------------------------- demo data ---
+const V3D_SEED = (() => {
+  const F = (bid, name, use, rooms) => ({ id: bid + "-" + String(name).replace(/[^A-Za-z0-9]/g, ""), name, use: use || "", rooms: rooms || "" });
+  const blk = (id, name, floors) => ({ id, name, floors: floors.map((f) => F(id, f[0], f[1], f[2])) });
+  const stack = (id, below, top, use, g) => {
+    const out = [];
+    for (let i = below; i >= 1; i--) out.push(["B" + i, "ชั้นใต้ดิน"]);
+    out.push(["G", g || use]);
+    for (let i = 2; i <= top; i++) out.push([String(i), use]);
+    return out;
+  };
+  const ous = (L) => blk("ous-" + L.toLowerCase(), "อาคาร " + L, [["G", "ร้านอาหาร"], ["2", "สำนักงานให้เช่า"], ["3", "สำนักงานให้เช่า"], ["4", "สำนักงานให้เช่า"]]);
+  return [
+    { id: "v3d-sama", name: "SAMA Garden", unitName: "SAMA Garden", type: "ต้นไม้ / ร้านอาหาร / กาแฟ", desc: "1 อาคาร 1 ชั้น + ชั้นลอย (1M) จำหน่ายต้นไม้สวยงาม ร้านอาหาร ร้านกาแฟ ชั้นลอยเป็นร้านอาหารเป็นหลัก", blocks: [blk("sama", "อาคาร 1", [["G", "จำหน่ายต้นไม้ + ร้านอาหาร + ร้านกาแฟ"], ["1M", "ร้านอาหาร (ชั้นลอย)"]])] },
+    { id: "v3d-beat-a", name: "BEAT Active", unitName: "BEAT Active", type: "สวนสนุก", desc: "1 อาคาร 1 ชั้น + ชั้นลอย (1M) อุปกรณ์เป็นเครื่องเล่นสวนสนุกเป็นหลัก", blocks: [blk("beata", "อาคาร 1", [["G", "เครื่องเล่นสวนสนุก"], ["1M", "เครื่องเล่น / พื้นที่กิจกรรม (ชั้นลอย)"]])] },
+    { id: "v3d-ekm", name: "Park X Ekkamai (EKM)", unitName: "Park X Ekkamai (EKM)", type: "ลานจอดรถให้เช่า + ร้านอาหาร", desc: "1 อาคาร 8 ชั้น + B1 อาคารจอดรถให้เช่าเป็นหลัก ร้านอาหารชั้น G และชั้น 8", blocks: [blk("ekm", "อาคาร 1", [["B1", "ชั้นใต้ดิน"], ["G", "ร้านอาหาร"], ["2", "ลานจอดรถ"], ["3", "ลานจอดรถ"], ["4", "ลานจอดรถ"], ["5", "ลานจอดรถ"], ["6", "ลานจอดรถ"], ["7", "ลานจอดรถ"], ["8", "ร้านอาหาร"]])] },
+    { id: "v3d-beat-d", name: "BEAT Discovery", unitName: "BEAT Discovery", type: "สนามกีฬา", desc: "อาคาร 2 ชั้น สนามแบดมินตันและเทนนิส", blocks: [blk("beatd", "อาคาร 1", [["1", "สนามแบดมินตัน"], ["2", "สนามเทนนิส"]])] },
+    { id: "v3d-ous", name: "One Udomsuk (OUS)", unitName: "One Udomsuk (OUS)", type: "สำนักงานให้เช่า + ร้านอาหาร", desc: "5 อาคาร (A–E) อาคารละ 4 ชั้น สำนักงานให้เช่า ชั้น G เป็นร้านอาหาร", blocks: ["A", "B", "C", "D", "E"].map(ous) },
+    { id: "v3d-bd-retail", name: "BEAT Discovery (Retail)", unitName: "BEAT Discovery (Retail)", type: "ร้านค้าให้เช่า + คลินิก", desc: "อยู่ในพื้นที่เดียวกับ BEAT Discovery · 1 อาคาร 2 ชั้น ร้านค้าให้เช่า ชั้น 2 เป็นคลินิกสุขภาพความงาม", blocks: [blk("bdr", "อาคาร 1", [["1", "ร้านค้าให้เช่า"], ["2", "คลินิกสุขภาพและความงาม"]])] },
+    { id: "v3d-hotel", name: "SAMA Living Hotel Asoke", unitName: "SAMA Living Hotel Asoke", type: "โรงแรม", desc: "1 อาคาร 8 ชั้น + Roof top + ชั้นใต้ดิน B1, B2 โรงแรมห้องพัก", blocks: [blk("hotel", "อาคาร 1", [["B2", "ชั้นใต้ดิน"], ["B1", "ชั้นใต้ดิน"]].concat([["G", "ล็อบบี้ / ห้องอาหาร (โรงแรม)"]], [2, 3, 4, 5, 6, 7, 8].map((n) => [String(n), "ห้องพักโรงแรม"]), [["Roof", "Roof top"]]))] }
+  ];
+})();
+
+function v3dEnsure() {
+  try { if (DB._raw("v3dBuildings", null) === null) DB.set("v3dBuildings", JSON.parse(JSON.stringify(V3D_SEED)), { raw: true }); } catch (e) { /* ignore */ }
+}
+
+// ------------------------------------------------------------ name matching ---
+const v3dNorm = (s) => Scope.norm(s);
+/** how well does a report site / unit name belong to a building: 3 exact, 2 same short name, 1 partial, 0 none */
+function v3dScore(b, name) {
+  const mine = [b.unitName, b.name].filter(Boolean), cs = Scope.cands(name);
+  if (!cs.length) return 0;
+  let best = 0;
+  mine.forEach((m) => {
+    const full = v3dNorm(m);
+    if (v3dNorm(name) === full) best = Math.max(best, 3);
+    Scope.cands(m).forEach((mc) => cs.forEach((c) => {
+      if (c === mc) best = Math.max(best, 2);
+      else if (c.length >= 5 && mc.length >= 5 && (c.includes(mc) || mc.includes(c))) best = Math.max(best, 1);
+    }));
+  });
+  return best;
+}
+function v3dAssign(name, list) {
+  let best = null, bs = 0;
+  (list || DB.get("v3dBuildings", [])).forEach((b) => { const s = v3dScore(b, name); if (s > bs) { bs = s; best = b; } });
+  return best;
+}
+
+// --------------------------------------------------------------- statistics ---
+/** QSHE numbers per building (read-only) */
+function v3dData() {
+  const bs = DB.get("v3dBuildings", []), out = {};
+  bs.forEach((b) => { out[b.id] = { b, unit: null, S: null, ir: [], psd: [], drr: {}, plan: [], sites: new Set() }; });
+  DB.get("mpUnits", []).forEach((u) => { const b = v3dAssign(u.name, bs); if (b && !out[b.id].unit) { out[b.id].unit = u; } });
+  Object.keys(out).forEach((id) => { const o = out[id]; if (o.unit) { try { o.S = mpStats([o.unit.id]); o.visits = mpVisits(o.unit.id).length; } catch (e) { o.S = null; } } });
+  DB.get("drrRecords", []).forEach((r) => {
+    if (!r.d || r.report === "cfg") return;
+    const b = v3dAssign(r.d.site, bs); if (!b) return;
+    const o = out[b.id]; o.sites.add(r.d.site);
+    const rep = r.report === "ts1" || r.report === "ts2" || r.report === "tsprof" ? "ts" : r.report;
+    o.drr[rep] = (o.drr[rep] || 0) + 1;
+    if ((r.report === "lp" || r.report === "tw") && r.d.date) o.ir.push(r);
+  });
+  try {
+    psdFindings().forEach((f) => { const b = v3dAssign(f.site, bs); if (b) out[b.id].psd.push(Object.assign({ st: (psdFor(f.key) || {}).status || "open" }, f)); });
+  } catch (e) { /* ignore */ }
+  const plans = DB.get("mpPlans", []);
+  bs.forEach((b) => {
+    const keys = Scope.cands(b.unitName || b.name).filter((k) => k.length >= 5);
+    out[b.id].plan = plans.filter((p) => { const loc = v3dNorm(p.location); return keys.some((k) => loc.includes(k)); });
+  });
+  Object.keys(out).forEach((id) => {
+    const o = out[id];
+    o.irStat = irStats(o.ir.slice(), false);
+    o.psdOpen = o.psd.filter((x) => x.st !== "closed").length;
+    const crit = o.S ? (o.S.risk.critical || 0) + (o.S.risk.high || 0) : 0;
+    o.crit = crit;
+    const pct = o.S ? o.S.pct : null;
+    o.status = o.irStat.open > 0 || crit > 0 ? "crit" : o.psdOpen > 0 || (pct !== null && pct < MP_TARGET) ? "warn" : pct === null && !o.ir.length && !o.psd.length ? "none" : "ok";
+  });
+  return out;
+}
+const V3_ST = { ok: 0x22c55e, warn: 0xf59e0b, crit: 0xef4444, none: 0x64748b };
+const V3_CSS = { ok: "#22c55e", warn: "#f59e0b", crit: "#ef4444", none: "#64748b" };
+
+function v3dFloorColor(use, name) {
+  const u = String(use || "") + " " + String(name || "");
+  if (/ใต้ดิน|^B\d/i.test(u)) return 0x475569;
+  if (/จอดรถ/.test(u)) return 0x64748b;
+  if (/คลินิก|ร้านค้า/.test(u)) return 0xec4899;
+  if (/โรงแรม|ห้องพัก/.test(u)) return 0x8b5cf6;
+  if (/Roof/i.test(u)) return 0x94a3b8;
+  if (/สนาม|เครื่องเล่น|สวนสนุก/.test(u)) return 0x22c55e;
+  if (/ร้านอาหาร|กาแฟ|ต้นไม้/.test(u)) return 0xf97316;
+  if (/สำนักงาน/.test(u)) return 0x3b82f6;
+  return 0x38bdf8;
+}
+
+// ------------------------------------------------------------------ 3D state ---
+const V3 = { T: null, failed: false, loading: false, sel: null, blk: null, flr: null, tab: "ov", explode: false, raf: 0, items: [], people: [], gap: 0.06, tgap: 0.06, cam: null, pick: [], R: null, data: {}, imgCache: {} };
+const V3_ROLES = [["staff", "พนักงาน", "Staff", "#3b82f6"], ["tech", "ช่าง", "Technician", "#f97316"], ["clean", "แม่บ้าน", "Housekeeping", "#ec4899"], ["sec", "รปภ.", "Security", "#8b5cf6"], ["contractor", "ผู้รับเหมา", "Contractor", "#eab308"], ["guest", "ลูกค้า/ผู้มาติดต่อ", "Visitor", "#22c55e"]];
+
+async function v3dLoadThree() {
+  if (V3.T) return V3.T;
+  V3.T = await import(window.V3D_THREE_URL || V3D_THREE_URL);
+  return V3.T;
+}
+
+function v3dBuildingBox(b) {
+  const n = (b.blocks || []).length || 1, many = n > 1;
+  const bw = many ? 4 : 6.4, bd = many ? 4.6 : 5.6, gap = 0.6;
+  const maxF = Math.max(1, ...(b.blocks || []).map((k) => (k.floors || []).length));
+  return { bw, bd, gap, w: n * bw + (n - 1) * gap, d: bd, floors: maxF };
+}
+
+function v3dClearScene() {
+  const R = V3.R; if (!R) return;
+  while (R.root.children.length) { const c = R.root.children[0]; R.root.remove(c); c.traverse && c.traverse((o) => { if (o.geometry && !o.userData.shared) o.geometry.dispose(); if (o.material && !o.userData.sharedMat) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose()); }); }
+  V3.items = []; V3.people = []; V3.pick = [];
+  const lb = document.getElementById("v3d-labels"); if (lb) lb.innerHTML = "";
+}
+
+/** (re)build every building from the stored layout */
+function v3dBuildScene() {
+  const R = V3.R, T = V3.T; if (!R || !T) return;
+  v3dClearScene();
+  V3.data = v3dData();
+  const bs = DB.get("v3dBuildings", []);
+  // layout: rows of buildings
+  const rowMax = 42, space = 4.5; let x = 0, z = 0, rowD = 0; const places = [];
+  bs.forEach((b) => {
+    const bx = v3dBuildingBox(b);
+    if (x > 0 && x + bx.w > rowMax) { x = 0; z += rowD + space; rowD = 0; }
+    places.push({ b, bx, x: x + bx.w / 2, z: z + bx.d / 2 });
+    x += bx.w + space; rowD = Math.max(rowD, bx.d);
+  });
+  const maxX = Math.max(10, ...places.map((p) => p.x + p.bx.w / 2)), maxZ = Math.max(10, ...places.map((p) => p.z + p.bx.d / 2));
+  places.forEach((p) => { p.x -= maxX / 2; p.z -= maxZ / 2; });
+  V3.bounds = { w: maxX, d: maxZ };
+  const fh = 1;
+  places.forEach((p) => {
+    const { b, bx } = p, d = V3.data[b.id], g = new T.Group(); g.position.set(p.x, 0, p.z); R.root.add(g);
+    const plate = new T.Mesh(new T.BoxGeometry(bx.w + 1.6, 0.18, bx.d + 1.6), new T.MeshStandardMaterial({ color: 0x14213a, roughness: 0.9 }));
+    plate.position.y = -0.1; plate.receiveShadow = true; g.add(plate);
+    const it = { b, g, floors: [], cx: p.x, cz: p.z, bx, top: 0, status: d ? d.status : "none" };
+    const blocks = b.blocks || [];
+    blocks.forEach((blk, bi) => {
+      const ox = -bx.w / 2 + bx.bw / 2 + bi * (bx.bw + bx.gap);
+      (blk.floors || []).forEach((f, fi) => {
+        const col = v3dFloorColor(f.use, f.name);
+        const m = new T.Mesh(new T.BoxGeometry(bx.bw, fh * 0.84, bx.bd), new T.MeshStandardMaterial({ color: col, roughness: 0.55, metalness: 0.1, transparent: true, opacity: 0.93, emissive: col, emissiveIntensity: 0.05 }));
+        m.castShadow = true; m.receiveShadow = true; m.position.x = ox;
+        const ed = new T.LineSegments(new T.EdgesGeometry(m.geometry), new T.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.28 }));
+        m.add(ed);
+        // little "windows" strip
+        const win = new T.Mesh(new T.BoxGeometry(bx.bw + 0.02, fh * 0.22, bx.bd + 0.02), new T.MeshStandardMaterial({ color: 0xbfdbfe, transparent: true, opacity: 0.35, roughness: 0.2 }));
+        m.add(win);
+        m.userData = { b, blk, fl: f, fi, bi, col };
+        g.add(m); V3.pick.push(m);
+        it.floors.push({ m, ox, fi, blk, fl: f, col });
+      });
+      it.top = Math.max(it.top, (blk.floors || []).length);
+    });
+    const beacon = new T.Mesh(new T.SphereGeometry(0.34, 14, 10), new T.MeshBasicMaterial({ color: V3_ST[it.status] }));
+    g.add(beacon); it.beacon = beacon;
+    // label
+    const el = document.createElement("div"); el.className = "v3d-lbl"; el.dataset.b = b.id;
+    document.getElementById("v3d-labels").appendChild(el); it.el = el;
+    V3.items.push(it);
+  });
+  // ground
+  const gs = Math.max(maxX, maxZ) + 40;
+  const ground = new T.Mesh(new T.PlaneGeometry(gs * 2, gs * 2), new T.MeshStandardMaterial({ color: 0x0e1a2f, roughness: 1 }));
+  ground.rotation.x = -Math.PI / 2; ground.position.y = -0.2; ground.receiveShadow = true; R.root.add(ground);
+  v3dMakePeople();
+  v3dApplyLook(true);
+  v3dUpdateLabels(true);
+}
+
+/** demo people (counts are samples until a real source is connected) */
+function v3dMakePeople() {
+  const T = V3.T, R = V3.R; V3.people = [];
+  const body = new T.CylinderGeometry(0.11, 0.13, 0.34, 8), head = new T.SphereGeometry(0.1, 8, 6);
+  let seed = 7; const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+  const mats = {}; V3_ROLES.forEach((r) => { mats[r[0]] = new T.MeshStandardMaterial({ color: r[3], roughness: 0.6 }); });
+  V3.items.forEach((it) => {
+    const nf = Math.max(1, it.top), n = Math.min(10, 2 + Math.round(nf * 0.6));
+    for (let i = 0; i < n; i++) {
+      const role = V3_ROLES[Math.floor(rnd() * V3_ROLES.length)][0];
+      const grp = new T.Group();
+      const bo = new T.Mesh(body, mats[role]); bo.position.y = 0.17; const he = new T.Mesh(head, mats[role]); he.position.y = 0.42;
+      bo.userData.shared = he.userData.shared = true; bo.userData.sharedMat = he.userData.sharedMat = true;
+      grp.add(bo, he); grp.scale.setScalar(1.9); R.root.add(grp);
+      const fi = Math.floor(rnd() * nf), bi = Math.floor(rnd() * Math.max(1, (it.b.blocks || []).length));
+      const P = { grp, it, role, fi, bi, x: 0, z: 0, tx: 0, tz: 0, sp: 0.4 + rnd() * 0.5 };
+      V3.people.push(P); v3dPersonTarget(P, rnd, true);
+    }
+  });
+}
+function v3dPersonTarget(P, rnd, snap) {
+  const it = P.it, bx = it.bx, ox = -bx.w / 2 + bx.bw / 2 + P.bi * (bx.bw + bx.gap);
+  P.tx = it.cx + ox + (rnd() - 0.5) * (bx.bw - 0.8); P.tz = it.cz + (rnd() - 0.5) * (bx.bd - 0.8);
+  if (snap) { P.x = P.tx; P.z = P.tz; }
+}
+
+/** dimming / selection look + floor heights */
+function v3dApplyLook(snap) {
+  const sel = V3.sel;
+  V3.items.forEach((it) => {
+    const on = !sel || sel === it.b.id;
+    it.floors.forEach((f) => {
+      const mat = f.m.material, hit = on && V3.flr === f.fl.id && sel === it.b.id;
+      const hidden = on && sel === it.b.id && V3.flr && V3.flr !== f.fl.id;
+      mat.opacity = !on ? 0.22 : hidden ? 0.3 : 0.93;
+      mat.emissiveIntensity = hit ? 0.75 : 0.05;
+      mat.emissive.setHex(hit ? 0xffffff : f.col);
+    });
+    it.beacon.visible = on;
+  });
+  v3dPlaceFloors();
+}
+function v3dPlaceFloors() {
+  const gap = V3.gap, fh = 1;
+  V3.items.forEach((it) => {
+    it.floors.forEach((f) => { f.m.position.y = f.fi * (fh + gap) + fh * 0.42; f.m.position.x = f.ox; });
+    it.topY = it.top * (fh + gap);
+    it.beacon.position.set(0, it.topY + 0.7, 0);
+  });
+}
+
+// ------------------------------------------------------------- camera / input ---
+function v3dCamTo(az, pol, dist, tx, ty, tz) { const c = V3.cam; c.t = { az, pol, dist, tx, ty, tz }; }
+function v3dOverview() {
+  const b = V3.bounds || { w: 40, d: 20 }, tall = Math.max(8, ...V3.items.map((i) => i.topY || 0));
+  v3dCamTo(-0.6, 1.0, Math.max(b.w * 1.3, b.d * 2.4, tall * 2.8) + 14, 0, tall * 0.25, 0);
+}
+function v3dFocus(id) {
+  const it = V3.items.find((i) => i.b.id === id); if (!it) return v3dOverview();
+  const h = Math.max(2, it.topY || it.top * 1.06), s = Math.max(h * 2.1, it.bx.w * 2.1, 13);
+  v3dCamTo(-0.55, 1.05, s + 8, it.cx, h * 0.45, it.cz);
+}
+function v3dCamApply() {
+  const c = V3.cam, k = 0.14, t = c.t;
+  if (t) { ["az", "pol", "dist", "tx", "ty", "tz"].forEach((a) => { c[a] += (t[a] - c[a]) * k; }); }
+  const sp = Math.sin(c.pol), cp = Math.cos(c.pol);
+  V3.R.camera.position.set(c.tx + c.dist * sp * Math.sin(c.az), c.ty + c.dist * cp, c.tz + c.dist * sp * Math.cos(c.az));
+  V3.R.camera.lookAt(c.tx, c.ty, c.tz);
+}
+function v3dWireInput(el) {
+  const ptrs = new Map(); let moved = 0, last = null, pinch = 0;
+  el.style.touchAction = "none";
+  el.addEventListener("contextmenu", (e) => e.preventDefault());
+  el.addEventListener("pointerdown", (e) => { el.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); moved = 0; last = { x: e.clientX, y: e.clientY }; if (ptrs.size === 2) pinch = 0; });
+  el.addEventListener("pointermove", (e) => {
+    const c = V3.cam; if (!c) return;
+    if (!ptrs.has(e.pointerId)) { v3dHover(e); return; }
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ptrs.size === 2) {
+      const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (pinch) { const f = pinch / d; c.dist = c.t.dist = Math.max(4, Math.min(160, c.dist * f)); }
+      pinch = d; moved = 99; return;
+    }
+    const dx = e.clientX - last.x, dy = e.clientY - last.y; last = { x: e.clientX, y: e.clientY }; moved += Math.abs(dx) + Math.abs(dy);
+    if (e.buttons & 2 || e.shiftKey) {
+      const k = c.dist * 0.0016, cs = Math.cos(c.az), sn = Math.sin(c.az);
+      c.tx -= (dx * cs) * k; c.tz += (dx * sn) * k; c.tx -= (dy * sn) * k; c.tz -= (dy * cs) * k; c.t.tx = c.tx; c.t.tz = c.tz;
+    } else {
+      c.az -= dx * 0.006; c.pol = Math.max(0.15, Math.min(1.5, c.pol - dy * 0.006)); c.t.az = c.az; c.t.pol = c.pol;
+    }
+  });
+  const up = (e) => { const had = ptrs.delete(e.pointerId); if (had && moved < 6 && e.type === "pointerup") v3dPickAt(e); if (!ptrs.size) pinch = 0; };
+  el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up);
+  el.addEventListener("wheel", (e) => { e.preventDefault(); const c = V3.cam; c.dist = c.t.dist = Math.max(4, Math.min(160, c.dist * (e.deltaY > 0 ? 1.1 : 0.9))); }, { passive: false });
+  el.addEventListener("dblclick", () => { V3.sel = null; V3.flr = null; v3dApplyLook(); v3dOverview(); v3dRenderSide(); });
+}
+function v3dRay(e) {
+  const T = V3.T, r = V3.R.renderer.domElement.getBoundingClientRect();
+  const m = new T.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  const ray = new T.Raycaster(); ray.setFromCamera(m, V3.R.camera);
+  const hits = ray.intersectObjects(V3.pick, false);
+  return hits.length ? hits[0].object.userData : null;
+}
+function v3dPickAt(e) {
+  const u = v3dRay(e);
+  if (!u) { V3.sel = null; V3.flr = null; v3dApplyLook(); v3dOverview(); v3dRenderSide(); return; }
+  if (V3.sel === u.b.id) { V3.flr = V3.flr === u.fl.id ? null : u.fl.id; V3.blk = u.blk.id; }
+  else { V3.sel = u.b.id; V3.flr = null; V3.blk = null; v3dFocus(u.b.id); }
+  v3dApplyLook(); v3dRenderSide();
+}
+let v3dHoverT = 0;
+function v3dHover(e) {
+  const now = performance.now(); if (now - v3dHoverT < 70) return; v3dHoverT = now;
+  const tip = document.getElementById("v3d-tip"); if (!tip) return;
+  const u = v3dRay(e);
+  if (!u) { tip.style.display = "none"; return; }
+  const r = document.getElementById("v3d-stage").getBoundingClientRect();
+  tip.innerHTML = `<b>${mpEsc(u.b.name)}</b><br>${mpEsc(u.blk.name)} · ${mt("ชั้น", "Floor")} ${mpEsc(u.fl.name)}${u.fl.use ? "<br><span>" + mpEsc(u.fl.use) + "</span>" : ""}`;
+  tip.style.display = "block"; tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 220) + "px"; tip.style.top = e.clientY - r.top + 14 + "px";
+}
+
+// ------------------------------------------------------------------ frame loop ---
+function v3dUpdateLabels(force) {
+  const R = V3.R, T = V3.T; if (!R) return;
+  const st = document.getElementById("v3d-stage"); if (!st) return;
+  const w = st.clientWidth, h = st.clientHeight, v = new T.Vector3();
+  V3.items.forEach((it) => {
+    v.set(it.cx, (it.topY || 2) + 1.6, it.cz).project(R.camera);
+    const d = V3.data[it.b.id] || {}, on = !V3.sel || V3.sel === it.b.id;
+    if (force || it.el._k !== it.status + (d.irStat ? d.irStat.open : 0) + "|" + d.psdOpen) {
+      it.el._k = it.status + (d.irStat ? d.irStat.open : 0) + "|" + d.psdOpen;
+      it.el.innerHTML = `<i style="background:${V3_CSS[it.status]}"></i>${mpEsc(it.b.name)}${d.irStat && d.irStat.open ? `<em class="c">IR ${d.irStat.open}</em>` : ""}${d.psdOpen ? `<em class="w">PSD ${d.psdOpen}</em>` : ""}`;
+    }
+    const vis = v.z < 1 && Math.abs(v.x) < 1.2 && Math.abs(v.y) < 1.2;
+    it.el.style.display = vis ? "flex" : "none";
+    it.el.style.transform = `translate(-50%,-100%) translate(${((v.x + 1) / 2) * w}px,${((1 - v.y) / 2) * h}px)`;
+    it.el.style.opacity = on ? 1 : 0.35;
+    it.el.classList.toggle("sel", V3.sel === it.b.id);
+  });
+}
+function v3dFrame(ts) {
+  if (!document.getElementById("v3d-stage") || !V3.R) { V3.raf = 0; return; }
+  V3.raf = requestAnimationFrame(v3dFrame);
+  const R = V3.R, t = ts / 1000;
+  V3.gap += (V3.tgap - V3.gap) * 0.12; if (Math.abs(V3.tgap - V3.gap) > 0.002) v3dPlaceFloors();
+  v3dCamApply();
+  V3.items.forEach((it) => { const s = 1 + Math.sin(t * 3 + it.cx) * 0.18; it.beacon.scale.setScalar(s); });
+  V3.people.forEach((P) => {
+    const dx = P.tx - P.x, dz = P.tz - P.z, d = Math.hypot(dx, dz);
+    if (d < 0.08) { if (Math.random() < 0.02) v3dPersonTarget(P, Math.random); } else { P.x += (dx / d) * 0.012 * P.sp; P.z += (dz / d) * 0.012 * P.sp; }
+    P.grp.position.set(P.x, P.fi * (1 + V3.gap) + 0.04 + Math.abs(Math.sin(t * 6 * P.sp + P.fi)) * 0.015, P.z);
+    const on = !V3.sel || V3.sel === P.it.b.id; P.grp.visible = on && (!V3.flr || (V3.sel === P.it.b.id && P.it.floors.some((f) => f.fi === P.fi && f.fl.id === V3.flr)) || V3.sel !== P.it.b.id);
+  });
+  v3dUpdateLabels();
+  R.renderer.render(R.scene, R.camera);
+}
+function v3dResize() {
+  const st = document.getElementById("v3d-stage"); if (!st || !V3.R) return;
+  const w = st.clientWidth, h = st.clientHeight; if (!w || !h) return;
+  V3.R.renderer.setSize(w, h, false); V3.R.camera.aspect = w / h; V3.R.camera.updateProjectionMatrix();
+}
+
+async function v3dInitScene() {
+  const stage = document.getElementById("v3d-stage"), msg = document.getElementById("v3d-msg");
+  try {
+    const T = await v3dLoadThree();
+    if (!document.getElementById("v3d-stage")) return;
+    if (V3.R) { try { V3.R.renderer.dispose(); } catch (e) { /* ignore */ } V3.R = null; }
+    const renderer = new T.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
+    renderer.domElement.id = "v3d-canvas"; stage.insertBefore(renderer.domElement, stage.firstChild);
+    const scene = new T.Scene(); scene.background = new T.Color(0x0b1220); scene.fog = new T.Fog(0x0b1220, 90, 230);
+    const camera = new T.PerspectiveCamera(40, 1, 0.3, 600);
+    scene.add(new T.HemisphereLight(0xdbeafe, 0x1e293b, 1.25));
+    const sun = new T.DirectionalLight(0xffffff, 1.6); sun.position.set(22, 45, 18); sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048); const sc = sun.shadow.camera; sc.left = -60; sc.right = 60; sc.top = 60; sc.bottom = -60; sc.far = 160; scene.add(sun);
+    const grid = new T.GridHelper(300, 150, 0x16233b, 0x111a2d); grid.position.y = -0.19; scene.add(grid);
+    const root = new T.Group(); scene.add(root);
+    V3.R = { renderer, scene, camera, root };
+    V3.cam = { az: -0.6, pol: 1.0, dist: 60, tx: 0, ty: 3, tz: 0, t: { az: -0.6, pol: 1.0, dist: 60, tx: 0, ty: 3, tz: 0 } };
+    v3dWireInput(renderer.domElement); v3dResize();
+    v3dBuildScene(); v3dOverview(); V3.sel ? v3dFocus(V3.sel) : 0;
+    if (msg) msg.style.display = "none";
+    v3dRenderSide();
+    if (!V3.raf) V3.raf = requestAnimationFrame(v3dFrame);
+  } catch (e) {
+    console.error("3D failed", e); V3.failed = true;
+    if (msg) { msg.style.display = "flex"; msg.innerHTML = `<div>${mt("ไม่สามารถแสดงภาพ 3D ได้ (ต้องเชื่อมต่ออินเทอร์เน็ตและเบราว์เซอร์รองรับ WebGL) — ยังใช้รายการอาคารด้านข้างทำงานได้ตามปกติ", "3D view is unavailable (needs internet + WebGL). The building list still works.")}</div>`; }
+  }
+}
+
+// ------------------------------------------------------------------ UI: page ---
+const V3_TABS = [["ov", "ภาพรวม", "Overview"], ["chk", "Checklist", "Checklist"], ["ir", "Incident (IR)", "Incident (IR)"], ["psd", "PSD", "PSD"], ["drr", "Data Report", "Data Report"], ["plan", "Action Plan", "Action Plan"]];
+const V3_REPS = [["lp", "Live & Play"], ["tw", "Township"], ["food", "Food"], ["ww", "Waste water"], ["ts", "ทส.1 / ทส.2"], ["mwa", "MWA Raw Water"]];
+
+function renderV3d(root) {
+  v3dEnsure();
+  const bs = DB.get("v3dBuildings", []);
+  if (V3.sel && !bs.find((b) => b.id === V3.sel)) { V3.sel = null; V3.flr = null; }
+  root.innerHTML = `<div class="v3d" id="v3d">
+    <div class="v3d-kpis" id="v3d-kpis"></div>
+    <div class="v3d-main">
+      <aside class="v3d-left" id="v3d-left"></aside>
+      <div class="v3d-stage" id="v3d-stage"><div class="v3d-labels" id="v3d-labels"></div><div id="v3d-tip" class="v3d-tip"></div>
+        <div class="v3d-msg" id="v3d-msg"><div>${mt("กำลังโหลดโมเดล 3D…", "Loading 3D…")}</div></div>
+        <div class="v3d-tools">
+          <button id="v3d-home" title="${mt("มุมมองรวม", "Overview")}">⌂</button>
+          <button id="v3d-exp" title="${mt("แยกชั้น", "Explode floors")}" class="${V3.explode ? "on" : ""}">▦</button>
+        </div>
+        <div class="v3d-hint">${mt("ลาก = หมุน · คลิกขวา/Shift+ลาก = เลื่อน · ล้อเมาส์ = ซูม · คลิกอาคาร/ชั้น = เลือก · ดับเบิลคลิก = กลับมุมรวม", "Drag = rotate · right-drag/Shift = pan · wheel = zoom · click = select · double-click = reset")}</div>
+      </div>
+      <aside class="v3d-right" id="v3d-panel"></aside>
+    </div></div>`;
+  root.querySelector("#v3d-home").addEventListener("click", () => { V3.sel = null; V3.flr = null; v3dApplyLook(); v3dOverview(); v3dRenderSide(); });
+  root.querySelector("#v3d-exp").addEventListener("click", (e) => { V3.explode = !V3.explode; V3.tgap = V3.explode ? 0.9 : 0.06; e.currentTarget.classList.toggle("on", V3.explode); });
+  v3dRenderSide();
+  if (V3.R) { // canvas was removed with the old DOM: rebuild
+    try { V3.R.renderer.dispose(); } catch (e) { /* ignore */ }
+    V3.R = null;
+  }
+  if (!window._v3dRs) { window._v3dRs = true; window.addEventListener("resize", v3dResize); }
+  v3dInitScene();
+}
+
+/** re-read the data (after an edit in the side panel) without rebuilding the page */
+function v3dRefresh() {
+  if (!document.getElementById("v3d")) return;
+  if (V3.R) { const keep = V3.cam && Object.assign({}, V3.cam); v3dBuildScene(); if (keep) V3.cam = keep; }
+  v3dRenderSide();
+}
+
+function v3dRenderSide() {
+  if (!document.getElementById("v3d")) return;
+  V3.data = V3.data && Object.keys(V3.data).length && V3.R ? V3.data : v3dData();
+  const bs = DB.get("v3dBuildings", []), D = V3.data;
+  // KPIs
+  const all = bs.map((b) => D[b.id]).filter(Boolean);
+  const pcts = all.map((o) => (o.S ? o.S.pct : null)).filter((x) => x !== null);
+  const avg = pcts.length ? pcts.reduce((a, b) => a + b, 0) / pcts.length : null;
+  const sum = (f) => all.reduce((a, o) => a + f(o), 0);
+  const kp = document.getElementById("v3d-kpis");
+  const k = (c, label, val, sub) => `<div class="v3d-kpi ${c}"><span>${label}</span><b>${val}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
+  const nOK = all.filter((o) => o.status === "ok").length, nW = all.filter((o) => o.status === "warn").length, nC = all.filter((o) => o.status === "crit").length;
+  kp.innerHTML = k("ok", mt("อาคารปกติ", "Normal"), nOK) + k("crit", mt("วิกฤต/มี IR เปิด", "Critical / open IR"), nC) + k("warn", mt("ต้องติดตาม", "Follow-up"), nW) +
+    k("", "Checklist " + mt("เฉลี่ย", "avg"), avg === null ? "–" : avg.toFixed(1) + "%") + k("crit", "IR " + mt("เปิดอยู่", "open"), sum((o) => o.irStat.open)) + k("warn", "PSD " + mt("ค้างวิเคราะห์", "pending"), sum((o) => o.psdOpen)) +
+    k("", mt("ผู้ปฏิบัติงาน (ตัวอย่าง)", "People (demo)"), V3.people.length || "–");
+  // left: buildings
+  const left = document.getElementById("v3d-left");
+  const stLbl = { ok: mt("ปกติ", "OK"), warn: mt("ติดตาม", "Follow-up"), crit: mt("วิกฤต", "Critical"), none: mt("ยังไม่มีข้อมูล", "No data") };
+  let h = `<div class="v3d-h">${mt("อาคาร", "Buildings")}</div>` + bs.map((b) => {
+    const o = D[b.id] || {}, nf = (b.blocks || []).reduce((a, x) => a + (x.floors || []).length, 0);
+    return `<button class="v3d-b ${V3.sel === b.id ? "sel" : ""}" data-sel="${b.id}"><i style="background:${V3_CSS[o.status || "none"]}"></i><span><b>${mpEsc(b.name)}</b><small>${(b.blocks || []).length} ${mt("อาคาร", "blk")} · ${nf} ${mt("ชั้น", "fl.")} · ${stLbl[o.status || "none"]}</small></span></button>`;
+  }).join("");
+  const sb = V3.sel ? bs.find((b) => b.id === V3.sel) : null;
+  if (sb) {
+    h += `<div class="v3d-h">${mt("ชั้น", "Floors")} · ${mpEsc(sb.name)}</div>`;
+    (sb.blocks || []).forEach((blk) => {
+      if ((sb.blocks || []).length > 1) h += `<div class="v3d-blk">${mpEsc(blk.name)}</div>`;
+      h += [...(blk.floors || [])].reverse().map((f) => `<button class="v3d-f ${V3.flr === f.id ? "sel" : ""}" data-flr="${f.id}" data-blk="${blk.id}"><b>${mpEsc(f.name)}</b><span>${mpEsc(f.use)}</span></button>`).join("");
+    });
+  }
+  h += `<div class="v3d-h">${mt("ผู้ปฏิบัติงาน (ตัวอย่าง)", "People (demo)")}</div><div class="v3d-legend">` + V3_ROLES.map((r) => `<span><i style="background:${r[3]}"></i>${mt(r[1], r[2])} <b>${V3.people.filter((p) => p.role === r[0] && (!V3.sel || p.it.b.id === V3.sel)).length}</b></span>`).join("") + `</div>`;
+  h += `<div class="v3d-legend"><span><i style="background:#22c55e"></i>${mt("ปกติ", "OK")}</span><span><i style="background:#f59e0b"></i>${mt("ติดตาม", "Follow-up")}</span><span><i style="background:#ef4444"></i>${mt("วิกฤต", "Critical")}</span></div>`;
+  left.innerHTML = h;
+  left.querySelectorAll("[data-sel]").forEach((x) => x.addEventListener("click", () => { V3.sel = x.dataset.sel; V3.flr = null; V3.tab = "ov"; if (V3.R) { v3dApplyLook(); v3dFocus(V3.sel); } v3dRenderSide(); }));
+  left.querySelectorAll("[data-flr]").forEach((x) => x.addEventListener("click", () => { V3.flr = V3.flr === x.dataset.flr ? null : x.dataset.flr; V3.blk = x.dataset.blk; if (V3.R) v3dApplyLook(); v3dRenderSide(); }));
+  v3dRenderPanel();
+}
+
+function v3dRenderPanel() {
+  const P = document.getElementById("v3d-panel"); if (!P) return;
+  const bs = DB.get("v3dBuildings", []), b = bs.find((x) => x.id === V3.sel);
+  if (!b) {
+    P.innerHTML = `<div class="v3d-ph"><h3>${mt("ภาพรวมทุกอาคาร", "All buildings")}</h3><p>${mt("คลิกอาคารในภาพ 3D หรือในรายการด้านซ้ายเพื่อเริ่มทำงาน — Checklist, Incident (IR), PSD, Data Record Report และ Action Plan ของอาคารนั้นจะแสดงที่นี่", "Click a building in 3D or in the list to work with its Checklist, IR, PSD, Data Record Reports and Action Plan here.")}</p></div>` +
+      `<div class="v3d-sec">${v3dAllTable()}</div><div class="v3d-act"><button class="btn small" data-go="dashboard">${mt("เปิดหลังบ้าน", "Open back office")} ›</button></div>`;
+    P.querySelectorAll("[data-pick]").forEach((x) => x.addEventListener("click", () => { V3.sel = x.dataset.pick; V3.flr = null; if (V3.R) { v3dApplyLook(); v3dFocus(V3.sel); } v3dRenderSide(); }));
+    P.querySelectorAll("[data-go]").forEach((x) => x.addEventListener("click", () => navigate(x.dataset.go)));
+    return;
+  }
+  const o = V3.data[b.id] || { irStat: { open: 0, closed: 0, total: 0, days: 0 }, psd: [], drr: {}, plan: [], ir: [] };
+  const fl = V3.flr ? (b.blocks || []).flatMap((k) => k.floors || []).find((f) => f.id === V3.flr) : null;
+  let imgH = "";
+  if (b.img) imgH = `<img class="v3d-img" id="v3d-img" alt="" />`;
+  const stLbl = { ok: mt("ปกติ", "OK"), warn: mt("ต้องติดตาม", "Follow-up"), crit: mt("วิกฤต", "Critical"), none: mt("ยังไม่มีข้อมูล", "No data") };
+  let h = `<div class="v3d-ph"><div class="v3d-ptitle"><span class="v3d-dot" style="background:${V3_CSS[o.status || "none"]}"></span><div><h3>${mpEsc(b.name)}</h3><small>${mpEsc(b.type || "")} · ${stLbl[o.status || "none"]}</small></div></div>${imgH}${b.desc ? `<p>${mpEsc(b.desc)}</p>` : ""}
+    ${fl ? `<div class="v3d-flr"><b>${mt("ชั้น", "Floor")} ${mpEsc(fl.name)}</b> ${mpEsc(fl.use || "")}${fl.rooms ? `<br><small>${mt("ห้อง/พื้นที่", "Rooms")}: ${mpEsc(fl.rooms)}</small>` : ""}</div>` : ""}</div>`;
+  h += `<div class="v3d-tabs">${V3_TABS.map((x) => `<button class="${V3.tab === x[0] ? "on" : ""}" data-tab="${x[0]}">${mt(x[1], x[2])}</button>`).join("")}</div><div class="v3d-body">`;
+  const E = mpEsc;
+  const chip = (c, t_) => `<span class="v3d-chip ${c}">${t_}</span>`;
+  if (V3.tab === "ov") {
+    const S = o.S;
+    h += `<div class="v3d-grid">
+      <div><span>Checklist</span><b>${S ? mpFmtPct(S.pct) : "–"}</b></div><div><span>${mt("ความเสี่ยงสูง/วิกฤต", "High/critical")}</span><b>${o.crit || 0}</b></div>
+      <div><span>IR ${mt("เปิด / ปิด", "open / closed")}</span><b>${o.irStat.open} / ${o.irStat.closed}</b></div><div><span>${mt("วันปลอดอุบัติเหตุ", "Days safe")}</span><b>${o.irStat.days}</b></div>
+      <div><span>PSD ${mt("ค้าง", "pending")}</span><b>${o.psdOpen}</b></div><div><span>Action Plan</span><b>${(o.plan || []).length}</b></div></div>`;
+    h += `<div class="v3d-act"><button class="btn small" data-act="check">${mt("ทำ Checklist", "Checklist")}</button><button class="btn small ghost" data-act="addir">+ ${mt("แจ้ง Incident (IR)", "Report incident")}</button></div>`;
+  } else if (V3.tab === "chk") {
+    if (!o.unit) h += `<p class="muted-s">${mt("ยังไม่มีหน่วยงานใน Checklist ที่ตรงกับอาคารนี้ (เพิ่มได้ในหน้า Risk Assessment Checklist)", "No Checklist unit matches this building yet.")}</p>`;
+    else {
+      const S = o.S;
+      h += `<div class="v3d-grid"><div><span>${mt("หน่วยงาน", "Unit")}</span><b style="font-size:13px">${E(o.unit.name)}</b></div><div><span>${mt("คะแนนล่าสุด", "Latest")}</span><b>${S ? mpFmtPct(S.pct) : "–"}</b></div><div><span>${mt("ครั้งที่ตรวจ", "Visits")}</span><b>${o.visits || 0}</b></div></div>`;
+      if (S) h += `<div class="v3d-bars">${S.cats.map((c) => `<div><span>${E(mt(c.th, c.en))}</span><i><u style="width:${c.pct === null ? 0 : c.pct}%;background:${c.pct === null ? "#475569" : c.pct >= MP_TARGET ? "#22c55e" : c.pct >= 70 ? "#f59e0b" : "#ef4444"}"></u></i><b>${c.pct === null ? "–" : c.pct.toFixed(0) + "%"}</b></div>`).join("")}</div>`;
+      if (S && S.issues.length) h += `<div class="v3d-sub">${mt("ข้อที่ต้องแก้ไข (ต่ำ)", "Items to fix")}</div>` + S.issues.slice(0, 6).map((x) => `<div class="v3d-li">${chip(x.risk === "critical" ? "crit" : "warn", x.score)}<span>${E(x.item.id)} ${E(mpShort ? mpShort(x.item.text, 60) : x.item.text)}</span></div>`).join("");
+      h += `<div class="v3d-act"><button class="btn small" data-act="check">${mt("เปิด Checklist ในหลังบ้าน", "Open Checklist")} ›</button></div>`;
+    }
+  } else if (V3.tab === "ir") {
+    const rs = [...o.ir].sort((a, c) => (c.d.date || "").localeCompare(a.d.date || "")).slice(0, 8);
+    h += `<div class="v3d-grid"><div><span>${mt("ทั้งหมด", "Total")}</span><b>${o.irStat.total}</b></div><div><span>Open</span><b>${o.irStat.open}</b></div><div><span>Closed</span><b>${o.irStat.closed}</b></div></div>`;
+    h += rs.length ? rs.map((r) => `<div class="v3d-li">${chip(r.d.status === "closed" ? "ok" : "crit", r.d.status === "closed" ? "Closed" : "Open")}<span>${E(r.d.no || "")} ${E(r.d.type || "")} · ${E(r.d.date || "")}</span><button class="v3d-mini" data-edit-ir="${r.id}">${mt("แก้ไข", "Edit")}</button></div>`).join("") : `<p class="muted-s">${mt("ยังไม่มี IR", "No incidents")}</p>`;
+    h += `<div class="v3d-act"><button class="btn small" data-act="addir">+ ${mt("แจ้ง Incident (IR)", "Report incident")}</button><button class="btn small ghost" data-go="capa">${mt("หน้า Incident ในหลังบ้าน", "Incident page")} ›</button></div>`;
+  } else if (V3.tab === "psd") {
+    h += o.psd.length ? o.psd.slice(0, 12).map((f) => `<div class="v3d-li">${chip(f.st === "closed" ? "ok" : f.st === "doing" ? "warn" : "crit", f.st === "closed" ? "✔" : f.st === "doing" ? "▼" : "✖")}<span>${E(PSD_REPS[f.rep] || f.rep)} · ${E(f.title || "")} <small>${E(f.date || "")}</small></span><button class="v3d-mini" data-psd="${E(f.key)}">${mt("วิเคราะห์", "Analyse")}</button></div>`).join("") : `<p class="muted-s">${mt("ไม่มีรายการที่ไม่ผ่าน", "Nothing failing")}</p>`;
+    h += `<div class="v3d-act"><button class="btn small ghost" data-go="psd">${mt("หน้า PSD ในหลังบ้าน", "PSD page")} ›</button></div>`;
+  } else if (V3.tab === "drr") {
+    h += V3_REPS.map((r) => `<div class="v3d-li"><span><b>${E(r[1])}</b> · ${o.drr[r[0]] || 0} ${mt("รายการ", "records")}</span><button class="v3d-mini" data-drr-add="${r[0]}">+ ${mt("ลงข้อมูล", "Add")}</button><button class="v3d-mini" data-drr="${r[0]}">${mt("เปิด", "Open")}</button></div>`).join("");
+  } else if (V3.tab === "plan") {
+    h += (o.plan || []).length ? o.plan.map((p) => `<div class="v3d-li"><span>${E(String(p.step || "").trim())}<br><small>${E(p.start || "")} → ${E(p.end || "")}</small></span><select data-plan="${p.id}">${MP_PLAN_STATUS.map((s) => `<option value="${s.id}" ${p.status === s.id ? "selected" : ""}>${E(mt(s.th, s.en))}</option>`).join("")}</select></div>`).join("") : `<p class="muted-s">${mt("ไม่มีรายการ Action Plan ที่ระบุอาคารนี้ — ดูแผนรวมในหลังบ้าน", "No plan items name this building.")}</p>`;
+    h += `<div class="v3d-act"><button class="btn small ghost" data-go="mp_plan">${mt("QSHE Action Plan ในหลังบ้าน", "Action Plan page")} ›</button></div>`;
+  }
+  h += `</div><div class="v3d-act foot"><button class="btn small ghost" data-go="dashboard">${mt("หลังบ้าน", "Back office")} ›</button></div>`;
+  P.innerHTML = h;
+  if (b.img) { v3dLoadImg(b.id).then((u) => { const im = document.getElementById("v3d-img"); if (im && u) im.src = u; else if (im) im.remove(); }); }
+  P.querySelectorAll("[data-tab]").forEach((x) => x.addEventListener("click", () => { V3.tab = x.dataset.tab; v3dRenderPanel(); }));
+  P.querySelectorAll("[data-go]").forEach((x) => x.addEventListener("click", () => v3dGo(x.dataset.go, o, b)));
+  const site = () => v3dSiteFor(o, b);
+  P.querySelectorAll("[data-act]").forEach((x) => x.addEventListener("click", () => {
+    if (x.dataset.act === "check") { if (o.unit) MpCheckUI.unitId = o.unit.id; navigate("mp_check"); }
+    if (x.dataset.act === "addir") { DrrUI.site = site("lp"); drrOpenForm("lp", null, v3dRefresh); }
+  }));
+  P.querySelectorAll("[data-edit-ir]").forEach((x) => x.addEventListener("click", () => { const r = DB.get("drrRecords", []).find((y) => y.id === x.dataset.editIr); if (r) { DrrUI.site = (r.d || {}).site || "ALL"; drrOpenForm(r.report, r, v3dRefresh); } }));
+  P.querySelectorAll("[data-psd]").forEach((x) => x.addEventListener("click", () => { const f = o.psd.find((y) => y.key === x.dataset.psd); if (f) psdOpenForm(f, psdFor(f.key), v3dRefresh); }));
+  P.querySelectorAll("[data-drr]").forEach((x) => x.addEventListener("click", () => { DrrUI.site = site(x.dataset.drr); navigate("drr_" + x.dataset.drr); }));
+  P.querySelectorAll("[data-drr-add]").forEach((x) => x.addEventListener("click", () => { const rep = x.dataset.drrAdd; DrrUI.site = site(rep); drrOpenForm(rep, null, v3dRefresh); }));
+  P.querySelectorAll("[data-plan]").forEach((x) => x.addEventListener("change", () => { const all = DB.get("mpPlans", []), p = all.find((y) => y.id === x.dataset.plan); if (p) { p.status = x.value; DB.set("mpPlans", all); toast(mt("บันทึกแล้ว", "Saved")); v3dRefresh(); } }));
+}
+function v3dAllTable() {
+  const bs = DB.get("v3dBuildings", []), D = V3.data || {};
+  return `<table class="v3d-t"><thead><tr><th>${mt("อาคาร", "Building")}</th><th>Chk</th><th>IR</th><th>PSD</th></tr></thead><tbody>` + bs.map((b) => {
+    const o = D[b.id] || { irStat: { open: 0 }, psdOpen: 0 };
+    return `<tr data-pick="${b.id}"><td><i class="v3d-dot" style="background:${V3_CSS[o.status || "none"]}"></i>${mpEsc(b.name)}</td><td>${o.S ? mpFmtPct(o.S.pct) : "–"}</td><td>${o.irStat.open}</td><td>${o.psdOpen}</td></tr>`;
+  }).join("") + `</tbody></table>`;
+}
+function v3dSiteFor(o, b) {
+  return (rep) => {
+    const list = drrSiteList(rep === "ts" ? "ww" : rep), cand = [...o.sites].concat([b.unitName, b.name]);
+    const hit = list.find((s) => cand.some((c) => v3dNorm(c) === v3dNorm(s))) || list.find((s) => v3dAssign(s) && v3dAssign(s).id === b.id);
+    return hit || "ALL";
+  };
+}
+function v3dGo(page, o, b) {
+  if (page === "mp_plan" || page === "dashboard" || page === "psd" || page === "capa") { navigate(page); return; }
+  navigate(page);
+}
+async function v3dLoadImg(id) {
+  try { return await MpImg.get(MpImg.key("v3d", id, "img", 0)); } catch (e) { return null; }
+}
+
+// ------------------------------------------------------------- mode switch ---
+function v3dModeSwitchHtml() {
+  const on = (v) => (State.view === v ? "on" : "");
+  return `<div class="mode-sw" role="group" aria-label="3D / back office"><button data-mode="v3d" class="${on("v3d")}">3D</button><button data-mode="dashboard" class="${State.view === "v3d" ? "" : "on"}">${mt("หลังบ้าน", "Back office")}</button></div>`;
+}
+function v3dWireModeSwitch() {
+  document.querySelectorAll("#topbar [data-mode]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.mode)));
+}
+
+// --------------------------------------------------------------- setup page ---
+function v3dFloorsToText(b) {
+  return (b.blocks || []).map((k) => `# ${k.name}\n` + (k.floors || []).map((f) => [f.name, f.use || "", f.rooms || ""].join(" | ").replace(/( \| )+$/, "")).join("\n")).join("\n\n");
+}
+function v3dTextToBlocks(txt, bid, old) {
+  const blocks = []; let cur = null;
+  const oldF = {}; (old || []).forEach((k) => (k.floors || []).forEach((f) => { oldF[k.name + "|" + f.name] = f; }));
+  String(txt || "").split(/\r?\n/).forEach((ln) => {
+    const s = ln.trim(); if (!s) return;
+    if (s[0] === "#") { cur = { id: bid + "-b" + (blocks.length + 1), name: s.replace(/^#+\s*/, "") || "อาคาร " + (blocks.length + 1), floors: [] }; blocks.push(cur); return; }
+    if (!cur) { cur = { id: bid + "-b1", name: "อาคาร 1", floors: [] }; blocks.push(cur); }
+    const p = s.split("|").map((x) => x.trim());
+    cur.floors.push({ id: cur.id + "-" + (p[0] || "").replace(/[^A-Za-z0-9ก-๙]/g, "") + "-" + (cur.floors.length + 1), name: p[0] || String(cur.floors.length + 1), use: p[1] || "", rooms: p[2] || "" });
+  });
+  return blocks;
+}
+function v3dGenNames(below, top, mezz, roof) {
+  const o = [];
+  for (let i = below; i >= 1; i--) o.push("B" + i);
+  o.push("G"); if (mezz) o.push("M");
+  for (let i = 2; i <= top; i++) o.push(String(i));
+  if (roof) o.push("Roof");
+  return o;
+}
+
+function renderV3dSetup(root) {
+  v3dEnsure();
+  if (!Auth.isAdmin(State.user)) { root.innerHTML = `<div class="card">${mt("เฉพาะผู้ดูแลระบบ", "Administrators only")}</div>`; return; }
+  const bs = DB.get("v3dBuildings", []);
+  root.innerHTML = `<div class="card"><div class="muted-s" style="margin-bottom:10px">${mt("กำหนดอาคาร ชั้น และห้องสำหรับโมเดล 3D — ใส่ชั้นจากล่างขึ้นบน บรรทัดละ 1 ชั้น รูปแบบ: <code>ชื่อชั้น | การใช้งาน | ห้อง/พื้นที่ (คั่นด้วย ,)</code> · ขึ้นบรรทัด <code># ชื่ออาคาร</code> เพื่อเพิ่มอาคารย่อย (เช่น OUS A–E) · ช่อง “ชื่อที่ใช้เชื่อมข้อมูล” ต้องตรงกับชื่อหน่วยงานใน Checklist / Data Record Report เพื่อดึงตัวเลขมาแสดงอัตโนมัติ", "Define buildings, blocks and floors for the 3D model. One floor per line (bottom first): name | use | rooms. '# Block name' starts a new block. 'Data link name' must match the unit/site name used in the Checklist and Data Record Reports.")}</div>
+    <div id="v3s-list">${bs.map((b, i) => v3dSetupCard(b, i, bs.length)).join("")}</div>
+    <div class="actions" style="justify-content:flex-start;gap:8px"><button class="btn" id="v3s-add">+ ${mt("เพิ่มอาคาร", "Add building")}</button><button class="btn ghost" id="v3s-reset">${mt("คืนค่าตัวอย่าง (7 อาคาร)", "Restore demo (7 buildings)")}</button><button class="btn ghost" id="v3s-view">${mt("ดูโมเดล 3D", "View 3D")} ›</button></div></div>`;
+  const rerender = () => renderV3dSetup(root);
+  root.querySelector("#v3s-view").addEventListener("click", () => navigate("v3d"));
+  root.querySelector("#v3s-add").addEventListener("click", () => {
+    const all = DB.get("v3dBuildings", []); const id = uid("v3d");
+    all.push({ id, name: mt("อาคารใหม่", "New building"), unitName: "", type: "", desc: "", blocks: v3dTextToBlocks("# อาคาร 1\nG | \n2 | ", id) }); DB.set("v3dBuildings", all); rerender();
+  });
+  root.querySelector("#v3s-reset").addEventListener("click", () => {
+    if (!confirm(mt("คืนค่าเป็นอาคารตัวอย่าง 7 แห่ง? (ข้อมูล QSHE ไม่ถูกแตะต้อง)", "Restore the 7 demo buildings? (QSHE data is not touched)"))) return;
+    DB.set("v3dBuildings", JSON.parse(JSON.stringify(V3D_SEED))); V3.sel = null; rerender();
+  });
+  root.querySelectorAll(".v3s-card").forEach((card) => {
+    const id = card.dataset.id, q = (s) => card.querySelector(s);
+    q("[data-gen]").addEventListener("click", () => {
+      const names = v3dGenNames(+q("[data-gb]").value || 0, +q("[data-gt]").value || 1, q("[data-gm]").checked, q("[data-gr]").checked);
+      const b = DB.get("v3dBuildings", []).find((x) => x.id === id), old = {}; (b.blocks || []).forEach((k) => (k.floors || []).forEach((f) => { old[f.name] = f; }));
+      const blkName = ((b.blocks || [])[0] || {}).name || "อาคาร 1";
+      q("[data-floors]").value = "# " + blkName + "\n" + names.map((n) => [n, (old[n] || {}).use || (/^B/.test(n) ? "ชั้นใต้ดิน" : ""), (old[n] || {}).rooms || ""].join(" | ").replace(/( \| )+$/, "")).join("\n");
+    });
+    q("[data-save]").addEventListener("click", () => {
+      const all = DB.get("v3dBuildings", []), b = all.find((x) => x.id === id); if (!b) return;
+      b.name = q("[data-name]").value.trim() || b.name; b.unitName = q("[data-unit]").value.trim(); b.type = q("[data-type]").value.trim(); b.desc = q("[data-desc]").value.trim();
+      b.blocks = v3dTextToBlocks(q("[data-floors]").value, id, b.blocks);
+      DB.set("v3dBuildings", all); toast(mt("บันทึกแล้ว", "Saved")); rerender();
+    });
+    q("[data-del]").addEventListener("click", () => { if (!confirm(mt("ลบอาคารนี้ออกจากโมเดล 3D? (ข้อมูล QSHE ไม่ถูกลบ)", "Remove this building from the 3D model? (QSHE data stays)"))) return; DB.set("v3dBuildings", DB.get("v3dBuildings", []).filter((x) => x.id !== id)); MpImg.del(MpImg.key("v3d", id, "img", 0)).catch(() => {}); rerender(); });
+    q("[data-up]").addEventListener("click", () => v3dMove(id, -1, rerender)); q("[data-dn]").addEventListener("click", () => v3dMove(id, 1, rerender));
+    q("[data-img]").addEventListener("change", async (e) => {
+      const f = e.target.files[0]; if (!f) return;
+      try {
+        const data = await MpImg.compress(f); await MpImg.put(MpImg.key("v3d", id, "img", 0), data);
+        const all = DB.get("v3dBuildings", []), b = all.find((x) => x.id === id); b.img = true; DB.set("v3dBuildings", all); toast(mt("อัปโหลดภาพแล้ว", "Image uploaded")); rerender();
+      } catch (err) { toast(mt("อัปโหลดภาพไม่สำเร็จ", "Upload failed")); }
+    });
+    const rm = q("[data-imgdel]"); if (rm) rm.addEventListener("click", async () => { await MpImg.del(MpImg.key("v3d", id, "img", 0)).catch(() => {}); const all = DB.get("v3dBuildings", []), b = all.find((x) => x.id === id); b.img = false; DB.set("v3dBuildings", all); rerender(); });
+    const pv = q("[data-prev]"); if (pv) v3dLoadImg(id).then((u) => { if (u) pv.src = u; });
+  });
+}
+function v3dMove(id, d, done) {
+  const all = DB.get("v3dBuildings", []), i = all.findIndex((x) => x.id === id), j = i + d;
+  if (i < 0 || j < 0 || j >= all.length) return;
+  [all[i], all[j]] = [all[j], all[i]]; DB.set("v3dBuildings", all); done();
+}
+function v3dSetupCard(b, i, n) {
+  const E = mpEsc, nf = (b.blocks || []).reduce((a, k) => a + (k.floors || []).length, 0);
+  return `<details class="v3s-card" data-id="${b.id}" ${n <= 1 ? "open" : ""}><summary><b>${i + 1}. ${E(b.name)}</b> <small>${(b.blocks || []).length} ${mt("อาคารย่อย", "blocks")} · ${nf} ${mt("ชั้น", "floors")}${b.img ? " · 🖼" : ""}</small></summary>
+    <div class="v3s-grid">
+      <label>${mt("ชื่ออาคาร", "Name")}<input data-name value="${E(b.name)}"></label>
+      <label>${mt("ชื่อที่ใช้เชื่อมข้อมูล (หน่วยงาน/Site)", "Data link name (unit/site)")}<input data-unit value="${E(b.unitName || "")}" placeholder="One Udomsuk (OUS)"></label>
+      <label>${mt("ประเภท", "Type")}<input data-type value="${E(b.type || "")}"></label>
+      <label>${mt("รายละเอียด", "Description")}<input data-desc value="${E(b.desc || "")}"></label>
+    </div>
+    <div class="v3s-gen">${mt("สร้างรายชื่อชั้นอัตโนมัติ", "Generate floors")}: ${mt("ใต้ดิน", "basements")} <input type="number" min="0" max="6" value="0" data-gb> ${mt("ชั้นบนสุด", "top floor")} <input type="number" min="1" max="60" value="${Math.max(1, ((b.blocks || [])[0] || { floors: [] }).floors.length)}" data-gt> <label><input type="checkbox" data-gm> ${mt("ชั้นลอย", "mezz.")}</label> <label><input type="checkbox" data-gr> Roof</label> <button class="btn small ghost" type="button" data-gen>${mt("สร้าง", "Generate")}</button></div>
+    <label class="v3s-fl">${mt("ชั้น (จากล่างขึ้นบน)", "Floors (bottom first)")}<textarea data-floors rows="9">${E(v3dFloorsToText(b))}</textarea></label>
+    <div class="v3s-img">${b.img ? `<img data-prev alt="">` : ""}<label class="btn small ghost">${mt("อัปโหลดภาพ 3D / ภาพอาคาร", "Upload 3D / building picture")}<input type="file" accept="image/*" data-img hidden></label>${b.img ? `<button class="btn small ghost" type="button" data-imgdel>${mt("ลบภาพ", "Remove picture")}</button>` : ""}</div>
+    <div class="actions" style="justify-content:flex-start;gap:8px"><button class="btn" data-save type="button">${mt("บันทึก", "Save")}</button><button class="btn ghost small" data-up type="button">▲</button><button class="btn ghost small" data-dn type="button">▼</button><button class="btn ghost small" data-del type="button" style="margin-left:auto;color:var(--st-critical)">${mt("ลบอาคาร", "Delete")}</button></div></details>`;
+}
+
+/**
  * sync.js
  * Central data sync through the same Google Apps Script web app used for backup.
  * Why: data is otherwise kept in each browser's own storage, so an Admin on another computer
@@ -5830,7 +6545,7 @@ const SyncMgr = {
  */
 
 const BACKUP_DAYS = 7;
-const BACKUP_KEYS = ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "drrRecords", "drrCfg", "psdAnalyses", "lang", "uiPrefs", "moduleVisibility"];
+const BACKUP_KEYS = ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "drrRecords", "drrCfg", "psdAnalyses", "v3dBuildings", "lang", "uiPrefs", "moduleVisibility"];
 // "users" travels in the JSON backup and (as salted hashes, no plain passwords) through sync; the readable users tab never shows passwords.
 
 const BackupMgr = {
@@ -5917,7 +6632,7 @@ const BackupMgr = {
     if (!this.validUrl(c.url) || !c.token) { if (manual) throw new Error(mt("ยังไม่ได้ตั้งค่า Google Sheet", "Google Sheet is not set up")); return false; }
     const t = this.tables();
     const res = await this.call({ action: "tables", by: State.user ? State.user.username : "", tables: t });
-    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v10 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v10 and deploy a new version") : (res.error || "failed"));
+    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v11 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v10 and deploy a new version") : (res.error || "failed"));
     this.saveMeta({ tablesAt: new Date().toISOString(), tablesStatus: "ok" });
     localStorage.removeItem(DB._key("pubDirty"));
     return true;
@@ -5973,10 +6688,10 @@ const APPS_SCRIPT_CODE = `/**
  * (Execute as: Me, Who has access: Anyone).  After editing: Deploy > Manage deployments > New version.
  */
 const TOKEN = '__TOKEN__';   // must equal the Token in the app
-const VERSION = 10;
+const VERSION = 11;
 const CHUNK = 45000;         // one cell holds at most 50,000 characters
 const MAXCH = 8;             // max cells per record / photo
-const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords', 'auditLog', 'users', 'psdAnalyses'];
+const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords', 'auditLog', 'users', 'psdAnalyses', 'v3dBuildings'];
 
 function doPost(e) {
   try {
@@ -6487,7 +7202,7 @@ function startApp(user) {
   MpImg.migrate().catch(() => {});
   renderShell();
   navigate("dashboard");
-  SyncMgr.onChange(() => { if (["dashboard", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd", "capa"].includes(State.view) && !document.getElementById("modal-overlay") && !document.activeElement?.closest?.("input,textarea,select")) renderView(); });
+  SyncMgr.onChange(() => { if (State.view === "v3d" && !document.getElementById("modal-overlay")) { v3dRefresh(); return; } if (["dashboard", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd", "capa"].includes(State.view) && !document.getElementById("modal-overlay") && !document.activeElement?.closest?.("input,textarea,select")) renderView(); });
   SyncMgr.start();
   BackupMgr.autoCheck();
   BackupMgr.startTimer();
@@ -6555,6 +7270,7 @@ const NAV_ITEMS = [
     admin: true,
     items: [
       { id: "buildings", labelKey: "nav_buildings" },
+      { id: "v3d_setup", labelKey: "nav_v3d_setup" },
       { id: "users", labelKey: "nav_users" },
       { id: "backup", labelKey: "nav_backup" }
     ]
@@ -6589,7 +7305,7 @@ function renderShell() {
       <div class="mark">QS</div>
       <div>
         <div class="name">PSD eNGINNo<br/>QSHE Management</div>
-        <div class="ver">V1.0</div>
+        <div class="ver">V1.0 <span class="ver-up">Update V1.01</span></div>
       </div>
     </div>
     <div class="sidebar-toolbar">
@@ -6652,6 +7368,8 @@ function renderTopbar() {
     kpi: ["title_kpi", "sub_kpi"],
     capa: ["title_capa", "sub_capa"],
     psd: ["title_psd", "sub_psd"],
+    v3d: ["title_v3d", "sub_v3d"],
+    v3d_setup: ["title_v3d_setup", "sub_v3d_setup"],
     buildings: ["title_buildings", "sub_buildings"],
     users: ["title_users", "sub_users"],
     mp_plan: ["title_mp_plan", "sub_mp_plan"],
@@ -6667,13 +7385,14 @@ function renderTopbar() {
   const title = titleKey ? t(titleKey) : "";
   const subtitle = subKey ? t(subKey) : "";
   const buildings = accessibleBuildings();
-  const showBuildingPicker = !["buildings", "users", "backup", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd", "capa"].includes(State.view);
+  const showBuildingPicker = !["buildings", "users", "backup", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd", "capa", "v3d", "v3d_setup"].includes(State.view);
 
   document.getElementById("topbar").innerHTML = `
     <div>
       <h2>${title}</h2>
       <div class="subtitle">${subtitle}</div>
     </div>
+    ${["dashboard", "v3d"].includes(State.view) ? v3dModeSwitchHtml() : ""}
     ${State.view === "dashboard" ? dashToolsHtml() : ""}
     ${
       showBuildingPicker
@@ -6688,6 +7407,7 @@ function renderTopbar() {
     }
   `;
 
+  if (["dashboard", "v3d"].includes(State.view)) v3dWireModeSwitch();
   if (State.view === "dashboard") wireDashTools();
   if (showBuildingPicker) {
     const picker = document.getElementById("building-picker");
@@ -6729,6 +7449,8 @@ function renderViewInner(root) {
     case "kpi": return renderKPI(root);
     case "capa": return renderIncidents(root);
     case "psd": return renderPsd(root);
+    case "v3d": return renderV3d(root);
+    case "v3d_setup": return renderV3dSetup(root);
     case "buildings": return renderBuildings(root);
     case "users": return renderUsers(root);
     case "drr_lp": case "drr_tw": case "drr_food": case "drr_ww": case "drr_ts": case "drr_mwa": return renderDrr(root, State.view);
@@ -7086,6 +7808,7 @@ function openSettingsModal() {
         : ""
     }
     <div class="settings-section" id="sync-sec"></div>
+    ${isAdmin ? `<div class="settings-section"><h4>${mt("โมเดล 3D (หลังบ้าน)", "3D model (back office)")}</h4><div class="desc" style="margin-bottom:8px;">${mt("อัปโหลดภาพ 3D และกำหนดชื่อชั้น / ห้อง ของแต่ละอาคาร", "Upload 3D pictures and define floors / rooms of each building")}</div><button class="btn small" id="open-v3d-setup" type="button">${mt("ตั้งค่าอาคาร 3D", "3D building setup")} ›</button></div>` : ""}
     <div class="actions">
       <button class="btn ghost" id="close-settings">${t("settings_close")}</button>
     </div>
@@ -7115,6 +7838,7 @@ function openSettingsModal() {
     });
   }
 
+  const v3b = modal.querySelector("#open-v3d-setup"); if (v3b) v3b.addEventListener("click", () => { closeModal(); navigate("v3d_setup"); });
   mpRenderSyncSettings(modal.querySelector("#sync-sec"));
   modal.querySelector("#close-settings").addEventListener("click", () => {
     closeModal();
@@ -7687,7 +8411,7 @@ function renderUsers(root) {
 
 /** Admin-only: sign-in / sign-out history and the latest data edits */
 const AccUI = { user: "ALL", limit: 100, audUser: "ALL", audMod: "ALL" };
-const AUD_MODS = { mpScores: "Risk Assessment Checklist", mpUnits: "หน่วยงาน (Checklist)", mpPlans: "QSHE Action Plan", mpForms: "PCRA / ICRA", drrRecords: "Data Record Report", capas: "CAPA / Incident", psdAnalyses: "PSD วิเคราะห์และแก้ไข", okrs: "OKR", kpis: "KPI", buildings: "อาคาร / BU", processStatus: "SSPPC Modules" };
+const AUD_MODS = { v3dBuildings: "โมเดล 3D (อาคาร/ชั้น)", mpScores: "Risk Assessment Checklist", mpUnits: "หน่วยงาน (Checklist)", mpPlans: "QSHE Action Plan", mpForms: "PCRA / ICRA", drrRecords: "Data Record Report", capas: "CAPA / Incident", psdAnalyses: "PSD วิเคราะห์และแก้ไข", okrs: "OKR", kpis: "KPI", buildings: "อาคาร / BU", processStatus: "SSPPC Modules" };
 function renderAccessSection(host) {
   const logs = DB.get("accessLog", []).slice().sort((x, y) => (y.inAt || "").localeCompare(x.inAt || ""));
   const names = [...new Set(logs.map((l) => l.user))].sort();
