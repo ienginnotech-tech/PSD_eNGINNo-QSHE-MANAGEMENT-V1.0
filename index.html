@@ -1010,7 +1010,7 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 /* dashboard: top row, master plan, safety board */
 .dash-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .85fr) minmax(0, 1.6fr); gap: 14px; margin-bottom: 14px; align-items: stretch; }
 .dash-top.one { grid-template-columns: 1fr; }
-@media (max-width: 1280px) { .dash-top { grid-template-columns: 1fr 1fr; } .dash-top #dash-safety { grid-column: 1 / -1; } }
+@media (max-width: 1280px) { .dash-top { grid-template-columns: 1fr 1fr; } .dash-top #dash-safety, .dash-top #dash-body { grid-column: 1 / -1; } }
 @media (max-width: 720px) { .dash-top { grid-template-columns: 1fr; } }
 .mon-grid3.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); }
 .big { font-size: 30px; font-weight: 700; color: var(--heading); line-height: 1.1; }
@@ -1291,6 +1291,37 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .v3s-gen { font-size: 12px; margin: 6px 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; } .v3s-gen input[type=number] { width: 56px; }
 .v3s-img { display: flex; align-items: center; gap: 10px; margin: 8px 0; } .v3s-img img { height: 70px; border-radius: 6px; }
 @media (max-width: 1100px) { .v3d-main { grid-template-columns: 1fr; height: auto; } .v3d-stage { height: 70vh; } .v3d-kpis { grid-template-columns: repeat(3, 1fr); } .v3s-grid { grid-template-columns: 1fr; } .v3d-nbcard { display: none !important; } .v3d-hint { display: none; } .v3d-ptoggle { display: none; } }
+/* dashboard: safety board above the plan card (left) · injured body parts card */
+.dash-lcol { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.dash-lcol .safety { height: auto !important; gap: 10px; }
+.dash-top2 > #dash-ir > .card { height: 100%; box-sizing: border-box; }
+.dash-top.one { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
+@media (max-width: 1000px) { .dash-top.one { grid-template-columns: 1fr; } }
+.inj-card { display: flex; flex-direction: column; }
+.inj-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 8px 0; }
+.inj-k { border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; } .inj-k span { display: block; font-size: 11.5px; color: var(--muted); } .inj-k b { font-size: 22px; line-height: 1.2; } .inj-k small { display: block; font-size: 11px; color: var(--muted); }
+.inj-main { display: grid; grid-template-columns: minmax(200px, .9fr) minmax(0, 1.2fr); gap: 14px; align-items: start; }
+.inj-body { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: center; }
+.inj-svg { width: 100%; max-height: 270px; } .inj-svg [data-tip] { cursor: help; } .inj-svg [data-tip]:hover { stroke: #0f172a; stroke-width: 1.4; }
+.inj-cap { font-size: 11px; color: var(--muted); }
+.inj-bar { display: grid; grid-template-columns: minmax(90px, 40%) minmax(0, 1fr) 26px 48px; gap: 8px; align-items: center; font-size: 12.5px; margin: 4px 0; }
+.inj-bar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .inj-bar i { height: 10px; background: #f1f5f9; border-radius: 5px; overflow: hidden; } .inj-bar u { display: block; height: 100%; border-radius: 5px; }
+.inj-bar b { text-align: right; } .inj-bar em { font-style: normal; font-size: 11px; color: var(--muted); } .inj-bar.unk span { color: var(--muted); }
+.inj-ramp { display: flex; align-items: center; gap: 3px; font-size: 11px; color: var(--muted); margin-top: 6px; } .inj-ramp i { width: 18px; height: 9px; border-radius: 2px; display: inline-block; }
+.inj-tl svg { width: 100%; height: auto; display: block; } .inj-tl circle { cursor: help; } .inj-tl circle:hover { stroke: #0f172a; stroke-width: 1.5; }
+.inj-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin: 0 3px 0 6px; vertical-align: 0; }
+.inj-recent { list-style: none; margin: 2px 0 0; padding: 0; font-size: 12.5px; } .inj-recent li { padding: 3px 0; border-bottom: 1px dashed var(--border); }
+@media (max-width: 760px) { .inj-main { grid-template-columns: 1fr; } .inj-kpis { grid-template-columns: repeat(2, 1fr); } }
+/* injury form chips */
+.bp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.bp-chip { border: 1px solid var(--border); background: var(--card, #fff); color: inherit; border-radius: 16px; padding: 4px 11px; font: inherit; font-size: 12.5px; cursor: pointer; }
+.bp-chip.on { background: #dc2626; border-color: #dc2626; color: #fff; } .bp-chip.none.on { background: #16a34a; border-color: #16a34a; }
+.bp-hint { font-size: 12px; color: #b45309; margin-top: 4px; min-height: 1em; }
+
+.dash-top2 > #dash-ir > .card { display: flex; flex-direction: column; }
+.dash-top2 > #dash-ir .ir-units { flex: 1 1 auto; max-height: none !important; min-height: 150px; }
+@media (max-width: 1000px) { .dash-top2 > #dash-ir .ir-units { max-height: 260px !important; } }
+@media (min-width: 1001px) { .dash-top2 > #dash-ir { position: relative; min-height: 560px; } .dash-top2 > #dash-ir > .card { position: absolute; inset: 0; overflow: hidden; } .dash-top2 > #dash-ir .ir-units { min-height: 0; overflow: auto; } }
 
 </style>
 </head>
@@ -4018,6 +4049,7 @@ function mpDashScopeUnits() {
 function mpDashRefresh() {
   if (document.getElementById("dash-safety")) renderSafetyBoard(document.getElementById("dash-safety"));
   if (document.getElementById("dash-ir")) renderIrDashCard(document.getElementById("dash-ir"));
+  renderInjuryCard(document.getElementById("dash-body"));
   mpRenderDashRank(document.getElementById("dash-rank"));
   mpRenderDashScore(document.getElementById("dash-score"));
   renderDashMasterPlan(document.getElementById("dash-mp"));
@@ -4094,6 +4126,7 @@ function renderDashMasterPlan(host) {
   host.innerHTML = `
     <div class="mp-dash">
       <div class="grid dash-top2" style="margin-bottom:0;">
+        <div class="dash-lcol"><div id="dash-safety"></div>
         <div class="card" style="margin:0;"><div class="dash-qi"><div>
           <div class="toolbar" style="margin-bottom:4px;"><h3 style="margin:0;">QSHE Action Plan 2026-2027</h3><button class="btn ghost small" data-goto="mp_plan">${mt("เปิดแผน", "Open")} →</button></div>
           <div style="display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;"><div><span class="big">${achieve === null ? "–" : achieve.toFixed(0) + "%"}</span> <span class="muted-s">% Achieve plan (${mt("เสร็จสิ้น", "done")} ${cnt.done}/${total})</span></div>
@@ -4106,7 +4139,7 @@ function renderDashMasterPlan(host) {
           <div style="display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;"><span class="big" style="color:${mpScoreColor(S.pct)}">${mpFmtPct(S.pct)}</span><span>${mpChip(ov)}</span></div>
           <div class="muted-s" style="margin:4px 0 8px;">${scopeLbl} (${mt("ตรวจล่าสุด", "latest visit")}) · ${mpPeriodLabel()} · ${S.done}/${S.total} ${mt("ข้อประเมินแล้ว", "assessed")} · N/A ${S.na}</div>
           <div class="rk-sum">${MP_RISK.map((r) => `<div class="rk-chip" data-tip="${mpRiskLabel(r.id)}: ${S.risk[r.id]}"><i style="color:${mpRiskColor(r.id)}">${r.icon}</i> ${mpRiskLabel(r.id)}<b>${S.risk[r.id]}</b></div>`).join("")}</div>
-        </div></div></div>
+        </div></div></div></div>
         <div id="dash-ir"></div>
       </div>
     </div>`;
@@ -4124,6 +4157,7 @@ function renderDashMasterPlan(host) {
           ${cats.map((c) => mpRiskStackRow(mpCatName(c), c.risk, c.pct, "", null, false, true)).join("")}
         </div>
       </div>`;
+  renderSafetyBoard(host.querySelector("#dash-safety"));
   renderIrDashCard(host.querySelector("#dash-ir"));
   [host, chkHost].forEach((h) => { if (!h) return; h.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto))); if (!h._tips) { mpWireTips(h); h._tips = true; } });
 }
@@ -4385,6 +4419,45 @@ function drrWwSample(d) {
 }
 const drrLimitText = (btype, k) => { const c = (DRR_WW_CRIT[btype] || {})[k]; return c === undefined ? "–" : Array.isArray(c) ? c[0] + " – " + c[1] : "≤ " + c; };
 
+// ------------------------------------------------------------------ injured body parts ---
+/** body parts: Thai/English name + a pattern that finds the part in the Incident Detail text (context-aware, so
+ *  words such as "เจ้าหน้าที่", "ออก", "หลังจาก", "ตาม", "หัวหน้า", "แขนไม้กั้น" are not taken as body parts) */
+const DRR_BODY = [
+  { id: "head", th: "ศีรษะ", en: "Head", re: /(?<!ปวด\s*)(?:ศ[ีร]+ษ|กะโหลก|หัวโน|หัวแตก|หัวปูด|หัวบวม|(?:ที่|บริเวณ|โดน|ถูก|กระแทก|ใส่|ฟาด)\s*หัว(?!หน้า|ใจ|ข้อ|เข่า|เข้า|ไหล่|ฉีด|จ่าย|ถัง))/ },
+  { id: "face", th: "ใบหน้า / ตา / จมูก / ปาก / หู", en: "Face / eye / nose / mouth / ear", re: /ใบหน้า|หน้าผาก|โหนกแก้ม|แก้ม|คิ้ว|คาง(?!วาง)|ดวงตา|เปลือกตา|ตา(?:ซ้าย|ขวา|ข้าง)|(?:เข้า|โดน|กระแทก)\s*(?:ที่)?\s*ตา(?!ม|ราง|ข่าย|รา|ย)|จมูก|ริมฝีปาก|(?:ที่|บริเวณ|โดน|กระแทก)\s*ปาก(?!ทาง|กา|ซอย)|ฟัน(?!เฟือง)|ใบหู|หูข้าง|หู(?:ซ้าย|ขวา)|(?:เข้าที่|กระแทก|โดน|ใส่)\s*หน้า(?!ที่|ห้อง|ร้าน|บูธ|ประตู|เวที|ลิฟ|งาน|มืด|ต่าง|ฮอลล์|อาคาร|ทาง|เคาน์|จอ|โรง|แข้ง|อก|ท้อง|ผา(?!ก)|ตู้|\s*[A-Za-z0-9])/ },
+  { id: "neck", th: "คอ", en: "Neck", re: /ลำคอ|ต้นคอ|คอเคล็ด|(?:ที่|บริเวณ|โดน)\s*คอ(?![มนยลรอนทก])/ },
+  { id: "shoulder", th: "ไหล่", en: "Shoulder", re: /ไหล่/ },
+  { id: "arm", th: "แขน / ข้อศอก", en: "Arm / elbow", re: /แขน(?!ไม้|กั้น|เครื่อง|กล)|ศอก/ },
+  { id: "hand", th: "มือ / ข้อมือ", en: "Hand / wrist", re: /(?<!ชีพ\S{0,4})ข้อมือ|ฝ่ามือ|หลังมือ|(?<!นิ้ว\S{0,7})มือ(?:ซ้าย|ขวา|ข้าง)|(?:ที่|บริเวณ|โดน)\s*มือ(?!ถือ|อาชีพ)/ },
+  { id: "finger", th: "นิ้วมือ", en: "Finger", re: /(?<!\d\s*)นิ้ว(?!เท้า)|เล็บ(?!เท้า)/ },
+  { id: "chest", th: "หน้าอก / ลำตัว", en: "Chest / torso", re: /(?<!แน่น\s*)(?:หน้าอก|ทรวงอก)|ซี่โครง|ลำตัว/ },
+  { id: "back", th: "หลัง / เอว", en: "Back / waist", re: /แผ่นหลัง|กลางหลัง|หลังส่วน|สันหลัง|บั้นเอว|(?:บริเวณ|กระแทก|เจ็บ)\s*หลัง(?!\s*[A-Za-z0-9]|โหลด|จาก|คา|ร้าน|เวที|บูธ|งาน|ห้อง|ประตู|บ้าน)/ },
+  { id: "abdomen", th: "ท้อง", en: "Abdomen", re: /หน้าท้อง|ช่องท้อง|(?:ที่|บริเวณ|กระแทก)\s*ท้อง(?!ถิ่น)/ },
+  { id: "hip", th: "สะโพก / ก้น", en: "Hip / buttocks", re: /สะโพก|ก้นกบ|เชิงกราน|(?:ที่|บริเวณ|กระแทก)\s*ก้น/ },
+  { id: "leg", th: "ขา / ต้นขา / แข้ง", en: "Leg / thigh / shin", re: /ต้นขา|หน้าแข้ง|(?<!แข่ง|แข้ง)แข้ง(?!ขัน)|น่อง|ขา(?:ซ้าย|ขวา|ข้าง|หัก|พลิก)|(?:ที่|บริเวณ|โดน)\s*ขา(?!ออก|เข้า|ตั้ง|ประจำ|ไป)/ },
+  { id: "knee", th: "เข่า", en: "Knee", re: /เข่า/ },
+  { id: "ankle", th: "ข้อเท้า", en: "Ankle", re: /ข้อเท้า|เท้าพลิก|ข้อพลิก/ },
+  { id: "foot", th: "เท้า / นิ้วเท้า", en: "Foot / toe", re: /(?<!ข้อ|รอย|เดิน|ก้าว)เท้า(?!พลิก)|นิ้วเท้า|ส้นเท้า|ฝ่าเท้า/ }
+];
+/** incident types that can involve an injured person */
+const drrIsInjuryType = (t) => /Accident|Illness|บาดเจ็บ/i.test(String(t || ""));
+const DRR_BODY_NONE = "ไม่มีการบาดเจ็บ";
+const drrBodyName = (id) => { const p = DRR_BODY.find((x) => x.id === id); return p ? mt(p.th, p.en) : id; };
+function drrBodyDetect(text) { const t = String(text || ""); return DRR_BODY.filter((p) => p.re.test(t)).map((p) => p.id); }
+/** stored value "ศีรษะ, นิ้วมือ" → ["head","finger"] (also accepts English names / ids) */
+function drrBodyParse(str) {
+  const parts = String(str || "").split(/[,;\n]/).map((x) => x.trim()).filter(Boolean), out = [];
+  parts.forEach((x) => { if (x === DRR_BODY_NONE || /^none$/i.test(x)) { out.push("none"); return; } const p = DRR_BODY.find((b) => b.th === x || b.en === x || b.id === x || b.th.split(" / ")[0] === x); if (p && !out.includes(p.id)) out.push(p.id); });
+  return out;
+}
+const drrBodyStr = (ids) => ids.map((id) => (id === "none" ? DRR_BODY_NONE : (DRR_BODY.find((b) => b.id === id) || {}).th || id)).join(", ");
+/** body parts of an incident: the saved field first, otherwise detected from the Incident Detail */
+function drrBodyOf(d) {
+  const saved = drrBodyParse(d && d.bodyPart);
+  if (saved.length) return { ids: saved.filter((x) => x !== "none"), auto: false, none: saved.includes("none") };
+  return { ids: drrBodyDetect(d && d.detail), auto: true, none: false };
+}
+
 // ------------------------------------------------------------------ report definitions ---
 const drrOpt = (arr) => arr.map((x) => (Array.isArray(x) ? { v: x[0], t: x[0] + " · " + x[1] } : { v: x, t: x }));
 function drrIncidentFields(rep) {
@@ -4404,6 +4477,8 @@ function drrIncidentFields(rep) {
     { k: "assetOwner", label: "Asset Owner", type: "text" },
     { k: "witness", label: "Witness", type: "text" },
     { k: "detail", label: "Incident Detail", type: "textarea", wide: true, req: true },
+    { k: "bodyPart", label: mt("อวัยวะที่ได้รับบาดเจ็บ", "Injured body part(s)"), type: "parts", wide: true },
+    { k: "injuryDays", label: mt("จำนวนวันที่บาดเจ็บ (วัน)", "Days injured (days)"), type: "number" },
     { k: "severity", label: mt("ระดับความรุนแรง", "Severity"), type: "select", opts: [1, 2, 3].map((n) => ({ v: String(n), t: DRR_SEVERITY[n][0] + " – " + DRR_SEVERITY[n][1] })) },
     { k: "rootCause", label: "Root Cause", type: "select", opts: DRR_ROOT },
     { k: "corrective", label: mt("การแก้ไขและป้องกัน", "Corrective / preventive action"), type: "textarea", wide: true },
@@ -4462,6 +4537,12 @@ function drrOpenForm(rep, rec, after) {
     const id = "drr-f-" + f.k;
     if (f.type === "textarea") return `<textarea id="${id}" rows="3">${drrEsc(val)}</textarea>`;
     if (f.type === "select") return `<select id="${id}">${f.opts.map((o) => { const v = typeof o === "object" ? o.v : o, t = typeof o === "object" ? o.t : o; return `<option value="${drrEsc(v)}" ${String(val) === String(v) ? "selected" : ""}>${drrEsc(t)}</option>`; }).join("")}</select>`;
+    if (f.type === "parts") {
+      const saved = drrBodyParse(val), auto = !saved.length && (!d.type || drrIsInjuryType(d.type)) ? drrBodyDetect(d.detail) : [], on = saved.length ? saved : auto;
+      return `<div class="bp-chips" id="${id}">${DRR_BODY.map((p) => `<button type="button" class="bp-chip ${on.includes(p.id) ? "on" : ""}" data-bp="${p.id}">${drrEsc(mt(p.th, p.en))}</button>`).join("")}<button type="button" class="bp-chip none ${on.includes("none") ? "on" : ""}" data-bp="none">${mt(DRR_BODY_NONE, "No injury")}</button></div>
+        <div class="bp-hint" id="${id}-hint">${auto.length ? `✨ ${mt("ระบบเลือกให้จาก Incident Detail — ตรวจสอบ/แก้ไขได้ก่อนบันทึก", "Pre-selected from the Incident Detail — check before saving")}` : ""}</div>
+        <button type="button" class="btn ghost small" id="${id}-detect" style="margin-top:4px;">🔍 ${mt("ตรวจหาจาก Incident Detail", "Detect from Incident Detail")}</button>`;
+    }
     if (f.type === "list") return `<input id="${id}" list="${id}-l" value="${drrEsc(val)}" autocomplete="off" /><datalist id="${id}-l">${sites.map((s) => `<option value="${drrEsc(s)}">`).join("")}</datalist>`;
     return `<input id="${id}" type="${f.type}" ${f.type === "number" ? 'step="any"' : ""} value="${drrEsc(val)}" ${f.auto ? "" : ""} />`;
   };
@@ -4471,6 +4552,15 @@ function drrOpenForm(rep, rec, after) {
     ${special}
     <div class="actions">${!isNew ? `<button class="btn danger" id="drr-del" style="margin-right:auto;">${mt("ลบ", "Delete")}</button>` : ""}<button class="btn ghost" id="drr-cancel">${mt("ยกเลิก", "Cancel")}</button><button class="btn" id="drr-save">${mt("บันทึก", "Save")}</button></div>`);
   drrWireSpecial(modal, rtype);
+  const bp = modal.querySelector("#drr-f-bodyPart");
+  if (bp) {
+    bp.addEventListener("click", (e) => { const b = e.target.closest("[data-bp]"); if (!b) return; const none = b.dataset.bp === "none"; if (none) bp.querySelectorAll(".bp-chip").forEach((x) => { if (x !== b) x.classList.remove("on"); }); else bp.querySelector('[data-bp="none"]').classList.remove("on"); b.classList.toggle("on"); });
+    modal.querySelector("#drr-f-bodyPart-detect").addEventListener("click", () => {
+      const ids = drrBodyDetect((modal.querySelector("#drr-f-detail") || {}).value);
+      bp.querySelectorAll(".bp-chip").forEach((x) => x.classList.toggle("on", ids.includes(x.dataset.bp)));
+      modal.querySelector("#drr-f-bodyPart-hint").textContent = ids.length ? "✨ " + mt("พบ: ", "Found: ") + ids.map(drrBodyName).join(", ") : mt("ไม่พบชื่ออวัยวะในข้อความ — เลือกเองได้", "No body part found in the text — pick manually");
+    });
+  }
   modal.querySelector("#drr-cancel").addEventListener("click", closeModal);
   const del = modal.querySelector("#drr-del");
   if (del) del.addEventListener("click", () => { if (!confirm(mt("ลบรายการนี้หรือไม่?", "Delete this record?"))) return; drrRemove(rec.id); closeModal(); toast(mt("ลบแล้ว", "Deleted")); after(); });
@@ -4478,6 +4568,7 @@ function drrOpenForm(rep, rec, after) {
     const nd = Object.assign({}, d);
     for (const f of fields) {
       const el = modal.querySelector("#drr-f-" + f.k);
+      if (f.type === "parts") { nd[f.k] = el ? drrBodyStr([...el.querySelectorAll(".bp-chip.on")].map((x) => x.dataset.bp)) : (d[f.k] || ""); continue; }
       let v = el ? el.value.trim() : "";
       if (f.type === "number") v = v === "" ? null : drrNum(v);
       if (f.req && (v === "" || v === null)) { alert(mt("กรุณากรอก: ", "Required: ") + f.label); return; }
@@ -5657,7 +5748,7 @@ function irWireScope(host, refresh) {
   if (g) g.onchange = () => { IrSafeUI.group = g.value; IrSafeUI.site = "ALL"; refresh(); };
   if (s) s.onchange = () => { IrSafeUI.site = s.value; refresh(); };
 }
-function irRefreshDash() { renderSafetyBoard(document.getElementById("dash-safety")); renderIrDashCard(document.getElementById("dash-ir")); }
+function irRefreshDash() { renderSafetyBoard(document.getElementById("dash-safety")); renderIrDashCard(document.getElementById("dash-ir")); renderInjuryCard(document.getElementById("dash-body")); }
 
 function renderIrDashCard(host) {
   if (!host) return;
@@ -5684,8 +5775,80 @@ function renderIrDashCard(host) {
     <div class="mon-t" style="margin-top:10px;">${mt("จำนวนครั้งรายเดือน ", "Per month ")}${yr + (DB.get("lang", "th") === "th" ? 543 : 0)} <span class="muted-s" style="font-weight:400"><i style="background:var(--series-1);display:inline-block;width:10px;height:10px;border-radius:2px"></i> IR &nbsp;<i style="background:var(--st-critical);display:inline-block;width:10px;height:10px;border-radius:2px"></i> ${mt("อุบัติเหตุ", "accidents")}</span></div>
     <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;max-height:140px" role="img" aria-label="IR per month">${g}</svg>
     <div class="mon-t" style="margin-top:8px;">${mt("แยกตามอาคาร / หน่วยงาน", "By building / unit")}</div>
-    <div class="acc-scroll" style="max-height:150px;overflow:auto"><table class="mon-table"><thead><tr><th>${mt("อาคาร / หน่วยงาน", "Building / unit")}</th><th>${mt("อุบัติเหตุ", "Acc.")}</th><th>${mt("ล่าสุด", "Last")}</th><th>${mt("ปลอดภัย (วัน)", "Days safe")}</th><th>${mt("สูงสุด", "Best")}</th><th>Open</th><th>Closed</th></tr></thead><tbody>
+    <div class="acc-scroll ir-units" style="max-height:150px;overflow:auto"><table class="mon-table"><thead><tr><th>${mt("อาคาร / หน่วยงาน", "Building / unit")}</th><th>${mt("อุบัติเหตุ", "Acc.")}</th><th>${mt("ล่าสุด", "Last")}</th><th>${mt("ปลอดภัย (วัน)", "Days safe")}</th><th>${mt("สูงสุด", "Best")}</th><th>Open</th><th>Closed</th></tr></thead><tbody>
     ${rows.map((x) => `<tr><td>${E(x.name)}${IrSafeUI.group === "ALL" ? `<div class="muted-s">${IR_GROUPS[x.group][0]}</div>` : ""}</td><td class="num"><b style="color:${x.st.count ? "var(--st-critical)" : "inherit"}">${x.st.count}</b></td><td style="white-space:nowrap">${x.st.last ? mpFmtDate(x.st.last) : "–"}</td><td class="num"><b>${x.st.days}</b></td><td class="num">${x.st.best}</td><td class="num" style="${x.st.open ? "color:var(--st-serious);font-weight:700" : ""}">${x.st.open}</td><td class="num">${x.st.closed}</td></tr>`).join("") || `<tr><td colspan="7" class="muted-s">${mt("ยังไม่มี IR", "No IR yet")}</td></tr>`}</tbody></table></div></div>`;
+  host.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto)));
+  if (!host._tips) { mpWireTips(host); host._tips = true; }
+}
+
+// ------------------------------------------------------------------ injured body parts (dashboard) ---
+const INJ_RAMP = ["#fee2e2", "#fca5a5", "#f87171", "#dc2626", "#991b1b"];
+const injColor = (n, mx) => (n ? INJ_RAMP[Math.min(INJ_RAMP.length - 1, Math.floor((n / Math.max(1, mx)) * (INJ_RAMP.length - 1) + 0.0001))] : "#e5e7eb");
+/** injuries in the current IR scope since the safety start date */
+function injRecords() {
+  const today = todayISO(), types = irAccTypes();
+  return irScopeRecs(IrSafeUI.group, IrSafeUI.site).filter((r) => r.d.date >= MP_SAFETY.start && r.d.date <= today).map((r) => {
+    const bp = drrBodyOf(r.d);
+    if (bp.none) return null;
+    const hurt = bp.ids.length || irIsAcc(r, types) || (!bp.auto && bp.ids.length);
+    if (!hurt || (!drrIsInjuryType(r.d.type) && bp.auto)) return null;
+    const days = Number(r.d.injuryDays); return { r, ids: bp.ids, auto: bp.auto, days: isFinite(days) && days > 0 ? days : 0 };
+  }).filter(Boolean);
+}
+function injBodySvg(cnt, mx, back) {
+  const f = (reg) => (reg ? injColor(cnt[reg] || 0, mx) : "#e5e7eb");
+  const tip = (reg) => (reg ? ` data-tip="${mpEsc(drrBodyName(reg))}: ${cnt[reg] || 0} ${mt("ราย", "case(s)")}"` : "");
+  const sh = (reg, el) => el.replace("/>", ` fill="${f(reg)}" stroke="#94a3b8" stroke-width=".8"${tip(reg)} />`);
+  const F = back
+    ? [["head", '<circle cx="60" cy="24" r="17"/>'], ["neck", '<rect x="54" y="40" width="12" height="10" rx="2"/>'], [null, '<circle cx="39" cy="58" r="9"/>'], [null, '<circle cx="81" cy="58" r="9"/>'], ["back", '<rect x="42" y="50" width="36" height="60" rx="7"/>'], ["hip", '<rect x="43" y="110" width="34" height="18" rx="6"/>'],
+       [null, '<rect x="26" y="62" width="11" height="44" rx="5"/>'], [null, '<rect x="83" y="62" width="11" height="44" rx="5"/>'], [null, '<rect x="22" y="104" width="10" height="30" rx="5"/>'], [null, '<rect x="88" y="104" width="10" height="30" rx="5"/>'], [null, '<circle cx="27" cy="140" r="7"/>'], [null, '<circle cx="93" cy="140" r="7"/>'],
+       [null, '<rect x="44" y="127" width="14" height="50" rx="6"/>'], [null, '<rect x="62" y="127" width="14" height="50" rx="6"/>'], [null, '<rect x="45" y="182" width="12" height="46" rx="5"/>'], [null, '<rect x="63" y="182" width="12" height="46" rx="5"/>'], [null, '<ellipse cx="51" cy="240" rx="8" ry="5"/>'], [null, '<ellipse cx="69" cy="240" rx="8" ry="5"/>']]
+    : [["head", '<circle cx="60" cy="24" r="17"/>'], ["face", '<ellipse cx="60" cy="28" rx="10" ry="11"/>'], ["neck", '<rect x="54" y="40" width="12" height="10" rx="2"/>'], ["shoulder", '<circle cx="39" cy="58" r="9"/>'], ["shoulder", '<circle cx="81" cy="58" r="9"/>'], ["chest", '<rect x="42" y="50" width="36" height="34" rx="7"/>'], ["abdomen", '<rect x="44" y="84" width="32" height="26" rx="4"/>'], ["hip", '<rect x="43" y="110" width="34" height="18" rx="6"/>'],
+       ["arm", '<rect x="26" y="62" width="11" height="44" rx="5"/>'], ["arm", '<rect x="83" y="62" width="11" height="44" rx="5"/>'], ["arm", '<rect x="22" y="104" width="10" height="30" rx="5"/>'], ["arm", '<rect x="88" y="104" width="10" height="30" rx="5"/>'], ["hand", '<circle cx="27" cy="140" r="7"/>'], ["hand", '<circle cx="93" cy="140" r="7"/>'], ["finger", '<rect x="23" y="146" width="8" height="10" rx="3"/>'], ["finger", '<rect x="89" y="146" width="8" height="10" rx="3"/>'],
+       ["leg", '<rect x="44" y="127" width="14" height="50" rx="6"/>'], ["leg", '<rect x="62" y="127" width="14" height="50" rx="6"/>'], ["knee", '<circle cx="51" cy="180" r="7"/>'], ["knee", '<circle cx="69" cy="180" r="7"/>'], ["leg", '<rect x="45" y="186" width="12" height="42" rx="5"/>'], ["leg", '<rect x="63" y="186" width="12" height="42" rx="5"/>'], ["ankle", '<rect x="46" y="228" width="10" height="7" rx="2"/>'], ["ankle", '<rect x="64" y="228" width="10" height="7" rx="2"/>'], ["foot", '<ellipse cx="51" cy="241" rx="8" ry="5"/>'], ["foot", '<ellipse cx="69" cy="241" rx="8" ry="5"/>']];
+  const AN = back ? { back: [60, 82], hip: [60, 121] } : { head: [60, 11], face: [60, 31], neck: [60, 47], shoulder: [81, 60], chest: [60, 70], abdomen: [60, 99], hip: [60, 121], arm: [31.5, 86], hand: [93, 142], finger: [27, 153], leg: [51, 152], knee: [69, 182], ankle: [51, 233], foot: [69, 243] };
+  const lbl = Object.keys(AN).filter((k) => cnt[k]).map((k) => { const n = cnt[k], dark = INJ_RAMP.indexOf(injColor(n, mx)) >= 3; return `<text x="${AN[k][0]}" y="${AN[k][1] + 3}" text-anchor="middle" font-size="8.5" font-weight="700" fill="${dark ? "#fff" : "#7f1d1d"}" pointer-events="none">${n}</text>`; }).join("");
+  return `<div><svg viewBox="0 0 120 252" class="inj-svg" role="img" aria-label="${back ? mt("ด้านหลัง", "Back") : mt("ด้านหน้า", "Front")}">${F.map(([reg, el]) => sh(reg, el)).join("")}${lbl}</svg><div class="inj-cap">${back ? mt("ด้านหลัง", "Back") : mt("ด้านหน้า", "Front")}</div></div>`;
+}
+function renderInjuryCard(host) {
+  if (!host) return;
+  const E = mpEsc, list = injRecords(), cnt = {}, days = {};
+  list.forEach((x) => x.ids.forEach((id) => { cnt[id] = (cnt[id] || 0) + 1; days[id] = (days[id] || 0) + x.days; }));
+  const unknown = list.filter((x) => !x.ids.length).length, mx = Math.max(1, ...Object.values(cnt));
+  const parts = DRR_BODY.filter((p) => cnt[p.id]).sort((a, b) => cnt[b.id] - cnt[a.id]);
+  const totDays = list.reduce((a, x) => a + x.days, 0), withDays = list.filter((x) => x.days).length;
+  const top = parts[0], nAuto = list.filter((x) => x.auto && x.ids.length).length, nSaved = list.filter((x) => !x.auto).length;
+  const tile = (l, v, s, c) => `<div class="inj-k"><span>${l}</span><b ${c ? `style="color:${c}"` : ""}>${v}</b>${s ? `<small>${s}</small>` : ""}</div>`;
+  const bars = parts.map((p) => `<div class="inj-bar" data-tip="${E(mt(p.th, p.en))}: ${cnt[p.id]} ${mt("ราย", "case(s)")}${days[p.id] ? ` · ${days[p.id]} ${mt("วันบาดเจ็บ", "injury days")}` : ""}"><span>${E(mt(p.th, p.en))}</span><i><u style="width:${(cnt[p.id] / mx) * 100}%;background:${injColor(cnt[p.id], mx)}"></u></i><b>${cnt[p.id]}</b><em>${days[p.id] ? days[p.id] + " " + mt("วัน", "d") : ""}</em></div>`).join("") +
+    (unknown ? `<div class="inj-bar unk" data-tip="${mt("บาดเจ็บแต่ยังไม่ระบุอวัยวะ — แก้ไขรายการใน Live & Play / Township เพื่อระบุ", "Injured, body part not recorded yet")}"><span>${mt("ยังไม่ระบุอวัยวะ", "Not specified")}</span><i><u style="width:${(unknown / Math.max(mx, unknown)) * 100}%;background:#cbd5e1"></u></i><b>${unknown}</b><em></em></div>` : "");
+  // timeline: one row per body part, a dot per injury on its date
+  const start = MP_SAFETY.start, end = todayISO(), d0 = mpDayNum(start), d1 = Math.max(d0 + 30, mpDayNum(end));
+  const rowsP = parts.concat(unknown ? [{ id: "_unk", th: "ยังไม่ระบุ", en: "Not specified" }] : []);
+  const W = 640, L = 112, R = 10, RH = 18, T = 6, H = T + rowsP.length * RH + 22, x = (iso) => L + ((mpDayNum(iso) - d0) / (d1 - d0)) * (W - L - R);
+  const MON = mt("ม.ค.,ก.พ.,มี.ค.,เม.ย.,พ.ค.,มิ.ย.,ก.ค.,ส.ค.,ก.ย.,ต.ค.,พ.ย.,ธ.ค.", "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec").split(",");
+  let grid = "", m = new Date(start + "T00:00:00");
+  m.setDate(1); while (true) { const iso = m.toISOString().slice(0, 10), dn = mpDayNum(iso); if (dn > d1) break; if (dn >= d0) { const gx = x(iso); grid += `<line x1="${gx}" x2="${gx}" y1="${T}" y2="${H - 18}" stroke="#e2e8f0"/><text x="${gx + 3}" y="${H - 6}" font-size="10" fill="#64748b">${MON[m.getMonth()]}</text>`; } m.setMonth(m.getMonth() + 1); }
+  const dots = rowsP.map((p, i) => {
+    const cy = T + i * RH + RH / 2, items = list.filter((it) => (p.id === "_unk" ? !it.ids.length : it.ids.includes(p.id)));
+    return `<text x="${L - 6}" y="${cy + 3.5}" text-anchor="end" font-size="10.5" fill="#334155">${E(mt(p.th, p.en).split(" / ")[0])}</text><line x1="${L}" x2="${W - R}" y1="${cy}" y2="${cy}" stroke="#f1f5f9"/>` +
+      items.map((it) => { const d = it.r.d, r = 3.6 + Math.min(5, it.days / 3); return `<circle cx="${x(d.date).toFixed(1)}" cy="${cy}" r="${r.toFixed(1)}" fill="${p.id === "_unk" ? "#94a3b8" : it.r.report === "lp" ? "#dc2626" : "#f97316"}" fill-opacity=".85" stroke="#fff" stroke-width="1" data-tip="${E(mpFmtDate(d.date))} · ${E(irSiteName(it.r) || "-")}\n${E(it.ids.map(drrBodyName).join(", ") || mt("ยังไม่ระบุอวัยวะ", "not specified"))}${it.days ? `\n${mt("บาดเจ็บ", "Injured")} ${it.days} ${mt("วัน", "days")}` : ""}\n${E(String(d.type || ""))} · ${d.status === "closed" ? "Closed" : "Open"}${it.auto && it.ids.length ? "\n✨ " + mt("ตรวจจาก Incident Detail", "detected from the detail text") : ""}"/>`; }).join("");
+  }).join("");
+  const recent = list.slice().sort((a, b) => b.r.d.date.localeCompare(a.r.d.date)).slice(0, 4);
+  host.innerHTML = `<div class="card inj-card" style="height:100%;margin:0;">
+    <div class="toolbar" style="margin-bottom:4px;"><div><h3 style="margin:0;">${mt("อวัยวะที่ได้รับบาดเจ็บ", "Injured body parts")}</h3><div class="muted-s">${E(irScopeLabel())} · ${mt("นับตั้งแต่", "since")} ${mpFmtDate(MP_SAFETY.start)} · Live & Play + Township</div></div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;" class="sf-scope">${irScopeSelectsHtml()}<button class="btn ghost small" data-goto="capa">${mt("เปิด IR", "Open IR")} →</button></div></div>
+    <div class="inj-kpis">${tile(mt("ผู้บาดเจ็บ", "Injured"), list.length, mt("ราย", "cases"))}${tile(mt("วันบาดเจ็บรวม", "Injury days"), totDays, withDays ? `${mt("จาก", "from")} ${withDays} ${mt("รายที่กรอกวัน", "with days")}` : mt("ยังไม่กรอกจำนวนวัน", "no days recorded yet"), totDays ? "var(--st-critical)" : "")}${tile(mt("เฉลี่ย / ราย", "Avg / case"), withDays ? (totDays / withDays).toFixed(1) : "–", mt("วัน", "days"))}${tile(mt("บาดเจ็บบ่อยสุด", "Most injured"), top ? E(mt(top.th, top.en).split(" / ")[0]) : "–", top ? cnt[top.id] + " " + mt("ราย", "cases") : "", "var(--st-critical)")}</div>
+    <div class="inj-main">
+      <div class="inj-body">${injBodySvg(cnt, mx, false)}${injBodySvg(cnt, mx, true)}</div>
+      <div class="inj-bars"><div class="mon-t">${mt("จำนวนรายตามอวัยวะ", "Cases by body part")}</div>${bars || `<div class="muted-s">${mt("ยังไม่มีข้อมูลการบาดเจ็บในช่วงนี้", "No injuries in this period")}</div>`}
+        <div class="inj-ramp">${mt("น้อย", "Few")} ${INJ_RAMP.map((c) => `<i style="background:${c}"></i>`).join("")} ${mt("มาก", "Many")}</div></div>
+    </div>
+    ${rowsP.length ? `<div class="mon-t" style="margin-top:6px;">${mt("วันที่ได้รับบาดเจ็บ (แยกตามอวัยวะ)", "Injury dates by body part")} <span class="muted-s">· <i class="inj-dot" style="background:#dc2626"></i>Live & Play <i class="inj-dot" style="background:#f97316"></i>Township · ${mt("ขนาดจุด = จำนวนวันบาดเจ็บ", "dot size = injury days")}</span></div>
+    <div class="inj-tl"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMinYMin meet">${grid}${dots}</svg></div>` : ""}
+    ${recent.length ? `<div class="mon-t" style="margin-top:6px;">${mt("ล่าสุด", "Latest")}</div><ul class="inj-recent">${recent.map((it) => `<li><b>${mpFmtDate(it.r.d.date)}</b> · ${E(irSiteName(it.r) || "-")} · <span style="color:var(--st-critical)">${E(it.ids.map(drrBodyName).join(", ") || mt("ยังไม่ระบุอวัยวะ", "not specified"))}</span>${it.days ? ` · ${it.days} ${mt("วัน", "days")}` : ""}${it.auto && it.ids.length ? ' <span class="muted-s" title="' + mt("ตรวจจาก Incident Detail", "detected from text") + '">✨</span>' : ""}</li>`).join("")}</ul>` : ""}
+    <div class="muted-s" style="margin-top:6px;">✨ ${nAuto} ${mt("รายการตรวจหาอวัยวะจาก Incident Detail อัตโนมัติ", "detected from the Incident Detail")} · ${nSaved} ${mt("รายการระบุในฟอร์มแล้ว", "recorded in the form")}${unknown ? ` · ${unknown} ${mt("รายการยังไม่ระบุ", "not specified")}` : ""} — ${mt("แก้ไข/ยืนยันได้ที่ แก้ไขรายการ ใน Live & Play / Township", "edit in Live & Play / Township records")}</div>
+  </div>`;
+  irWireScope(host, irRefreshDash);
   host.querySelectorAll("[data-goto]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.goto)));
   if (!host._tips) { mpWireTips(host); host._tips = true; }
 }
@@ -7978,14 +8141,15 @@ function renderDashboard(root) {
   root.innerHTML = `
     ${showMp ? `<div id="dash-mp" style="margin-bottom:14px;"></div>` : ""}
     <div class="dash-top ${showMp ? "" : "one"}">
-      ${showMp ? `<div id="dash-rank"></div><div id="dash-score"></div>` : ""}
-      <div id="dash-safety"></div>
+      ${showMp ? `<div id="dash-rank"></div><div id="dash-score"></div>` : `<div id="dash-safety"></div>`}
+      <div id="dash-body"></div>
     </div>
     ${showMp ? `<div id="dash-chk"></div><div id="mon-host" style="margin-top:14px;"></div>` : ""}
     <div class="grid cols-${statCards.length}" style="margin-top:14px;">${statCards.join("")}</div>
     <div class="grid ${visMods.length ? "cols-2" : "cols-1"}">${modCard}${kpiCard}</div>
   `;
   renderSafetyBoard(document.getElementById("dash-safety"));
+  renderInjuryCard(document.getElementById("dash-body"));
   if (showMp) {
     mpRenderDashRank(document.getElementById("dash-rank"));
     mpRenderDashScore(document.getElementById("dash-score"));
