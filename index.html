@@ -1214,62 +1214,83 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 @media(max-width:1100px){.dash-qi{grid-template-columns:1fr}.dash-qi-r{border-left:0;padding-left:0;border-top:1px solid var(--border);padding-top:12px}}
 .dash-top2{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px}@media(max-width:1000px){.dash-top2{grid-template-columns:1fr}}
 
-/* ===== 3D QSHE (V1.01) ===== */
+/* ===== 3D QSHE (V1.01) — light IFM style ===== */
 .ver-up { margin-left: 6px; padding: 1px 6px; border-radius: 8px; background: #f59e0b; color: #1c1917; font-size: 10px; font-weight: 700; white-space: nowrap; }
 .mode-sw { display: inline-flex; border: 1px solid var(--border, #cbd5e1); border-radius: 10px; overflow: hidden; margin-left: 12px; flex-shrink: 0; }
 .mode-sw button { border: 0; background: transparent; padding: 7px 16px; font-weight: 700; cursor: pointer; color: inherit; font-family: inherit; }
 .mode-sw button.on { background: #ea580c; color: #fff; }
-.v3d { --bg: #0b1220; --pn: #111a2d; --ln: #1f2d48; --tx: #e2e8f0; --mu: #94a3b8; background: var(--bg); color: var(--tx); border-radius: 12px; padding: 10px; }
-.v3d-kpis { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 10px; }
-.v3d-kpi { background: var(--pn); border: 1px solid var(--ln); border-radius: 10px; padding: 8px 10px; border-left: 3px solid #38bdf8; }
-.v3d-kpi.ok { border-left-color: #22c55e; } .v3d-kpi.warn { border-left-color: #f59e0b; } .v3d-kpi.crit { border-left-color: #ef4444; }
-.v3d-kpi span { display: block; font-size: 11px; color: var(--mu); } .v3d-kpi b { font-size: 22px; }
-.v3d-main { display: grid; grid-template-columns: 220px minmax(0, 1fr) 340px; gap: 10px; height: calc(100vh - 230px); min-height: 520px; }
-.v3d-left, .v3d-right { background: var(--pn); border: 1px solid var(--ln); border-radius: 10px; overflow: auto; padding: 8px; }
-.v3d-h { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--mu); margin: 8px 4px 6px; }
-.v3d-b, .v3d-f { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; background: transparent; border: 1px solid transparent; color: var(--tx); border-radius: 8px; padding: 6px 8px; cursor: pointer; font-family: inherit; }
-.v3d-b:hover, .v3d-f:hover { background: #17233c; } .v3d-b.sel, .v3d-f.sel { background: #1e3a5f; border-color: #38bdf8; }
-.v3d-b i { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; } .v3d-b small { display: block; color: var(--mu); font-size: 11px; }
-.v3d-f { justify-content: space-between; font-size: 12px; padding: 4px 8px; } .v3d-f span { color: var(--mu); font-size: 11px; text-align: right; }
-.v3d-blk { font-size: 11px; color: #38bdf8; margin: 6px 4px 2px; }
-.v3d-legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11px; color: var(--mu); padding: 0 4px; margin-bottom: 6px; } .v3d-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; }
-.v3d-stage { position: relative; background: var(--bg); border: 1px solid var(--ln); border-radius: 10px; overflow: hidden; min-width: 0; }
-.v3d-stage canvas { width: 100%; height: 100%; display: block; cursor: grab; }
+.v3d { --tx: #0f172a; --mu: #64748b; --ln: #e2e8f0; --navy: #0f1b33; color: var(--tx); background: #f1f5f9; border-radius: 12px; padding: 10px; }
+.v3d-bchips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; }
+.v3d-bchips button { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; border: 1px solid #cbd5e1; background: #fff; color: #334155; border-radius: 10px; padding: 7px 12px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.v3d-bchips button i { width: 9px; height: 9px; border-radius: 50%; }
+.v3d-bchips button.on { background: #f97316; border-color: #f97316; color: #fff; box-shadow: 0 2px 8px rgba(249,115,22,.35); }
+.v3d-bchips button.on i { box-shadow: 0 0 0 2px #fff; }
+.v3d-kpis { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.v3d-kpi { background: #fff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 6px 10px; }
+.v3d-kpi span { display: block; font-size: 11px; color: var(--mu); } .v3d-kpi b { font-size: 20px; }
+.v3d-kpi.ok { border-color: #86efac; } .v3d-kpi.ok b { color: #16a34a; } .v3d-kpi.crit { border-color: #fca5a5; } .v3d-kpi.crit b { color: #dc2626; }
+.v3d-kpi.warn { border-color: #fcd34d; } .v3d-kpi.warn b { color: #d97706; } .v3d-kpi.info { border-color: #7dd3fc; } .v3d-kpi.info b { color: #0284c7; } .v3d-kpi.dark { border-color: #94a3b8; }
+.v3d-main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 10px; height: calc(100vh - 250px); min-height: 560px; }
+.v3d-main.nopanel { grid-template-columns: minmax(0, 1fr) 0; } .v3d-main.nopanel .v3d-right { display: none; }
+.v3d-stage { position: relative; background: #e9eef3; border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; min-width: 0; }
+.v3d-stage canvas#v3d-canvas { width: 100%; height: 100%; display: block; cursor: grab; }
 .v3d-labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.v3d-lbl { position: absolute; left: 0; top: 0; display: none; align-items: center; gap: 5px; background: #0f1b33; border: 1px solid #f59e0b; color: #fff; border-radius: 8px; padding: 2px 8px; font-size: 12px; font-weight: 600; white-space: nowrap; }
-.v3d-lbl i { width: 8px; height: 8px; border-radius: 50%; } .v3d-lbl.sel { border-color: #38bdf8; background: #12305a; }
-.v3d-lbl em { font-style: normal; font-size: 10px; padding: 0 5px; border-radius: 6px; } .v3d-lbl em.c { background: #7f1d1d; } .v3d-lbl em.w { background: #78350f; }
-.v3d-tip { position: absolute; display: none; background: #0f1b33ee; border: 1px solid var(--ln); color: #fff; border-radius: 8px; padding: 6px 10px; font-size: 12px; pointer-events: none; max-width: 220px; z-index: 3; } .v3d-tip span { color: var(--mu); }
+.v3l { position: absolute; left: 0; top: 0; white-space: nowrap; font-size: 11px; font-weight: 700; color: #fff; background: var(--navy, #0f1b33); border: 1.5px solid #f59e0b; border-radius: 7px; padding: 2px 8px; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 6px rgba(15,23,42,.25); }
+.v3l .pc { background: #2563eb; border-radius: 6px; padding: 0 5px; font-size: 10px; }
+.v3l.fbadge { background: #f97316; border-color: #fff; font-size: 13px; padding: 2px 9px; }
+.v3l.blk { background: #fff; color: #0f172a; border-color: #f97316; font-size: 12px; }
+.v3l.bld { font-size: 12px; padding: 3px 9px; } .v3l.bld i { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }
+.v3l.bld.ok i { background: #22c55e; } .v3l.bld.warn i { background: #f59e0b; } .v3l.bld.crit i { background: #ef4444; } .v3l.bld.crit { border-color: #ef4444; }
+.v3l em { font-style: normal; font-size: 10px; padding: 0 5px; border-radius: 6px; } .v3l em.c { background: #dc2626; } .v3l em.w { background: #d97706; }
+.v3d-tip { position: absolute; display: none; background: rgba(15,27,51,.94); color: #fff; border-radius: 8px; padding: 6px 10px; font-size: 12px; pointer-events: none; max-width: 240px; z-index: 6; } .v3d-tip span { color: #cbd5e1; }
 .v3d-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--mu); padding: 20px; z-index: 2; }
-.v3d-tools { position: absolute; right: 10px; top: 10px; display: flex; flex-direction: column; gap: 6px; z-index: 3; }
-.v3d-tools button { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--ln); background: #0f1b33; color: #fff; font-size: 16px; cursor: pointer; } .v3d-tools button.on { border-color: #f59e0b; color: #f59e0b; }
-.v3d-hint { position: absolute; left: 10px; bottom: 8px; font-size: 11px; color: var(--mu); pointer-events: none; max-width: 80%; }
-.v3d-ph { padding: 6px 4px 0; } .v3d-ph h3 { margin: 0; font-size: 17px; } .v3d-ph small, .v3d-ph p { color: var(--mu); font-size: 12px; }
+.v3d-ftabs { position: absolute; left: 10px; top: 10px; right: 120px; z-index: 4; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+.v3d-ftabs .row { display: flex; flex-wrap: wrap; gap: 4px; background: rgba(255,255,255,.92); border: 1px solid #e2e8f0; border-radius: 10px; padding: 4px; width: max-content; max-width: 100%; pointer-events: auto; box-shadow: 0 2px 8px rgba(15,23,42,.08); }
+.v3d-ftabs button { border: 0; background: transparent; color: #334155; border-radius: 8px; padding: 5px 10px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.v3d-ftabs button:hover { background: #f1f5f9; } .v3d-ftabs button.on { background: #f97316; color: #fff; }
+.v3d-nbcard { position: absolute; left: 10px; top: 92px; z-index: 4; width: 206px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 10px; box-shadow: 0 4px 14px rgba(15,23,42,.12); }
+.v3d-nbh { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: #334155; }
+.v3d-nbh span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .v3d-nbh button { border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; font: inherit; font-size: 11px; padding: 1px 7px; cursor: pointer; }
+.v3d-nb { position: relative; height: 210px; margin-top: 4px; border-radius: 8px; background: linear-gradient(#f8fafc, #e2e8f0); overflow: hidden; } .v3d-nb canvas { width: 186px !important; height: 210px !important; cursor: grab; }
+.v3d-nbbtn { position: absolute; right: 14px; top: 40px; display: flex; flex-direction: column; gap: 4px; } .v3d-nbbtn button { width: 26px; height: 26px; border-radius: 7px; border: 1px solid #cbd5e1; background: #0f1b33; color: #fff; cursor: pointer; font-size: 11px; }
+.v3d-nbleg { font-size: 10px; color: var(--mu); margin-top: 4px; }
+.v3d-tools { position: absolute; right: 10px; top: 10px; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.v3d-tools > button { width: 36px; height: 36px; border-radius: 9px; border: 1px solid #cbd5e1; background: #fff; color: #0f172a; font-size: 16px; cursor: pointer; box-shadow: 0 2px 6px rgba(15,23,42,.08); }
+.v3d-tools > button.on { border-color: #f97316; color: #fff; background: #f97316; }
+.v3d-tools input[type=range] { writing-mode: vertical-lr; direction: rtl; width: 22px; height: 120px; accent-color: #f97316; }
+.v3d-zl { font-size: 11px; color: var(--mu); }
+.v3d-zpre { display: flex; flex-direction: column; gap: 3px; } .v3d-zpre button { border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; font: inherit; font-size: 11px; padding: 2px 6px; cursor: pointer; color: #334155; } .v3d-zpre button:hover { border-color: #f97316; }
+.v3d-legend { position: absolute; left: 10px; bottom: 10px; z-index: 4; background: rgba(255,255,255,.95); border: 1px solid #e2e8f0; border-radius: 10px; padding: 6px 10px; font-size: 11px; color: #334155; max-width: 60%; }
+.v3d-legend div { display: flex; flex-wrap: wrap; gap: 3px 10px; } .v3d-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; } .v3d-legend .demo { color: var(--mu); font-style: italic; }
+.v3d-hint { position: absolute; right: 10px; bottom: 10px; font-size: 11px; color: var(--mu); background: rgba(255,255,255,.85); border-radius: 8px; padding: 3px 8px; pointer-events: none; max-width: 36%; text-align: right; }
+.v3d-ptoggle { position: absolute; right: 56px; top: 10px; z-index: 5; border: 1px solid #cbd5e1; background: #fff; border-radius: 9px; padding: 0 10px; height: 36px; font: inherit; font-weight: 700; cursor: pointer; color: #0f172a; }
+.v3d-right { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: auto; padding: 10px; }
+.v3d-ph { padding: 2px 2px 0; } .v3d-ph h3 { margin: 0; font-size: 17px; } .v3d-ph small, .v3d-ph p { color: var(--mu); font-size: 12px; }
 .v3d-ptitle { display: flex; gap: 10px; align-items: center; } .v3d-dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
 .v3d-img { width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; margin-top: 8px; }
-.v3d-flr { background: #12305a; border: 1px solid #38bdf8; border-radius: 8px; padding: 6px 10px; font-size: 12px; margin: 6px 0; }
-.v3d-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0; } .v3d-tabs button { background: #17233c; border: 1px solid var(--ln); color: var(--tx); border-radius: 14px; padding: 3px 10px; font-size: 12px; cursor: pointer; font-family: inherit; } .v3d-tabs button.on { background: #ea580c; border-color: #ea580c; }
-.v3d-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 8px; } .v3d-grid > div { background: #17233c; border-radius: 8px; padding: 6px 10px; } .v3d-grid span { display: block; font-size: 11px; color: var(--mu); } .v3d-grid b { font-size: 18px; }
-.v3d-bars > div { display: grid; grid-template-columns: 1fr 70px 34px; gap: 6px; align-items: center; font-size: 11px; margin: 3px 0; } .v3d-bars i { height: 7px; background: #1f2d48; border-radius: 4px; overflow: hidden; } .v3d-bars u { display: block; height: 100%; }
+.v3d-flr { background: #fff7ed; border: 1px solid #fdba74; border-radius: 8px; padding: 6px 10px; font-size: 12px; margin: 6px 0; }
+.v3d-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0; } .v3d-tabs button { background: #f1f5f9; border: 1px solid #e2e8f0; color: #334155; border-radius: 14px; padding: 3px 10px; font-size: 12px; cursor: pointer; font-family: inherit; } .v3d-tabs button.on { background: #f97316; border-color: #f97316; color: #fff; }
+.v3d-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-bottom: 8px; } .v3d-grid > div { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px; } .v3d-grid span { display: block; font-size: 11px; color: var(--mu); } .v3d-grid b { font-size: 18px; }
+.v3d-bars > div { display: grid; grid-template-columns: 1fr 70px 34px; gap: 6px; align-items: center; font-size: 11px; margin: 3px 0; } .v3d-bars i { height: 7px; background: #e2e8f0; border-radius: 4px; overflow: hidden; } .v3d-bars u { display: block; height: 100%; }
 .v3d-sub { font-size: 11px; color: var(--mu); margin: 8px 0 4px; }
-.v3d-li { display: flex; align-items: center; gap: 6px; background: #17233c; border-radius: 8px; padding: 5px 8px; margin: 4px 0; font-size: 12px; } .v3d-li > span { flex: 1; min-width: 0; } .v3d-li small { color: var(--mu); }
-.v3d-li select { background: #0f1b33; color: #fff; border: 1px solid var(--ln); border-radius: 6px; font-size: 11px; }
-.v3d-chip { padding: 0 7px; border-radius: 8px; font-size: 11px; font-weight: 700; } .v3d-chip.ok { background: #14532d; } .v3d-chip.warn { background: #78350f; } .v3d-chip.crit { background: #7f1d1d; }
-.v3d-mini { background: #1e3a5f; color: #fff; border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 8px; font-size: 11px; cursor: pointer; font-family: inherit; }
-.v3d-act { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; } .v3d-act.foot { border-top: 1px solid var(--ln); padding-top: 8px; }
-.v3d .btn { font-family: inherit; } .v3d .btn.ghost { color: var(--tx); border-color: var(--ln); }
-.v3d-t { width: 100%; border-collapse: collapse; font-size: 12px; } .v3d-t th { text-align: left; color: var(--mu); font-weight: 600; padding: 4px; } .v3d-t td { padding: 5px 4px; border-top: 1px solid var(--ln); } .v3d-t tr[data-pick] { cursor: pointer; } .v3d-t tr[data-pick]:hover { background: #17233c; }
+.v3d-li { display: flex; align-items: center; gap: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 5px 8px; margin: 4px 0; font-size: 12px; } .v3d-li > span { flex: 1; min-width: 0; } .v3d-li small { color: var(--mu); }
+.v3d-li select { border: 1px solid #cbd5e1; border-radius: 6px; font-size: 11px; font-family: inherit; }
+.v3d-chip { padding: 0 7px; border-radius: 8px; font-size: 11px; font-weight: 700; color: #fff; } .v3d-chip.ok { background: #16a34a; } .v3d-chip.warn { background: #d97706; } .v3d-chip.crit { background: #dc2626; }
+.v3d-mini { background: #fff; color: #c2410c; border: 1px solid #fdba74; border-radius: 6px; padding: 1px 8px; font-size: 11px; cursor: pointer; font-family: inherit; }
+.v3d-act { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; } .v3d-act.foot { border-top: 1px solid #e2e8f0; padding-top: 8px; }
+.v3d .btn { font-family: inherit; }
+.v3d-t { width: 100%; border-collapse: collapse; font-size: 12px; } .v3d-t th { text-align: left; color: var(--mu); font-weight: 600; padding: 4px; } .v3d-t td { padding: 5px 4px; border-top: 1px solid #e2e8f0; } .v3d-t tr[data-pick] { cursor: pointer; } .v3d-t tr[data-pick]:hover { background: #fff7ed; }
 .v3d .muted-s { color: var(--mu); font-size: 12px; }
+.v3d-warn { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 3px solid #94a3b8; border-radius: 8px; padding: 6px 10px; margin: 6px 0; font-size: 12px; } .v3d-warn.crit { border-left-color: #ef4444; background: #fef2f2; } .v3d-warn.warn { border-left-color: #f59e0b; background: #fffbeb; } .v3d-warn.ok { border-left-color: #22c55e; }
+.v3d-warn b { display: block; margin-bottom: 3px; } .v3d-warn button { display: flex; align-items: center; gap: 6px; width: 100%; text-align: left; background: transparent; border: 0; color: #0f172a; padding: 3px 0; cursor: pointer; font-family: inherit; font-size: 12px; }
+.v3d-warn i { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; } .v3d-warn i.crit { background: #ef4444; } .v3d-warn i.warn { background: #f59e0b; }
 .v3s-card { border: 1px solid var(--border, #cbd5e1); border-radius: 10px; padding: 8px 12px; margin-bottom: 8px; } .v3s-card summary { cursor: pointer; }
 .v3s-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; } .v3s-grid label, .v3s-fl { display: flex; flex-direction: column; font-size: 12px; gap: 3px; }
 .v3s-grid input, .v3s-fl textarea { padding: 6px 8px; border: 1px solid var(--border, #cbd5e1); border-radius: 6px; font-family: inherit; }
 .v3s-fl textarea { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
 .v3s-gen { font-size: 12px; margin: 6px 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; } .v3s-gen input[type=number] { width: 56px; }
 .v3s-img { display: flex; align-items: center; gap: 10px; margin: 8px 0; } .v3s-img img { height: 70px; border-radius: 6px; }
-@media (max-width: 1100px) { .v3d-main { grid-template-columns: 1fr; height: auto; } .v3d-stage { height: 60vh; } .v3d-kpis { grid-template-columns: repeat(3, 1fr); } .v3s-grid { grid-template-columns: 1fr; } }
-.v3d-warn { background: #17233c; border-left: 3px solid #64748b; border-radius: 8px; padding: 6px 10px; margin: 6px 0; font-size: 12px; } .v3d-warn.crit { border-left-color: #ef4444; } .v3d-warn.warn { border-left-color: #f59e0b; } .v3d-warn.ok { border-left-color: #22c55e; }
-.v3d-warn b { display: block; margin-bottom: 3px; } .v3d-warn button { display: flex; align-items: center; gap: 6px; width: 100%; text-align: left; background: transparent; border: 0; color: var(--tx); padding: 3px 0; cursor: pointer; font-family: inherit; font-size: 12px; }
-.v3d-warn i { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; } .v3d-warn i.crit { background: #ef4444; } .v3d-warn i.warn { background: #f59e0b; }
+@media (max-width: 1100px) { .v3d-main { grid-template-columns: 1fr; height: auto; } .v3d-stage { height: 70vh; } .v3d-kpis { grid-template-columns: repeat(3, 1fr); } .v3s-grid { grid-template-columns: 1fr; } .v3d-nbcard { display: none !important; } .v3d-hint { display: none; } .v3d-ptoggle { display: none; } }
 
 </style>
 </head>
@@ -5770,25 +5791,28 @@ function v3dData() {
   });
   return out;
 }
-const V3_ST = { ok: 0x22c55e, warn: 0xf59e0b, crit: 0xef4444, none: 0x64748b };
-const V3_CSS = { ok: "#22c55e", warn: "#f59e0b", crit: "#ef4444", none: "#64748b" };
+const V3_ST = { ok: 0x22c55e, warn: 0xf59e0b, crit: 0xef4444, none: 0x94a3b8 };
+const V3_CSS = { ok: "#22c55e", warn: "#f59e0b", crit: "#ef4444", none: "#94a3b8" };
 
 function v3dFloorColor(use, name) {
   const u = String(use || "") + " " + String(name || "");
-  if (/ใต้ดิน|^B\d/i.test(u)) return 0x475569;
-  if (/จอดรถ/.test(u)) return 0x64748b;
-  if (/คลินิก|ร้านค้า/.test(u)) return 0xec4899;
-  if (/โรงแรม|ห้องพัก/.test(u)) return 0x8b5cf6;
-  if (/Roof/i.test(u)) return 0x94a3b8;
-  if (/สนาม|เครื่องเล่น|สวนสนุก/.test(u)) return 0x22c55e;
-  if (/ร้านอาหาร|กาแฟ|ต้นไม้/.test(u)) return 0xf97316;
-  if (/สำนักงาน/.test(u)) return 0x3b82f6;
-  return 0x38bdf8;
+  if (/ใต้ดิน|^B\d/i.test(u)) return 0x64748b;
+  if (/จอดรถ/.test(u)) return 0x94a3b8;
+  if (/คลินิก|ร้านค้า/.test(u)) return 0xf472b6;
+  if (/โรงแรม|ห้องพัก/.test(u)) return 0xa78bfa;
+  if (/Roof/i.test(u)) return 0xcbd5e1;
+  if (/สนาม|เครื่องเล่น|สวนสนุก/.test(u)) return 0x4ade80;
+  if (/ร้านอาหาร|กาแฟ|ต้นไม้/.test(u)) return 0xfb923c;
+  if (/สำนักงาน/.test(u)) return 0x60a5fa;
+  return 0x7dd3fc;
 }
 
 // ------------------------------------------------------------------ 3D state ---
-const V3 = { T: null, failed: false, loading: false, sel: null, blk: null, flr: null, tab: "ov", explode: false, raf: 0, items: [], people: [], gap: 0.06, tgap: 0.06, cam: null, pick: [], R: null, data: {}, imgCache: {} };
-const V3_ROLES = [["staff", "พนักงาน", "Staff", "#3b82f6"], ["tech", "ช่าง", "Technician", "#f97316"], ["clean", "แม่บ้าน", "Housekeeping", "#ec4899"], ["sec", "รปภ.", "Security", "#8b5cf6"], ["contractor", "ผู้รับเหมา", "Contractor", "#eab308"], ["guest", "ลูกค้า/ผู้มาติดต่อ", "Visitor", "#22c55e"]];
+// mode: no building selected = campus (all buildings) · building selected = floor plans (all floors or one floor)
+const V3 = { T: null, R: null, NB: null, failed: false, sel: null, blk: null, flr: null, tab: "ov", explode: false, raf: 0, cam: null, items: [], rooms: [], agents: [], anims: [], pick: [], labels: [], fgroups: [], disp: [], data: {}, count: {}, panel: true, auto: false, lastT: 0 };
+const V3_ROLES = [["staff", "พนักงาน", "Staff", "#3b82f6"], ["tech", "ช่าง", "Technician", "#f97316"], ["clean", "แม่บ้าน", "Housekeeping", "#ec4899"], ["sec", "รปภ.", "Security", "#7c3aed"], ["contractor", "ผู้รับเหมา", "Contractor", "#eab308"], ["guest", "ลูกค้า/ผู้มาติดต่อ", "Visitor", "#22c55e"]];
+const V3_RC = { staff: 0x3b82f6, tech: 0xf97316, clean: 0xec4899, sec: 0x7c3aed, contractor: 0xeab308, guest: 0x22c55e };
+const V3_FH = 4.8, V3_FHX = 9; // floor spacing in the whole-building view (normal / exploded)
 
 async function v3dLoadThree() {
   if (V3.T) return V3.T;
@@ -5796,325 +5820,551 @@ async function v3dLoadThree() {
   return V3.T;
 }
 
-function v3dBuildingBox(b) {
-  const n = (b.blocks || []).length || 1, many = n > 1;
-  const bw = many ? 4 : 6.4, bd = many ? 4.6 : 5.6, gap = 0.6;
-  const maxF = Math.max(1, ...(b.blocks || []).map((k) => (k.floors || []).length));
-  return { bw, bd, gap, w: n * bw + (n - 1) * gap, d: bd, floors: maxF };
+// --------------------------------------------------------- geometry helpers ---
+let V3G = null; const V3M = {};
+function v3G() {
+  const T = V3.T;
+  if (!V3G) V3G = { box: new T.BoxGeometry(1, 1, 1), cyl: new T.CylinderGeometry(1, 1, 1, 18), sph: new T.SphereGeometry(1, 14, 10), cone: new T.ConeGeometry(1, 1, 18), hemi: new T.SphereGeometry(1, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2) };
+  return V3G;
+}
+function v3M(c, o) { const k = c + "|" + (o ? JSON.stringify(o) : ""); return V3M[k] || (V3M[k] = new V3.T.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.75, metalness: 0.05 }, o || {}))); }
+function v3Mesh(p, geo, c, o) { const m = new V3.T.Mesh(geo, typeof c === "object" ? c : v3M(c, o)); m.castShadow = true; m.receiveShadow = true; p.add(m); return m; }
+/** box with its bottom at y */
+function bx(p, w, h, d, c, x, y, z, o) { const m = v3Mesh(p, v3G().box, c, o); m.scale.set(w, h, d); m.position.set(x || 0, (y || 0) + h / 2, z || 0); return m; }
+/** cylinder with its bottom at y */
+function cy(p, r, h, c, x, y, z, o) { const m = v3Mesh(p, v3G().cyl, c, o); m.scale.set(r, h, r); m.position.set(x || 0, (y || 0) + h / 2, z || 0); return m; }
+/** sphere centred at y */
+function sp(p, r, c, x, y, z, o) { const m = v3Mesh(p, v3G().sph, c, o); m.scale.set(r, r, r); m.position.set(x || 0, y || 0, z || 0); return m; }
+function grp(p, x, y, z, ry) { const g = new V3.T.Group(); g.position.set(x || 0, y || 0, z || 0); if (ry) g.rotation.y = ry; p.add(g); return g; }
+const yawTo = (dx, dz) => Math.atan2(dx, dz);
+function v3Rnd(seedStr) { let s = 0; String(seedStr).split("").forEach((ch) => { s = (s * 31 + ch.charCodeAt(0)) % 2147483647; }); s = s || 7; return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
+
+// ----------------------------------------------------------------- people ---
+function v3dPerson(role) {
+  const col = V3_RC[role] || V3_RC.staff, g = new V3.T.Group();
+  const pants = role === "clean" ? 0x9d174d : role === "contractor" ? 0x334155 : 0x1e293b;
+  const legs = [-0.09, 0.09].map((sx) => { const pv = grp(g, sx, 0.55, 0); bx(pv, 0.13, 0.55, 0.13, pants, 0, -0.55, 0); return pv; });
+  const torso = grp(g);
+  cy(torso, 0.2, 0.56, col, 0, 0.55, 0); sp(torso, 0.15, 0xf1c27d, 0, 1.28, 0);
+  const arms = [-0.26, 0.26].map((sx) => { const pv = grp(torso, sx, 1.06, 0); bx(pv, 0.09, 0.46, 0.09, col, 0, -0.46, 0); return pv; });
+  const hat = (c) => { const h = v3Mesh(torso, v3G().hemi, c); h.scale.set(0.17, 0.12, 0.17); h.position.y = 1.33; };
+  if (role === "tech") { hat(0xfacc15); bx(arms[1], 0.05, 0.05, 0.28, 0x9ca3af, 0, -0.5, 0.1); }
+  if (role === "contractor") { hat(0xffffff); bx(torso, 0.42, 0.06, 0.42, 0xf97316, 0, 0.9, 0); }
+  if (role === "sec") cy(torso, 0.16, 0.08, 0x111827, 0, 1.38, 0);
+  if (role === "clean") bx(torso, 0.3, 0.3, 0.02, 0xffffff, 0, 0.6, 0.2);
+  return { g, legs, arms, torso };
+}
+function v3dSpawn(c, role, mode, x, z, ry, zone) {
+  const p = v3dPerson(role); p.g.position.set(x, 0, z); p.g.rotation.y = ry || 0; c.g.add(p.g);
+  const a = Object.assign(p, { role, mode, rc: c.rc, zone: zone || c.rc.zone, speed: mode === "walk" ? 0.7 + Math.random() * 0.6 : 0, target: null, wait: Math.random() * 2, ph: Math.random() * 9 });
+  if (mode === "sit") { a.legs.forEach((l) => { l.rotation.x = -Math.PI / 2; }); p.g.position.y = -0.1; a.arms.forEach((l) => { l.rotation.x = -0.9; }); }
+  V3.agents.push(a); c.rc.n++; V3.count[role] = (V3.count[role] || 0) + 1;
+  return a;
+}
+function v3dWalk(c, n, roles, zone) { const z = zone || c.rc.zone; for (let i = 0; i < n; i++) v3dSpawn(c, roles[Math.floor(c.rnd() * roles.length)], "walk", z.x0 + c.rnd() * (z.x1 - z.x0), z.z0 + c.rnd() * (z.z1 - z.z0), c.rnd() * 6, z); }
+function v3dUpAgent(a, dt, t) {
+  if (a.mode === "walk") {
+    if (!a.target) { a.wait -= dt; if (a.wait <= 0) { const z = a.zone; a.target = { x: z.x0 + Math.random() * (z.x1 - z.x0), z: z.z0 + Math.random() * (z.z1 - z.z0) }; } }
+    let moving = false;
+    if (a.target) {
+      const p = a.g.position, dx = a.target.x - p.x, dz = a.target.z - p.z, d = Math.hypot(dx, dz);
+      if (d < 0.12) { a.target = null; a.wait = 1 + Math.random() * 3.5; }
+      else { const st = Math.min(d, a.speed * dt); p.x += (dx / d) * st; p.z += (dz / d) * st; let df = yawTo(dx, dz) - a.g.rotation.y; df = Math.atan2(Math.sin(df), Math.cos(df)); a.g.rotation.y += df * Math.min(1, dt * 7); a.ph += dt * a.speed * 7.5; moving = true; }
+    }
+    const sw = moving ? Math.sin(a.ph) * 0.6 : 0;
+    a.legs[0].rotation.x = sw; a.legs[1].rotation.x = -sw; a.arms[0].rotation.x = -sw * 0.8; a.arms[1].rotation.x = sw * 0.8;
+    a.torso.position.y = moving ? Math.abs(Math.sin(a.ph)) * 0.03 : 0;
+  } else if (a.mode === "stand") {
+    a.arms[0].rotation.x = Math.sin(t * 1.3 + a.ph) * 0.08; a.arms[1].rotation.x = -Math.sin(t * 1.1 + a.ph) * 0.08;
+  } else if (a.mode === "work") {
+    a.arms[0].rotation.x = -0.9 + Math.sin(t * 5 + a.ph) * 0.25; a.arms[1].rotation.x = -0.9 - Math.sin(t * 5 + a.ph) * 0.25;
+  }
 }
 
-function v3dClearScene() {
-  const R = V3.R; if (!R) return;
-  while (R.root.children.length) { const c = R.root.children[0]; R.root.remove(c); c.traverse && c.traverse((o) => { if (o.geometry && !o.userData.shared) o.geometry.dispose(); if (o.material && !o.userData.sharedMat) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose()); }); }
-  V3.items = []; V3.people = []; V3.pick = [];
-  const lb = document.getElementById("v3d-labels"); if (lb) lb.innerHTML = "";
+// ------------------------------------------------------------- furniture ---
+function v3Seat(c, role, x, z, ry, occ) { const g = grp(c.g, x, 0, z, ry); bx(g, 0.46, 0.45, 0.46, 0x475569, 0, 0, 0); bx(g, 0.46, 0.5, 0.07, 0x334155, 0, 0.45, -0.2); if (occ) v3dSpawn(c, role, "sit", x, z, ry); }
+function v3Table(c, x, z, seats, occ, role, r) {
+  r = r || 0.55; cy(c.g, r, 0.05, 0xd6b98c, x, 0.72, z); cy(c.g, 0.06, 0.72, 0x334155, x, 0, z);
+  for (let i = 0; i < seats; i++) { const a = (i / seats) * Math.PI * 2 + 0.4, sx = x + Math.cos(a) * (r + 0.45), sz = z + Math.sin(a) * (r + 0.45); v3Seat(c, role, sx, sz, yawTo(x - sx, z - sz), c.rnd() < occ); }
 }
-
-const V3_GEO = {};
-const v3dGeo = (T, k, mk) => V3_GEO[k] || (V3_GEO[k] = Object.assign(mk(), { userData: { shared: true } }));
-const V3_MAT = {};
-const v3dMat = (T, c, o) => { const k = c + JSON.stringify(o || {}); return V3_MAT[k] || (V3_MAT[k] = Object.assign(new T.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.7 }, o || {})), { userData: { sharedMat: true } })); };
-/** an "open" floor: slab + low walls + furniture that matches the use of the floor, so the inside can be seen */
-function v3dOpenFloor(T, bx, col, f, ox) {
-  const g = new T.Group(); g.position.x = ox; const mats = [];
-  const slabM = new T.MeshStandardMaterial({ color: col, roughness: 0.6, transparent: true, opacity: 0.95, emissive: col, emissiveIntensity: 0.05 });
-  const slab = new T.Mesh(new T.BoxGeometry(bx.bw, 0.14, bx.bd), slabM); slab.position.y = 0.07; slab.castShadow = slab.receiveShadow = true; g.add(slab); mats.push(slabM);
-  const wallM = new T.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.4, transparent: true, opacity: 0.28 }); mats.push(wallM);
-  const wl = (w, d, x, z) => { const m = new T.Mesh(new T.BoxGeometry(w, 0.42, d), wallM); m.position.set(x, 0.35, z); g.add(m); };
-  wl(bx.bw, 0.07, 0, bx.bd / 2 - 0.035); wl(bx.bw, 0.07, 0, -bx.bd / 2 + 0.035); wl(0.07, bx.bd, bx.bw / 2 - 0.035, 0); wl(0.07, bx.bd, -bx.bw / 2 + 0.035, 0);
-  let sd = 0; String(f.id + f.name).split("").forEach((c) => { sd = (sd * 31 + c.charCodeAt(0)) % 9973; });
-  const rnd = () => { sd = (sd * 9301 + 49297) % 233280; return sd / 233280; };
-  const u = String(f.use || "") + " " + String(f.name || "");
-  const box = (w, h, d, x, z, c, y) => { const m = new T.Mesh(v3dGeo(T, "b" + w + "_" + h + "_" + d, () => new T.BoxGeometry(w, h, d)), v3dMat(T, c)); m.position.set(x, (y || 0) + 0.14 + h / 2, z); m.castShadow = true; g.add(m); return m; };
-  const px = () => (rnd() - 0.5) * (bx.bw - 1), pz = () => (rnd() - 0.5) * (bx.bd - 1);
-  const cyl = (r1, r2, h, x, z, c, y, seg) => { const m = new T.Mesh(v3dGeo(T, "c" + r1 + "_" + r2 + "_" + h + "_" + (seg || 10), () => new T.CylinderGeometry(r1, r2, h, seg || 10)), v3dMat(T, c)); m.position.set(x, (y || 0) + 0.14 + h / 2, z); m.castShadow = true; g.add(m); return m; };
-  const tree = (x, z, k) => { cyl(0.04, 0.05, 0.22, x, z, 0x78350f); cyl(0.22 * k, 0.02, 0.34 * k, x, z, 0x16a34a, 0.18, 8); cyl(0.16 * k, 0.02, 0.28 * k, x, z, 0x22c55e, 0.4 * k, 8); };
-  const pot = (x, z) => { cyl(0.07, 0.05, 0.1, x, z, 0xb45309); cyl(0.1, 0.01, 0.2, x, z, 0x4ade80, 0.1, 7); };
-  const car = (x, z, c, rot) => {
-    const cg = new T.Group(); cg.position.set(x, 0.14, z); cg.rotation.y = rot || 0;
-    const body = new T.Mesh(v3dGeo(T, "carb", () => new T.BoxGeometry(0.56, 0.1, 0.26)), v3dMat(T, c)); body.position.y = 0.11; body.castShadow = true;
-    const cab = new T.Mesh(v3dGeo(T, "carc", () => new T.BoxGeometry(0.28, 0.09, 0.22)), v3dMat(T, 0x1e293b, { metalness: 0.4 })); cab.position.set(-0.02, 0.2, 0);
-    cg.add(body, cab);
-    [[-0.18, 0.13], [0.18, 0.13], [-0.18, -0.13], [0.18, -0.13]].forEach((w) => { const wh = new T.Mesh(v3dGeo(T, "carw", () => new T.CylinderGeometry(0.06, 0.06, 0.05, 10)), v3dMat(T, 0x0f172a)); wh.rotation.x = Math.PI / 2; wh.position.set(w[0], 0.06, w[1]); cg.add(wh); });
-    g.add(cg);
-  };
-  const table = (x, z) => {
-    cyl(0.03, 0.03, 0.18, x, z, 0x57534e); cyl(0.2, 0.2, 0.025, x, z, 0xfde68a, 0.18, 14);
-    [[0.27, 0], [-0.27, 0], [0, 0.27], [0, -0.27]].forEach((c) => box(0.11, 0.1, 0.11, x + c[0], z + c[1], 0x9a3412));
-  };
-  const grid = (cols, rows, margin, fn) => { for (let a = 0; a < cols; a++) for (let b = 0; b < rows; b++) fn(-bx.bw / 2 + margin + (cols === 1 ? (bx.bw - 2 * margin) / 2 : a * (bx.bw - 2 * margin) / (cols - 1)), -bx.bd / 2 + margin + (rows === 1 ? (bx.bd - 2 * margin) / 2 : b * (bx.bd - 2 * margin) / (rows - 1)), a, b); };
-  const wide = bx.bw > 5;
-  if (/ใต้ดิน|^B\d/i.test(u)) { grid(wide ? 4 : 3, 2, 0.5, (x, z) => box(0.18, 0.62, 0.18, x, z, 0x94a3b8)); }
-  else if (/จอดรถ/.test(u)) {
-    const cols = wide ? 4 : 3, cc = [0xef4444, 0x3b82f6, 0xe5e7eb, 0x1f2937, 0xeab308, 0x22c55e, 0xf97316, 0x94a3b8];
-    grid(cols, 2, 0.55, (x, z, a, b) => { if (rnd() > 0.2) car(x, z, cc[(a * 2 + b + Math.floor(rnd() * 3)) % cc.length], 0); box(0.62, 0.005, 0.03, x, z + (b ? -0.22 : 0.22), 0xf8fafc); });
-  }
-  else if (/ห้องพัก|โรงแรม/.test(u)) { for (let i = 0; i < 3; i++) { const x = -bx.bw / 2 + 0.7 + i * (bx.bw - 1.4) / 2; box(0.04, 0.34, bx.bd * 0.5, x + 0.55, -bx.bd * 0.22, 0xe2e8f0); box(0.42, 0.1, 0.62, x, -bx.bd * 0.22, 0xf8fafc); box(0.42, 0.05, 0.22, x, -bx.bd * 0.22 - 0.2, 0x93c5fd); } }
-  else if (/สนาม/.test(u)) { const c = new T.Mesh(new T.PlaneGeometry(bx.bw - 0.8, bx.bd - 0.8), v3dMat(T, /เทนนิส/.test(u) ? 0x1d4ed8 : 0x15803d)); c.rotation.x = -Math.PI / 2; c.position.y = 0.16; g.add(c); box(0.03, 0.24, bx.bd - 0.8, 0, 0, 0xf8fafc); box(0.02, 0.2, 0.02, 0, -(bx.bd - 0.8) / 2, 0xf8fafc); box(0.02, 0.2, 0.02, 0, (bx.bd - 0.8) / 2, 0xf8fafc); }
-  else if (/เครื่องเล่น|สวนสนุก/.test(u)) {
-    const x0 = -bx.bw / 4; cyl(0.5, 0.5, 0.06, x0, 0, 0xfacc15); cyl(0.03, 0.03, 0.4, x0, 0, 0xe5e7eb); cyl(0.02, 0.6, 0.22, x0, 0, 0xef4444, 0.4, 12);
-    for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2; box(0.1, 0.1, 0.1, x0 + Math.cos(a) * 0.38, Math.sin(a) * 0.38, [0x3b82f6, 0x22c55e, 0xec4899, 0xf97316][k], 0.06); }
-    const x1 = bx.bw / 4; for (let k = 0; k < 3; k++) box(0.34, 0.12 + k * 0.1, 0.34, x1, (k - 1) * 0.5, [0x8b5cf6, 0x06b6d4, 0xf43f5e][k]);
-  }
-  else if (/ต้นไม้/.test(u) && /ร้านอาหาร|กาแฟ/.test(u)) {
-    for (let i = 0; i < 4; i++) tree(-bx.bw / 2 + 0.6 + i * (bx.bw - 1.2) / 3, -bx.bd / 2 + 0.6, 1);
-    for (let i = 0; i < 5; i++) pot(-bx.bw / 2 + 0.5 + i * (bx.bw - 1) / 4, -bx.bd / 2 + 1.3);
-    grid(3, 1, 0.8, (x) => table(x, bx.bd / 4 + 0.1));
-  }
-  else if (/ร้านอาหาร|กาแฟ/.test(u)) { grid(wide ? 3 : 2, 2, 0.75, (x, z) => table(x, z)); }
-  else if (/ต้นไม้/.test(u)) { grid(4, 2, 0.6, (x, z) => tree(x, z, 1)); }
-  else if (/คลินิก|ร้านค้า/.test(u)) { for (let i = 0; i < 3; i++) box(bx.bw * 0.5, 0.3, 0.14, 0, -bx.bd / 2 + 0.7 + i * 1.2, 0xfbcfe8); }
-  else if (/สำนักงาน/.test(u)) { grid(wide ? 3 : 2, 2, 0.7, (x, z) => { box(0.5, 0.1, 0.28, x, z, 0xdbeafe); box(0.12, 0.1, 0.12, x, z + 0.28, 0x475569); }); }
-  else if (/Roof/i.test(u)) { grid(2, 1, 1.2, (x, z) => box(0.5, 0.3, 0.4, x, z, 0x94a3b8)); }
-  else { grid(2, 1, 1, (x, z) => box(0.4, 0.25, 0.4, x, z, 0x94a3b8)); }
-  g.userData.mats = mats;
+function v3Plant(c, x, z, s) { s = s || 1; cy(c.g, 0.22 * s, 0.4 * s, 0x92400e, x, 0, z); sp(c.g, 0.38 * s, [0x15803d, 0x16a34a, 0x22c55e][Math.floor(c.rnd() * 3)], x, 0.75 * s, z); }
+function v3Tree(c, x, z, s) { s = s || 1; cy(c.g, 0.14 * s, 1.3 * s, 0x78350f, x, 0, z); sp(c.g, 0.9 * s, 0x15803d, x, 1.9 * s, z); sp(c.g, 0.6 * s, 0x22c55e, x, 2.5 * s, z); }
+function v3Car(p, x, z, ry, col) {
+  const g = grp(p, x, 0, z, ry); bx(g, 1.8, 0.55, 4.2, col, 0, 0.25, 0, { metalness: 0.3, roughness: 0.45 }); bx(g, 1.55, 0.45, 2.1, 0x475569, 0, 0.8, -0.2, { metalness: 0.6, roughness: 0.25 }); bx(g, 1.7, 0.08, 0.3, 0xfef3c7, 0, 0.42, 2.0);
+  [[-0.85, 1.35], [0.85, 1.35], [-0.85, -1.35], [0.85, -1.35]].forEach((w) => { const m = v3Mesh(g, v3G().cyl, 0x111827); m.scale.set(0.33, 0.25, 0.33); m.rotation.z = Math.PI / 2; m.position.set(w[0], 0.33, w[1]); });
   return g;
 }
+function v3Shelf(c, x, z, len, ry) {
+  const g = grp(c.g, x, 0, z, ry); [-len / 2, len / 2].forEach((e) => bx(g, 0.06, 1.8, 0.5, 0x64748b, e, 0, 0));
+  for (let y = 0.15; y < 1.8; y += 0.55) { bx(g, len, 0.04, 0.5, 0x94a3b8, 0, y, 0); for (let i = -len / 2 + 0.3; i < len / 2 - 0.2; i += 0.5) if (c.rnd() < 0.7) bx(g, 0.36, 0.3, 0.36, [0xc2a173, 0xa16207, 0x2563eb, 0x16a34a, 0xdb2777][Math.floor(c.rnd() * 5)], i, y + 0.04, 0); }
+}
+const backZ = (c, m) => -c.ds * (c.d / 2 - (m || 0.5));
+const doorZ = (c, m) => c.ds * (c.d / 2 - (m || 0.5));
 
-/** (re)build every building from the stored layout */
-function v3dBuildScene() {
-  const R = V3.R, T = V3.T; if (!R || !T) return;
-  v3dClearScene();
-  V3.data = v3dData();
-  const bs = DB.get("v3dBuildings", []);
-  // layout: rows of buildings
-  const rowMax = 42, space = 4.5; let x = 0, z = 0, rowD = 0; const places = [];
-  bs.forEach((b) => {
-    const bx = v3dBuildingBox(b);
-    if (x > 0 && x + bx.w > rowMax) { x = 0; z += rowD + space; rowD = 0; }
-    places.push({ b, bx, x: x + bx.w / 2, z: z + bx.d / 2 });
-    x += bx.w + space; rowD = Math.max(rowD, bx.d);
+// --------------------------------------------------------- room generators ---
+// c = { rc, g, w, d, ds (door side +1/-1), rnd, dense (people factor) }
+const V3_GEN = {
+  dining(c) {
+    const bz = backZ(c, 0.6); bx(c.g, Math.min(c.w - 2, 5), 1, 0.6, 0x7c4a1e, 0, 0, bz); bx(c.g, Math.min(c.w - 2, 5) + 0.1, 0.05, 0.7, 0xe7e5e4, 0, 1, bz);
+    v3dSpawn(c, "staff", "stand", 0, bz - c.ds * 0.7, c.ds > 0 ? 0 : Math.PI);
+    for (let x = -c.w / 2 + 2; x <= c.w / 2 - 1.8; x += 3.3) for (let z = -c.d / 2 + 2.4; z <= c.d / 2 - 1.8; z += 3.2) { if (Math.abs(z - bz) < 1.8) continue; v3Table(c, x, z, 4, 0.32 * c.dense, "guest"); }
+    v3dWalk(c, Math.round(1 + c.dense), ["staff", "guest"]);
+  },
+  cafe(c) {
+    const bz = backZ(c, 0.6); bx(c.g, Math.min(c.w - 1.5, 4), 1, 0.6, 0x57534e, 0, 0, bz); cy(c.g, 0.25, 0.4, 0x991b1b, -0.8, 1, bz);
+    v3dSpawn(c, "staff", "work", 0.4, bz - c.ds * 0.7, c.ds > 0 ? 0 : Math.PI);
+    for (let x = -c.w / 2 + 1.4; x <= c.w / 2 - 1.4; x += 2.2) v3Table(c, x, doorZ(c, 2), 2, 0.5 * c.dense, "guest", 0.4);
+    v3Plant(c, -c.w / 2 + 0.6, bz); v3Plant(c, c.w / 2 - 0.6, bz);
+  },
+  kitchen(c) {
+    const bz = backZ(c, 0.45); bx(c.g, c.w - 1, 0.9, 0.7, 0xcbd5e1, 0, 0, bz, { metalness: 0.5, roughness: 0.35 });
+    for (let x = -c.w / 2 + 1.2; x < c.w / 2 - 1; x += 1.6) { bx(c.g, 0.8, 0.95, 0.7, 0x334155, x, 0, 0); cy(c.g, 0.18, 0.25, 0x94a3b8, x, 0.95, 0, { metalness: 0.6 }); }
+    v3dSpawn(c, "staff", "work", -0.6, bz - c.ds * 0.8, c.ds > 0 ? 0 : Math.PI); v3dWalk(c, 1, ["staff"]);
+  },
+  garden(c) {
+    const bz = backZ(c, 1.1);
+    for (let x = -c.w / 2 + 1.4; x <= c.w / 2 - 1.2; x += 2.6) v3Tree(c, x, bz, 0.8 + c.rnd() * 0.3);
+    for (let x = -c.w / 2 + 1.2; x <= c.w / 2 - 1.2; x += 1.25) for (let k = 0; k < 2; k++) v3Plant(c, x, bz + c.ds * (2.2 + k * 1.3), 0.7 + c.rnd() * 0.4);
+    bx(c.g, Math.min(c.w - 3, 6), 0.8, 1, 0x7c4a1e, 0, 0, doorZ(c, 2.2));
+    v3dSpawn(c, "staff", "stand", 1.5, doorZ(c, 3), c.ds > 0 ? Math.PI : 0); v3dWalk(c, Math.round(2 * c.dense + 1), ["guest", "guest", "staff"]);
+  },
+  parking(c) {
+    const cols = [0xef4444, 0x3b82f6, 0xe5e7eb, 0x1f2937, 0xeab308, 0x22c55e, 0xf97316, 0x94a3b8], rows = [-c.d / 2 + 2.6, c.d / 2 - 2.6];
+    if (c.d > 15) rows.push(0);
+    rows.forEach((z, ri) => {
+      for (let x = -c.w / 2 + 1.6; x <= c.w / 2 - 1.4; x += 2.7) {
+        bx(c.g, 0.08, 0.02, 4.8, 0xf8fafc, x - 1.35, 0.03, z);
+        if (c.rnd() < 0.75) v3Car(c.g, x, z, ri === 1 ? Math.PI : 0, cols[Math.floor(c.rnd() * cols.length)]);
+      }
+    });
+    for (let x = -c.w / 2 + 4; x < c.w / 2 - 2; x += 8) bx(c.g, 0.5, 3.2, 0.5, 0x94a3b8, x, 0, rows.length > 2 ? 3.3 : 0);
+    const lane = rows.length > 2 ? -3.4 : 0, mv = v3Car(c.g, 0, lane, Math.PI / 2, 0xdc2626), half = c.w / 2 - 3; let dir = 1;
+    V3.anims.push((dt) => { mv.position.x += dir * dt * 2.2; if (Math.abs(mv.position.x) > half) { dir = -dir; mv.rotation.y = dir > 0 ? Math.PI / 2 : -Math.PI / 2; } });
+    const az = { x0: -c.w / 2 + 1, x1: c.w / 2 - 1, z0: lane - 1.4, z1: lane + 1.4 };
+    v3dWalk(c, 1, ["sec"], az); v3dWalk(c, Math.round(1 + c.dense), ["guest", "contractor", "staff"], az);
+  },
+  office(c) {
+    for (let z = -c.d / 2 + 2; z <= c.d / 2 - 2.6; z += 3.4) for (let x = -c.w / 2 + 1.5; x <= c.w / 2 - 1.3; x += 1.6) {
+      bx(c.g, 1.2, 0.74, 0.6, 0xe5e7eb, x, 0, z); bx(c.g, 0.5, 0.32, 0.04, 0x111827, x, 0.74, z - 0.12);
+      v3Seat(c, "staff", x, z + 0.75, Math.PI, c.rnd() < 0.6 * c.dense);
+    }
+    v3dWalk(c, 1, ["staff", "clean"], { x0: -c.w / 2 + 0.8, x1: c.w / 2 - 0.8, z0: doorZ(c, 1.6) - 0.6, z1: doorZ(c, 1.6) + 0.6 });
+  },
+  meeting(c) {
+    const L = Math.max(2, c.w * 0.55); bx(c.g, L, 0.74, 1.3, 0xa16207, 0, 0, 0);
+    for (let x = -L / 2 + 0.5; x <= L / 2 - 0.4; x += 0.9) { v3Seat(c, "staff", x, -1.05, 0, c.rnd() < 0.5 * c.dense); v3Seat(c, "staff", x, 1.05, Math.PI, c.rnd() < 0.5 * c.dense); }
+    bx(c.g, 2, 1.2, 0.08, 0x111827, 0, 0.6, backZ(c, 0.25));
+  },
+  toilet(c) {
+    const bz = backZ(c, 0.7), n = Math.max(1, Math.min(4, Math.floor((c.w - 1) / 1.3)));
+    for (let i = 0; i <= n; i++) bx(c.g, 0.06, 1.0, 1.4, 0xcbd5e1, -c.w / 2 + 0.6 + i * 1.3, 0, bz);
+    bx(c.g, 0.5, 0.85, Math.min(2.4, c.d - 2), 0xe5e7eb, c.w / 2 - 0.5, 0, 0);
+    if (c.rnd() < 0.7) v3dWalk(c, 1, ["clean"]);
+  },
+  lobby(c) {
+    const bz = backZ(c, 0.8); bx(c.g, Math.min(3.2, c.w - 1.5), 1, 0.7, 0x7c4a1e, 0, 0, bz); bx(c.g, Math.min(3.2, c.w - 1.5) + 0.1, 0.05, 0.8, 0xe7e5e4, 0, 1, bz);
+    v3dSpawn(c, "staff", "stand", 0, bz - c.ds * 0.8, c.ds > 0 ? 0 : Math.PI);
+    if (c.w > 6) { bx(c.g, 1.8, 0.42, 0.8, 0x475569, -c.w / 2 + 1.6, 0, 0); bx(c.g, 1.8, 0.42, 0.8, 0x475569, c.w / 2 - 1.6, 0, 0); }
+    v3Plant(c, -c.w / 2 + 0.6, doorZ(c, 0.7)); v3Plant(c, c.w / 2 - 0.6, doorZ(c, 0.7));
+    v3dSpawn(c, "sec", "stand", 1.2, doorZ(c, 1), c.ds > 0 ? Math.PI : 0); v3dWalk(c, Math.round(1 + c.dense), ["guest", "guest", "contractor"]);
+  },
+  guestroom(c) {
+    const bz = backZ(c, 1.15); bx(c.g, 2, 1.1, 0.1, 0x5b4636, 0, 0, backZ(c, 0.12)); bx(c.g, 1.8, 0.42, 2.1, 0x7c4a1e, 0, 0, bz); bx(c.g, 1.7, 0.16, 2.0, 0xf8fafc, 0, 0.42, bz); bx(c.g, 1.6, 0.06, 0.9, [0x60a5fa, 0xfbbf24, 0xa78bfa][Math.floor(c.rnd() * 3)], 0, 0.58, bz + c.ds * 0.45);
+    bx(c.g, 0.45, 0.5, 0.4, 0x5b4636, -1.3, 0, backZ(c, 0.4)); bx(c.g, 0.45, 0.5, 0.4, 0x5b4636, 1.3, 0, backZ(c, 0.4));
+    bx(c.g, 0.1, 1.0, 2.2, 0xcbd5e1, c.w / 2 - 2.2, 0, doorZ(c, 1.3)); bx(c.g, 1.0, 0.74, 0.5, 0xd6d3d1, -c.w / 2 + 0.8, 0, doorZ(c, 1.6));
+    bx(c.g, 0.6, 2.0, 1.4, 0xd6d3d1, c.w / 2 - 0.45, 0, backZ(c, 1.2)); bx(c.g, 1.4, 0.5, 0.4, 0x44403c, -c.w / 2 + 0.4 + 0.7, 0, 0); bx(c.g, 1.1, 0.62, 0.06, 0x111827, -c.w / 2 + 1.1, 0.55, 0.05);
+    bx(c.g, 0.8, 0.45, 0.8, 0x64748b, c.w / 2 - 1.3, 0, 0.2); bx(c.g, 0.8, 0.4, 0.15, 0x475569, c.w / 2 - 1.3, 0.45, 0.55);
+    if (c.rnd() < 0.55) v3dWalk(c, 1, ["guest"]); if (c.rnd() < 0.25) v3dWalk(c, 1, ["clean"]);
+  },
+  court_b(c) { v3Court(c, 6.1, 13.4, 0x15803d, 2); },
+  court_t(c) { v3Court(c, 10.97, 23.77, 0x1d4ed8, 1); },
+  rides(c) {
+    const W = c.w, D = c.d;
+    // carousel
+    const cg = grp(c.g, -W * 0.36, 0, 0); cy(cg, 2.1, 0.3, 0xfbbf24); cy(cg, 1.95, 0.08, 0xf8fafc, 0, 0.3, 0); cy(cg, 0.12, 2.8, 0xe5e7eb);
+    const roof = v3Mesh(cg, v3G().cone, 0xef4444); roof.scale.set(2.3, 1.1, 2.3); roof.position.y = 3.3; sp(cg, 0.18, 0xfacc15, 0, 3.95, 0);
+    const hs = [];
+    for (let k = 0; k < 6; k++) { const a = (k / 6) * Math.PI * 2, hx = Math.cos(a) * 1.45, hz = Math.sin(a) * 1.45; cy(cg, 0.03, 2.5, 0xfde68a, hx, 0.35, hz); hs.push(bx(cg, 0.25, 0.45, 0.8, [0x3b82f6, 0x22c55e, 0xec4899, 0xf97316, 0x8b5cf6, 0x06b6d4][k], hx, 0.7, hz)); hs[k].rotation.y = -a; }
+    V3.anims.push((dt, t) => { cg.rotation.y += dt * 0.6; hs.forEach((h, k) => { h.position.y = 0.92 + Math.sin(t * 2 + k) * 0.15; }); });
+    // bumper cars arena
+    const ax = -W * 0.08, aw = Math.min(7, W * 0.2), ad = Math.min(6, D - 3), ag = grp(c.g, ax, 0, 0);
+    const fl_ = bx(ag, aw, 0.06, ad, 0x1e1b4b); fl_.castShadow = false; [[aw, 0.4, 0.15, 0, -ad / 2], [aw, 0.4, 0.15, 0, ad / 2], [0.15, 0.4, ad, -aw / 2, 0], [0.15, 0.4, ad, aw / 2, 0]].forEach((q) => bx(ag, q[0], q[1], q[2], 0xfacc15, q[3], 0, q[4]));
+    const cars = [0xef4444, 0x22c55e, 0x3b82f6, 0xec4899].map((col, k) => { const g = grp(ag, 0, 0, 0); bx(g, 0.9, 0.35, 1.3, col, 0, 0.08, 0, { metalness: 0.3 }); cy(g, 0.03, 0.9, 0x94a3b8, 0, 0.4, -0.4); return { g, k }; });
+    V3.anims.push((dt, t) => cars.forEach(({ g, k }) => { const a = t * (0.5 + k * 0.12) + k * 1.6, x = Math.cos(a) * (aw / 2 - 1), z = Math.sin(a * 1.3) * (ad / 2 - 1); g.rotation.y = Math.atan2(x - g.position.x, z - g.position.z); g.position.set(x, 0, z); }));
+    // ball pit
+    const pit = grp(c.g, W * 0.14, 0, -D / 4 + 0.3); bx(pit, 4, 0.5, 3, 0x0ea5e9, 0, 0, 0, { transparent: true, opacity: 0.55 });
+    for (let k = 0; k < 16; k++) sp(pit, 0.18, [0xef4444, 0xfacc15, 0x22c55e, 0x3b82f6, 0xec4899][k % 5], (c.rnd() - 0.5) * 3.4, 0.55, (c.rnd() - 0.5) * 2.4);
+    // trampoline
+    const tr = grp(c.g, W * 0.14, 0, D / 4 - 0.3); cy(tr, 1.3, 0.5, 0x1e293b); const mat = cy(tr, 1.2, 0.04, 0x2563eb, 0, 0.5, 0); mat.castShadow = false;
+    // slide tower
+    const sl = grp(c.g, W * 0.37, 0, 0); bx(sl, 1.4, 2.4, 1.4, 0x8b5cf6, -1.4, 0, 0); bx(sl, 1.6, 0.12, 1.6, 0xfacc15, -1.4, 2.4, 0); const pl = bx(sl, 0.8, 0.08, 3.4, 0xfacc15, 0, 0, 0); pl.position.set(0.1, 1.2, 0); pl.rotation.z = -0.6; pl.rotation.y = Math.PI / 2;
+    v3dSpawn(c, "staff", "stand", ax + aw / 2 + 0.8, ad / 2, Math.PI);
+    v3dWalk(c, Math.round(3 + 3 * c.dense), ["guest", "guest", "guest", "staff", "clean"]);
+  },
+  shop(c) {
+    v3Shelf(c, 0, backZ(c, 0.5), Math.min(c.w - 1.2, 5), 0); if (c.w > 5) v3Shelf(c, -c.w / 2 + 0.5, 0, Math.min(c.d - 2.5, 4), Math.PI / 2);
+    bx(c.g, 1.8, 1, 0.6, 0x57534e, c.w / 2 - 1.4, 0, doorZ(c, 1.4)); v3dSpawn(c, "staff", "stand", c.w / 2 - 1.4, doorZ(c, 2), c.ds > 0 ? Math.PI : 0);
+    v3dWalk(c, Math.round(1 + c.dense), ["guest"]);
+  },
+  clinic(c) {
+    bx(c.g, 0.8, 0.7, 2, 0xe0f2fe, -c.w / 2 + 1.2, 0, 0); bx(c.g, 0.7, 0.1, 1.9, 0x93c5fd, -c.w / 2 + 1.2, 0.7, 0);
+    bx(c.g, 1.2, 0.74, 0.6, 0xe5e7eb, c.w / 2 - 1.4, 0, backZ(c, 0.9)); v3Seat(c, "guest", c.w / 2 - 1.4, backZ(c, 0.9) + c.ds * 0.8, c.ds > 0 ? Math.PI : 0, c.rnd() < 0.6);
+    bx(c.g, 1.6, 1.8, 0.45, 0xf8fafc, 0, 0, backZ(c, 0.25)); v3dSpawn(c, "staff", "stand", -c.w / 2 + 2, 0.4, Math.PI / 2);
+  },
+  mech(c) {
+    const bz = backZ(c, 1.2); cy(c.g, 1, 2.6, 0x94a3b8, -c.w / 2 + 1.6, 0, bz, { metalness: 0.5, roughness: 0.4 });
+    for (let k = 0; k < 2; k++) { const pg = grp(c.g, -c.w / 2 + 4.2 + k * 2.2, 0, bz); bx(pg, 1.6, 0.15, 0.8, 0x334155, 0, 0, 0); const pm = v3Mesh(pg, v3G().cyl, 0x2563eb); pm.scale.set(0.3, 1.2, 0.3); pm.rotation.z = Math.PI / 2; pm.position.y = 0.5; }
+    if (c.w > 8) bx(c.g, 3, 1.8, 1.4, 0x16a34a, c.w / 2 - 2.2, 0, bz);
+    const pipe = v3Mesh(c.g, v3G().cyl, 0x1d4ed8); pipe.scale.set(0.12, c.w - 1.2, 0.12); pipe.rotation.z = Math.PI / 2; pipe.position.set(0, 2.4, backZ(c, 0.35));
+    v3dSpawn(c, "tech", "work", -c.w / 2 + 4.2, bz + c.ds * 1, c.ds > 0 ? Math.PI : 0); v3dWalk(c, 1, ["contractor", "tech"]);
+  },
+  roof(c) {
+    for (let k = 0; k < 2; k++) { const x = -c.w / 4 + k * 3; cy(c.g, 1.1, 1.8, 0x64748b, x, 0, -c.d / 4); cy(c.g, 0.9, 0.12, 0x1e293b, x, 1.8, -c.d / 4); }
+    for (let x = c.w / 8; x < c.w / 2 - 1; x += 1.6) bx(c.g, 1, 0.9, 1, 0xe2e8f0, x, 0, -c.d / 4);
+    for (let x = -c.w / 2 + 1.5; x < c.w / 2 - 1; x += 2.5) v3Plant(c, x, c.d / 2 - 1.5, 0.9);
+    v3dWalk(c, 1, ["tech", "contractor"]);
+  },
+  corridor(c) { if (c.rnd() < 0.8) v3dWalk(c, Math.max(1, Math.round(2 * c.dense)), ["staff", "guest", "clean", "contractor", "sec"]); }
+};
+function v3Court(c, cw, cl, col, maxN) {
+  const sc = Math.min(1, (c.d - 1.6) / cl, (c.w - 1.6) / (cw * Math.min(maxN, 1))), w = cw * sc, l = cl * sc;
+  const n = Math.max(1, Math.min(maxN, Math.floor((c.w - 1) / (w + 1.2)))), gap = (c.w - n * w) / (n + 1);
+  for (let i = 0; i < n; i++) {
+    const x = -c.w / 2 + gap + w / 2 + i * (w + gap), g = grp(c.g, x, 0, 0);
+    const s = bx(g, w, 0.03, l, col); s.castShadow = false;
+    [[w, 0.06, 0, -l / 2], [w, 0.06, 0, l / 2], [0.06, l, -w / 2, 0], [0.06, l, w / 2, 0], [0.04, l, 0, 0]].forEach((q) => bx(g, q[0], 0.02, q[1], 0xf8fafc, q[2], 0.03, q[3]));
+    bx(g, 0.05, 1.55, 0.05, 0xe5e7eb, -w / 2 - 0.2, 0, 0); bx(g, 0.05, 1.55, 0.05, 0xe5e7eb, w / 2 + 0.2, 0, 0); bx(g, w + 0.4, 0.75, 0.02, 0xf8fafc, 0, 0.8, 0, { transparent: true, opacity: 0.6 });
+    const half = (zs) => ({ x0: x - w / 2 + 0.4, x1: x + w / 2 - 0.4, z0: zs < 0 ? -l / 2 + 0.6 : 0.8, z1: zs < 0 ? -0.8 : l / 2 - 0.6 });
+    v3dWalk(c, 1, ["guest"], half(-1)); v3dWalk(c, 1, ["guest"], half(1)); if (c.dense > 0.6 && c.rnd() < 0.6) { v3dWalk(c, 1, ["guest"], half(-1)); v3dWalk(c, 1, ["guest"], half(1)); }
+  }
+  bx(c.g, Math.min(c.w - 2, 6), 0.45, 0.5, 0x475569, 0, 0, doorZ(c, 0.5));
+}
+
+// ------------------------------------------------------------ room layout ---
+const V3_RT = [[/ห้องน้ำ|toilet|wc\b|restroom/i, "toilet"], [/ครัว|kitchen/i, "kitchen"], [/กาแฟ|cafe|café|coffee/i, "cafe"], [/ร้านอาหาร|ห้องอาหาร|restaurant|dining|food/i, "dining"], [/ต้นไม้|สวน|garden|plant/i, "garden"], [/จอดรถ|parking|car ?park/i, "parking"], [/ประชุม|meeting/i, "meeting"], [/สำนักงาน|office/i, "office"], [/ห้องพัก|guest ?room|suite/i, "guestroom"], [/แบด|badminton/i, "court_b"], [/เทนนิส|tennis/i, "court_t"], [/เครื่องเล่น|สวนสนุก|playground|\bride/i, "rides"], [/คลินิก|clinic|ความงาม/i, "clinic"], [/ร้านค้า|shop|retail|store/i, "shop"], [/ปั๊ม|ห้องเครื่อง|ไฟฟ้า|pump|mech|generator|\bmdb\b/i, "mech"], [/roof|ดาดฟ้า/i, "roof"], [/ทางเดิน|corridor/i, "corridor"], [/ล็อบบี้|lobby|ต้อนรับ|reception|ลิฟต์|บันได|ห้องรอ|waiting|ตั๋ว|พักนักกีฬา/i, "lobby"]];
+const V3_RTN = { toilet: ["ห้องน้ำ", "Toilet"], kitchen: ["ครัว", "Kitchen"], cafe: ["ร้านกาแฟ", "Cafe"], dining: ["ร้านอาหาร", "Dining"], garden: ["ต้นไม้/สวน", "Garden"], parking: ["ลานจอดรถ", "Parking"], meeting: ["ห้องประชุม", "Meeting"], office: ["สำนักงาน", "Office"], guestroom: ["ห้องพัก", "Guest room"], court_b: ["สนามแบดมินตัน", "Badminton"], court_t: ["สนามเทนนิส", "Tennis"], rides: ["เครื่องเล่น", "Rides"], clinic: ["คลินิก", "Clinic"], shop: ["ร้านค้า", "Shop"], mech: ["ห้องเครื่อง", "Plant room"], roof: ["ดาดฟ้า", "Roof"], corridor: ["ทางเดิน", "Corridor"], lobby: ["โถง/ต้อนรับ", "Lobby"] };
+const V3_FC = { dining: 0x3b2f2a, kitchen: 0x3a4250, cafe: 0x3f3426, garden: 0x1f3d2b, parking: 0x2b3442, office: 0x253049, meeting: 0x22324a, toilet: 0x33415a, lobby: 0x2f3a4d, guestroom: 0x3a3046, court_b: 0x1c3a2a, court_t: 0x1c2a4a, rides: 0x2e2448, shop: 0x3b2a3f, clinic: 0x1f3b44, mech: 0x2a2f36, roof: 0x3a4150, corridor: 0x1e293b };
+const V3_WT = { toilet: 0.5, kitchen: 0.75, lobby: 0.8, meeting: 0.8, cafe: 0.9, mech: 0.9, clinic: 0.9, shop: 0.9, guestroom: 1 };
+function v3dRoomType(name, fb) { for (const r of V3_RT) if (r[0].test(name)) return r[1]; return fb || "lobby"; }
+function v3dDefaultRooms(fl) {
+  const u = String(fl.use || "") + " " + String(fl.name || ""), R = (a) => a.map((x) => ({ name: x[0], type: x[1] }));
+  if (/ต้นไม้/.test(u)) return R([["โซนจำหน่ายต้นไม้", "garden"], ["ร้านกาแฟ", "cafe"], ["ร้านอาหาร", "dining"], ["ครัว", "kitchen"], ["ห้องน้ำ", "toilet"]]);
+  if (/ใต้ดิน|^B\d/i.test(u)) return R([["ลานจอดรถใต้ดิน", "parking"], ["ห้องเครื่อง / ปั๊มน้ำ", "mech"]]);
+  if (/จอดรถ/.test(u)) return R([["ลานจอดรถ", "parking"], ["โถงลิฟต์ / บันได", "lobby"]]);
+  if (/Roof/i.test(u)) return R([["Roof top", "roof"]]);
+  if (/ห้องพัก/.test(u)) { const p = String(fl.name).replace(/\D/g, "") || "1"; return [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ name: "ห้อง " + p + "0" + k, type: "guestroom" })); }
+  if (/ล็อบบี้|โรงแรม/.test(u)) return R([["ล็อบบี้ / ต้อนรับ", "lobby"], ["ห้องอาหาร", "dining"], ["ครัว", "kitchen"], ["ห้องน้ำ", "toilet"]]);
+  if (/แบด/.test(u)) return R([["สนามแบดมินตัน", "court_b"], ["ห้องพักนักกีฬา", "lobby"]]);
+  if (/เทนนิส/.test(u)) return R([["สนามเทนนิส", "court_t"]]);
+  if (/เครื่องเล่น|สวนสนุก/.test(u)) return R([["โซนเครื่องเล่น", "rides"], ["จุดขายตั๋ว", "lobby"], ["ห้องน้ำ", "toilet"]]);
+  if (/คลินิก/.test(u)) return R([["คลินิก 1", "clinic"], ["คลินิก 2", "clinic"], ["ห้องรอ", "lobby"], ["ห้องน้ำ", "toilet"]]);
+  if (/ร้านค้า/.test(u)) return R([["ร้านค้า 1", "shop"], ["ร้านค้า 2", "shop"], ["ร้านค้า 3", "shop"], ["ร้านค้า 4", "shop"], ["ห้องน้ำ", "toilet"]]);
+  if (/สำนักงาน/.test(u)) return R([["สำนักงานให้เช่า 1", "office"], ["สำนักงานให้เช่า 2", "office"], ["สำนักงานให้เช่า 3", "office"], ["ห้องประชุม", "meeting"], ["ห้องน้ำ", "toilet"]]);
+  if (/ร้านอาหาร|กาแฟ/.test(u)) return R([["ร้านอาหาร 1", "dining"], ["ร้านอาหาร 2", "dining"], ["ครัว", "kitchen"], ["ห้องน้ำ", "toilet"]]);
+  return R([["พื้นที่ส่วนกลาง", "lobby"]]);
+}
+function v3dRoomsOf(fl) {
+  const list = String(fl.rooms || "").split(/[,\n]/).map((s) => s.trim()).filter(Boolean);
+  if (!list.length) return v3dDefaultRooms(fl);
+  const fb = v3dRoomType(fl.use || "", "lobby");
+  return list.map((n) => ({ name: n, type: v3dRoomType(n, fb) }));
+}
+/** rooms → rectangles on a W×D plate (two rows along a corridor, doors facing the corridor) */
+function v3dLayout(rooms, W, D) {
+  const n = rooms.length, out = [], wt = (r) => V3_WT[r.type] || 1.3;
+  if (n === 1) return [Object.assign({ x0: -W / 2, z0: -D / 2, w: W, d: D, ds: 1 }, rooms[0])];
+  if (n === 2) { const a = wt(rooms[0]), b = wt(rooms[1]), w1 = (W * a) / (a + b); out.push(Object.assign({ x0: -W / 2, z0: -D / 2, w: w1, d: D, ds: 1 }, rooms[0])); out.push(Object.assign({ x0: -W / 2 + w1, z0: -D / 2, w: W - w1, d: D, ds: 1 }, rooms[1])); return out; }
+  const cd = 3, rd = (D - cd) / 2, N = [], S = []; let sn = 0, ss = 0;
+  rooms.forEach((r) => { if (sn <= ss) { N.push(r); sn += wt(r); } else { S.push(r); ss += wt(r); } });
+  [[N, -D / 2, 1, sn], [S, cd / 2, -1, ss]].forEach(([row, z0, ds, sum]) => { let x = -W / 2; row.forEach((r) => { const w = (W * wt(r)) / sum; out.push(Object.assign({ x0: x, z0, w, d: rd, ds }, r)); x += w; }); });
+  out.push({ name: "ทางเดิน", type: "corridor", x0: -W / 2, z0: -cd / 2, w: W, d: cd, ds: 1 });
+  return out;
+}
+function v3dWalls(g, def, glass) {
+  const w = def.w, d = def.d, h = glass ? 2.3 : 1.0, t = 0.14, gap = 1.6, ds = def.ds;
+  const m = glass ? v3M(0x93c5fd, { transparent: true, opacity: 0.18, depthWrite: false }) : v3M(0xa3aec0);
+  const seg = (x1, z1, x2, z2) => { const L = Math.hypot(x2 - x1, z2 - z1); if (L < 0.05) return; bx(g, Math.abs(x2 - x1) || t, h, Math.abs(z2 - z1) || t, m, (x1 + x2) / 2, 0, (z1 + z2) / 2); };
+  const dz = (ds * d) / 2, bz = (-ds * d) / 2;
+  seg(-w / 2, bz, w / 2, bz); seg(-w / 2, -d / 2, -w / 2, d / 2); seg(w / 2, -d / 2, w / 2, d / 2);
+  seg(-w / 2, dz, -gap / 2, dz); seg(gap / 2, dz, w / 2, dz);
+}
+function v3dBuildRoom(fg, def, ctx) {
+  const g = grp(fg, def.x0 + def.w / 2, 0, def.z0 + def.d / 2);
+  const rc = { def, g, n: 0, b: ctx.b, blk: ctx.blk, fl: ctx.fl, zone: { x0: -def.w / 2 + 0.8, x1: def.w / 2 - 0.8, z0: -def.d / 2 + 0.8, z1: def.d / 2 - 0.8 } };
+  const fm = bx(g, def.w - 0.08, 0.05, def.d - 0.08, V3_FC[def.type] || 0x2a3344); fm.castShadow = false; fm.userData.rc = rc; V3.pick.push(fm);
+  if (def.type !== "corridor") v3dWalls(g, def, def.type === "meeting");
+  const c = { rc, g, w: def.w, d: def.d, ds: def.ds || 1, rnd: v3Rnd(ctx.fl.id + def.name), dense: ctx.dense };
+  try { (V3_GEN[def.type] || V3_GEN.lobby)(c); } catch (e) { console.warn("room", def.name, e); }
+  V3.rooms.push(rc);
+  if (ctx.labels && def.type !== "corridor") v3dLabel(g, 0, 2.6, -def.ds * (def.d / 2 - 1.4), "room", () => `<b>${mpEsc(def.name)}</b>${rc.n ? `<span class="pc">👤 ${rc.n}</span>` : ""}`);
+  return rc;
+}
+function v3dPlate(b) { return (b.blocks || []).length > 1 ? { w: 22, d: 16 } : { w: 34, d: 24 }; }
+function v3dBuildFloor(parent, b, blk, fl, x, y, z, ctx) {
+  const P = v3dPlate(b), fg = grp(parent, x, y, z);
+  bx(fg, P.w, 0.4, P.d, 0x334155, 0, -0.42, 0); const top = bx(fg, P.w - 0.4, 0.02, P.d - 0.4, 0x1e293b, 0, -0.02, 0); top.castShadow = false;
+  const c = Object.assign({ b, blk, fl }, ctx);
+  v3dLayout(v3dRoomsOf(fl), P.w - 0.6, P.d - 0.6).forEach((def) => v3dBuildRoom(fg, def, c));
+  if (ctx.badge) v3dLabel(fg, -P.w / 2 - 1.2, 0.6, P.d / 2, "fbadge", () => mpEsc(fl.name));
+  return fg;
+}
+
+// ------------------------------------------------------------------ labels ---
+function v3dLabel(obj, x, y, z, cls, html, onClick) {
+  const el = document.createElement("div"); el.className = "v3l " + cls; el.innerHTML = html();
+  const host = document.getElementById("v3d-labels"); if (host) host.appendChild(el);
+  const anchor = new V3.T.Object3D(); anchor.position.set(x, y, z); obj.add(anchor);
+  const L = { el, anchor, html }; if (onClick) { el.style.pointerEvents = "auto"; el.style.cursor = "pointer"; el.addEventListener("click", onClick); }
+  V3.labels.push(L); return L;
+}
+function v3dUpdateLabels() {
+  const R = V3.R, T = V3.T; if (!R) return;
+  const st = document.getElementById("v3d-stage"); if (!st) return;
+  const w = st.clientWidth, h = st.clientHeight, v = new T.Vector3();
+  V3.labels.forEach((L) => {
+    L.anchor.getWorldPosition(v); v.project(R.camera);
+    const vis = v.z < 1 && v.z > -1 && Math.abs(v.x) < 1.15 && Math.abs(v.y) < 1.15;
+    L.el.style.display = vis ? "" : "none";
+    if (vis) L.el.style.transform = `translate(-50%,-100%) translate(${((v.x + 1) / 2) * w}px,${((1 - v.y) / 2) * h}px)`;
   });
+}
+
+// ------------------------------------------------------------- scene build ---
+function v3dClearScene() {
+  const R = V3.R; if (!R) return;
+  while (R.root.children.length) R.root.remove(R.root.children[0]);
+  V3.disp.forEach((x) => { try { x.dispose(); } catch (e) { /* ignore */ } }); V3.disp = [];
+  V3.items = []; V3.rooms = []; V3.agents = []; V3.anims = []; V3.pick = []; V3.fgroups = []; V3.count = {};
+  V3.labels.forEach((L) => L.el.remove()); V3.labels = [];
+}
+function v3dBuildingBox(b) {
+  const n = (b.blocks || []).length || 1, many = n > 1;
+  const bw = many ? 4 : 6.4, bd = many ? 4.6 : 5.6, gap = 0.8;
+  return { bw, bd, gap, w: n * bw + (n - 1) * gap, d: bd };
+}
+function v3dLevels(blk) {
+  const fls = blk.floors || [], gIdx = fls.findIndex((x) => /^G/i.test(String(x.name).trim()));
+  const nb = gIdx >= 0 ? gIdx : fls.filter((x) => /^B\d|ใต้ดิน/i.test(String(x.name) + String(x.use))).length;
+  return fls.map((f, i) => ({ f, lv: i - nb }));
+}
+function v3dFacade(fl, colHex, w) {
+  const cv = document.createElement("canvas"); cv.width = 256; cv.height = 64; const c = cv.getContext("2d");
+  const base = "#" + colHex.toString(16).padStart(6, "0"); c.fillStyle = base; c.fillRect(0, 0, 256, 64);
+  const gr = c.createLinearGradient(0, 0, 0, 64); gr.addColorStop(0, "rgba(255,255,255,.45)"); gr.addColorStop(0.55, "rgba(255,255,255,.05)"); gr.addColorStop(1, "rgba(0,0,0,.12)"); c.fillStyle = gr; c.fillRect(0, 0, 256, 64);
+  c.fillStyle = "rgba(15,23,42,.35)"; for (let x = 8; x < 256; x += 22) c.fillRect(x, 16, 14, 30);
+  c.fillStyle = "rgba(255,255,255,.9)"; c.fillRect(0, 0, 256, 5); c.fillRect(0, 59, 256, 5);
+  c.fillStyle = "rgba(15,23,42,.6)"; c.fillRect(6, 12, 58, 40); c.fillStyle = "#fff"; c.font = "bold 26px Arial"; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText(String(fl.name).slice(0, 4), 35, 33);
+  const t = new V3.T.CanvasTexture(cv); t.colorSpace = V3.T.SRGBColorSpace; t.repeat.set(Math.max(1, w / 6.4), 1); t.wrapS = V3.T.RepeatWrapping; V3.disp.push(t); return t;
+}
+/** campus: every building as a massing model with floor facades */
+function v3dBuildCampus() {
+  const T = V3.T, R = V3.R, bs = DB.get("v3dBuildings", []);
+  const rowMax = 44, space = 6; let x = 0, z = 0, rowD = 0; const places = [];
+  bs.forEach((b) => { const bx_ = v3dBuildingBox(b); if (x > 0 && x + bx_.w > rowMax) { x = 0; z += rowD + space; rowD = 0; } places.push({ b, bx: bx_, x: x + bx_.w / 2, z: z + bx_.d / 2 }); x += bx_.w + space; rowD = Math.max(rowD, bx_.d); });
   const maxX = Math.max(10, ...places.map((p) => p.x + p.bx.w / 2)), maxZ = Math.max(10, ...places.map((p) => p.z + p.bx.d / 2));
   places.forEach((p) => { p.x -= maxX / 2; p.z -= maxZ / 2; });
   V3.bounds = { w: maxX, d: maxZ };
-  const fh = 1;
+  // plaza, paths, trees
+  const plaza = bx(R.root, maxX + 10, 0.1, maxZ + 10, 0xd8dee6, 0, -0.1, 0); plaza.castShadow = false;
+  const tr = v3Rnd("campus"), c0 = { g: R.root, rnd: tr };
+  for (let k = 0; k < 18; k++) { const side = k % 4, t = tr(); const px = side < 2 ? (t - 0.5) * (maxX + 6) : (side === 2 ? -1 : 1) * (maxX / 2 + 3.5), pz = side < 2 ? (side === 0 ? -1 : 1) * (maxZ / 2 + 3.5) : (t - 0.5) * (maxZ + 6); v3Tree(c0, px, pz, 0.55 + tr() * 0.3); }
   places.forEach((p) => {
-    const { b, bx } = p, d = V3.data[b.id], g = new T.Group(); g.position.set(p.x, 0, p.z); R.root.add(g);
-    const plate = new T.Mesh(new T.BoxGeometry(bx.w + 1.6, 0.06, bx.d + 1.6), new T.MeshStandardMaterial({ color: 0x14213a, roughness: 0.9, transparent: true, opacity: 0.55, depthWrite: false }));
-    plate.position.y = -0.04; plate.receiveShadow = true; g.add(plate);
-    const it = { b, g, floors: [], cx: p.x, cz: p.z, bx, top: 0, status: d ? d.status : "none" };
-    const blocks = b.blocks || [];
-    blocks.forEach((blk, bi) => {
-      const ox = -bx.w / 2 + bx.bw / 2 + bi * (bx.bw + bx.gap);
-      // level 0 = ground (G); basements (B1, B2…) get negative levels and sit below the ground
-      const fls = blk.floors || [], gIdx = fls.findIndex((x) => /^G/i.test(String(x.name).trim())), nb = gIdx >= 0 ? gIdx : fls.filter((x) => /^B\d|ใต้ดิน/i.test(String(x.name) + String(x.use))).length;
-      it.base = Math.max(it.base || 0, nb);
-      fls.forEach((f, fi0) => {
-        const fi = fi0 - nb;
-        const col = v3dFloorColor(f.use, f.name);
-        const m = new T.Mesh(new T.BoxGeometry(bx.bw, fh * 0.84, bx.bd), new T.MeshStandardMaterial({ color: col, roughness: 0.55, metalness: 0.1, transparent: true, opacity: 0.93, emissive: col, emissiveIntensity: 0.05 }));
-        m.castShadow = true; m.receiveShadow = true; m.position.x = ox;
-        const ed = new T.LineSegments(new T.EdgesGeometry(m.geometry), new T.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.28 }));
-        m.add(ed);
-        // little "windows" strip
-        const win = new T.Mesh(new T.BoxGeometry(bx.bw + 0.02, fh * 0.22, bx.bd + 0.02), new T.MeshStandardMaterial({ color: 0xbfdbfe, transparent: true, opacity: 0.35, roughness: 0.2 }));
-        m.add(win);
-        const hit = new T.Mesh(m.geometry, new T.MeshBasicMaterial({ visible: false }));
-        hit.userData = { b, blk, fl: f, fi, bi, col }; hit.position.x = ox;
-        const open = v3dOpenFloor(T, bx, col, f, ox); open.visible = false;
-        g.add(m, open, hit); V3.pick.push(hit);
-        it.floors.push({ m, open, hit, ox, fi, blk, fl: f, col });
+    const { b, bx: B } = p, d = V3.data[b.id] || {}, g = grp(R.root, p.x, 0, p.z);
+    const pl = bx(g, B.w + 1.6, 0.06, B.d + 1.6, 0xbfc8d4, 0, -0.04, 0); pl.castShadow = false;
+    let topY = 0, minY = 0;
+    (b.blocks || []).forEach((blk, bi) => {
+      const ox = -B.w / 2 + B.bw / 2 + bi * (B.bw + B.gap);
+      v3dLevels(blk).forEach(({ f, lv }) => {
+        const col = v3dFloorColor(f.use, f.name), tex = v3dFacade(f, col, B.bw), side = new T.MeshStandardMaterial({ map: tex, roughness: 0.4, metalness: 0.1, transparent: lv < 0, opacity: lv < 0 ? 0.55 : 1 });
+        const plain = v3M(0xe5e7eb); V3.disp.push(side);
+        const m = new T.Mesh(v3G().box, [side, side, plain, plain, side, side]); m.scale.set(B.bw, 0.92, B.bd); m.position.set(ox, lv * 1 + 0.46, 0); m.castShadow = lv >= 0; m.receiveShadow = true;
+        m.userData = { b, fl: f, blk }; g.add(m); V3.pick.push(m);
+        const slab = bx(g, B.bw + 0.18, 0.08, B.bd + 0.18, 0xf1f5f9, ox, lv * 1 + 0.92, 0); slab.castShadow = false;
+        topY = Math.max(topY, lv + 1); minY = Math.min(minY, lv);
       });
-      it.top = Math.max(it.top, fls.length - nb);
     });
-    const beacon = new T.Mesh(new T.SphereGeometry(0.2, 14, 10), new T.MeshBasicMaterial({ color: V3_ST[it.status] }));
-    g.add(beacon); it.beacon = beacon;
-    // label
-    const el = document.createElement("div"); el.className = "v3d-lbl"; el.dataset.b = b.id;
-    document.getElementById("v3d-labels").appendChild(el); it.el = el;
+    const cap = bx(g, B.w * 0.5, 0.35, B.d * 0.4, 0xcbd5e1, 0, topY, 0); cap.castShadow = true;
+    const beacon = sp(g, 0.22, 0, 0, topY + 0.8, 0); beacon.material = new T.MeshBasicMaterial({ color: V3_ST[d.status || "none"] }); V3.disp.push(beacon.material);
+    const it = { b, g, cx: p.x, cz: p.z, topY, bx: B, beacon };
     V3.items.push(it);
+    v3dLabel(g, 0, topY + 1.6, 0, "bld " + (d.status || "none"), () => `<i></i>${mpEsc(b.name)}${d.irStat && d.irStat.open ? `<em class="c">IR ${d.irStat.open}</em>` : ""}${d.psdOpen ? `<em class="w">PSD ${d.psdOpen}</em>` : ""}`, () => v3dSelect(b.id));
+    V3.anims.push((dt, t) => { beacon.scale.setScalar(0.22 * (1 + Math.sin(t * 3 + p.x) * 0.2)); });
   });
-  // ground
-  const gs = Math.max(maxX, maxZ) + 40;
-  const ground = new T.Mesh(new T.PlaneGeometry(gs * 2, gs * 2), new T.MeshStandardMaterial({ color: 0x0e1a2f, roughness: 1, transparent: true, opacity: 0.5, depthWrite: false }));
-  ground.rotation.x = -Math.PI / 2; ground.position.y = -0.2; ground.receiveShadow = true; R.root.add(ground);
-  v3dMakePeople();
-  v3dApplyLook(true);
-  v3dUpdateLabels(true);
+  // a few people walking on the plaza
+  const prc = { n: 0, zone: { x0: -maxX / 2 - 2, x1: maxX / 2 + 2, z0: maxZ / 2 + 1, z1: maxZ / 2 + 2.5 } }, pc = { rc: prc, g: R.root, rnd: tr };
+  v3dWalk(pc, 6, ["guest", "staff", "sec", "contractor", "clean"]);
+  prc.zone = { x0: -maxX / 2 - 2.5, x1: -maxX / 2 - 1, z0: -maxZ / 2, z1: maxZ / 2 }; v3dWalk(pc, 2, ["guest", "tech"]);
 }
-
-/** demo people: small figures with arms and legs that walk (counts are samples until a real source is connected) */
-function v3dMakePerson(T, role, col) {
-  const g = new T.Group(), sh = v3dMat(T, col), pants = v3dMat(T, 0x1e293b), skin = v3dMat(T, 0xf1c9a5);
-  const G = (k, mk) => v3dGeo(T, "p" + k, mk);
-  const limb = (geo, mat, x, y) => { const piv = new T.Group(); piv.position.set(x, y, 0); const m = new T.Mesh(geo, mat); m.position.y = -geo.parameters.height / 2; m.castShadow = true; piv.add(m); g.add(piv); return piv; };
-  const legG = G("leg", () => new T.BoxGeometry(0.06, 0.2, 0.06)), armG = G("arm", () => new T.BoxGeometry(0.05, 0.19, 0.05));
-  const legL = limb(legG, pants, -0.04, 0.2), legR = limb(legG, pants, 0.04, 0.2);
-  const torso = new T.Mesh(G("tor", () => new T.BoxGeometry(0.17, 0.22, 0.09)), sh); torso.position.y = 0.31; torso.castShadow = true; g.add(torso);
-  const armL = limb(armG, sh, -0.115, 0.4), armR = limb(armG, sh, 0.115, 0.4);
-  const head = new T.Mesh(G("head", () => new T.SphereGeometry(0.07, 10, 8)), skin); head.position.y = 0.49; g.add(head);
-  if (role === "contractor" || role === "tech") { const hat = new T.Mesh(G("hat", () => new T.SphereGeometry(0.078, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2)), v3dMat(T, role === "tech" ? 0xf97316 : 0xfacc15)); hat.position.y = 0.5; g.add(hat); }
-  if (role === "sec") { const cap = new T.Mesh(G("cap", () => new T.CylinderGeometry(0.075, 0.075, 0.03, 10)), v3dMat(T, 0x312e81)); cap.position.y = 0.55; g.add(cap); }
-  g.userData.rig = { legL, legR, armL, armR };
-  return g;
-}
-function v3dMakePeople() {
-  const T = V3.T, R = V3.R; V3.people = [];
-  let seed = 7; const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-  V3.items.forEach((it) => {
-    const nf = Math.max(1, it.floors.length / Math.max(1, (it.b.blocks || []).length)), n = Math.min(16, 3 + Math.round(nf * 1.1));
-    for (let i = 0; i < n; i++) {
-      const rr = V3_ROLES[Math.floor(rnd() * V3_ROLES.length)], role = rr[0];
-      const grp = v3dMakePerson(T, role, parseInt(rr[3].slice(1), 16)); R.root.add(grp);
-      const fl0 = it.floors[Math.floor(rnd() * it.floors.length)], fi = fl0.fi, ox0 = fl0.ox;
-      const P = { grp, it, role, fi, ox: ox0, x: 0, z: 0, tx: 0, tz: 0, sp: 0.6 + rnd() * 0.6, ph: rnd() * 6, ry: 0 };
-      V3.people.push(P); v3dPersonTarget(P, rnd, true);
-    }
-  });
-}
-function v3dPersonTarget(P, rnd, snap) {
-  const it = P.it, bx = it.bx, ox = P.ox;
-  P.tx = it.cx + ox + (rnd() - 0.5) * (bx.bw - 0.8); P.tz = it.cz + (rnd() - 0.5) * (bx.bd - 0.8);
-  if (snap) { P.x = P.tx; P.z = P.tz; }
-}
-
-/** dimming / selection look + floor heights */
-function v3dApplyLook(snap) {
-  const sel = V3.sel;
-  V3.items.forEach((it) => {
-    const on = !sel || sel === it.b.id;
-    const opened = sel === it.b.id;
-    it.floors.forEach((f) => {
-      const mat = f.m.material, hit = opened && V3.flr === f.fl.id;
-      const hidden = opened && V3.flr && V3.flr !== f.fl.id;
-      mat.opacity = !on ? 0.1 : hidden ? 0.3 : 0.93;
-      mat.emissiveIntensity = hit ? 0.75 : 0.05;
-      mat.emissive.setHex(hit ? 0xffffff : f.col);
-      f.m.visible = !opened; f.open.visible = opened;
-      const sm = f.open.userData.mats[0]; sm.opacity = hidden ? 0.35 : 0.95; sm.emissiveIntensity = hit ? 0.8 : 0.05; sm.emissive.setHex(hit ? 0xffffff : f.col);
-      f.open.userData.mats[1].opacity = hidden ? 0.08 : hit ? 0.5 : 0.28;
+/** one building: floor plans (all floors of the selected/all blocks, or one floor) */
+function v3dBuildBuilding(b) {
+  const R = V3.R, P = v3dPlate(b), blocks = b.blocks || [];
+  if (V3.flr) {
+    const blk = blocks.find((k) => (k.floors || []).some((f) => f.id === V3.flr)) || blocks[0];
+    const fl = (blk.floors || []).find((f) => f.id === V3.flr);
+    if (fl) { v3dBuildFloor(R.root, b, blk, fl, 0, 0, 0, { dense: 1, labels: true, badge: false }); V3.bounds = { w: P.w, d: P.d, h: 3 }; v3dGround(P.w + 30, P.d + 30, -0.45); return; }
+    V3.flr = null;
+  }
+  const shown = V3.blk ? blocks.filter((k) => k.id === V3.blk) : blocks, n = shown.length, H = V3.explode ? V3_FHX : V3_FH;
+  let minLv = 0, maxLv = 0;
+  shown.forEach((blk, i) => {
+    const x = (i - (n - 1) / 2) * (P.w + 6);
+    v3dLevels(blk).forEach(({ f, lv }) => {
+      const fg = v3dBuildFloor(R.root, b, blk, f, x, lv * H, 0, { dense: n > 1 ? 0.35 : 0.6, labels: false, badge: true });
+      fg.userData.lv = lv; V3.fgroups.push(fg); minLv = Math.min(minLv, lv); maxLv = Math.max(maxLv, lv);
     });
-    it.beacon.visible = on;
+    if (n > 1) v3dLabel(R.root, x, (maxLv + 1) * H + 1, 0, "blk", () => mpEsc(blk.name), () => { V3.blk = blk.id; v3dRebuild(true); });
   });
-  v3dPlaceFloors();
+  V3.bounds = { w: n * (P.w + 6), d: P.d, h: (maxLv + 1) * H, lo: minLv * H };
+  v3dGround(n * (P.w + 6) + 40, P.d + 40, -0.6, minLv < 0);
 }
-function v3dPlaceFloors() {
-  const gap = V3.gap, fh = 1;
-  V3.items.forEach((it) => {
-    it.floors.forEach((f) => { f.m.position.y = f.fi * (fh + gap) + fh * 0.42; f.m.position.x = f.ox; f.open.position.y = f.fi * (fh + gap); f.hit.position.y = f.m.position.y; });
-    it.topY = it.top * (fh + gap);
-    it.beacon.position.set(0, it.topY + 0.7, 0);
-  });
+function v3dGround(w, d, y, see) {
+  const T = V3.T, m = new T.Mesh(new T.PlaneGeometry(w, d), new T.MeshStandardMaterial({ color: 0xcfd7e1, roughness: 1, transparent: !!see, opacity: see ? 0.45 : 1, depthWrite: !see }));
+  m.rotation.x = -Math.PI / 2; m.position.y = y; m.receiveShadow = true; V3.R.root.add(m); V3.disp.push(m.geometry, m.material);
+}
+function v3dRebuild(preset) {
+  if (!V3.R) return;
+  v3dClearScene();
+  V3.data = v3dData();
+  const b = V3.sel ? DB.get("v3dBuildings", []).find((x) => x.id === V3.sel) : null;
+  if (!b) { V3.sel = null; V3.flr = null; V3.blk = null; v3dBuildCampus(); } else v3dBuildBuilding(b);
+  if (preset) v3dPreset();
+  v3dNbBuild();
+  v3dRenderSide();
 }
 
 // ------------------------------------------------------------- camera / input ---
+const V3_ZMIN = 3, V3_ZMAX = 260;
+const v3zDist = (v) => V3_ZMIN * Math.pow(V3_ZMAX / V3_ZMIN, 1 - v / 100), v3zVal = (d) => 100 * (1 - Math.log(Math.max(V3_ZMIN, Math.min(V3_ZMAX, d)) / V3_ZMIN) / Math.log(V3_ZMAX / V3_ZMIN));
 function v3dCamTo(az, pol, dist, tx, ty, tz) { const c = V3.cam; c.t = { az, pol, dist, tx, ty, tz }; }
-function v3dOverview() {
-  const b = V3.bounds || { w: 40, d: 20 }, tall = Math.max(8, ...V3.items.map((i) => i.topY || 0));
-  v3dCamTo(-0.6, 1.0, Math.max(b.w * 1.3, b.d * 2.4, tall * 2.8) + 14, 0, tall * 0.25, 0);
+function v3dPreset() {
+  const B = V3.bounds || { w: 40, d: 30, h: 10 };
+  if (!V3.sel) { const tall = Math.max(6, ...V3.items.map((i) => i.topY || 0)); v3dCamTo(-0.55, 0.95, Math.max(B.w * 1.15, B.d * 2, tall * 2.6) + 10, 0, tall * 0.25, 0); }
+  else if (V3.flr) v3dCamTo(-0.3, 0.8, Math.max(B.w * 1.55, B.d * 2.1) + 4, -B.w * 0.08, 0, 1);
+  else { const h = (B.h || 10) - (B.lo || 0); v3dCamTo(-0.55, 1.0, Math.max(h * 2.0, B.w * 1.6, 62), -Math.min(B.w * 0.06, 6), (B.lo || 0) + h * 0.45, 0); }
 }
-function v3dSetExplode(on) {
-  V3.explode = on; V3.tgap = on ? 1.7 : 0.06;
-  const b = document.getElementById("v3d-exp"); if (b) b.classList.toggle("on", on);
-}
-function v3dSelect(id) {
-  V3.sel = id; V3.flr = null; V3.blk = null; v3dSetExplode(!!id);
-  if (V3.R) { v3dApplyLook(); id ? v3dFocus(id) : v3dOverview(); }
-  v3dRenderSide();
-}
-function v3dFocus(id) {
-  const it = V3.items.find((i) => i.b.id === id); if (!it) return v3dOverview();
-  const h = Math.max(2, it.top * (1 + V3.tgap)), dep = (it.base || 0) * (1 + V3.tgap), s = Math.max((h + dep) * 1.3, it.bx.w * 1.35, 8);
-  v3dCamTo(-0.5, 0.95, s + 8 + dep * 0.6, it.cx, (h - dep) * 0.45, it.cz);
-}
-function v3dCamApply() {
-  const c = V3.cam, k = 0.14, t = c.t;
-  if (t) { ["az", "pol", "dist", "tx", "ty", "tz"].forEach((a) => { c[a] += (t[a] - c[a]) * k; }); }
-  const sp = Math.sin(c.pol), cp = Math.cos(c.pol);
-  V3.R.camera.position.set(c.tx + c.dist * sp * Math.sin(c.az), c.ty + c.dist * cp, c.tz + c.dist * sp * Math.cos(c.az));
+function v3dZoomTo(dist) { const c = V3.cam; if (!c) return; c.t = Object.assign({}, c.t, { dist: Math.max(V3_ZMIN, Math.min(V3_ZMAX, dist)) }); }
+function v3dCamApply(dt) {
+  const c = V3.cam, k = Math.min(1, dt * 6), t = c.t;
+  if (V3.auto && !c.drag) { c.az += dt * 0.12; t.az = c.az; }
+  ["az", "pol", "dist", "tx", "ty", "tz"].forEach((a) => { c[a] += (t[a] - c[a]) * k; });
+  const sp_ = Math.sin(c.pol), cp = Math.cos(c.pol);
+  V3.R.camera.position.set(c.tx + c.dist * sp_ * Math.sin(c.az), c.ty + c.dist * cp, c.tz + c.dist * sp_ * Math.cos(c.az));
   V3.R.camera.lookAt(c.tx, c.ty, c.tz);
+  const zr = document.getElementById("v3d-zr"), zl = document.getElementById("v3d-zl");
+  if (zr && !zr._drag) { const v = Math.round(v3zVal(c.dist)); if (+zr.value !== v) zr.value = v; if (zl) zl.textContent = "Lv " + (1 + Math.min(9, Math.floor(v / 10))); }
 }
 function v3dWireInput(el) {
   const ptrs = new Map(); let moved = 0, last = null, pinch = 0;
   el.style.touchAction = "none";
   el.addEventListener("contextmenu", (e) => e.preventDefault());
-  el.addEventListener("pointerdown", (e) => { el.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); moved = 0; last = { x: e.clientX, y: e.clientY }; if (ptrs.size === 2) pinch = 0; });
+  el.addEventListener("pointerdown", (e) => { el.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); moved = 0; last = { x: e.clientX, y: e.clientY }; if (ptrs.size === 2) pinch = 0; V3.cam.drag = true; });
   el.addEventListener("pointermove", (e) => {
     const c = V3.cam; if (!c) return;
     if (!ptrs.has(e.pointerId)) { v3dHover(e); return; }
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (ptrs.size === 2) {
-      const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
-      if (pinch) { const f = pinch / d; c.dist = c.t.dist = Math.max(4, Math.min(160, c.dist * f)); }
-      pinch = d; moved = 99; return;
-    }
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y); if (pinch) v3dZoomTo(c.t.dist * (pinch / d)); pinch = d; moved = 99; return; }
     const dx = e.clientX - last.x, dy = e.clientY - last.y; last = { x: e.clientX, y: e.clientY }; moved += Math.abs(dx) + Math.abs(dy);
     if (e.buttons & 2 || e.shiftKey) {
       const k = c.dist * 0.0016, cs = Math.cos(c.az), sn = Math.sin(c.az);
-      c.tx -= (dx * cs) * k; c.tz += (dx * sn) * k; c.tx -= (dy * sn) * k; c.tz -= (dy * cs) * k; c.t.tx = c.tx; c.t.tz = c.tz;
-    } else {
-      c.az -= dx * 0.006; c.pol = Math.max(0.15, Math.min(1.5, c.pol - dy * 0.006)); c.t.az = c.az; c.t.pol = c.pol;
-    }
+      c.t.tx -= dx * cs * k + dy * sn * k; c.t.tz += dx * sn * k - dy * cs * k;
+    } else { c.t.az -= dx * 0.006; c.t.pol = Math.max(0.12, Math.min(1.45, c.t.pol - dy * 0.006)); }
   });
-  const up = (e) => { const had = ptrs.delete(e.pointerId); if (had && moved < 6 && e.type === "pointerup") v3dPickAt(e); if (!ptrs.size) pinch = 0; };
+  const up = (e) => { const had = ptrs.delete(e.pointerId); if (had && moved < 6 && e.type === "pointerup") v3dPickAt(e); if (!ptrs.size) { pinch = 0; V3.cam.drag = false; } };
   el.addEventListener("pointerup", up); el.addEventListener("pointercancel", up);
-  el.addEventListener("wheel", (e) => { e.preventDefault(); const c = V3.cam; c.dist = c.t.dist = Math.max(4, Math.min(160, c.dist * (e.deltaY > 0 ? 1.1 : 0.9))); }, { passive: false });
-  el.addEventListener("dblclick", () => { v3dSelect(null); });
+  el.addEventListener("wheel", (e) => { e.preventDefault(); v3dZoomTo(V3.cam.t.dist * (e.deltaY > 0 ? 1.12 : 0.89)); }, { passive: false });
+  el.addEventListener("dblclick", (e) => {
+    const h = v3dRayHit(e); if (!h) { v3dPreset(); return; }
+    const p = h.point, c = V3.cam; c.t.tx = p.x; c.t.ty = p.y; c.t.tz = p.z; c.t.dist = Math.max(V3_ZMIN + 2, c.t.dist * 0.45);
+  });
 }
-function v3dRay(e) {
+function v3dRayHit(e) {
   const T = V3.T, r = V3.R.renderer.domElement.getBoundingClientRect();
   const m = new T.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
   const ray = new T.Raycaster(); ray.setFromCamera(m, V3.R.camera);
-  const hits = ray.intersectObjects(V3.pick, false);
-  return hits.length ? hits[0].object.userData : null;
+  return ray.intersectObjects(V3.pick, false)[0] || null;
 }
 function v3dPickAt(e) {
-  const u = v3dRay(e);
-  if (!u) { v3dSelect(null); return; }
-  if (V3.sel === u.b.id) { V3.flr = V3.flr === u.fl.id ? null : u.fl.id; V3.blk = u.blk.id; }
-  else { v3dSelect(u.b.id); return; }
-  v3dApplyLook(); v3dRenderSide();
+  const h = v3dRayHit(e); if (!h) return;
+  const u = h.object.userData;
+  if (u.rc) {
+    const rc = u.rc;
+    if (!V3.flr) { V3.blk = rc.blk.id; v3dSetFloor(rc.fl.id); return; }
+    const p = new V3.T.Vector3(); rc.g.getWorldPosition(p); const s = Math.max(rc.def.w, rc.def.d), c = V3.cam;
+    c.t.tx = p.x; c.t.ty = 0; c.t.tz = p.z; c.t.dist = s * 1.3 + 6; c.t.pol = Math.min(c.t.pol, 0.95);
+  } else if (u.b) { if (V3.sel !== u.b.id) v3dSelect(u.b.id); }
 }
 let v3dHoverT = 0;
 function v3dHover(e) {
   const now = performance.now(); if (now - v3dHoverT < 70) return; v3dHoverT = now;
   const tip = document.getElementById("v3d-tip"); if (!tip) return;
-  const u = v3dRay(e);
-  if (!u) { tip.style.display = "none"; return; }
-  const r = document.getElementById("v3d-stage").getBoundingClientRect();
-  tip.innerHTML = `<b>${mpEsc(u.b.name)}</b><br>${mpEsc(u.blk.name)} · ${mt("ชั้น", "Floor")} ${mpEsc(u.fl.name)}${u.fl.use ? "<br><span>" + mpEsc(u.fl.use) + "</span>" : ""}`;
-  tip.style.display = "block"; tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 220) + "px"; tip.style.top = e.clientY - r.top + 14 + "px";
+  const h = v3dRayHit(e); if (!h) { tip.style.display = "none"; return; }
+  const u = h.object.userData, r = document.getElementById("v3d-stage").getBoundingClientRect();
+  if (u.rc) { const d = u.rc.def, tn = V3_RTN[d.type] || ["", ""]; tip.innerHTML = `<b>${mpEsc(d.name)}</b><br><span>${mpEsc(mt(tn[0], tn[1]))} · ${mt("ชั้น", "Floor")} ${mpEsc(u.rc.fl.name)}${u.rc.n ? ` · 👤 ${u.rc.n}` : ""}</span>`; }
+  else if (u.b) tip.innerHTML = `<b>${mpEsc(u.b.name)}</b><br><span>${mt("ชั้น", "Floor")} ${mpEsc(u.fl.name)} · ${mpEsc(u.fl.use || "")}</span>`;
+  else { tip.style.display = "none"; return; }
+  tip.style.display = "block"; tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 230) + "px"; tip.style.top = e.clientY - r.top + 14 + "px";
+}
+function v3dSelect(id) { V3.sel = id || null; V3.flr = null; V3.blk = null; if (V3.R) v3dRebuild(true); else v3dRenderSide(); }
+function v3dSetFloor(fid) { V3.flr = fid || null; if (V3.R) v3dRebuild(true); else v3dRenderSide(); }
+
+// ------------------------------------------------------- mini building (left) ---
+function v3dNbBuild() {
+  const host = document.getElementById("v3d-nb"), card = document.getElementById("v3d-nbcard"); if (!host || !V3.T) return;
+  const b = V3.sel ? DB.get("v3dBuildings", []).find((x) => x.id === V3.sel) : null;
+  card.style.display = b ? "" : "none"; if (!b) return;
+  const T = V3.T;
+  if (!V3.NB || V3.NB.host !== host) {
+    if (V3.NB) { try { V3.NB.r.dispose(); } catch (e) { /* ignore */ } }
+    const r = new T.WebGLRenderer({ antialias: true, alpha: true }); r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); r.setSize(186, 210, false); host.innerHTML = ""; host.appendChild(r.domElement);
+    const scene = new T.Scene(); scene.add(new T.HemisphereLight(0xffffff, 0x94a3b8, 1.4)); const dl = new T.DirectionalLight(0xffffff, 1.2); dl.position.set(5, 9, 6); scene.add(dl);
+    const cam = new T.PerspectiveCamera(32, 186 / 210, 0.1, 200), g = new T.Group(); scene.add(g);
+    V3.NB = { host, r, scene, cam, g, pick: [], az: 0.7, drag: false, mats: [] };
+    let sx = 0, mv = 0; const el = r.domElement; el.style.touchAction = "none";
+    el.addEventListener("pointerdown", (e) => { el.setPointerCapture(e.pointerId); sx = e.clientX; mv = 0; V3.NB.drag = true; });
+    el.addEventListener("pointermove", (e) => { if (!V3.NB.drag) return; const dx = e.clientX - sx; sx = e.clientX; mv += Math.abs(dx); V3.NB.az -= dx * 0.012; });
+    el.addEventListener("pointerup", (e) => { V3.NB.drag = false; if (mv < 5) { const rr = el.getBoundingClientRect(), ray = new T.Raycaster(); ray.setFromCamera({ x: ((e.clientX - rr.left) / rr.width) * 2 - 1, y: -((e.clientY - rr.top) / rr.height) * 2 + 1 }, V3.NB.cam); const hh = ray.intersectObjects(V3.NB.pick, false)[0]; if (hh) { V3.blk = hh.object.userData.blk; v3dSetFloor(hh.object.userData.fid); } } });
+  }
+  const NB = V3.NB; while (NB.g.children.length) NB.g.remove(NB.g.children[0]); NB.mats.forEach((m) => { if (m.map) m.map.dispose(); m.dispose(); }); NB.mats = []; NB.pick = [];
+  const blk = (b.blocks || []).find((k) => k.id === V3.blk) || (V3.flr && (b.blocks || []).find((k) => (k.floors || []).some((f) => f.id === V3.flr))) || (b.blocks || [])[0];
+  if (!blk) return;
+  const lv = v3dLevels(blk), FW = 4;
+  lv.forEach(({ f, lv: L }) => {
+    const sel = V3.flr === f.id, col = v3dFloorColor(f.use, f.name);
+    const cv = document.createElement("canvas"); cv.width = 256; cv.height = 64; const c = cv.getContext("2d");
+    c.fillStyle = "#" + col.toString(16).padStart(6, "0"); c.fillRect(0, 0, 256, 64); c.fillStyle = "rgba(255,255,255,.5)"; for (let x = 0; x <= 256; x += 32) c.fillRect(x, 0, 2, 64); c.fillRect(0, 0, 256, 5);
+    c.fillStyle = "rgba(0,0,0,.5)"; c.fillRect(8, 10, 118, 44); c.fillStyle = "#fff"; c.font = "bold 28px Arial"; c.textBaseline = "middle"; c.fillText(String(f.name).slice(0, 5), 16, 33);
+    const t = new T.CanvasTexture(cv); t.colorSpace = T.SRGBColorSpace;
+    const side = new T.MeshStandardMaterial({ map: t, roughness: 0.35, transparent: L < 0, opacity: L < 0 ? 0.8 : 1, emissive: sel ? 0xf97316 : 0x000000, emissiveIntensity: sel ? 0.35 : 0 }), plain = new T.MeshStandardMaterial({ color: 0xd1d5db });
+    NB.mats.push(side, plain);
+    const m = new T.Mesh(new T.BoxGeometry(FW, 0.9, FW), [side, side, plain, plain, side, side]); m.position.y = L + 0.5; if (sel) m.scale.set(1.08, 1, 1.08);
+    m.userData = { fid: f.id, blk: blk.id }; NB.g.add(m); NB.pick.push(m);
+    if (sel) { const ln = new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(FW * 1.08 + 0.02, 0.92, FW * 1.08 + 0.02)), new T.LineBasicMaterial({ color: 0xf97316 })); ln.position.y = L + 0.5; NB.g.add(ln); }
+  });
+  const top = Math.max(...lv.map((x) => x.lv)) + 1, lo = Math.min(0, ...lv.map((x) => x.lv));
+  const cap = new T.Mesh(new T.BoxGeometry(FW - 0.5, 0.2, FW - 0.5), new T.MeshStandardMaterial({ color: 0xe5e7eb })); cap.position.y = top + 0.1; NB.g.add(cap); NB.mats.push(cap.material);
+  const gr = new T.Mesh(new T.BoxGeometry(FW + 2, 0.06, FW + 2), new T.MeshStandardMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.5 })); gr.position.y = -0.03; NB.g.add(gr); NB.mats.push(gr.material);
+  const hgt = top - lo; NB.fit = { y: lo + hgt / 2, d: Math.max(9, hgt * 2.1 + 3) };
+}
+function v3dNbFrame(dt) {
+  const NB = V3.NB; if (!NB || !NB.fit || !document.body.contains(NB.r.domElement)) return;
+  if (!NB.drag) NB.az += dt * 0.25;
+  NB.cam.position.set(Math.sin(NB.az) * NB.fit.d, NB.fit.y + NB.fit.d * 0.35, Math.cos(NB.az) * NB.fit.d); NB.cam.lookAt(0, NB.fit.y, 0);
+  NB.r.render(NB.scene, NB.cam);
 }
 
 // ------------------------------------------------------------------ frame loop ---
-function v3dUpdateLabels(force) {
-  const R = V3.R, T = V3.T; if (!R) return;
-  const st = document.getElementById("v3d-stage"); if (!st) return;
-  const w = st.clientWidth, h = st.clientHeight, v = new T.Vector3();
-  V3.items.forEach((it) => {
-    v.set(it.cx, (it.topY || 2) + 1.6, it.cz).project(R.camera);
-    const d = V3.data[it.b.id] || {}, on = !V3.sel || V3.sel === it.b.id;
-    if (force || it.el._k !== it.status + (d.irStat ? d.irStat.open : 0) + "|" + d.psdOpen) {
-      it.el._k = it.status + (d.irStat ? d.irStat.open : 0) + "|" + d.psdOpen;
-      it.el.innerHTML = `<i style="background:${V3_CSS[it.status]}"></i>${mpEsc(it.b.name)}${d.irStat && d.irStat.open ? `<em class="c">IR ${d.irStat.open}</em>` : ""}${d.psdOpen ? `<em class="w">PSD ${d.psdOpen}</em>` : ""}`;
-    }
-    const vis = v.z < 1 && Math.abs(v.x) < 1.2 && Math.abs(v.y) < 1.2;
-    it.el.style.display = vis ? "flex" : "none";
-    it.el.style.transform = `translate(-50%,-100%) translate(${((v.x + 1) / 2) * w}px,${((1 - v.y) / 2) * h}px)`;
-    it.el.style.opacity = on ? 1 : 0.35;
-    it.el.classList.toggle("sel", V3.sel === it.b.id);
-  });
-}
 function v3dFrame(ts) {
   if (!document.getElementById("v3d-stage") || !V3.R) { V3.raf = 0; return; }
   V3.raf = requestAnimationFrame(v3dFrame);
-  const R = V3.R, t = ts / 1000;
-  V3.gap += (V3.tgap - V3.gap) * 0.12; if (Math.abs(V3.tgap - V3.gap) > 0.002) v3dPlaceFloors();
-  v3dCamApply();
-  V3.items.forEach((it) => { const s = 1 + Math.sin(t * 3 + it.cx) * 0.18; it.beacon.scale.setScalar(s); });
-  V3.people.forEach((P) => {
-    const dx = P.tx - P.x, dz = P.tz - P.z, d = Math.hypot(dx, dz); let walking = false;
-    if (d < 0.06) { if (Math.random() < 0.015) v3dPersonTarget(P, Math.random); } else { walking = true; P.x += (dx / d) * 0.007 * P.sp; P.z += (dz / d) * 0.007 * P.sp; const want = Math.atan2(dx, dz); let df = want - P.ry; df = Math.atan2(Math.sin(df), Math.cos(df)); P.ry += df * 0.15; }
-    P.ph += walking ? 0.16 * P.sp : 0;
-    const sw = walking ? Math.sin(P.ph) * 0.8 : 0, rg = P.grp.userData.rig;
-    rg.legL.rotation.x = sw; rg.legR.rotation.x = -sw; rg.armL.rotation.x = -sw * 0.9; rg.armR.rotation.x = sw * 0.9;
-    P.grp.rotation.y = P.ry;
-    P.grp.position.set(P.x, P.fi * (1 + V3.gap) + 0.14 + (walking ? Math.abs(Math.sin(P.ph)) * 0.012 : 0), P.z);
-    const on = !V3.sel || V3.sel === P.it.b.id; P.grp.visible = on && (!V3.flr || (V3.sel === P.it.b.id && P.it.floors.some((f) => f.fi === P.fi && f.fl.id === V3.flr)) || V3.sel !== P.it.b.id);
-  });
+  const R = V3.R, t = ts / 1000, dt = Math.min(0.05, V3.lastT ? t - V3.lastT : 0.016); V3.lastT = t;
+  const H = V3.explode ? V3_FHX : V3_FH;
+  V3.fgroups.forEach((g) => { const ty = g.userData.lv * H; g.position.y += (ty - g.position.y) * Math.min(1, dt * 5); });
+  V3.agents.forEach((a) => v3dUpAgent(a, dt, t));
+  V3.anims.forEach((f) => f(dt, t));
+  v3dCamApply(dt);
   v3dUpdateLabels();
   R.renderer.render(R.scene, R.camera);
+  v3dNbFrame(dt);
 }
 function v3dResize() {
   const st = document.getElementById("v3d-stage"); if (!st || !V3.R) return;
@@ -6132,24 +6382,24 @@ async function v3dInitScene() {
     renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
     renderer.domElement.id = "v3d-canvas"; stage.insertBefore(renderer.domElement, stage.firstChild);
-    const scene = new T.Scene(); scene.background = new T.Color(0x0b1220); scene.fog = new T.Fog(0x0b1220, 90, 230);
-    const camera = new T.PerspectiveCamera(40, 1, 0.3, 600);
-    scene.add(new T.HemisphereLight(0xdbeafe, 0x1e293b, 1.25));
-    const sun = new T.DirectionalLight(0xffffff, 1.6); sun.position.set(22, 45, 18); sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048); const sc = sun.shadow.camera; sc.left = -60; sc.right = 60; sc.top = 60; sc.bottom = -60; sc.far = 160; scene.add(sun);
-    const grid = new T.GridHelper(300, 150, 0x16233b, 0x111a2d); grid.position.y = -0.19; scene.add(grid);
+    const scene = new T.Scene(); scene.background = new T.Color(0xe9eef3); scene.fog = new T.Fog(0xe9eef3, 220, 520);
+    const camera = new T.PerspectiveCamera(40, 1, 0.3, 900);
+    scene.add(new T.HemisphereLight(0xffffff, 0x94a3b8, 1.35));
+    const sun = new T.DirectionalLight(0xffffff, 1.5); sun.position.set(40, 80, 30); sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048); const sc = sun.shadow.camera; sc.left = -80; sc.right = 80; sc.top = 80; sc.bottom = -80; sc.far = 260; sun.shadow.bias = -0.0005; scene.add(sun);
+    const grid = new T.GridHelper(600, 120, 0xc5ced9, 0xd6dde6); grid.position.y = -0.7; scene.add(grid);
     const root = new T.Group(); scene.add(root);
     V3.R = { renderer, scene, camera, root };
-    V3.cam = { az: -0.6, pol: 1.0, dist: 60, tx: 0, ty: 3, tz: 0, t: { az: -0.6, pol: 1.0, dist: 60, tx: 0, ty: 3, tz: 0 } };
+    V3.cam = { az: -0.55, pol: 0.95, dist: 90, tx: 0, ty: 3, tz: 0, t: { az: -0.55, pol: 0.95, dist: 90, tx: 0, ty: 3, tz: 0 } };
     v3dWireInput(renderer.domElement); v3dResize();
-    V3.gap = V3.tgap = V3.sel ? 1.7 : 0.06; V3.explode = !!V3.sel;
-    v3dBuildScene(); v3dOverview(); V3.sel ? v3dFocus(V3.sel) : 0;
+    if (window.ResizeObserver) new ResizeObserver(v3dResize).observe(stage);
+    v3dRebuild(true);
+    const c = V3.cam; ["az", "pol", "dist", "tx", "ty", "tz"].forEach((a) => { c[a] = c.t[a]; });
     if (msg) msg.style.display = "none";
-    v3dRenderSide();
-    if (!V3.raf) V3.raf = requestAnimationFrame(v3dFrame);
+    if (!V3.raf) { V3.lastT = 0; V3.raf = requestAnimationFrame(v3dFrame); }
   } catch (e) {
     console.error("3D failed", e); V3.failed = true;
-    if (msg) { msg.style.display = "flex"; msg.innerHTML = `<div>${mt("ไม่สามารถแสดงภาพ 3D ได้ (ต้องเชื่อมต่ออินเทอร์เน็ตและเบราว์เซอร์รองรับ WebGL) — ยังใช้รายการอาคารด้านข้างทำงานได้ตามปกติ", "3D view is unavailable (needs internet + WebGL). The building list still works.")}</div>`; }
+    if (msg) { msg.style.display = "flex"; msg.innerHTML = `<div>${mt("ไม่สามารถแสดงภาพ 3D ได้ (ต้องเชื่อมต่ออินเทอร์เน็ตและเบราว์เซอร์รองรับ WebGL) — ยังเลือกอาคารและใช้แผงงาน QSHE ด้านขวาได้ตามปกติ", "3D view is unavailable (needs internet + WebGL). Building tabs and the QSHE panel still work.")}</div>`; }
   }
 }
 
@@ -6160,74 +6410,107 @@ const V3_REPS = [["lp", "Live & Play"], ["tw", "Township"], ["food", "Food"], ["
 function renderV3d(root) {
   v3dEnsure();
   const bs = DB.get("v3dBuildings", []);
-  if (V3.sel && !bs.find((b) => b.id === V3.sel)) { V3.sel = null; V3.flr = null; }
+  if (V3.sel && !bs.find((b) => b.id === V3.sel)) { V3.sel = null; V3.flr = null; V3.blk = null; }
   root.innerHTML = `<div class="v3d" id="v3d">
+    <div class="v3d-bchips" id="v3d-bchips"></div>
     <div class="v3d-kpis" id="v3d-kpis"></div>
-    <div class="v3d-main">
-      <aside class="v3d-left" id="v3d-left"></aside>
+    <div class="v3d-main ${V3.panel ? "" : "nopanel"}" id="v3d-main">
       <div class="v3d-stage" id="v3d-stage"><div class="v3d-labels" id="v3d-labels"></div><div id="v3d-tip" class="v3d-tip"></div>
         <div class="v3d-msg" id="v3d-msg"><div>${mt("กำลังโหลดโมเดล 3D…", "Loading 3D…")}</div></div>
+        <div class="v3d-ftabs" id="v3d-ftabs"></div>
+        <div class="v3d-nbcard" id="v3d-nbcard" style="display:none"><div class="v3d-nbh"><span id="v3d-nbt"></span><button id="v3d-nball">${mt("ทั้งหมด", "All")}</button></div><div id="v3d-nb" class="v3d-nb"></div><div class="v3d-nbbtn"><button data-step="1" title="${mt("ชั้นบน", "Up")}">▲</button><button data-step="-1" title="${mt("ชั้นล่าง", "Down")}">▼</button></div><div class="v3d-nbleg">${mt("แตะชั้นเพื่อเข้าดู · ลากเพื่อหมุน", "Tap a floor · drag to rotate")}</div></div>
         <div class="v3d-tools">
-          <button id="v3d-home" title="${mt("มุมมองรวม", "Overview")}">⌂</button>
-          <button id="v3d-exp" title="${mt("แยกชั้น", "Explode floors")}" class="${V3.explode ? "on" : ""}">▦</button>
+          <button id="v3d-home" title="${mt("มุมมองเริ่มต้น", "Reset view")}">⌂</button>
+          <button id="v3d-exp" title="${mt("แยกชั้น", "Explode floors")}" class="${V3.explode ? "on" : ""}">☰</button>
+          <button id="v3d-rot" title="${mt("หมุนอัตโนมัติ", "Auto-rotate")}" class="${V3.auto ? "on" : ""}">⟳</button>
+          <button id="v3d-zin" title="${mt("ซูมเข้า", "Zoom in")}">+</button>
+          <input type="range" id="v3d-zr" min="0" max="100" value="40" orient="vertical" aria-label="zoom">
+          <button id="v3d-zout" title="${mt("ซูมออก", "Zoom out")}">−</button>
+          <span class="v3d-zl" id="v3d-zl">Lv 1</span>
+          <div class="v3d-zpre">${[[12, "อาคาร", "Building"], [40, "ชั้น", "Floor"], [58, "โซน", "Zone"], [72, "ห้อง", "Room"], [86, "ใกล้", "Close-up"]].map((z) => `<button data-z="${z[0]}">${mt(z[1], z[2])}</button>`).join("")}</div>
         </div>
-        <div class="v3d-hint">${mt("ลาก = หมุน · คลิกขวา/Shift+ลาก = เลื่อน · ล้อเมาส์ = ซูม · คลิกอาคาร/ชั้น = เลือก · ดับเบิลคลิก = กลับมุมรวม", "Drag = rotate · right-drag/Shift = pan · wheel = zoom · click = select · double-click = reset")}</div>
+        <div class="v3d-legend" id="v3d-legend"></div>
+        <div class="v3d-hint">${mt("ลาก = หมุน · คลิกขวา/Shift+ลาก = เลื่อน · ล้อเมาส์/+ − = ซูม · คลิก = เลือก · ดับเบิลคลิก = ซูมไปจุดนั้น", "Drag = rotate · right-drag = pan · wheel/+ − = zoom · click = select · double-click = zoom to point")}</div>
+        <button class="v3d-ptoggle" id="v3d-ptoggle" title="${mt("แผงงาน QSHE", "QSHE panel")}">${V3.panel ? "⟩" : "⟨ QSHE"}</button>
       </div>
       <aside class="v3d-right" id="v3d-panel"></aside>
     </div></div>`;
-  root.querySelector("#v3d-home").addEventListener("click", () => { v3dSelect(null); });
-  root.querySelector("#v3d-exp").addEventListener("click", (e) => { V3.explode = !V3.explode; V3.tgap = V3.explode ? 0.9 : 0.06; e.currentTarget.classList.toggle("on", V3.explode); });
+  const q = (s) => root.querySelector(s);
+  q("#v3d-home").addEventListener("click", () => v3dPreset());
+  q("#v3d-exp").addEventListener("click", (e) => { V3.explode = !V3.explode; e.currentTarget.classList.toggle("on", V3.explode); if (V3.sel && !V3.flr) { const B = V3.bounds; if (B) { const H = V3.explode ? V3_FHX : V3_FH, f = H / (V3.explode ? V3_FH : V3_FHX); B.h *= f; B.lo = (B.lo || 0) * f; } v3dPreset(); } });
+  q("#v3d-rot").addEventListener("click", (e) => { V3.auto = !V3.auto; e.currentTarget.classList.toggle("on", V3.auto); });
+  q("#v3d-zin").addEventListener("click", () => V3.cam && v3dZoomTo(V3.cam.t.dist / 1.45));
+  q("#v3d-zout").addEventListener("click", () => V3.cam && v3dZoomTo(V3.cam.t.dist * 1.45));
+  const zr = q("#v3d-zr");
+  zr.addEventListener("input", () => { zr._drag = true; v3dZoomTo(v3zDist(+zr.value)); }); zr.addEventListener("change", () => { zr._drag = false; });
+  root.querySelectorAll("[data-z]").forEach((x) => x.addEventListener("click", () => v3dZoomTo(v3zDist(+x.dataset.z))));
+  q("#v3d-ptoggle").addEventListener("click", () => { V3.panel = !V3.panel; q("#v3d-main").classList.toggle("nopanel", !V3.panel); q("#v3d-ptoggle").textContent = V3.panel ? "⟩" : "⟨ QSHE"; setTimeout(v3dResize, 50); });
+  q("#v3d-nball").addEventListener("click", () => { V3.blk = null; v3dSetFloor(null); });
+  root.querySelectorAll("[data-step]").forEach((x) => x.addEventListener("click", () => v3dStepFloor(+x.dataset.step)));
+  if (V3.R) { try { V3.R.renderer.dispose(); } catch (e) { /* ignore */ } V3.R = null; }
+  if (V3.NB) { try { V3.NB.r.dispose(); } catch (e) { /* ignore */ } V3.NB = null; }
+  V3.labels = [];
+  if (!window._v3dRs) { window._v3dRs = true; window.addEventListener("resize", v3dResize); window.addEventListener("keydown", (e) => { if (!document.getElementById("v3d") || /INPUT|SELECT|TEXTAREA/.test((document.activeElement || {}).tagName || "")) return; if (e.key === "+" || e.key === "=") v3dZoomTo(V3.cam.t.dist / 1.3); else if (e.key === "-") v3dZoomTo(V3.cam.t.dist * 1.3); else if (e.key === "0") v3dPreset(); }); }
   v3dRenderSide();
-  if (V3.R) { // canvas was removed with the old DOM: rebuild
-    try { V3.R.renderer.dispose(); } catch (e) { /* ignore */ }
-    V3.R = null;
-  }
-  if (!window._v3dRs) { window._v3dRs = true; window.addEventListener("resize", v3dResize); }
   v3dInitScene();
 }
-
-/** re-read the data (after an edit in the side panel) without rebuilding the page */
-function v3dRefresh() {
-  if (!document.getElementById("v3d")) return;
-  if (V3.R) { const keep = V3.cam && Object.assign({}, V3.cam); v3dBuildScene(); if (keep) V3.cam = keep; }
-  v3dRenderSide();
+function v3dStepFloor(d) {
+  const b = V3.sel ? DB.get("v3dBuildings", []).find((x) => x.id === V3.sel) : null; if (!b) return;
+  const blk = (b.blocks || []).find((k) => k.id === V3.blk) || (b.blocks || []).find((k) => (k.floors || []).some((f) => f.id === V3.flr)) || (b.blocks || [])[0];
+  const fls = blk.floors || []; let i = fls.findIndex((f) => f.id === V3.flr);
+  i = i < 0 ? (d > 0 ? 0 : fls.length - 1) : Math.max(0, Math.min(fls.length - 1, i + d));
+  V3.blk = blk.id; v3dSetFloor(fls[i].id);
 }
 
+/** re-read the data (after an edit in the side panel) keeping the camera */
+function v3dRefresh() {
+  if (!document.getElementById("v3d")) return;
+  if (V3.R) v3dRebuild(false); else v3dRenderSide();
+}
+
+function v3dFloorTitle(f) {
+  const n = String(f.name).trim();
+  if (/^G/i.test(n)) return "Ground Floor (" + n + ")";
+  if (/^B\d/i.test(n)) return mt("ใต้ดิน ", "Basement ") + n;
+  if (/roof/i.test(n)) return "Roof top";
+  if (/M$/i.test(n)) return mt("ชั้นลอย ", "Mezz. ") + n;
+  return mt("ชั้น ", "Floor ") + n;
+}
 function v3dRenderSide() {
   if (!document.getElementById("v3d")) return;
-  V3.data = V3.data && Object.keys(V3.data).length && V3.R ? V3.data : v3dData();
-  const bs = DB.get("v3dBuildings", []), D = V3.data;
-  // KPIs
-  const all = bs.map((b) => D[b.id]).filter(Boolean);
+  if (!V3.R || !Object.keys(V3.data || {}).length) V3.data = v3dData();
+  const bs = DB.get("v3dBuildings", []), D = V3.data, b = V3.sel ? bs.find((x) => x.id === V3.sel) : null;
+  // building chips
+  const bc = document.getElementById("v3d-bchips");
+  bc.innerHTML = `<button class="${!V3.sel ? "on" : ""}" data-campus="1">🏙 ${mt("ภาพรวมทุกอาคาร", "All buildings")}</button>` + bs.map((x) => { const o = D[x.id] || {}; return `<button class="${V3.sel === x.id ? "on" : ""}" data-sel="${x.id}"><i style="background:${V3_CSS[o.status || "none"]}"></i>${mpEsc(x.name)}</button>`; }).join("");
+  bc.querySelector("[data-campus]").addEventListener("click", () => v3dSelect(null));
+  bc.querySelectorAll("[data-sel]").forEach((x) => x.addEventListener("click", () => { V3.tab = "ov"; v3dSelect(x.dataset.sel); }));
+  // KPIs (white cards)
+  const all = (b ? [b] : bs).map((x) => D[x.id]).filter(Boolean);
   const pcts = all.map((o) => (o.S ? o.S.pct : null)).filter((x) => x !== null);
-  const avg = pcts.length ? pcts.reduce((a, b) => a + b, 0) / pcts.length : null;
-  const sum = (f) => all.reduce((a, o) => a + f(o), 0);
-  const kp = document.getElementById("v3d-kpis");
-  const k = (c, label, val, sub) => `<div class="v3d-kpi ${c}"><span>${label}</span><b>${val}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
-  const nOK = all.filter((o) => o.status === "ok").length, nW = all.filter((o) => o.status === "warn").length, nC = all.filter((o) => o.status === "crit").length;
-  kp.innerHTML = k("ok", mt("อาคารปกติ", "Normal"), nOK) + k("crit", mt("วิกฤต/มี IR เปิด", "Critical / open IR"), nC) + k("warn", mt("ต้องติดตาม", "Follow-up"), nW) +
-    k("", "Checklist " + mt("เฉลี่ย", "avg"), avg === null ? "–" : avg.toFixed(1) + "%") + k("crit", "IR " + mt("เปิดอยู่", "open"), sum((o) => o.irStat.open)) + k("warn", "PSD " + mt("ค้างวิเคราะห์", "pending"), sum((o) => o.psdOpen)) +
-    k("", mt("ผู้ปฏิบัติงาน (ตัวอย่าง)", "People (demo)"), V3.people.length || "–");
-  // left: buildings
-  const left = document.getElementById("v3d-left");
-  const stLbl = { ok: mt("ปกติ", "OK"), warn: mt("ติดตาม", "Follow-up"), crit: mt("วิกฤต", "Critical"), none: mt("ยังไม่มีข้อมูล", "No data") };
-  let h = `<div class="v3d-h">${mt("อาคาร", "Buildings")}</div>` + bs.map((b) => {
-    const o = D[b.id] || {}, nf = (b.blocks || []).reduce((a, x) => a + (x.floors || []).length, 0);
-    return `<button class="v3d-b ${V3.sel === b.id ? "sel" : ""}" data-sel="${b.id}"><i style="background:${V3_CSS[o.status || "none"]}"></i><span><b>${mpEsc(b.name)}</b><small>${(b.blocks || []).length} ${mt("อาคาร", "blk")} · ${nf} ${mt("ชั้น", "fl.")} · ${(o.warns && o.warns[0]) ? mpEsc(mt(o.warns[0].th, o.warns[0].en)) : stLbl[o.status || "none"]}</small></span></button>`;
-  }).join("");
-  const sb = V3.sel ? bs.find((b) => b.id === V3.sel) : null;
-  if (sb) {
-    h += `<div class="v3d-h">${mt("ชั้น", "Floors")} · ${mpEsc(sb.name)}</div>`;
-    (sb.blocks || []).forEach((blk) => {
-      if ((sb.blocks || []).length > 1) h += `<div class="v3d-blk">${mpEsc(blk.name)}</div>`;
-      h += [...(blk.floors || [])].reverse().map((f) => `<button class="v3d-f ${V3.flr === f.id ? "sel" : ""}" data-flr="${f.id}" data-blk="${blk.id}"><b>${mpEsc(f.name)}</b><span>${mpEsc(f.use)}</span></button>`).join("");
-    });
+  const avg = pcts.length ? pcts.reduce((a, c) => a + c, 0) / pcts.length : null;
+  const sum = (f) => all.reduce((a, o) => a + f(o), 0), people = Object.values(V3.count || {}).reduce((a, c) => a + c, 0);
+  const k = (c, label, val) => `<div class="v3d-kpi ${c}"><span>${label}</span><b>${val}</b></div>`;
+  document.getElementById("v3d-kpis").innerHTML = k("ok", mt("อาคารปกติ", "Normal"), all.filter((o) => o.status === "ok").length) + k("crit", mt("วิกฤต / มี IR เปิด", "Critical / open IR"), all.filter((o) => o.status === "crit").length) + k("warn", mt("ต้องติดตาม", "Follow-up"), all.filter((o) => o.status === "warn").length) +
+    k("info", "Checklist " + mt("เฉลี่ย", "avg"), avg === null ? "–" : avg.toFixed(1) + "%") + k("crit", "IR " + mt("เปิดอยู่", "open"), sum((o) => o.irStat.open)) + k("warn", "PSD " + mt("ค้างวิเคราะห์", "pending"), sum((o) => o.psdOpen)) +
+    k("dark", mt("คนในพื้นที่ (แสดง)", "People (shown)"), people || "–");
+  // floor tabs
+  const ft = document.getElementById("v3d-ftabs");
+  if (!b) ft.innerHTML = "";
+  else {
+    const blocks = b.blocks || [], blk = blocks.find((x) => x.id === V3.blk) || blocks.find((x) => (x.floors || []).some((f) => f.id === V3.flr)) || blocks[0];
+    let h = "";
+    if (blocks.length > 1) h += `<div class="row">${`<button class="${!V3.blk ? "on" : ""}" data-blk="">${mt("ทุกอาคารย่อย", "All blocks")}</button>`}${blocks.map((x) => `<button class="${V3.blk === x.id ? "on" : ""}" data-blk="${x.id}">${mpEsc(x.name)}</button>`).join("")}</div>`;
+    h += `<div class="row"><button class="${!V3.flr ? "on" : ""}" data-fl="">🏢 ${mt("ทั้งอาคาร", "Whole building")}</button>` + (blk ? [...(blk.floors || [])].reverse().map((f) => `<button class="${V3.flr === f.id ? "on" : ""}" data-fl="${f.id}" data-fb="${blk.id}">${mpEsc(v3dFloorTitle(f))}</button>`).join("") : "") + `</div>`;
+    ft.innerHTML = h;
+    ft.querySelectorAll("[data-blk]").forEach((x) => x.addEventListener("click", () => { V3.blk = x.dataset.blk || null; V3.flr = null; if (V3.R) v3dRebuild(true); else v3dRenderSide(); }));
+    ft.querySelectorAll("[data-fl]").forEach((x) => x.addEventListener("click", () => { if (x.dataset.fb) V3.blk = x.dataset.fb; v3dSetFloor(x.dataset.fl || null); }));
+    const nbc = document.getElementById("v3d-nbcard"); if (nbc) nbc.style.top = ft.offsetHeight + 18 + "px";
+    const nt = document.getElementById("v3d-nbt"); if (nt) nt.textContent = "🏢 " + b.name + (blocks.length > 1 && blk ? " · " + blk.name : "");
   }
-  h += `<div class="v3d-h">${mt("ผู้ปฏิบัติงาน (ตัวอย่าง)", "People (demo)")}</div><div class="v3d-legend">` + V3_ROLES.map((r) => `<span><i style="background:${r[3]}"></i>${mt(r[1], r[2])} <b>${V3.people.filter((p) => p.role === r[0] && (!V3.sel || p.it.b.id === V3.sel)).length}</b></span>`).join("") + `</div>`;
-  h += `<div class="v3d-legend"><span><i style="background:#22c55e"></i>${mt("ปกติ", "OK")}</span><span><i style="background:#f59e0b"></i>${mt("ติดตาม", "Follow-up")}</span><span><i style="background:#ef4444"></i>${mt("วิกฤต", "Critical")}</span></div>`;
-  left.innerHTML = h;
-  left.querySelectorAll("[data-sel]").forEach((x) => x.addEventListener("click", () => { V3.tab = "ov"; v3dSelect(x.dataset.sel); }));
-  left.querySelectorAll("[data-flr]").forEach((x) => x.addEventListener("click", () => { V3.flr = V3.flr === x.dataset.flr ? null : x.dataset.flr; V3.blk = x.dataset.blk; if (V3.R) v3dApplyLook(); v3dRenderSide(); }));
+  // legend
+  const lg = document.getElementById("v3d-legend");
+  lg.innerHTML = `<div>${V3_ROLES.map((r) => `<span><i style="background:${r[3]}"></i>${mt(r[1], r[2])} <b>${(V3.count || {})[r[0]] || 0}</b></span>`).join("")}</div><div><span><i style="background:#22c55e"></i>${mt("ปกติ", "OK")}</span><span><i style="background:#f59e0b"></i>${mt("ติดตาม", "Follow-up")}</span><span><i style="background:#ef4444"></i>${mt("วิกฤต", "Critical")}</span><span class="demo">${mt("จำนวนคน = ตัวอย่าง (Demo)", "People = demo")}</span></div>`;
   v3dRenderPanel();
 }
 
