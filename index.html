@@ -1703,11 +1703,72 @@ const LOGO_DATA_URI = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAbgAAACSCAY
 
 const DB_PREFIX = "qshe_";
 
+/**
+ * Per-user visibility. Admins (and users with "ALL") see everything; any other user only sees the records of the
+ * building(s) they were given. Buildings, units and report sites are matched by id/code and by name.
+ */
+const Scope = {
+  _c: null,
+  COLLS: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpUnits", "mpScores", "mpForms", "drrRecords", "psdAnalyses"],
+  CODE_ALIASES: { "001": ["sama garden", "sama"], "002": ["beat active"], "003": ["park x ekkamai", "ekm", "ekkamai"], "004": ["beat discovery"], "005": ["hotel23", "hotel 23"], "007": ["one udomsuk", "ous", "udomsuk"], "008": ["sls", "sunny", "sunny life style"] },
+  scoped(name) { return this.COLLS.indexOf(name) >= 0; },
+  reset() { this._c = null; },
+  active() {
+    const u = typeof State !== "undefined" ? State.user : null;
+    return !!u && u.role !== "admin" && !(u.buildingIds || []).includes("ALL");
+  },
+  norm(s) { return String(s === null || s === undefined ? "" : s).toLowerCase().replace(/[^a-z0-9\u0E00-\u0E7F]/g, ""); },
+  cands(name) {
+    const s = String(name || ""), out = [this.norm(s)];
+    const st = s.replace(/\([^)]*\)/g, " "); if (st.trim()) out.push(this.norm(st));
+    (s.match(/\(([^)]*)\)/g) || []).forEach((m) => out.push(this.norm(m.slice(1, -1))));
+    return out.filter(Boolean);
+  },
+  ctx() {
+    if (this._c) return this._c;
+    const u = State.user, ids = new Set(u.buildingIds || []), bset = new Set(ids), al = new Set();
+    const add = (x) => { this.cands(x).forEach((n) => al.add(n)); };
+    DB._raw("buildings", []).forEach((b) => {
+      if (!(ids.has(b.id) || ids.has(b.code))) return;
+      bset.add(b.id); if (b.code) bset.add(b.code); add(b.name);
+    });
+    bset.forEach((k) => (this.CODE_ALIASES[k] || []).forEach(add));
+    const c = { bset, al, uset: new Set(), uname: u.username };
+    this._c = c;
+    DB._raw("mpUnits", []).forEach((x) => { if (this.nameOk(x.name)) c.uset.add(x.id); });
+    return c;
+  },
+  /** does this building / unit / site name belong to the signed-in user? (always true for admins) */
+  nameOk(name) {
+    if (!this.active()) return true;
+    const al = this.ctx().al, cs = this.cands(name);
+    for (const n of cs) {
+      if (al.has(n)) return true;
+      for (const a of al) { if ((a.length >= 5 && n.length >= 5) && (n.includes(a) || a.includes(n))) return true; }
+    }
+    return false;
+  },
+  sees(name, r) {
+    if (!r) return false;
+    const c = this.ctx();
+    switch (name) {
+      case "buildings": return c.bset.has(r.id) || c.bset.has(r.code);
+      case "processStatus": case "okrs": case "kpis": return c.bset.has(r.buildingId);
+      case "capas": return c.bset.has(r.buildingId) || (!!r.unitId && c.uset.has(r.unitId));
+      case "mpUnits": return c.uset.has(r.id);
+      case "mpScores": case "mpForms": return c.uset.has(r.unitId);
+      case "drrRecords": { const d = r.d || {}; return r.report === "cfg" || this.nameOk(d.site) || r.by === c.uname; }
+      case "psdAnalyses": return this.nameOk(r.bu) || this.nameOk(r.location) || this.nameOk(r.site) || r.by === c.uname;
+    }
+    return true;
+  }
+};
+
 const DB = {
   _key(name) {
     return DB_PREFIX + name;
   },
-  get(name, fallback) {
+  _raw(name, fallback) {
     try {
       const raw = localStorage.getItem(this._key(name));
       if (raw === null) return fallback;
@@ -1716,6 +1777,14 @@ const DB = {
       console.error("DB.get failed for", name, e);
       return fallback;
     }
+  },
+  /** unscoped read (sync, backup, tombstones): always the full collection */
+  full(name, fallback) { return this._raw(name, fallback); },
+  /** scoped read: a non-admin user only gets the records of their own building(s) */
+  get(name, fallback) {
+    const v = this._raw(name, fallback);
+    if (Array.isArray(v) && Scope.scoped(name) && Scope.active()) return v.filter((r) => Scope.sees(name, r));
+    return v;
   },
   /**
    * Collections shared through the central Google Sheet (see sync.js). Every record needs an `id`.
@@ -1767,8 +1836,16 @@ const DB = {
   },
   set(name, value, opts) {
     try {
+      if (name === "buildings" || name === "mpUnits") Scope.reset();
+      if (!(opts && opts.raw) && Scope.scoped(name) && Scope.active() && Array.isArray(value)) {
+        // a restricted user only sees part of the collection: keep the records they cannot see untouched
+        const have = {};
+        value.forEach((r) => { if (r && r.id) have[r.id] = 1; });
+        const hidden = this._raw(name, []).filter((r) => r && r.id && !have[r.id] && !Scope.sees(name, r));
+        if (hidden.length) value = value.concat(hidden);
+      }
       if (!(opts && opts.raw) && this.SYNC.includes(name) && Array.isArray(value)) {
-        const prev = this.get(name, []);
+        const prev = this._raw(name, []);
         const pm = {};
         prev.forEach((r) => { if (r && r.id) pm[r.id] = this._stable(r); });
         const now = new Date().toISOString();
@@ -4167,7 +4244,7 @@ function drrYears() {
 function drrSiteList(report) {
   const base = report === "food" ? DRR_FOOD_SITES : report === "ww" || report === "mwa" ? Object.keys(DRR_WW_SITES) : report === "tw" ? DRR_BU : DB.get("mpUnits", []).map((u) => u.name).concat(["BITEC", "Retail"]);
   const used = drrAll(report).map((r) => r.d.site).filter(Boolean);
-  return [...new Set(base.concat(used))];
+  return [...new Set(base.concat(used))].filter((n) => Scope.nameOk(n));
 }
 function drrSave(rec) {
   rec.by = State.user ? State.user.username : "";
@@ -5544,9 +5621,9 @@ const SyncMgr = {
   _deb: null,
   _listeners: [],
 
-  cfg() { return Object.assign({ url: "", token: "", on: false }, DB.get("syncCfg", {})); },
+  cfg() { return Object.assign({ url: "", token: "", on: false }, DB.full("syncCfg", {})); },
   saveCfg(c) { DB.set("syncCfg", c); },
-  meta() { return DB.get("syncMeta", {}); },
+  meta() { return DB.full("syncMeta", {}); },
   saveMeta(p) { DB.set("syncMeta", Object.assign(this.meta(), p)); },
   enabled() { const c = this.cfg(); return !!(c.on && BackupMgr.validUrl(c.url) && c.token); },
 
@@ -5614,7 +5691,7 @@ const SyncMgr = {
         this.applyRemote(res);
         // 2) local records the centre has never seen are stamped so they get uploaded
         DB.SYNC.forEach((c) => {
-          const arr = DB.get(c, []);
+          const arr = DB.full(c, []);
           let touched = false;
           arr.forEach((r) => { if (r && r.id && !r._u && !serverIds[c + "|" + r.id]) { r._u = started; touched = true; } });
           if (touched) DB.set(c, arr, { raw: true });
@@ -5628,17 +5705,17 @@ const SyncMgr = {
       const changes = {};
       let any = false;
       DB.SYNC.forEach((c) => {
-        const list = DB.get(c, []).filter((r) => r && r.id && r._u && r._u > lastPush);
+        const list = DB.full(c, []).filter((r) => r && r.id && r._u && r._u > lastPush);
         if (list.length) { changes[c] = list; any = true; }
       });
-      const tomb = DB.get("syncTomb", []);
+      const tomb = DB.full("syncTomb", []);
       res = await this.call({ action: "sync", since, changes, deletes: tomb });
       if (!res.ok) throw new Error(res.error === "unknown action" ? mt("สคริปต์ Apps Script เป็นเวอร์ชันเก่า — วางโค้ดใหม่และ Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste the new code and deploy a new version") : res.error || "sync failed");
       this.applyRemote(res);
       const recv = Object.keys(res.changes || {}).some((k) => (res.changes[k] || []).length) || (res.deletes || []).length > 0;
       if (any || recv || tomb.length) BackupMgr.schedulePublish();
       // tombstones that were delivered can go
-      DB.set("syncTomb", DB.get("syncTomb", []).filter((t) => t._u > started), { raw: true });
+      DB.set("syncTomb", DB.full("syncTomb", []).filter((t) => t._u > started), { raw: true });
       this.saveMeta({ since: res.serverTime, lastPush: started, lastAt: new Date().toISOString(), status: "ok", lastError: "" });
       await this.syncPhotos(res.photoKeys || []);
       this.paint();
@@ -5656,7 +5733,7 @@ const SyncMgr = {
     let changed = false;
     Object.keys(res.changes || {}).forEach((c) => {
       if (!DB.SYNC.includes(c)) return;
-      const local = DB.get(c, []);
+      const local = DB.full(c, []);
       const map = {};
       local.forEach((r, i) => { map[r.id] = i; });
       (res.changes[c] || []).forEach((rec) => {
@@ -5668,7 +5745,7 @@ const SyncMgr = {
     });
     (res.deletes || []).forEach((d) => {
       if (!DB.SYNC.includes(d.c)) return;
-      const local = DB.get(d.c, []);
+      const local = DB.full(d.c, []);
       const i = local.findIndex((r) => r.id === d.id);
       if (i >= 0 && (local[i]._u || "") < d._u) { local.splice(i, 1); DB.set(d.c, local, { raw: true }); changed = true; }
     });
@@ -5757,9 +5834,9 @@ const BACKUP_KEYS = ["buildings", "processStatus", "okrs", "kpis", "capas", "mpP
 // "users" travels in the JSON backup and (as salted hashes, no plain passwords) through sync; the readable users tab never shows passwords.
 
 const BackupMgr = {
-  cfg() { return Object.assign({ url: "", token: "", auto: true }, DB.get("backupCfg", {})); },
+  cfg() { return Object.assign({ url: "", token: "", auto: true }, DB.full("backupCfg", {})); },
   saveCfg(c) { DB.set("backupCfg", c); },
-  meta() { return DB.get("backupMeta", {}); },
+  meta() { return DB.full("backupMeta", {}); },
   saveMeta(patch) { DB.set("backupMeta", Object.assign(this.meta(), patch)); },
   lastAt() {
     const m = this.meta();
@@ -5778,7 +5855,7 @@ const BackupMgr = {
   async collect(opts) {
     const keys = {};
     const list = opts.users ? ["users"].concat(BACKUP_KEYS) : BACKUP_KEYS;
-    list.forEach((k) => { keys[k] = DB.get(k, null); });
+    list.forEach((k) => { keys[k] = DB.full(k, null); });
     const out = { app: "PSD eNGINNo QSHE Management", version: "1.0", exportedAt: new Date().toISOString(), by: State.user ? State.user.username : "", keys };
     if (opts.photos && MpImg.available()) {
       const rows = await MpImg._tx("readonly", (st) => st.getAll());
@@ -5806,7 +5883,7 @@ const BackupMgr = {
       t[k] = { headers: ds.headers.map((h) => h.label), rows: ds.rows().map((r) => ds.headers.map((h) => (r[h.key] === undefined || r[h.key] === null ? "" : r[h.key]))) };
     });
     // user list for reference only – no passwords
-    t.users = { headers: ["username", "name", "role", "status", "buildings"], rows: DB.get("users", []).map((u) => [u.username, u.name, u.role, u.status || "active", (u.buildingIds || []).join(" ")]) };
+    t.users = { headers: ["username", "name", "role", "status", "buildings"], rows: DB.full("users", []).map((u) => [u.username, u.name, u.role, u.status || "active", (u.buildingIds || []).join(" ")]) };
     return t;
   },
 
@@ -6398,11 +6475,11 @@ function wirePasswordToggle(btnId, inputId) {
 }
 
 function startApp(user) {
-  State.user = user;
+  State.user = user; Scope.reset();
   const buildings = DB.get("buildings", []);
   State.activeBuilding = user.buildingIds.includes("ALL")
     ? (buildings[0] ? buildings[0].id : "ALL")
-    : user.buildingIds[0];
+    : (buildings[0] ? buildings[0].id : user.buildingIds[0]);
 
   document.getElementById("login-screen").classList.add("hidden");
   document.getElementById("app-shell").classList.remove("hidden");
@@ -6418,7 +6495,7 @@ function startApp(user) {
 
 function logout() {
   Auth.logout();
-  State.user = null;
+  State.user = null; Scope.reset();
   // give the central sync a moment to publish the sign-out, then reload
   let p = Promise.resolve();
   try { if (typeof SyncMgr !== "undefined" && SyncMgr.enabled()) p = Promise.race([SyncMgr.run(), new Promise((r) => setTimeout(r, 2500))]); } catch (e) { /* ignore */ }
@@ -6560,7 +6637,7 @@ function navigate(viewId) {
 function accessibleBuildings() {
   const all = DB.get("buildings", []);
   if (Auth.isAdmin(State.user) || State.user.buildingIds.includes("ALL")) return all;
-  return all.filter((b) => State.user.buildingIds.includes(b.id));
+  return all; // DB.get already limits a non-admin user to their own building(s) (see Scope in storage.js)
 }
 
 function renderTopbar() {
