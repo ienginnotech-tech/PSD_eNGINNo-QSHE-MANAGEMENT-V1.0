@@ -5891,13 +5891,17 @@ function v3dBuildScene() {
   const fh = 1;
   places.forEach((p) => {
     const { b, bx } = p, d = V3.data[b.id], g = new T.Group(); g.position.set(p.x, 0, p.z); R.root.add(g);
-    const plate = new T.Mesh(new T.BoxGeometry(bx.w + 1.6, 0.18, bx.d + 1.6), new T.MeshStandardMaterial({ color: 0x14213a, roughness: 0.9 }));
-    plate.position.y = -0.1; plate.receiveShadow = true; g.add(plate);
+    const plate = new T.Mesh(new T.BoxGeometry(bx.w + 1.6, 0.06, bx.d + 1.6), new T.MeshStandardMaterial({ color: 0x14213a, roughness: 0.9, transparent: true, opacity: 0.55, depthWrite: false }));
+    plate.position.y = -0.04; plate.receiveShadow = true; g.add(plate);
     const it = { b, g, floors: [], cx: p.x, cz: p.z, bx, top: 0, status: d ? d.status : "none" };
     const blocks = b.blocks || [];
     blocks.forEach((blk, bi) => {
       const ox = -bx.w / 2 + bx.bw / 2 + bi * (bx.bw + bx.gap);
-      (blk.floors || []).forEach((f, fi) => {
+      // level 0 = ground (G); basements (B1, B2…) get negative levels and sit below the ground
+      const fls = blk.floors || [], gIdx = fls.findIndex((x) => /^G/i.test(String(x.name).trim())), nb = gIdx >= 0 ? gIdx : fls.filter((x) => /^B\d|ใต้ดิน/i.test(String(x.name) + String(x.use))).length;
+      it.base = Math.max(it.base || 0, nb);
+      fls.forEach((f, fi0) => {
+        const fi = fi0 - nb;
         const col = v3dFloorColor(f.use, f.name);
         const m = new T.Mesh(new T.BoxGeometry(bx.bw, fh * 0.84, bx.bd), new T.MeshStandardMaterial({ color: col, roughness: 0.55, metalness: 0.1, transparent: true, opacity: 0.93, emissive: col, emissiveIntensity: 0.05 }));
         m.castShadow = true; m.receiveShadow = true; m.position.x = ox;
@@ -5912,7 +5916,7 @@ function v3dBuildScene() {
         g.add(m, open, hit); V3.pick.push(hit);
         it.floors.push({ m, open, hit, ox, fi, blk, fl: f, col });
       });
-      it.top = Math.max(it.top, (blk.floors || []).length);
+      it.top = Math.max(it.top, fls.length - nb);
     });
     const beacon = new T.Mesh(new T.SphereGeometry(0.2, 14, 10), new T.MeshBasicMaterial({ color: V3_ST[it.status] }));
     g.add(beacon); it.beacon = beacon;
@@ -5923,7 +5927,7 @@ function v3dBuildScene() {
   });
   // ground
   const gs = Math.max(maxX, maxZ) + 40;
-  const ground = new T.Mesh(new T.PlaneGeometry(gs * 2, gs * 2), new T.MeshStandardMaterial({ color: 0x0e1a2f, roughness: 1 }));
+  const ground = new T.Mesh(new T.PlaneGeometry(gs * 2, gs * 2), new T.MeshStandardMaterial({ color: 0x0e1a2f, roughness: 1, transparent: true, opacity: 0.5, depthWrite: false }));
   ground.rotation.x = -Math.PI / 2; ground.position.y = -0.2; ground.receiveShadow = true; R.root.add(ground);
   v3dMakePeople();
   v3dApplyLook(true);
@@ -5949,18 +5953,18 @@ function v3dMakePeople() {
   const T = V3.T, R = V3.R; V3.people = [];
   let seed = 7; const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
   V3.items.forEach((it) => {
-    const nf = Math.max(1, it.top), n = Math.min(16, 3 + Math.round(nf * 1.1));
+    const nf = Math.max(1, it.floors.length / Math.max(1, (it.b.blocks || []).length)), n = Math.min(16, 3 + Math.round(nf * 1.1));
     for (let i = 0; i < n; i++) {
       const rr = V3_ROLES[Math.floor(rnd() * V3_ROLES.length)], role = rr[0];
       const grp = v3dMakePerson(T, role, parseInt(rr[3].slice(1), 16)); R.root.add(grp);
-      const fi = Math.floor(rnd() * nf), bi = Math.floor(rnd() * Math.max(1, (it.b.blocks || []).length));
-      const P = { grp, it, role, fi, bi, x: 0, z: 0, tx: 0, tz: 0, sp: 0.6 + rnd() * 0.6, ph: rnd() * 6, ry: 0 };
+      const fl0 = it.floors[Math.floor(rnd() * it.floors.length)], fi = fl0.fi, ox0 = fl0.ox;
+      const P = { grp, it, role, fi, ox: ox0, x: 0, z: 0, tx: 0, tz: 0, sp: 0.6 + rnd() * 0.6, ph: rnd() * 6, ry: 0 };
       V3.people.push(P); v3dPersonTarget(P, rnd, true);
     }
   });
 }
 function v3dPersonTarget(P, rnd, snap) {
-  const it = P.it, bx = it.bx, ox = -bx.w / 2 + bx.bw / 2 + P.bi * (bx.bw + bx.gap);
+  const it = P.it, bx = it.bx, ox = P.ox;
   P.tx = it.cx + ox + (rnd() - 0.5) * (bx.bw - 0.8); P.tz = it.cz + (rnd() - 0.5) * (bx.bd - 0.8);
   if (snap) { P.x = P.tx; P.z = P.tz; }
 }
@@ -6011,8 +6015,8 @@ function v3dSelect(id) {
 }
 function v3dFocus(id) {
   const it = V3.items.find((i) => i.b.id === id); if (!it) return v3dOverview();
-  const h = Math.max(2, it.top * (1 + V3.tgap)), s = Math.max(h * 1.3, it.bx.w * 1.35, 8);
-  v3dCamTo(-0.5, 0.95, s + 8, it.cx, h * 0.45, it.cz);
+  const h = Math.max(2, it.top * (1 + V3.tgap)), dep = (it.base || 0) * (1 + V3.tgap), s = Math.max((h + dep) * 1.3, it.bx.w * 1.35, 8);
+  v3dCamTo(-0.5, 0.95, s + 8 + dep * 0.6, it.cx, (h - dep) * 0.45, it.cz);
 }
 function v3dCamApply() {
   const c = V3.cam, k = 0.14, t = c.t;
