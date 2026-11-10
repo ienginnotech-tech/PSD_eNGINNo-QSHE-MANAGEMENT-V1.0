@@ -5827,14 +5827,46 @@ function v3dOpenFloor(T, bx, col, f, ox) {
   const u = String(f.use || "") + " " + String(f.name || "");
   const box = (w, h, d, x, z, c, y) => { const m = new T.Mesh(v3dGeo(T, "b" + w + "_" + h + "_" + d, () => new T.BoxGeometry(w, h, d)), v3dMat(T, c)); m.position.set(x, (y || 0) + 0.14 + h / 2, z); m.castShadow = true; g.add(m); return m; };
   const px = () => (rnd() - 0.5) * (bx.bw - 1), pz = () => (rnd() - 0.5) * (bx.bd - 1);
-  if (/ใต้ดิน|^B\d/i.test(u)) { for (let i = 0; i < 4; i++) box(0.22, 0.7, 0.22, -bx.bw / 2 + 0.8 + i * (bx.bw - 1.6) / 3, 0, 0x94a3b8); }
-  else if (/จอดรถ/.test(u)) { for (let i = 0; i < 6; i++) box(0.6, 0.22, 0.32, -bx.bw / 2 + 0.7 + (i % 3) * 1.8, (i < 3 ? -1 : 1) * (bx.bd / 4), [0xef4444, 0x3b82f6, 0xe5e7eb, 0x1f2937, 0xeab308, 0x22c55e][i]); }
-  else if (/ห้องพัก|โรงแรม/.test(u)) { for (let i = 0; i < 4; i++) { const x = -bx.bw / 2 + 0.9 + i * (bx.bw - 1.8) / 3; box(0.05, 0.4, bx.bd * 0.55, x + 0.45, -bx.bd * 0.2, 0xe2e8f0); box(0.55, 0.14, 0.8, x, -bx.bd * 0.25, 0xf8fafc); } }
-  else if (/สนาม|เครื่องเล่น|สวนสนุก/.test(u)) { const c = new T.Mesh(new T.PlaneGeometry(bx.bw - 1, bx.bd - 1), v3dMat(T, 0x15803d)); c.rotation.x = -Math.PI / 2; c.position.y = 0.16; g.add(c); box(0.05, 0.4, bx.bd - 1, 0, 0, 0xf8fafc); box(0.5, 0.3, 0.5, px(), pz(), 0xfacc15); }
-  else if (/ร้านอาหาร|กาแฟ|ต้นไม้/.test(u)) { for (let i = 0; i < 6; i++) { const m = new T.Mesh(v3dGeo(T, "tbl", () => new T.CylinderGeometry(0.28, 0.28, 0.16, 12)), v3dMat(T, 0x7c4a1e)); m.position.set(px(), 0.28, pz()); g.add(m); } }
-  else if (/คลินิก|ร้านค้า/.test(u)) { for (let i = 0; i < 4; i++) box(1.2, 0.34, 0.2, px(), pz(), 0xfbcfe8); }
-  else if (/สำนักงาน/.test(u)) { for (let i = 0; i < 6; i++) box(0.6, 0.2, 0.34, -bx.bw / 2 + 0.8 + (i % 3) * 1.4, (i < 3 ? -1 : 1) * (bx.bd / 4), 0xdbeafe); }
-  else { for (let i = 0; i < 3; i++) box(0.5, 0.3, 0.5, px(), pz(), 0x94a3b8); }
+  const cyl = (r1, r2, h, x, z, c, y, seg) => { const m = new T.Mesh(v3dGeo(T, "c" + r1 + "_" + r2 + "_" + h + "_" + (seg || 10), () => new T.CylinderGeometry(r1, r2, h, seg || 10)), v3dMat(T, c)); m.position.set(x, (y || 0) + 0.14 + h / 2, z); m.castShadow = true; g.add(m); return m; };
+  const tree = (x, z, k) => { cyl(0.04, 0.05, 0.22, x, z, 0x78350f); cyl(0.22 * k, 0.02, 0.34 * k, x, z, 0x16a34a, 0.18, 8); cyl(0.16 * k, 0.02, 0.28 * k, x, z, 0x22c55e, 0.4 * k, 8); };
+  const pot = (x, z) => { cyl(0.07, 0.05, 0.1, x, z, 0xb45309); cyl(0.1, 0.01, 0.2, x, z, 0x4ade80, 0.1, 7); };
+  const car = (x, z, c, rot) => {
+    const cg = new T.Group(); cg.position.set(x, 0.14, z); cg.rotation.y = rot || 0;
+    const body = new T.Mesh(v3dGeo(T, "carb", () => new T.BoxGeometry(0.56, 0.1, 0.26)), v3dMat(T, c)); body.position.y = 0.11; body.castShadow = true;
+    const cab = new T.Mesh(v3dGeo(T, "carc", () => new T.BoxGeometry(0.28, 0.09, 0.22)), v3dMat(T, 0x1e293b, { metalness: 0.4 })); cab.position.set(-0.02, 0.2, 0);
+    cg.add(body, cab);
+    [[-0.18, 0.13], [0.18, 0.13], [-0.18, -0.13], [0.18, -0.13]].forEach((w) => { const wh = new T.Mesh(v3dGeo(T, "carw", () => new T.CylinderGeometry(0.06, 0.06, 0.05, 10)), v3dMat(T, 0x0f172a)); wh.rotation.x = Math.PI / 2; wh.position.set(w[0], 0.06, w[1]); cg.add(wh); });
+    g.add(cg);
+  };
+  const table = (x, z) => {
+    cyl(0.03, 0.03, 0.18, x, z, 0x57534e); cyl(0.2, 0.2, 0.025, x, z, 0xfde68a, 0.18, 14);
+    [[0.27, 0], [-0.27, 0], [0, 0.27], [0, -0.27]].forEach((c) => box(0.11, 0.1, 0.11, x + c[0], z + c[1], 0x9a3412));
+  };
+  const grid = (cols, rows, margin, fn) => { for (let a = 0; a < cols; a++) for (let b = 0; b < rows; b++) fn(-bx.bw / 2 + margin + (cols === 1 ? (bx.bw - 2 * margin) / 2 : a * (bx.bw - 2 * margin) / (cols - 1)), -bx.bd / 2 + margin + (rows === 1 ? (bx.bd - 2 * margin) / 2 : b * (bx.bd - 2 * margin) / (rows - 1)), a, b); };
+  const wide = bx.bw > 5;
+  if (/ใต้ดิน|^B\d/i.test(u)) { grid(wide ? 4 : 3, 2, 0.5, (x, z) => box(0.18, 0.62, 0.18, x, z, 0x94a3b8)); }
+  else if (/จอดรถ/.test(u)) {
+    const cols = wide ? 4 : 3, cc = [0xef4444, 0x3b82f6, 0xe5e7eb, 0x1f2937, 0xeab308, 0x22c55e, 0xf97316, 0x94a3b8];
+    grid(cols, 2, 0.55, (x, z, a, b) => { if (rnd() > 0.2) car(x, z, cc[(a * 2 + b + Math.floor(rnd() * 3)) % cc.length], 0); box(0.62, 0.005, 0.03, x, z + (b ? -0.22 : 0.22), 0xf8fafc); });
+  }
+  else if (/ห้องพัก|โรงแรม/.test(u)) { for (let i = 0; i < 3; i++) { const x = -bx.bw / 2 + 0.7 + i * (bx.bw - 1.4) / 2; box(0.04, 0.34, bx.bd * 0.5, x + 0.55, -bx.bd * 0.22, 0xe2e8f0); box(0.42, 0.1, 0.62, x, -bx.bd * 0.22, 0xf8fafc); box(0.42, 0.05, 0.22, x, -bx.bd * 0.22 - 0.2, 0x93c5fd); } }
+  else if (/สนาม/.test(u)) { const c = new T.Mesh(new T.PlaneGeometry(bx.bw - 0.8, bx.bd - 0.8), v3dMat(T, /เทนนิส/.test(u) ? 0x1d4ed8 : 0x15803d)); c.rotation.x = -Math.PI / 2; c.position.y = 0.16; g.add(c); box(0.03, 0.24, bx.bd - 0.8, 0, 0, 0xf8fafc); box(0.02, 0.2, 0.02, 0, -(bx.bd - 0.8) / 2, 0xf8fafc); box(0.02, 0.2, 0.02, 0, (bx.bd - 0.8) / 2, 0xf8fafc); }
+  else if (/เครื่องเล่น|สวนสนุก/.test(u)) {
+    const x0 = -bx.bw / 4; cyl(0.5, 0.5, 0.06, x0, 0, 0xfacc15); cyl(0.03, 0.03, 0.4, x0, 0, 0xe5e7eb); cyl(0.02, 0.6, 0.22, x0, 0, 0xef4444, 0.4, 12);
+    for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2; box(0.1, 0.1, 0.1, x0 + Math.cos(a) * 0.38, Math.sin(a) * 0.38, [0x3b82f6, 0x22c55e, 0xec4899, 0xf97316][k], 0.06); }
+    const x1 = bx.bw / 4; for (let k = 0; k < 3; k++) box(0.34, 0.12 + k * 0.1, 0.34, x1, (k - 1) * 0.5, [0x8b5cf6, 0x06b6d4, 0xf43f5e][k]);
+  }
+  else if (/ต้นไม้/.test(u) && /ร้านอาหาร|กาแฟ/.test(u)) {
+    for (let i = 0; i < 4; i++) tree(-bx.bw / 2 + 0.6 + i * (bx.bw - 1.2) / 3, -bx.bd / 2 + 0.6, 1);
+    for (let i = 0; i < 5; i++) pot(-bx.bw / 2 + 0.5 + i * (bx.bw - 1) / 4, -bx.bd / 2 + 1.3);
+    grid(3, 1, 0.8, (x) => table(x, bx.bd / 4 + 0.1));
+  }
+  else if (/ร้านอาหาร|กาแฟ/.test(u)) { grid(wide ? 3 : 2, 2, 0.75, (x, z) => table(x, z)); }
+  else if (/ต้นไม้/.test(u)) { grid(4, 2, 0.6, (x, z) => tree(x, z, 1)); }
+  else if (/คลินิก|ร้านค้า/.test(u)) { for (let i = 0; i < 3; i++) box(bx.bw * 0.5, 0.3, 0.14, 0, -bx.bd / 2 + 0.7 + i * 1.2, 0xfbcfe8); }
+  else if (/สำนักงาน/.test(u)) { grid(wide ? 3 : 2, 2, 0.7, (x, z) => { box(0.5, 0.1, 0.28, x, z, 0xdbeafe); box(0.12, 0.1, 0.12, x, z + 0.28, 0x475569); }); }
+  else if (/Roof/i.test(u)) { grid(2, 1, 1.2, (x, z) => box(0.5, 0.3, 0.4, x, z, 0x94a3b8)); }
+  else { grid(2, 1, 1, (x, z) => box(0.4, 0.25, 0.4, x, z, 0x94a3b8)); }
   g.userData.mats = mats;
   return g;
 }
@@ -5898,22 +5930,31 @@ function v3dBuildScene() {
   v3dUpdateLabels(true);
 }
 
-/** demo people (counts are samples until a real source is connected) */
+/** demo people: small figures with arms and legs that walk (counts are samples until a real source is connected) */
+function v3dMakePerson(T, role, col) {
+  const g = new T.Group(), sh = v3dMat(T, col), pants = v3dMat(T, 0x1e293b), skin = v3dMat(T, 0xf1c9a5);
+  const G = (k, mk) => v3dGeo(T, "p" + k, mk);
+  const limb = (geo, mat, x, y) => { const piv = new T.Group(); piv.position.set(x, y, 0); const m = new T.Mesh(geo, mat); m.position.y = -geo.parameters.height / 2; m.castShadow = true; piv.add(m); g.add(piv); return piv; };
+  const legG = G("leg", () => new T.BoxGeometry(0.06, 0.2, 0.06)), armG = G("arm", () => new T.BoxGeometry(0.05, 0.19, 0.05));
+  const legL = limb(legG, pants, -0.04, 0.2), legR = limb(legG, pants, 0.04, 0.2);
+  const torso = new T.Mesh(G("tor", () => new T.BoxGeometry(0.17, 0.22, 0.09)), sh); torso.position.y = 0.31; torso.castShadow = true; g.add(torso);
+  const armL = limb(armG, sh, -0.115, 0.4), armR = limb(armG, sh, 0.115, 0.4);
+  const head = new T.Mesh(G("head", () => new T.SphereGeometry(0.07, 10, 8)), skin); head.position.y = 0.49; g.add(head);
+  if (role === "contractor" || role === "tech") { const hat = new T.Mesh(G("hat", () => new T.SphereGeometry(0.078, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2)), v3dMat(T, role === "tech" ? 0xf97316 : 0xfacc15)); hat.position.y = 0.5; g.add(hat); }
+  if (role === "sec") { const cap = new T.Mesh(G("cap", () => new T.CylinderGeometry(0.075, 0.075, 0.03, 10)), v3dMat(T, 0x312e81)); cap.position.y = 0.55; g.add(cap); }
+  g.userData.rig = { legL, legR, armL, armR };
+  return g;
+}
 function v3dMakePeople() {
   const T = V3.T, R = V3.R; V3.people = [];
-  const body = new T.CylinderGeometry(0.11, 0.13, 0.34, 8), head = new T.SphereGeometry(0.1, 8, 6);
   let seed = 7; const rnd = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-  const mats = {}; V3_ROLES.forEach((r) => { mats[r[0]] = new T.MeshStandardMaterial({ color: r[3], roughness: 0.6 }); });
   V3.items.forEach((it) => {
-    const nf = Math.max(1, it.top), n = Math.min(10, 2 + Math.round(nf * 0.6));
+    const nf = Math.max(1, it.top), n = Math.min(16, 3 + Math.round(nf * 1.1));
     for (let i = 0; i < n; i++) {
-      const role = V3_ROLES[Math.floor(rnd() * V3_ROLES.length)][0];
-      const grp = new T.Group();
-      const bo = new T.Mesh(body, mats[role]); bo.position.y = 0.17; const he = new T.Mesh(head, mats[role]); he.position.y = 0.42;
-      bo.userData.shared = he.userData.shared = true; bo.userData.sharedMat = he.userData.sharedMat = true;
-      grp.add(bo, he); grp.scale.setScalar(3); R.root.add(grp);
+      const rr = V3_ROLES[Math.floor(rnd() * V3_ROLES.length)], role = rr[0];
+      const grp = v3dMakePerson(T, role, parseInt(rr[3].slice(1), 16)); R.root.add(grp);
       const fi = Math.floor(rnd() * nf), bi = Math.floor(rnd() * Math.max(1, (it.b.blocks || []).length));
-      const P = { grp, it, role, fi, bi, x: 0, z: 0, tx: 0, tz: 0, sp: 0.4 + rnd() * 0.5 };
+      const P = { grp, it, role, fi, bi, x: 0, z: 0, tx: 0, tz: 0, sp: 0.6 + rnd() * 0.6, ph: rnd() * 6, ry: 0 };
       V3.people.push(P); v3dPersonTarget(P, rnd, true);
     }
   });
@@ -5970,7 +6011,7 @@ function v3dSelect(id) {
 }
 function v3dFocus(id) {
   const it = V3.items.find((i) => i.b.id === id); if (!it) return v3dOverview();
-  const h = Math.max(2, it.top * (1 + V3.tgap)), s = Math.max(h * 1.3, it.bx.w * 1.9, 12);
+  const h = Math.max(2, it.top * (1 + V3.tgap)), s = Math.max(h * 1.3, it.bx.w * 1.35, 8);
   v3dCamTo(-0.5, 0.95, s + 8, it.cx, h * 0.45, it.cz);
 }
 function v3dCamApply() {
@@ -6059,9 +6100,13 @@ function v3dFrame(ts) {
   v3dCamApply();
   V3.items.forEach((it) => { const s = 1 + Math.sin(t * 3 + it.cx) * 0.18; it.beacon.scale.setScalar(s); });
   V3.people.forEach((P) => {
-    const dx = P.tx - P.x, dz = P.tz - P.z, d = Math.hypot(dx, dz);
-    if (d < 0.08) { if (Math.random() < 0.02) v3dPersonTarget(P, Math.random); } else { P.x += (dx / d) * 0.012 * P.sp; P.z += (dz / d) * 0.012 * P.sp; }
-    P.grp.position.set(P.x, P.fi * (1 + V3.gap) + 0.14 + Math.abs(Math.sin(t * 6 * P.sp + P.fi)) * 0.015, P.z);
+    const dx = P.tx - P.x, dz = P.tz - P.z, d = Math.hypot(dx, dz); let walking = false;
+    if (d < 0.06) { if (Math.random() < 0.015) v3dPersonTarget(P, Math.random); } else { walking = true; P.x += (dx / d) * 0.007 * P.sp; P.z += (dz / d) * 0.007 * P.sp; const want = Math.atan2(dx, dz); let df = want - P.ry; df = Math.atan2(Math.sin(df), Math.cos(df)); P.ry += df * 0.15; }
+    P.ph += walking ? 0.16 * P.sp : 0;
+    const sw = walking ? Math.sin(P.ph) * 0.8 : 0, rg = P.grp.userData.rig;
+    rg.legL.rotation.x = sw; rg.legR.rotation.x = -sw; rg.armL.rotation.x = -sw * 0.9; rg.armR.rotation.x = sw * 0.9;
+    P.grp.rotation.y = P.ry;
+    P.grp.position.set(P.x, P.fi * (1 + V3.gap) + 0.14 + (walking ? Math.abs(Math.sin(P.ph)) * 0.012 : 0), P.z);
     const on = !V3.sel || V3.sel === P.it.b.id; P.grp.visible = on && (!V3.flr || (V3.sel === P.it.b.id && P.it.floors.some((f) => f.fi === P.fi && f.fl.id === V3.flr)) || V3.sel !== P.it.b.id);
   });
   v3dUpdateLabels();
