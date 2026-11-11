@@ -4799,7 +4799,7 @@ function renderDrrFood(root) {
     });
     drrWireTable(body, rep, rerender); return;
   }
-  const siteList = DrrUI.site === "ALL" ? DRR_FOOD_SITES : [DrrUI.site];
+  const siteList = DrrUI.site === "ALL" ? DRR_FOOD_SITES.filter((s) => Scope.nameOk(s)) : [DrrUI.site];
   const stat = (site, m) => { const rs = recs.filter((r) => r.d.site === site && (!m || drrMonthOf(r) === m)); let p = 0, n = 0; rs.forEach((r) => { const s = drrFoodSample(r.d); if (!s.tested) return; if (s.pass) p++; else n++; }); return { p, n }; };
   const tgt = (site) => (cfg.foodTarget[site] !== undefined ? cfg.foodTarget[site] : DRR_FOOD_TARGET[site] || 0);
   const tiles = siteList.map((s) => { const x = stat(s); const tot = x.p + x.n; const done = new Date().getFullYear() === DrrUI.year ? new Date().getMonth() + 1 : 12; const plan = tgt(s) * done; const rate = tot ? (x.p / tot) * 100 : null; return drrTile(`${s} <span class="muted-s">(${tgt(s)} ${mt("รายการ/เดือน", "items/month")})</span>`, rate === null ? "–" : rate.toFixed(1) + "%", `${mt("ผ่าน", "Pass")} ${x.p} · ${mt("ไม่ผ่าน", "Not pass")} ${x.n} · ${mt("แผน", "plan")} ${plan} ${mt("ตัวอย่าง", "samples")}`, rate === null ? "" : rate >= 85 ? "var(--st-good)" : rate >= 70 ? "var(--st-serious)" : "var(--st-critical)"); }).join("");
@@ -4836,7 +4836,7 @@ function renderDrrWw(root) {
     });
     drrWireTable(body, rep, rerender); return;
   }
-  const sites = DrrUI.site === "ALL" ? Object.keys(DRR_WW_SITES).concat(drrSiteList("ww").filter((s) => !(s in DRR_WW_SITES))) : [DrrUI.site];
+  const sites = DrrUI.site === "ALL" ? Object.keys(DRR_WW_SITES).filter((s) => Scope.nameOk(s)).concat(drrSiteList("ww").filter((s) => !(s in DRR_WW_SITES))) : [DrrUI.site];
   const by = (s, m) => recs.find((r) => r.d.site === s && drrMonthOf(r) === m);
   const cell = (s, m) => { const r = by(s, m); if (!r) return `<td class="num muted-s">·</td>`; const e = drrWwSample(r.d); const tip = `${s} ${DRR_MONTHS[m - 1]}\n` + DRR_WW_PARAMS.map((p) => { const v = (r.d.eff || {})[p.k]; return v === undefined ? null : `${p.name}: ${v} (${drrLimitText(r.d.btype, p.k)}) ${drrWwEval(r.d.btype, p.k, v) ? "✔" : "✖"}`; }).filter(Boolean).join("\n"); return `<td class="num" data-tip="${drrEsc(tip)}" style="color:var(--st-${e.pass ? "good" : "critical"});font-weight:700">${e.pass ? "✔" : "✖"}</td>`; };
   const latest = sites.map((s) => { const rs = recs.filter((r) => r.d.site === s).sort((a, b) => b.d.date.localeCompare(a.d.date)); return { s, r: rs[0] }; });
@@ -4936,7 +4936,7 @@ const DRR_TS_PF_TEXT = [
 const drrThDate = (iso) => { const m = /^(\d{4})-(\d\d)-(\d\d)/.exec(String(iso || "")); return m ? `${m[3]}/${m[2]}/${Number(m[1]) + 543}` : ""; };
 const drrDaysIn = (ym) => new Date(Number(ym.slice(0, 4)), Number(ym.slice(5, 7)), 0).getDate();
 function drrTsCtx() {
-  const sites = Object.keys(DRR_WW_SITES);
+  const sites = Object.keys(DRR_WW_SITES).filter((s) => Scope.nameOk(s));
   const site = DrrUI.site !== "ALL" ? DrrUI.site : sites[0];
   const mm = DrrUI.month !== "ALL" ? String(DrrUI.month).padStart(2, "0") : String(new Date().getMonth() + 1).padStart(2, "0");
   return { site, ym: `${DrrUI.year}-${mm}`, all: DrrUI.site === "ALL", allMonths: DrrUI.month === "ALL" };
@@ -5245,7 +5245,7 @@ function renderDrrTs(root) {
       (r) => [String(r.d.date).slice(0, 7), drrEsc(r.d.site), r.d.days ?? "", drrFmt(r.d.elec, 2), drrFmt(r.d.water, 2), drrFmt(r.d.inflow, 2), drrEsc(r.d.discharge), r.d.sentDate ? drrThDate(r.d.sentDate) : "–"]);
     drrWireTable(body, "ts2", rerender); return;
   }
-  const sites = c.all ? Object.keys(DRR_WW_SITES) : [c.site];
+  const sites = c.all ? Object.keys(DRR_WW_SITES).filter((s) => Scope.nameOk(s)) : [c.site];
   body.innerHTML = note + `<div class="card"><h3 style="margin:0 0 4px;">รายงานสรุป ทส.2 ประจำเดือน ${DRR_TH_MONTHS[Number(c.ym.slice(5)) - 1]} ${Number(c.ym.slice(0, 4)) + 543}${c.allMonths ? ` <span class="muted-s">(เดือนปัจจุบัน — เลือกเดือนด้านบนเพื่อเปลี่ยน)</span>` : ""}</h3>
     <div class="desc">ตัวเลขดึงอัตโนมัติจากแบบ ทส.1 ของเดือนนั้น · กด “บันทึกรายงานเดือนนี้” เพื่อเก็บสรุปลงฐานข้อมูล/Google Sheet · “พิมพ์ ทส.2” ได้ฟอร์มตามแบบ (ข้อมูลทั่วไปและผู้ลงนามมาจาก “ข้อมูลทั่วไป / ระบบ”)</div>${sites.map((s) => drrTs2Card(s, c.ym)).join("")}</div>`;
   body.querySelectorAll("[data-ts2-prof]").forEach((b) => b.addEventListener("click", () => drrTsOpenProfile(b.dataset.ts2Prof, rerender)));
@@ -5736,7 +5736,13 @@ function irStats(recs, withLegacy) {
   return Object.assign(base, { last: dates[dates.length - 1], days, best: Math.max(best, days), count: dates.length });
 }
 const irScopeStats = (group, site) => irStats(irScopeRecs(group, site), group === "ALL" && site === "ALL");
-const irScopeLabel = () => IrSafeUI.site !== "ALL" ? `${IR_GROUPS[IrSafeUI.group][0]} · ${IrSafeUI.site}` : IR_GROUPS[IrSafeUI.group][0];
+/** "BBG Group" for admins; for a building user the "all" scope is their own building(s) */
+function irGroupName(k) {
+  if (k !== "ALL" || !Scope.active()) return IR_GROUPS[k][0];
+  const mine = DB.get("mpUnits", []).map((u) => u.name), b = accessibleBuildings();
+  return mine.length ? mine.join(", ") : b.length ? b.map((x) => x.name).join(", ") : mt("อาคารของฉัน", "My building");
+}
+const irScopeLabel = () => IrSafeUI.site !== "ALL" ? `${irGroupName(IrSafeUI.group)} · ${IrSafeUI.site}` : irGroupName(IrSafeUI.group);
 /** rows for "by unit" tables: groups when BBG, else the sub-units of the chosen group */
 function irUnitRows() {
   const g = IrSafeUI.group, s = IrSafeUI.site;
@@ -5747,7 +5753,7 @@ function irUnitRows() {
 /** the two selects shown in the safety board (BBG Group / Live & Play / Township, then its sub-units) */
 function irScopeSelectsHtml() {
   const g = IrSafeUI.group;
-  return `<select id="sf-group" aria-label="${mt("กลุ่ม", "Group")}">${Object.keys(IR_GROUPS).map((k) => `<option value="${k}" ${g === k ? "selected" : ""}>${IR_GROUPS[k][0]}</option>`).join("")}</select>
+  return `<select id="sf-group" aria-label="${mt("กลุ่ม", "Group")}">${Object.keys(IR_GROUPS).map((k) => `<option value="${k}" ${g === k ? "selected" : ""}>${mpEsc(irGroupName(k))}</option>`).join("")}</select>
     ${g !== "ALL" ? `<select id="sf-site" aria-label="${mt("หน่วยงานย่อย", "Sub-unit")}"><option value="ALL">${mt("ทุกหน่วยงานย่อย", "All sub-units")}</option>${irSites(g).map((n) => `<option value="${mpEsc(n)}" ${IrSafeUI.site === n ? "selected" : ""}>${mpEsc(n)}</option>`).join("")}</select>` : ""}`;
 }
 function irWireScope(host, refresh) {
