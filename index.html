@@ -1330,6 +1330,22 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .dash-lcol2 > div > .card { flex: 1 1 auto; height: auto !important; }
 @media (max-width: 1280px) { .dash-top:not(.one) { grid-template-columns: 1fr; } }
 
+/* 3D KPI cards with a sub line · safety board inside the 3D side panel */
+.v3d-kpi b em { font-style: normal; font-size: 12px; font-weight: 600; color: var(--mu); }
+.v3d-kpi small { display: block; font-size: 10.5px; color: #475569; line-height: 1.3; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.v3d-kpi small b { font-size: 11px; }
+.v3d-board { margin-top: 12px; }
+.v3d-board .safety { padding: 10px; gap: 7px; height: auto !important; }
+.v3d-board .sf-head { gap: 6px; padding-bottom: 6px; } .v3d-board .sf-logo { width: 74px; height: 34px; padding: 3px 5px; }
+.v3d-board .sf-title b { font-size: 15px; } .v3d-board .sf-title span { font-size: 11px; } .v3d-board .sf-badge svg { width: 44px; height: 44px; }
+.v3d-board .sf-scope { gap: 6px; } .v3d-board .sf-scope select { font-size: 12px; max-width: 100%; } .v3d-board .sf-scope .muted-s { font-size: 10.5px; }
+.v3d-board .sf-row { font-size: 12.5px; gap: 6px; flex-wrap: nowrap; } .v3d-board .sf-row small { font-size: 9px; }
+.v3d-board .sf-two { grid-template-columns: 1fr; gap: 7px; }
+.v3d-board .sf-box, .v3d-board .sf-two .sf-box { width: 20px; height: 27px; font-size: 14px; border-width: 1.5px; }
+.v3d-board .sf-num > span, .v3d-board .sf-two .sf-num > span { font-size: 11px; margin-left: 3px; }
+.v3d-board .sf-date { font-size: 14px; padding: 4px 8px; min-width: 0; }
+.v3d-board .sf-prog .muted-s, .v3d-board .sf-by summary { font-size: 11px; } .v3d-board .mon-table { font-size: 11px; }
+
 </style>
 </head>
 <body>
@@ -5761,7 +5777,7 @@ function irWireScope(host, refresh) {
   if (g) g.onchange = () => { IrSafeUI.group = g.value; IrSafeUI.site = "ALL"; refresh(); };
   if (s) s.onchange = () => { IrSafeUI.site = s.value; refresh(); };
 }
-function irRefreshDash() { renderSafetyBoard(document.getElementById("dash-safety")); renderIrDashCard(document.getElementById("dash-ir")); renderInjuryCard(document.getElementById("dash-body")); }
+function irRefreshDash() { renderSafetyBoard(document.getElementById("dash-safety")); renderIrDashCard(document.getElementById("dash-ir")); renderInjuryCard(document.getElementById("dash-body")); const v3 = document.getElementById("v3d-safety"); if (v3) renderSafetyBoard(v3); }
 
 function renderIrDashCard(host) {
   if (!host) return;
@@ -6480,7 +6496,13 @@ function v3dHover(e) {
   else { tip.style.display = "none"; return; }
   tip.style.display = "block"; tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 230) + "px"; tip.style.top = e.clientY - r.top + 14 + "px";
 }
-function v3dSelect(id) { V3.sel = id || null; V3.flr = null; V3.blk = null; if (V3.R) v3dRebuild(true); else v3dRenderSide(); }
+function v3dBoardFollow(id) {
+  IrSafeUI.group = "ALL"; IrSafeUI.site = "ALL";
+  if (!id) return;
+  const bs = DB.get("v3dBuildings", []), r = irAll().find((x) => { const bb = v3dAssign(irSiteName(x), bs) || v3dAssign(x.d.site, bs); return bb && bb.id === id; });
+  if (r) { IrSafeUI.group = r.report; IrSafeUI.site = irSiteName(r); }
+}
+function v3dSelect(id) { v3dBoardFollow(id); V3.sel = id || null; V3.flr = null; V3.blk = null; if (V3.R) v3dRebuild(true); else v3dRenderSide(); }
 function v3dSetFloor(fid) { V3.flr = fid || null; if (V3.R) v3dRebuild(true); else v3dRenderSide(); }
 
 // ------------------------------------------------------- mini building (left) ---
@@ -6644,6 +6666,42 @@ function v3dRefresh() {
   if (V3.R) v3dRebuild(false); else v3dRenderSide();
 }
 
+/** best-record colour thresholds (set by the admin in Settings, synced as record cfg-3d) */
+function v3dSafeCfg() { const r = DB.get("drrRecords", []).find((x) => x.id === "cfg-3d"); const d = (r && r.d) || {}; return { green: Number(d.green) > 0 ? Number(d.green) : 300, red: Number(d.red) > 0 ? Number(d.red) : 200 }; }
+function v3dSaveSafeCfg(green, red) {
+  const all = DB.get("drrRecords", []), i = all.findIndex((r) => r.id === "cfg-3d");
+  const rec = { id: "cfg-3d", report: "cfg", d: { green, red }, by: State.user ? State.user.username : "", byName: mpUserLabel(), at: new Date().toISOString() };
+  if (i >= 0) all[i] = rec; else all.push(rec);
+  DB.set("drrRecords", all);
+}
+function v3dSafeBand(days) {
+  const c = v3dSafeCfg();
+  if (days > c.green) return { cls: "ok", color: "var(--st-good)", th: `ดีมาก (มากกว่า ${c.green} วัน)`, en: `Good (over ${c.green} days)` };
+  if (days >= c.red) return { cls: "warn", color: "#ca8a04", th: `เฝ้าระวัง (${c.red}–${c.green} วัน)`, en: `Watch (${c.red}–${c.green} days)` };
+  return { cls: "crit", color: "var(--st-critical)", th: `ต้องปรับปรุง (น้อยกว่า ${c.red} วัน)`, en: `Improve (under ${c.red} days)` };
+}
+/** KPI cards: best record · Risk Level · open critical+high · after-fix · IR open · PSD pending · last visit */
+function v3dKpisHtml(b, D) {
+  const bs = DB.get("v3dBuildings", []), all = (b ? [b] : bs).map((x) => D[x.id]).filter(Boolean);
+  const units = b ? (D[b.id] && D[b.id].unit ? [D[b.id].unit] : []) : DB.get("mpUnits", []), ids = units.map((u) => u.id), range = mpPeriodRange();
+  const S = ids.length ? mpStats(ids, range) : null, pct = S ? S.pct : null;
+  let bt = 0, at = 0;
+  units.forEach((u) => { const a = mpStats([u.id], range), base = mpBaselineStats(u.id) || a; if (!a.done) return; bt += base.risk.critical + base.risk.high; at += a.risk.critical + a.risk.high; });
+  const fixedN = Math.max(0, bt - at), fixedPct = bt ? (fixedN / bt) * 100 : null;
+  const crit = S ? S.risk.critical : 0, high = S ? S.risk.high : 0;
+  const st = b ? (D[b.id] || {}).irStat || irStats([], false) : irStats(irAll(), false), band = v3dSafeBand(st.best);
+  let last = null; DB.get("mpScores", []).forEach((r) => { if (ids.includes(r.unitId) && r.date && (!last || r.date > last.date)) last = r; });
+  const lu = last ? units.find((u) => u.id === last.unitId) : null, ago = last ? Math.max(0, mpDayNum(todayISO()) - mpDayNum(last.date)) : 0;
+  const ov = mpOverallStatusOf(pct), sum = (f) => all.reduce((a, o) => a + f(o), 0);
+  const k = (cls, label, val, color, sub, tip) => `<div class="v3d-kpi ${cls}"${tip ? ` title="${mpEsc(tip)}"` : ""}><span>${label}</span><b${color ? ` style="color:${color}"` : ""}>${val}</b>${sub ? `<small>${sub}</small>` : ""}</div>`;
+  return k(band.cls, mt("สถิติสูงสุดไม่เกิดอุบัติเหตุ", "Best record without accident"), `${st.best} <em>${mt("วัน", "days")}</em>`, band.color, `<i style="color:${band.color}">●</i> ${mt(band.th, band.en)}`) +
+    k(pct === null ? "" : pct < 70 ? "crit" : pct < 85 ? "warn" : "ok", "Risk Level", pct === null ? "–" : mpFmtPct(pct), mpScoreColor(pct), ov ? `<i style="color:${mpScoreColor(pct)}">${ov.icon}</i> ${mt(ov.th, ov.en)}` : mt("ยังไม่ประเมิน", "Not assessed")) +
+    k(crit ? "crit" : high ? "warn" : "ok", mt("วิกฤต + สูง ที่ยังไม่แก้", "Open critical + high"), crit + high, crit ? "var(--st-critical)" : high ? "var(--st-serious)" : "var(--st-good)", `<i style="color:${mpRiskColor("critical")}">✖</i> ${mpRiskLabel("critical")} ${crit} · <i style="color:${mpRiskColor("high")}">▲</i> ${mpRiskLabel("high")} ${high}`) +
+    k(fixedPct === null ? "" : fixedPct >= 85 ? "ok" : fixedPct >= 70 ? "warn" : "crit", mt("หลังแก้ไข", "After editing"), `${fixedN} <em>${mt("ข้อ", "items")}</em>`, "", fixedPct === null ? mt("ยังไม่มีข้อแดง/ส้ม", "no red / orange items") : `${mt("แก้ไขแล้ว", "corrected")} <b style="color:${mpScoreColor(fixedPct)}">${fixedPct.toFixed(1)}%</b> ${mt("จาก", "of")} ${bt} ${mt("ข้อ", "items")}`) +
+    (() => { const n = sum((o) => o.irStat.open); return k(n ? "crit" : "ok", "IR " + mt("เปิดอยู่", "open"), n, n ? "var(--st-critical)" : "var(--st-good)", n ? mt("ยังไม่ปิดเรื่อง", "not closed yet") : "✔ " + mt("ปิดครบแล้ว", "all closed")); })() +
+    (() => { const n = sum((o) => o.psdOpen); return k(n ? "warn" : "ok", "PSD " + mt("ค้างวิเคราะห์", "pending"), n, n ? "#d97706" : "var(--st-good)", n ? mt("ผลรายงานไม่ผ่าน รอวิเคราะห์", "failed results to analyse") : "✔ " + mt("ไม่มีค้าง", "none pending")); })() +
+    k("dark", mt("เยี่ยมสำรวจครั้งล่าสุด", "Last inspection visit"), last ? mpFmtDate(last.date) : "–", "", last ? `${mpEsc(lu ? lu.name : "")} · ${ago ? ago + " " + mt("วันที่แล้ว", "days ago") : mt("วันนี้", "today")}` : mt("ยังไม่มีการตรวจ", "no visit yet"));
+}
 function v3dFloorTitle(f) {
   const n = String(f.name).trim();
   if (/^G/i.test(n)) return "Ground Floor (" + n + ")";
@@ -6661,15 +6719,8 @@ function v3dRenderSide() {
   bc.innerHTML = `<button class="${!V3.sel ? "on" : ""}" data-campus="1">🏙 ${mt("ภาพรวมทุกอาคาร", "All buildings")}</button>` + bs.map((x) => { const o = D[x.id] || {}; return `<button class="${V3.sel === x.id ? "on" : ""}" data-sel="${x.id}"><i style="background:${V3_CSS[o.status || "none"]}"></i>${mpEsc(x.name)}</button>`; }).join("");
   bc.querySelector("[data-campus]").addEventListener("click", () => v3dSelect(null));
   bc.querySelectorAll("[data-sel]").forEach((x) => x.addEventListener("click", () => { V3.tab = "ov"; v3dSelect(x.dataset.sel); }));
-  // KPIs (white cards)
-  const all = (b ? [b] : bs).map((x) => D[x.id]).filter(Boolean);
-  const pcts = all.map((o) => (o.S ? o.S.pct : null)).filter((x) => x !== null);
-  const avg = pcts.length ? pcts.reduce((a, c) => a + c, 0) / pcts.length : null;
-  const sum = (f) => all.reduce((a, o) => a + f(o), 0), people = Object.values(V3.count || {}).reduce((a, c) => a + c, 0);
-  const k = (c, label, val) => `<div class="v3d-kpi ${c}"><span>${label}</span><b>${val}</b></div>`;
-  document.getElementById("v3d-kpis").innerHTML = k("ok", mt("อาคารปกติ", "Normal"), all.filter((o) => o.status === "ok").length) + k("crit", mt("วิกฤต / มี IR เปิด", "Critical / open IR"), all.filter((o) => o.status === "crit").length) + k("warn", mt("ต้องติดตาม", "Follow-up"), all.filter((o) => o.status === "warn").length) +
-    k("info", "Checklist " + mt("เฉลี่ย", "avg"), avg === null ? "–" : avg.toFixed(1) + "%") + k("crit", "IR " + mt("เปิดอยู่", "open"), sum((o) => o.irStat.open)) + k("warn", "PSD " + mt("ค้างวิเคราะห์", "pending"), sum((o) => o.psdOpen)) +
-    k("dark", mt("คนในพื้นที่ (แสดง)", "People (shown)"), people || "–");
+  // KPIs (white cards) — same numbers and colours as the back office
+  document.getElementById("v3d-kpis").innerHTML = v3dKpisHtml(b, D);
   // floor tabs
   const ft = document.getElementById("v3d-ftabs");
   if (!b) ft.innerHTML = "";
@@ -6695,9 +6746,10 @@ function v3dRenderPanel() {
   const bs = DB.get("v3dBuildings", []), b = bs.find((x) => x.id === V3.sel);
   if (!b) {
     P.innerHTML = `<div class="v3d-ph"><h3>${mt("ภาพรวมทุกอาคาร", "All buildings")}</h3><p>${mt("คลิกอาคารในภาพ 3D หรือในรายการด้านซ้ายเพื่อเริ่มทำงาน — Checklist, Incident (IR), PSD, Data Record Report และ Action Plan ของอาคารนั้นจะแสดงที่นี่", "Click a building in 3D or in the list to work with its Checklist, IR, PSD, Data Record Reports and Action Plan here.")}</p></div>` +
-      `<div class="v3d-sec">${v3dAllTable()}</div><div class="v3d-act"><button class="btn small" data-go="dashboard">${mt("เปิดหลังบ้าน", "Open back office")} ›</button></div>`;
+      `<div class="v3d-sec">${v3dAllTable()}</div><div class="v3d-act"><button class="btn small" data-go="dashboard">${mt("เปิดหลังบ้าน", "Open back office")} ›</button></div><div class="v3d-board" id="v3d-safety"></div>`;
     P.querySelectorAll("[data-pick]").forEach((x) => x.addEventListener("click", () => v3dSelect(x.dataset.pick)));
     P.querySelectorAll("[data-go]").forEach((x) => x.addEventListener("click", () => navigate(x.dataset.go)));
+    renderSafetyBoard(P.querySelector("#v3d-safety"));
     return;
   }
   const o = V3.data[b.id] || { irStat: { open: 0, closed: 0, total: 0, days: 0 }, psd: [], drr: {}, plan: [], ir: [] };
@@ -6714,7 +6766,7 @@ function v3dRenderPanel() {
   if (V3.tab === "ov") {
     const S = o.S;
     h += `<div class="v3d-grid">
-      <div><span>Checklist</span><b>${S ? mpFmtPct(S.pct) : "–"}</b></div><div><span>${mt("ความเสี่ยงสูง/วิกฤต", "High/critical")}</span><b>${o.crit || 0}</b></div>
+      <div><span>Risk Level</span><b style="color:${S ? mpScoreColor(S.pct) : "inherit"}">${S ? mpFmtPct(S.pct) : "–"}</b></div><div><span>${mt("ความเสี่ยงสูง/วิกฤต", "High/critical")}</span><b>${o.crit || 0}</b></div>
       <div><span>IR ${mt("เปิด / ปิด", "open / closed")}</span><b>${o.irStat.open} / ${o.irStat.closed}</b></div><div><span>${mt("วันปลอดอุบัติเหตุ", "Days safe")}</span><b>${o.irStat.days}</b></div>
       <div><span>PSD ${mt("ค้าง", "pending")}</span><b>${o.psdOpen}</b></div><div><span>Action Plan</span><b>${(o.plan || []).length}</b></div></div>`;
     h += `<div class="v3d-act"><button class="btn small" data-act="check">${mt("ทำ Checklist", "Checklist")}</button><button class="btn small ghost" data-act="addir">+ ${mt("แจ้ง Incident (IR)", "Report incident")}</button></div>`;
@@ -6757,12 +6809,13 @@ function v3dRenderPanel() {
   P.querySelectorAll("[data-drr]").forEach((x) => x.addEventListener("click", () => { DrrUI.site = site(x.dataset.drr); navigate("drr_" + x.dataset.drr); }));
   P.querySelectorAll("[data-drr-add]").forEach((x) => x.addEventListener("click", () => { const rep = x.dataset.drrAdd; DrrUI.site = site(rep); drrOpenForm(rep, null, v3dRefresh); }));
   P.querySelectorAll("[data-plan]").forEach((x) => x.addEventListener("change", () => { const all = DB.get("mpPlans", []), p = all.find((y) => y.id === x.dataset.plan); if (p) { p.status = x.value; DB.set("mpPlans", all); toast(mt("บันทึกแล้ว", "Saved")); v3dRefresh(); } }));
+  const sb = document.createElement("div"); sb.className = "v3d-board"; sb.id = "v3d-safety"; P.appendChild(sb); renderSafetyBoard(sb);
 }
 function v3dAllTable() {
   const bs = DB.get("v3dBuildings", []), D = V3.data || {};
-  return `<table class="v3d-t"><thead><tr><th>${mt("อาคาร", "Building")}</th><th>Chk</th><th>IR</th><th>PSD</th></tr></thead><tbody>` + bs.map((b) => {
+  return `<table class="v3d-t"><thead><tr><th>${mt("อาคาร", "Building")}</th><th>Risk Level</th><th>IR</th><th>PSD</th></tr></thead><tbody>` + bs.map((b) => {
     const o = D[b.id] || { irStat: { open: 0 }, psdOpen: 0 };
-    return `<tr data-pick="${b.id}"><td><i class="v3d-dot" style="background:${V3_CSS[o.status || "none"]}"></i>${mpEsc(b.name)}</td><td>${o.S ? mpFmtPct(o.S.pct) : "–"}</td><td>${o.irStat.open}</td><td>${o.psdOpen}</td></tr>`;
+    return `<tr data-pick="${b.id}"><td><i class="v3d-dot" style="background:${V3_CSS[o.status || "none"]}"></i>${mpEsc(b.name)}</td><td style="font-weight:700;color:${o.S ? mpScoreColor(o.S.pct) : "inherit"}">${o.S ? mpFmtPct(o.S.pct) : "–"}</td><td>${o.irStat.open}</td><td>${o.psdOpen}</td></tr>`;
   }).join("") + `</tbody></table>`;
 }
 function v3dSiteFor(o, b) {
@@ -8372,7 +8425,11 @@ function openSettingsModal() {
         : ""
     }
     <div class="settings-section" id="sync-sec"></div>
-    ${isAdmin ? `<div class="settings-section"><h4>${mt("โมเดล 3D (หลังบ้าน)", "3D model (back office)")}</h4><div class="desc" style="margin-bottom:8px;">${mt("อัปโหลดภาพ 3D และกำหนดชื่อชั้น / ห้อง ของแต่ละอาคาร", "Upload 3D pictures and define floors / rooms of each building")}</div><button class="btn small" id="open-v3d-setup" type="button">${mt("ตั้งค่าอาคาร 3D", "3D building setup")} ›</button></div>` : ""}
+    ${isAdmin ? `<div class="settings-section"><h4>${mt("โมเดล 3D (หลังบ้าน)", "3D model (back office)")}</h4><div class="desc" style="margin-bottom:8px;">${mt("อัปโหลดภาพ 3D และกำหนดชื่อชั้น / ห้อง ของแต่ละอาคาร", "Upload 3D pictures and define floors / rooms of each building")}</div><button class="btn small" id="open-v3d-setup" type="button">${mt("ตั้งค่าอาคาร 3D", "3D building setup")} ›</button>
+      <div class="desc" style="margin:12px 0 6px;">${mt("เกณฑ์สี “สถิติสูงสุดไม่เกิดอุบัติเหตุ” ในหน้า 3D", "Colour bands for the “best record without accident” card on the 3D page")}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;"><span style="color:var(--st-good);font-weight:700;">● ${mt("เขียว มากกว่า", "Green over")}</span><input type="number" id="v3-safe-g" min="1" style="width:76px" value="${v3dSafeCfg().green}"> ${mt("วัน", "days")}
+        <span style="color:var(--st-critical);font-weight:700;margin-left:8px;">● ${mt("แดง น้อยกว่า", "Red under")}</span><input type="number" id="v3-safe-r" min="1" style="width:76px" value="${v3dSafeCfg().red}"> ${mt("วัน", "days")}
+        <span class="muted-s">· ${mt("ระหว่างนั้น = เหลือง", "in between = yellow")}</span><button class="btn small ghost" id="v3-safe-save" type="button">${mt("บันทึกเกณฑ์", "Save")}</button></div></div>` : ""}
     <div class="actions">
       <button class="btn ghost" id="close-settings">${t("settings_close")}</button>
     </div>
@@ -8403,6 +8460,12 @@ function openSettingsModal() {
   }
 
   const v3b = modal.querySelector("#open-v3d-setup"); if (v3b) v3b.addEventListener("click", () => { closeModal(); navigate("v3d_setup"); });
+  const v3s = modal.querySelector("#v3-safe-save");
+  if (v3s) v3s.addEventListener("click", () => {
+    const g = Math.round(Number(modal.querySelector("#v3-safe-g").value)), r = Math.round(Number(modal.querySelector("#v3-safe-r").value));
+    if (!(g > 0) || !(r > 0) || r > g) { toast(mt("กรุณาใส่ตัวเลข โดยค่าแดงต้องไม่มากกว่าค่าเขียว", "Enter numbers; red must not exceed green")); return; }
+    v3dSaveSafeCfg(g, r); toast(mt("บันทึกเกณฑ์แล้ว", "Saved")); if (State.view === "v3d") v3dRenderSide();
+  });
   mpRenderSyncSettings(modal.querySelector("#sync-sec"));
   modal.querySelector("#close-settings").addEventListener("click", () => {
     closeModal();
