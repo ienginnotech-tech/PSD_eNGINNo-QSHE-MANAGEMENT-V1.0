@@ -1386,6 +1386,43 @@ td .lg-bar-c { display: inline-block; width: calc(100% - 46px); vertical-align: 
 .qs-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 12px 0; } .qs-stats > div { border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
 .qs-stats span { display: block; font-size: 11.5px; color: var(--muted); } .qs-stats b { font-size: 20px; } .qs-stats small { display: block; font-size: 11.5px; color: var(--muted); }
 .qs-std-row { display: grid; grid-template-columns: 140px minmax(0, 1fr) 34px; gap: 6px; margin-bottom: 6px; } .qs-std-row input { padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font: inherit; }
+/* ===== Sidebar: main modules + hover fly-outs + auto-hide ===== */
+#sidebar nav { display: flex; flex-direction: column; gap: 3px; }
+.nav-main { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 10px; border: 0; border-radius: 9px; background: transparent; color: #D8EADD; font: inherit; font-size: 13.5px; font-weight: 600; text-align: left; cursor: pointer; transition: background .15s, color .15s; }
+.nav-main .nm-i { width: 19px; height: 19px; flex-shrink: 0; opacity: .85; }
+.nav-main .nm-t { flex: 1; min-width: 0; line-height: 1.25; }
+.nav-main .nm-c { font-size: 10.5px; font-weight: 700; min-width: 20px; padding: 1px 6px; border-radius: 10px; background: rgba(255,255,255,.12); color: #CFE3D6; text-align: center; }
+.nav-main .nm-a { font-size: 16px; opacity: .55; transition: transform .15s, opacity .15s; }
+.nav-main:hover, .nav-main.open { background: rgba(255,255,255,.1); color: #fff; }
+.nav-main.open .nm-a { opacity: 1; transform: translateX(2px); }
+.nav-main.active { background: var(--green); color: #fff; }
+.nav-main.active .nm-c { background: rgba(255,255,255,.25); color: #fff; }
+.nav-main:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+#nav-flys .nav-fly { position: fixed; z-index: 80; width: 286px; max-height: calc(100vh - 16px); overflow-y: auto; padding: 8px 8px 10px; border-radius: 12px; background: var(--brand-fixed); color: #EAF3EE; box-shadow: 0 14px 40px rgba(6,24,16,.38), 0 0 0 1px rgba(255,255,255,.08); animation: navFlyIn .14s ease-out; }
+#nav-flys .nav-fly[hidden] { display: none; }
+#nav-flys .nav-group-label { margin: 4px 8px 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,.12); color: #A9CDB8; font-weight: 700; line-height: 1.4; }
+#nav-flys .nav-item { font-size: 13px; padding: 8px 10px; }
+#nav-flys .nav-item.lvl2 { padding-left: 30px; }
+#nav-flys .nav-sub { padding: 8px 10px 3px; } #nav-flys .nav-sub.lvl2 { padding-left: 20px; }
+@keyframes navFlyIn { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+#nav-edge { display: none; }
+@media (min-width: 861px) {
+  #app-shell.nav-auto { grid-template-columns: 1fr; }
+  #app-shell.nav-auto #sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 248px; z-index: 70; overflow-y: auto; box-shadow: 8px 0 30px rgba(6,24,16,.25); transition: transform var(--nav-anim, 300ms) ease, box-shadow var(--nav-anim, 300ms) ease; }
+  #app-shell.nav-auto.nav-hidden #sidebar { transform: translateX(-100%); box-shadow: none; }
+  #app-shell.nav-auto #main { padding-left: 40px; }
+  #app-shell.nav-auto #nav-edge { display: flex; position: fixed; top: 0; left: 0; bottom: 0; width: 16px; z-index: 65; align-items: center; justify-content: flex-start; cursor: pointer; }
+  #nav-edge span { display: flex; align-items: center; justify-content: center; width: 16px; height: 64px; border-radius: 0 9px 9px 0; background: var(--brand-fixed); color: #D8EADD; font-size: 11px; box-shadow: 2px 0 10px rgba(6,24,16,.25); opacity: .85; transition: width .15s, opacity .15s; }
+  #nav-edge:hover span { width: 22px; opacity: 1; }
+}
+@media (max-width: 860px) {
+  #sidebar nav { flex-direction: row; }
+  .nav-main { width: auto; white-space: nowrap; padding: 8px 10px; }
+  .nav-main .nm-c { display: none; }
+  #nav-flys .nav-fly { width: min(300px, calc(100vw - 16px)); max-height: 70vh; }
+}
+@media (prefers-reduced-motion: reduce) { #app-shell.nav-auto #sidebar { transition: none; } #nav-flys .nav-fly { animation: none; } }
+@media (max-width: 860px) { #nav-flys .nav-group-label { display: block; } }
 
 </style>
 </head>
@@ -8428,6 +8465,7 @@ function applyUiPrefs() {
   document.body.classList.remove("theme-dark", "theme-ocean");
   if (prefs.theme === "dark") document.body.classList.add("theme-dark");
   if (prefs.theme === "ocean") document.body.classList.add("theme-ocean");
+  if (typeof NavUI !== "undefined") NavUI.applyHide();
 }
 
 function showLogin() {
@@ -8544,6 +8582,117 @@ function logout() {
 }
 
 // -------------------------------------------------------------- shell ---
+const NAV_HIDE_DEFAULT = "mid";
+const NAV_HIDE_OPTS = [
+  { id: "off", th: "แสดงเมนูตลอดเวลา", en: "Always show the menu" },
+  { id: "lo", th: "ซ่อนช้า (3 วินาที)", en: "Slow (3 s)", wait: 3000, anim: 480 },
+  { id: "mid", th: "ปานกลาง (1.5 วินาที)", en: "Medium (1.5 s)", wait: 1500, anim: 320 },
+  { id: "hi", th: "ซ่อนเร็ว (0.5 วินาที)", en: "Fast (0.5 s)", wait: 500, anim: 180 }
+];
+const NAV_ICONS = {
+  nav_overview: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  nav_modules_group: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+  nav_masterplan_group: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  nav_risk_group: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 8v5M12 16h.01"/>',
+  nav_legal_group: '<path d="M12 3v18M5 21h14M6 7h12M6 7l-3 7a3 3 0 0 0 6 0zM18 7l-3 7a3 3 0 0 0 6 0z"/>',
+  nav_drr_group: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 11h6M9 15h6"/>',
+  nav_drive_group: '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  nav_admin_group: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 15.1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9 4.6V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0 1.2 2.9H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+  nav_reports_group: '<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/>'
+};
+const navIcon = (k) => `<svg class="nm-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NAV_ICONS[k] || '<circle cx="12" cy="12" r="4"/>'}</svg>`;
+
+/** sidebar behaviour: hover fly-outs for each main module + auto-hide with a left-edge hot zone */
+const NavUI = {
+  flyT: null, hideT: null, openG: null,
+  shell: () => document.getElementById("app-shell"),
+  side: () => document.getElementById("sidebar"),
+  narrow: () => window.matchMedia && window.matchMedia("(max-width: 860px)").matches,
+  opt() { const id = (DB.get("uiPrefs", {}) || {}).navHide || NAV_HIDE_DEFAULT; return NAV_HIDE_OPTS.find((o) => o.id === id) || NAV_HIDE_OPTS[2]; },
+  auto() { return this.opt().id !== "off" && !this.narrow(); },
+  mount(flysHtml) {
+    const shell = this.shell(), side = this.side();
+    let box = document.getElementById("nav-flys");
+    if (!box) { box = document.createElement("div"); box.id = "nav-flys"; shell.appendChild(box); }
+    box.innerHTML = flysHtml;
+    let edge = document.getElementById("nav-edge");
+    if (!edge) {
+      edge = document.createElement("div"); edge.id = "nav-edge"; edge.innerHTML = `<span>☰</span>`; shell.appendChild(edge);
+      edge.addEventListener("mouseenter", () => this.show());
+      edge.addEventListener("click", () => this.show());
+    }
+    edge.title = mt("เมนู", "Menu");
+    box.querySelectorAll("[data-nav]").forEach((b) => b.addEventListener("click", () => { navigate(b.dataset.nav); this.closeFly(); this.hideSoon(true); }));
+    box.querySelectorAll(".nav-fly").forEach((f) => {
+      f.addEventListener("mouseenter", () => { clearTimeout(this.flyT); clearTimeout(this.hideT); this.hideT = null; });
+      f.addEventListener("mouseleave", () => { this.closeFlySoon(); this.hideSoon(); });
+    });
+    side.querySelectorAll(".nav-main").forEach((b) => {
+      if (b.dataset.go) {
+        b.addEventListener("click", () => { navigate(b.dataset.go); this.closeFly(); this.hideSoon(true); });
+        b.addEventListener("mouseenter", () => this.closeFlySoon(120));
+        return;
+      }
+      b.addEventListener("mouseenter", () => { if (!this.narrow()) this.openFly(b); });
+      b.addEventListener("mouseleave", () => this.closeFlySoon());
+      b.addEventListener("click", () => { if (this.openG === b.dataset.g) this.closeFly(); else this.openFly(b); });
+    });
+    if (!side.dataset.navWired) {
+      side.dataset.navWired = "1";
+      side.addEventListener("mouseenter", () => { clearTimeout(this.hideT); this.hideT = null; });
+      side.addEventListener("mouseleave", () => this.hideSoon());
+      document.addEventListener("click", (e) => { if (this.openG != null && !e.target.closest(".nav-fly") && !e.target.closest(".nav-main")) this.closeFly(); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") this.closeFly(); });
+      window.addEventListener("resize", () => this.applyHide(true));
+    }
+    const cur = State.view === "mp_form" ? "mp_check" : State.view;
+    side.querySelectorAll(".nav-main").forEach((b) => b.classList.toggle("active", (b.dataset.views || "").split(" ").includes(cur)));
+    box.querySelectorAll(".nav-item").forEach((b) => b.classList.toggle("active", b.dataset.nav === cur));
+    this.applyHide();
+  },
+  openFly(btn) {
+    clearTimeout(this.flyT); clearTimeout(this.hideT); this.hideT = null;
+    const g = btn.dataset.g, box = document.getElementById("nav-flys"); if (!box) return;
+    box.querySelectorAll(".nav-fly").forEach((f) => { f.hidden = f.dataset.g !== g; });
+    const fly = box.querySelector(`.nav-fly[data-g="${g}"]`); if (!fly) return;
+    this.openG = g;
+    this.side().querySelectorAll(".nav-main").forEach((b) => b.classList.toggle("open", b === btn));
+    const r = btn.getBoundingClientRect(), sr = this.side().getBoundingClientRect();
+    if (this.narrow()) { fly.style.left = Math.max(8, Math.min(r.left, innerWidth - fly.offsetWidth - 8)) + "px"; fly.style.top = (r.bottom + 6) + "px"; return; }
+    fly.style.left = (sr.right + 6) + "px";
+    const h = fly.offsetHeight;
+    fly.style.top = Math.max(8, Math.min(r.top - 6, innerHeight - h - 8)) + "px";
+  },
+  closeFly() {
+    clearTimeout(this.flyT); this.openG = null;
+    document.querySelectorAll("#nav-flys .nav-fly").forEach((f) => { f.hidden = true; });
+    document.querySelectorAll(".nav-main.open").forEach((b) => b.classList.remove("open"));
+  },
+  closeFlySoon(ms) { clearTimeout(this.flyT); this.flyT = setTimeout(() => this.closeFly(), ms == null ? 260 : ms); },
+  show() { clearTimeout(this.hideT); this.hideT = null; const sh = this.shell(); if (sh) sh.classList.remove("nav-hidden"); },
+  hideSoon(fast) {
+    if (!this.auto()) return;
+    const ms = fast ? Math.min(400, this.opt().wait) : this.opt().wait, at = Date.now() + ms;
+    if (this.hideT && this.hideAt && this.hideAt < at && this.hideFast) return; // a quicker "just picked a page" hide is already pending
+    clearTimeout(this.hideT); this.hideAt = at; this.hideFast = !!fast;
+    this.hideT = setTimeout(() => {
+      this.hideT = null; this.hideAt = 0;
+      const side = this.side(), hovering = (side && side.matches(":hover")) || document.querySelector("#nav-flys .nav-fly:not([hidden]):hover");
+      if (hovering && !fast) return;
+      if (this.openG != null && !fast) return;
+      this.closeFly(); this.shell().classList.add("nav-hidden");
+    }, ms);
+  },
+  applyHide(quiet) {
+    const sh = this.shell(); if (!sh) return;
+    const o = this.opt(), on = this.auto(), was = sh.classList.contains("nav-auto");
+    sh.style.setProperty("--nav-anim", (o.anim || 300) + "ms");
+    sh.classList.toggle("nav-auto", on);
+    if (!on) sh.classList.remove("nav-hidden");
+    else if (!quiet || !was) { this.show(); this.hideSoon(); }
+    if (was !== on) setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
+  }
+};
 const NAV_ITEMS = [
   { groupKey: "nav_overview", items: [{ id: "dashboard", labelKey: "nav_dashboard" }] },
   {
@@ -8633,8 +8782,9 @@ function renderShell() {
   const moduleVisibility = DB.get("moduleVisibility", {});
   const lang = DB.get("lang", "th");
 
-  let nav = "";
-  NAV_ITEMS.forEach((group) => {
+  // main modules only in the sidebar; each module's pages open in a fly-out panel on hover / click
+  let nav = "", flys = "";
+  NAV_ITEMS.forEach((group, gi) => {
     if (group.admin && !isAdmin) return;
     if (group.visKey && moduleVisibility[group.visKey] === false) return;
     const all = typeof group.items === "function" ? group.items() : group.items;
@@ -8642,11 +8792,22 @@ function renderShell() {
       ? all.filter((it) => moduleVisibility[it.id] !== false)
       : all;
     if (!items.length) return;
-    nav += `<div class="nav-group-label">${t(group.groupKey)}</div>`;
+    const full = t(group.groupKey), short = full.split(" · ")[0];
+    const links = items.filter((it) => !it.sub);
+    const ids = links.map((it) => it.id).join(" ");
+    if (links.length === 1) {
+      const it = links[0], lbl = it.label ? mpEsc(it.label) : t(it.labelKey);
+      nav += `<button class="nav-main" data-go="${it.id}" data-views="${ids}" title="${lbl}">${navIcon(group.groupKey)}<span class="nm-t">${mpEsc(short)}</span></button>`;
+      flys += `<div class="nav-fly" data-g="${gi}" hidden><div class="nav-group-label">${mpEsc(full)}</div><button class="nav-item" data-nav="${it.id}"><span class="dot"></span>${lbl}</button></div>`;
+      return;
+    }
+    nav += `<button class="nav-main" data-g="${gi}" data-views="${ids}" title="${mpEsc(full)}">${navIcon(group.groupKey)}<span class="nm-t">${mpEsc(short)}</span><span class="nm-c">${links.length}</span><span class="nm-a">›</span></button>`;
+    flys += `<div class="nav-fly" data-g="${gi}" hidden><div class="nav-group-label">${mpEsc(full)}</div>`;
     items.forEach((it) => {
-      if (it.sub) { nav += `<div class="nav-sub lvl${it.sub} ${it.cls || ""}">${mpEsc(it.label)}</div>`; return; }
-      nav += `<button class="nav-item ${it.lvl ? "lvl" + it.lvl : ""}" data-nav="${it.id}"><span class="dot"></span>${it.label ? mpEsc(it.label) : t(it.labelKey)}</button>`;
+      if (it.sub) { flys += `<div class="nav-sub lvl${it.sub} ${it.cls || ""}">${mpEsc(it.label)}</div>`; return; }
+      flys += `<button class="nav-item ${it.lvl ? "lvl" + it.lvl : ""}" data-nav="${it.id}"><span class="dot"></span>${it.label ? mpEsc(it.label) : t(it.labelKey)}</button>`;
     });
+    flys += `</div>`;
   });
 
   sidebar.innerHTML = `
@@ -8676,9 +8837,7 @@ function renderShell() {
     </div>
   `;
 
-  sidebar.querySelectorAll("[data-nav]").forEach((btn) => {
-    btn.addEventListener("click", () => navigate(btn.dataset.nav));
-  });
+  NavUI.mount(flys);
   document.getElementById("logout-btn").addEventListener("click", logout);
   SyncMgr.paint();
   document.getElementById("open-settings-btn").addEventListener("click", openSettingsModal);
@@ -8693,9 +8852,11 @@ function renderShell() {
 
 function navigate(viewId) {
   State.view = viewId;
+  const navId = viewId === "mp_form" ? "mp_check" : viewId;
   document.querySelectorAll(".nav-item").forEach((b) => {
-    b.classList.toggle("active", b.dataset.nav === (viewId === "mp_form" ? "mp_check" : viewId));
+    b.classList.toggle("active", b.dataset.nav === navId);
   });
+  document.querySelectorAll(".nav-main").forEach((b) => b.classList.toggle("active", (b.dataset.views || "").split(" ").includes(navId)));
   renderTopbar();
   renderView();
 }
@@ -9158,6 +9319,11 @@ function openSettingsModal() {
     <div class="settings-section">
       <h4>${t("settings_fontsize")}</h4>
       <div class="option-grid" data-setting-group="fontSize">${sizeCards}</div>
+    </div>
+    <div class="settings-section">
+      <h4>${mt("ซ่อนแถบเมนูอัตโนมัติ", "Auto-hide the menu bar")}</h4>
+      <div class="desc" style="margin-bottom:8px;">${mt("แถบเมนูจะซ่อนเมื่อไม่ได้ใช้ และแสดงเมื่อเลื่อนเมาส์ไปที่ขอบซ้ายของจอ · เลือกความเร็วในการซ่อน", "The menu hides when not in use and shows when the mouse touches the left edge · choose how fast it hides")}</div>
+      <div class="option-grid" data-setting-group="navHide">${NAV_HIDE_OPTS.map((o) => `<div class="option-card ${(prefs.navHide || NAV_HIDE_DEFAULT) === o.id ? "selected" : ""}" data-setting="navHide" data-value="${o.id}"><b>${o.id === "off" ? mt("ปิด", "Off") : o.id[0].toUpperCase() + o.id.slice(1)}</b><div class="muted-s">${mt(o.th, o.en)}</div></div>`).join("")}</div>
     </div>
     ${
       isAdmin
