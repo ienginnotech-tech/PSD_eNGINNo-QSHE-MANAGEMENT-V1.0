@@ -1350,6 +1350,42 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 @keyframes v3dIrBlink { 0%, 100% { box-shadow: 0 0 0 1px rgba(239,68,68,.25), 0 2px 6px rgba(15,23,42,.25); border-color: #ef4444; } 50% { box-shadow: 0 0 0 5px rgba(239,68,68,.55), 0 0 16px rgba(239,68,68,.65); border-color: #fecaca; } }
 .v3l.bld.irblink { animation: v3dIrBlink 2.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .v3l.bld.irblink { animation: none; box-shadow: 0 0 0 3px rgba(239,68,68,.6); } }
+/* ===== sidebar sub-headings (Legal & Standards / Data Record Report QSHE) ===== */
+.nav-sub { font-size: 11.5px; font-weight: 700; color: rgba(255,255,255,.85); padding: 8px 16px 2px 18px; letter-spacing: .2px; }
+.nav-sub.lvl2 { font-weight: 600; color: #fcd34d; padding: 5px 16px 1px 30px; font-size: 11.5px; }
+.nav-sub.q::before, .nav-sub.s::before, .nav-sub.h::before, .nav-sub.e::before { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 5px; margin-right: 6px; font-size: 10.5px; color: #fff; }
+.nav-sub.q::before { content: "Q"; background: #2563eb; } .nav-sub.s::before { content: "S"; background: #dc2626; } .nav-sub.h::before { content: "H"; background: #16a34a; } .nav-sub.e::before { content: "E"; background: #0891b2; }
+.nav-item.lvl2 { padding-left: 38px; font-size: 13px; }
+/* ===== Legal & Standards ===== */
+.lg-kpis { margin-bottom: 12px; } .grid.cols-5 { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1100px) { .grid.cols-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.lg-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 12px; font-size: 12px; font-weight: 700; white-space: nowrap; background: #f1f5f9; color: #475569; }
+.lg-chip.ok { background: #dcfce7; color: #15803d; } .lg-chip.warn { background: #ffedd5; color: #c2410c; } .lg-chip.crit { background: #fee2e2; color: #b91c1c; } .lg-chip.plan { background: #e0f2fe; color: #0369a1; }
+.lg-kind { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 5px; margin-right: 4px; vertical-align: 1px; }
+.lg-kind.license { background: #ede9fe; color: #6d28d9; } .lg-kind.report { background: #e0f2fe; color: #0369a1; } .lg-kind.doc { background: #fef3c7; color: #92400e; }
+.lg-site { margin-bottom: 14px; } .lg-site-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; } .lg-site-h h3 { margin: 0; }
+.lg-tbl td { vertical-align: top; } .lg-tbl .nowrap, .mon-table .nowrap { white-space: nowrap; }
+.lg-m { text-align: center; padding: 4px 2px !important; min-width: 30px; } .lg-m.now { background: color-mix(in srgb, var(--series-1) 10%, transparent); }
+.lg-dot { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; border-radius: 50%; font-size: 11px; font-weight: 800; border: 1.5px solid transparent; background: none; cursor: pointer; padding: 0; font-family: inherit; line-height: 1; }
+.lg-dot.done { background: #16a34a; color: #fff; } .lg-dot.over { background: #dc2626; color: #fff; } .lg-dot.soon { background: #f97316; color: #fff; } .lg-dot.plan { border-color: #94a3b8; color: #64748b; } .lg-dot.exp { border-color: #7c3aed; color: #7c3aed; }
+span.lg-dot { cursor: default; }
+.lg-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 12px; margin: 0 0 10px; } .lg-legend span { display: inline-flex; align-items: center; gap: 5px; } .lg-legend .lg-dot, .lg-legend .lg-sq { cursor: default; }
+.lg-sq { display: inline-flex; width: 24px; height: 24px; align-items: center; justify-content: center; border-radius: 6px; font-size: 12px; font-weight: 800; color: #fff; background: #cbd5e1; cursor: help; }
+.lg-sq.ok { background: #16a34a; } .lg-sq.warn { background: #f97316; } .lg-sq.crit { background: #dc2626; } .lg-sq.unset { background: #cbd5e1; color: #475569; }
+.lg-matrix td, .lg-matrix th { padding: 5px 6px; } .lg-matrix th.ctr { font-size: 11.5px; min-width: 76px; }
+.lg-bar-c { height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; margin: 4px 0 2px; } .lg-bar-c i { display: block; height: 100%; border-radius: 4px; }
+td .lg-bar-c { display: inline-block; width: calc(100% - 46px); vertical-align: middle; margin-right: 6px; }
+.lg-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; margin: 6px 0 14px; } @media (max-width:640px){ .lg-form { grid-template-columns: 1fr; } } .lg-form .wide { grid-column: 1 / -1; } .lg-form label { display: flex; flex-direction: column; gap: 3px; font-size: 13px; }
+.lg-form input, .lg-form select, .lg-form textarea { font: inherit; padding: 8px 10px; border: 1px solid var(--line, #d9e2dd); border-radius: 8px; background: #fff; width: 100%; box-sizing: border-box; }
+.lg-mpick { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; } .lg-mpick label { flex-direction: row !important; align-items: center; gap: 4px; }
+.lg-form .lbl { font-size: 13px; margin-bottom: 4px; }
+.qs-tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 10px; }
+.qs-tabs button { border: 1px solid var(--border); background: var(--card, #fff); color: inherit; border-radius: 18px; padding: 5px 14px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.qs-tabs button.on { background: var(--series-1, #2563eb); border-color: var(--series-1, #2563eb); color: #fff; }
+.qs-card .qs-card-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; } .qs-card h3 { margin: 0; } .qs-card.bad { border-left: 4px solid var(--st-critical); }
+.qs-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 12px 0; } .qs-stats > div { border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+.qs-stats span { display: block; font-size: 11.5px; color: var(--muted); } .qs-stats b { font-size: 20px; } .qs-stats small { display: block; font-size: 11.5px; color: var(--muted); }
+.qs-std-row { display: grid; grid-template-columns: 140px minmax(0, 1fr) 34px; gap: 6px; margin-bottom: 6px; } .qs-std-row input { padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font: inherit; }
 
 </style>
 </head>
@@ -1547,7 +1583,20 @@ const I18N = {
     nav_users: "ผู้ใช้งาน",
     nav_masterplan_group: "MASTER PLAN ACTIVITY",
     nav_risk_group: "Risk Assessment",
-    nav_drr_group: "Data Record Report",
+    nav_drr_group: "Data Record Report (QSHE)",
+    nav_legal_group: "Legal & Standards · Legal & Quality Standards Control",
+    nav_drr_wp: "Workplace incident data record report",
+    title_drr_wp: "Workplace incident data record report",
+    sub_drr_wp: "รายงานบันทึกอุบัติการณ์ในพื้นที่สำนักงาน / Workplace (เตรียมไว้ใช้งาน)",
+    title_lg_plan: "Legal Plan Schedule",
+    sub_lg_plan: "ทะเบียนใบอนุญาต / รายงานตามกฎหมาย แยกอาคาร · กำหนดส่ง · วันหมดอายุ · แผน 12 เดือน",
+    title_lg_insp: "Legal Inspection Report",
+    sub_lg_insp: "บันทึกผลการตรวจ การส่งรายงาน และการต่ออายุใบอนุญาต",
+    title_lg_sum: "Legal summary report",
+    sub_lg_sum: "สรุปความสอดคล้องกฎหมาย · ใบอนุญาตใกล้หมดอายุ · รายงานค้างส่ง · ตารางสรุปรายอาคาร",
+    title_qs_overview: "Quality Standard Control",
+    sub_qs_overview: "สรุปการควบคุมมาตรฐาน ISO — Audit Plan · Audit report · Document control",
+    settings_legal_label: "Legal & Standards",
     nav_drr_lp: "Live & Play incident data record report",
     nav_drr_tw: "Township incident data record report",
     nav_drr_food: "External Food testing report",
@@ -1566,7 +1615,7 @@ const I18N = {
     title_drr_mwa: "MWA Raw Water data record report",
     sub_drr_mwa: "ผลตรวจคุณภาพน้ำประปา 17 ดัชนี เทียบมาตรฐานการประปานครหลวง แยกตามหน่วยงานและเดือน",
     sub_drr_ts: "แบบ ทส.1 บันทึกประจำวัน และ ทส.2 สรุปรายเดือน ของระบบบำบัดน้ำเสีย",
-    settings_drr_label: "Data Record Report (5 รายงาน)",
+    settings_drr_label: "Data Record Report (QSHE)",
     settings_risk_label: "Risk Assessment (2 หัวข้อ)",
     nav_mp_plan: "QSHE Action Plan 2026-2027",
     nav_mp_risk: "Inspection Risk Summary",
@@ -1677,7 +1726,20 @@ const I18N = {
     nav_users: "Users",
     nav_masterplan_group: "MASTER PLAN ACTIVITY",
     nav_risk_group: "Risk Assessment",
-    nav_drr_group: "Data Record Report",
+    nav_drr_group: "Data Record Report (QSHE)",
+    nav_legal_group: "Legal & Standards · Legal & Quality Standards Control",
+    nav_drr_wp: "Workplace incident data record report",
+    title_drr_wp: "Workplace incident data record report",
+    sub_drr_wp: "Workplace / office incident records (ready for use)",
+    title_lg_plan: "Legal Plan Schedule",
+    sub_lg_plan: "Licences / legal reports per building · deadlines · expiry · 12-month plan",
+    title_lg_insp: "Legal Inspection Report",
+    sub_lg_insp: "Inspection results, report submissions and licence renewals",
+    title_lg_sum: "Legal summary report",
+    sub_lg_sum: "Legal compliance · licences expiring · overdue reports · building matrix",
+    title_qs_overview: "Quality Standard Control",
+    sub_qs_overview: "ISO standards — Audit Plan · Audit report · Document control",
+    settings_legal_label: "Legal & Standards",
     nav_drr_lp: "Live & Play incident data record report",
     nav_drr_tw: "Township incident data record report",
     nav_drr_food: "External Food testing report",
@@ -1696,7 +1758,7 @@ const I18N = {
     title_drr_mwa: "MWA Raw Water data record report",
     sub_drr_mwa: "Tap-water quality (17 indices) vs the Metropolitan Waterworks Authority standard, per unit and month",
     sub_drr_ts: "ทส.1 daily log and ทส.2 monthly summary of the wastewater treatment system",
-    settings_drr_label: "Data Record Report (5 reports)",
+    settings_drr_label: "Data Record Report (QSHE)",
     settings_risk_label: "Risk Assessment (2 topics)",
     nav_mp_plan: "QSHE Action Plan 2026-2027",
     nav_mp_risk: "Inspection Risk Summary",
@@ -1904,7 +1966,7 @@ const Scope = {
       case "capas": return c.bset.has(r.buildingId) || (!!r.unitId && c.uset.has(r.unitId));
       case "mpUnits": return c.uset.has(r.id);
       case "mpScores": case "mpForms": return c.uset.has(r.unitId);
-      case "drrRecords": { const d = r.d || {}; return r.report === "cfg" || this.nameOk(d.site) || r.by === c.uname; }
+      case "drrRecords": { const d = r.d || {}; return r.report === "cfg" || d.site === "*" || this.nameOk(d.site) || r.by === c.uname; }
       case "v3dBuildings": return this.nameOk(r.name) || this.nameOk(r.unitName);
       case "psdAnalyses": return this.nameOk(r.bu) || this.nameOk(r.location) || this.nameOk(r.site) || r.by === c.uname;
     }
@@ -4328,10 +4390,11 @@ const DRR_MWA_IMPORT = [{"id": "imp-mwa-SLS_(Sunny)-2026-01", "report": "mwa", "
  */
 
 // ------------------------------------------------------------------ constants ---
-const DRR_VIEWS = { drr_lp: "lp", drr_tw: "tw", drr_food: "food", drr_ww: "ww", drr_ts: "ts", drr_mwa: "mwa" };
+const DRR_VIEWS = { drr_lp: "lp", drr_tw: "tw", drr_wp: "wp", drr_food: "food", drr_ww: "ww", drr_ts: "ts", drr_mwa: "mwa" };
 const DRR_TITLES = {
   lp: ["Live & Play incident data record report", "รายงานบันทึกอุบัติการณ์ Live & Play"],
   tw: ["Township incident data record report", "รายงานบันทึกอุบัติการณ์ Township"],
+  wp: ["Workplace incident data record report", "รายงานบันทึกอุบัติการณ์ Workplace"],
   food: ["External Food testing report", "รายงานผลตรวจอาหารจากห้องปฏิบัติการภายนอก"],
   ww: ["Waste water treatment data record report", "รายงานผลคุณภาพน้ำทิ้ง / ระบบบำบัดน้ำเสีย"],
   ts: ["ทส.1 & ทส.2 data record report", "แบบ ทส.1 (บันทึกประจำวัน) และ ทส.2 (รายงานสรุปรายเดือน)"],
@@ -4416,7 +4479,7 @@ function drrNextNo(report, year) {
   const n = drrAll(report).filter((r) => drrYearOf(r) === year).map((r) => parseInt(String(r.d.no || "").slice(0, 3), 10)).filter((x) => !isNaN(x));
   return String((n.length ? Math.max(...n) : 0) + 1).padStart(3, "0") + "/" + year;
 }
-function drrCfg() { return Object.assign({ foodTarget: Object.assign({}, DRR_FOOD_TARGET), twTargets: {}, lpTargets: {}, wwTypes: {} }, DB.get("drrCfg", {})); }
+function drrCfg() { return Object.assign({ foodTarget: Object.assign({}, DRR_FOOD_TARGET), twTargets: {}, lpTargets: {}, wpTargets: {}, wwTypes: {} }, DB.get("drrCfg", {})); }
 
 // ------------------------------------------------------------------ evaluation ---
 /** food: true = pass, false = fail, null = not tested */
@@ -4522,7 +4585,8 @@ function drrIncidentFields(rep) {
 }
 const DRR_TABLE_COLS = {
   lp: ["no", "date", "time", "site", "location", "type", "severity", "rootCause", "detail", "loss", "status"],
-  tw: ["no", "date", "time", "areaType", "location", "type", "site", "severity", "rootCause", "detail", "loss", "status"]
+  tw: ["no", "date", "time", "areaType", "location", "type", "site", "severity", "rootCause", "detail", "loss", "status"],
+  wp: ["no", "date", "time", "site", "location", "type", "severity", "rootCause", "detail", "loss", "status"]
 };
 const drrStatusChip = (s) => s === "closed" ? `<span class="st-chip"><i style="color:var(--st-good)">✔</i>Closed</span>` : `<span class="st-chip"><i style="color:var(--st-serious)">▲</i>Open</span>`;
 
@@ -4611,14 +4675,14 @@ function drrOpenForm(rep, rec, after) {
 }
 function drrDefaults(rtype) {
   const today = todayISO();
-  if (rtype === "lp" || rtype === "tw") return { no: drrNextNo(rtype, DrrUI.year), date: today, severity: "1", rootCause: "Man", status: "open", site: DrrUI.site !== "ALL" ? DrrUI.site : "" };
+  if (rtype === "lp" || rtype === "tw" || rtype === "wp") return { no: drrNextNo(rtype, DrrUI.year), date: today, severity: "1", rootCause: "Man", status: "open", site: DrrUI.site !== "ALL" ? DrrUI.site : "" };
   if (rtype === "food") return { date: today, site: DrrUI.site !== "ALL" ? DrrUI.site : "Food Yard", retest: false, res: {} };
   if (rtype === "ww") { const s = DrrUI.site !== "ALL" ? DrrUI.site : "OUS"; return { date: today, site: s, btype: drrCfg().wwTypes[s] || DRR_WW_SITES[s] || "ค", inf: {}, eff: {} }; }
   if (rtype === "mwa") return drrMwaDefaults();
   return drrTsDefaults(rtype);
 }
 function drrFieldsOf(rtype) {
-  if (rtype === "lp" || rtype === "tw") return drrIncidentFields(rtype);
+  if (rtype === "lp" || rtype === "tw" || rtype === "wp") return drrIncidentFields(rtype);
   if (rtype === "food") return [
     { k: "date", label: mt("วันที่เก็บตัวอย่าง", "Sampling date"), type: "date", req: true },
     { k: "site", label: mt("หน่วยงาน / อาคาร", "Unit / building"), type: "list", report: "food", req: true },
@@ -4738,7 +4802,7 @@ function renderDrrIncident(root, rep) {
   const headers = fields.map((f) => ({ key: f.k, label: f.label }));
   root.innerHTML = drrToolbar(rep, drrActionButtons(rep, rep)) + `<div id="drr-body"></div>`;
   drrWireBar(root, rep, rerender);
-  drrWireActions(root, rep, rep, rerender, () => drrCsv(rep, headers, recs.map((r) => Object.assign({}, r.d)), `${rep === "lp" ? "LivePlay" : "Township"}_incidents_${DrrUI.year}`));
+  drrWireActions(root, rep, rep, rerender, () => drrCsv(rep, headers, recs.map((r) => Object.assign({}, r.d)), `${rep === "lp" ? "LivePlay" : rep === "wp" ? "Workplace" : "Township"}_incidents_${DrrUI.year}`));
   const body = root.querySelector("#drr-body");
   if (tab === "data") {
     const cols = DRR_TABLE_COLS[rep]; const labels = cols.map((k) => (fields.find((f) => f.k === k) || {}).label || k);
@@ -4874,7 +4938,7 @@ function renderDrrWw(root) {
 // ------------------------------------------------------------------ view router ---
 function renderDrr(root, view) {
   const rep = DRR_VIEWS[view];
-  if (rep === "lp" || rep === "tw") return renderDrrIncident(root, rep);
+  if (rep === "lp" || rep === "tw" || rep === "wp") return renderDrrIncident(root, rep);
   if (rep === "food") return renderDrrFood(root);
   if (rep === "ww") return renderDrrWw(root);
   if (rep === "mwa") return renderDrrMwa(root);
@@ -4890,7 +4954,7 @@ function drrBuildSheets() {
     const rows = drrAll(rep).sort((a, b) => (a.d.date || "").localeCompare(b.d.date || "")).map((r) => [r.id].concat(f.map((x) => { const v = r.d[x.k]; return v === undefined || v === null ? "" : v; }), [r.byName || r.by || "", r.at || ""]));
     out.push({ key: rep, title: name, columns: ["id"].concat(f.map((x) => x.k), ["editedBy", "editedAt"]), rows });
   };
-  inc("lp", "LivePlay_Incidents"); inc("tw", "Township_Incidents");
+  inc("lp", "LivePlay_Incidents"); inc("tw", "Township_Incidents"); inc("wp", "Workplace_Incidents");
   out.push({ key: "food", title: "Food_Testing", columns: ["id", "date", "site", "shop", "menu", "retest", "result", "failedParams"].concat(DRR_FOOD_PARAMS.map((p) => p.k), ["editedBy", "editedAt"]),
     rows: drrAll("food").sort((a, b) => (a.d.date || "").localeCompare(b.d.date || "")).map((r) => { const s = drrFoodSample(r.d); return [r.id, r.d.date, r.d.site, r.d.shop, r.d.menu, r.d.retest ? "re-test" : "", s.tested ? (s.pass ? "Pass" : "Not pass") : "-", s.fails.join("; ")].concat(DRR_FOOD_PARAMS.map((p) => (r.d.res || {})[p.k] || ""), [r.byName || r.by || "", r.at || ""]); }) });
   out.push({ key: "ww", title: "Wastewater", columns: ["id", "date", "site", "class", "effluentResult", "exceeded"].concat(DRR_WW_PARAMS.map((p) => "inf_" + p.k), DRR_WW_PARAMS.map((p) => "eff_" + p.k), ["editedBy", "editedAt"]),
@@ -4898,6 +4962,8 @@ function drrBuildSheets() {
   drrTsSheets(out);
   drrMwaSheets(out);
   if (typeof psdSheets === "function") psdSheets(out);
+  if (typeof lgSheets === "function") lgSheets(out);
+  if (typeof qsSheets === "function") qsSheets(out);
   return out;
 }
 async function drrPushSheets(manual) {
@@ -5457,7 +5523,7 @@ function renderDrrMwa(root) {
  *  - analyses are stored in the synced collection `psdAnalyses`; photos in MpImg (key psd|<id>|before|1 …)
  */
 const PsdUI = { year: new Date().getFullYear(), rep: "ALL", status: "ALL", q: "" };
-const PSD_REPS = { lp: "Live & Play", tw: "Township", food: "External Food", ww: "Waste water", mwa: "MWA Raw Water", ts1: "ทส.1 (Equipment)", manual: "—" };
+const PSD_REPS = { lp: "Live & Play", tw: "Township", wp: "Workplace", food: "External Food", ww: "Waste water", mwa: "MWA Raw Water", ts1: "ทส.1 (Equipment)", manual: "—" };
 const PSD_ST = { open: ["ยังไม่วิเคราะห์", "Not analysed", "var(--st-critical)", "✖"], doing: ["กำลังดำเนินการ", "In progress", "var(--st-serious)", "▼"], closed: ["ปิดแล้ว", "Closed", "var(--st-good)", "✔"] };
 const PSD_5M = [["man", "MAN", "👤", "สาเหตุจากบุคลากร…"], ["machine", "MACHINE", "⚙️", "สาเหตุจากเครื่องจักร…"], ["method", "METHOD", "📋", "สาเหตุจากวิธีการ…"], ["material", "MATERIAL", "📦", "สาเหตุจากวัสดุ…"], ["env", "ENV", "🌿", "สาเหตุจากสภาพแวดล้อม…"], ["measure", "MEASUREMENT", "📊", "สาเหตุจากการวัด…"]];
 const PSD_CATS = ["MACHINE", "MAN", "METHOD", "MATERIAL", "ENV", "MEASUREMENT"];
@@ -5471,7 +5537,7 @@ function psdFindings() {
     const d = r.d || {};
     if (!inYear(d.date)) return;
     const base = { rep: r.report, rid: r.id, site: d.site || "", date: d.date };
-    if ((r.report === "lp" || r.report === "tw") && d.status !== "closed") out.push(Object.assign(base, { key: r.report + "|" + r.id, title: `${d.no || ""} ${d.type || ""}`.trim(), detail: [d.detail, d.rootCause ? "Root cause: " + d.rootCause : ""].filter(Boolean).join("\n") }));
+    if ((r.report === "lp" || r.report === "tw" || r.report === "wp") && d.status !== "closed") out.push(Object.assign(base, { key: r.report + "|" + r.id, title: `${d.no || ""} ${d.type || ""}`.trim(), detail: [d.detail, d.rootCause ? "Root cause: " + d.rootCause : ""].filter(Boolean).join("\n") }));
     else if (r.report === "food") { const s = drrFoodSample(d); if (s.tested && !s.pass) out.push(Object.assign(base, { key: "food|" + r.id, title: `${d.shop || ""} ${d.menu || ""}`.trim(), detail: mt("ผลตรวจอาหารไม่ผ่าน: ", "Food test failed: ") + s.fails.join(", ") })); }
     else if (r.report === "ww") { const s = drrWwSample(d); if (s.tested && !s.pass) out.push(Object.assign(base, { key: "ww|" + r.id, title: mt("น้ำทิ้งเกินเกณฑ์", "Effluent over limit"), detail: mt("น้ำทิ้งเกินเกณฑ์: ", "Effluent exceeds: ") + s.fail.join(", ") })); }
     else if (r.report === "mwa") {
@@ -5670,7 +5736,9 @@ function irAccTypes() {
   const c = DB.get("drrRecords", []).find((r) => r.id === "cfg-safety");
   return c && Array.isArray(c.d.types) ? c.d.types : IR_DEFAULT_ACC;
 }
-const irAll = () => DB.get("drrRecords", []).filter((r) => (r.report === "lp" || r.report === "tw") && r.d && r.d.date);
+const IR_REPS = ["lp", "tw", "wp"];
+const irRepName = (rep) => (rep === "lp" ? "Live & Play" : rep === "wp" ? "Workplace" : "Township");
+const irAll = () => DB.get("drrRecords", []).filter((r) => IR_REPS.includes(r.report) && r.d && r.d.date);
 const irIsAcc = (r, types) => (types || irAccTypes()).includes(r.d.type);
 /** does an IR record belong to one of the Master-Plan units (matched by name)? */
 function irMatchUnit(r, unitIds) {
@@ -5698,7 +5766,7 @@ function renderIncidents(root) {
   const recs = all.filter(inScope);
   const sites = [...new Set(all.map((r) => r.d.site).filter(Boolean))].sort();
   const yrs = [...new Set(all.map((r) => Number(r.d.date.slice(0, 4))).concat(new Date().getFullYear()))].sort((a, b) => b - a);
-  const lp = recs.filter((r) => r.report === "lp"), tw = recs.filter((r) => r.report === "tw");
+  const lp = recs.filter((r) => r.report === "lp"), tw = recs.filter((r) => r.report === "tw"), wp = recs.filter((r) => r.report === "wp");
   const acc = recs.filter((r) => irIsAcc(r, types)), open = recs.filter((r) => r.d.status !== "closed");
   const S = irScopeStats("ALL", "ALL");
   const sev3 = recs.filter((r) => String(r.d.severity) === "3").length;
@@ -5715,28 +5783,28 @@ function renderIncidents(root) {
       <label class="dash-unit"><span>${mt("เดือน", "Month")}</span><select id="ir-month"><option value="ALL">${mt("ทุกเดือน", "All months")}</option>${DRR_MONTHS.map((m, i) => `<option value="${i + 1}" ${String(IrUI.month) === String(i + 1) ? "selected" : ""}>${m}</option>`).join("")}</select></label>
       <label class="dash-unit"><span>${mt("หน่วยงาน", "Unit")}</span><select id="ir-site"><option value="ALL">${mt("ทุกหน่วยงาน", "All units")}</option>${sites.map((s) => `<option value="${E(s)}" ${IrUI.site === s ? "selected" : ""}>${E(s)}</option>`).join("")}</select></label>
       <span style="flex:1"></span><button class="btn ghost small" id="ir-csv">${mt("ส่งออก CSV", "Export CSV")}</button><button class="btn ghost small" data-go="drr_lp">Live &amp; Play ›</button><button class="btn ghost small" data-go="drr_tw">Township ›</button></div>
-    <div class="grid cols-4" style="margin-bottom:14px;">${drrTile(mt("จำนวน IR ทั้งหมด", "Total IR"), recs.length, `Live &amp; Play ${lp.length} · Township ${tw.length}`)}${drrTile(mt("นับเป็นอุบัติเหตุ (เข้าบอร์ด)", "Counted as accident (board)"), acc.length, mt("ตามประเภทที่กำหนดด้านล่าง", "by the types set below"), acc.length ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("IR ที่ยังเปิดอยู่", "Open IR"), open.length, `${mt("รุนแรง (3)", "Severity 3")}: ${sev3}`, open.length ? "var(--st-serious)" : "var(--st-good)")}${drrTile(mt("วันปลอดอุบัติเหตุ (ทั้งเครือ)", "Days without accident (group)"), S.days, S.last ? mt("ล่าสุด ", "Last ") + mpFmtDate(S.last) : mt("ยังไม่มีอุบัติเหตุ", "No accident yet"), "var(--st-good)")}</div>
-    <div class="card"><h3>${mt("จำนวน IR รายเดือน", "IR per month")}</h3><div style="overflow-x:auto"><table class="mon-table drr-heat"><thead><tr><th style="text-align:left">${mt("แหล่งข้อมูล", "Source")}</th>${DRR_MONTHS.map((m) => `<th>${m}</th>`).join("")}<th>${mt("รวม", "Total")}</th></tr></thead><tbody>${MON("lp", lp, "Live &amp; Play")}${MON("tw", tw, "Township")}${MON("acc", acc, `<b>${mt("นับเป็นอุบัติเหตุ", "Counted accidents")}</b>`)}</tbody></table></div></div>
+    <div class="grid cols-4" style="margin-bottom:14px;">${drrTile(mt("จำนวน IR ทั้งหมด", "Total IR"), recs.length, `Live &amp; Play ${lp.length} · Township ${tw.length}${wp.length ? ` · Workplace ${wp.length}` : ""}`)}${drrTile(mt("นับเป็นอุบัติเหตุ (เข้าบอร์ด)", "Counted as accident (board)"), acc.length, mt("ตามประเภทที่กำหนดด้านล่าง", "by the types set below"), acc.length ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("IR ที่ยังเปิดอยู่", "Open IR"), open.length, `${mt("รุนแรง (3)", "Severity 3")}: ${sev3}`, open.length ? "var(--st-serious)" : "var(--st-good)")}${drrTile(mt("วันปลอดอุบัติเหตุ (ทั้งเครือ)", "Days without accident (group)"), S.days, S.last ? mt("ล่าสุด ", "Last ") + mpFmtDate(S.last) : mt("ยังไม่มีอุบัติเหตุ", "No accident yet"), "var(--st-good)")}</div>
+    <div class="card"><h3>${mt("จำนวน IR รายเดือน", "IR per month")}</h3><div style="overflow-x:auto"><table class="mon-table drr-heat"><thead><tr><th style="text-align:left">${mt("แหล่งข้อมูล", "Source")}</th>${DRR_MONTHS.map((m) => `<th>${m}</th>`).join("")}<th>${mt("รวม", "Total")}</th></tr></thead><tbody>${MON("lp", lp, "Live &amp; Play")}${MON("tw", tw, "Township")}${wp.length ? MON("wp", wp, "Workplace") : ""}${MON("acc", acc, `<b>${mt("นับเป็นอุบัติเหตุ", "Counted accidents")}</b>`)}</tbody></table></div></div>
     <div class="grid cols-2" style="margin-top:14px;">
       <div class="card"><h3>${mt("สรุปตามหน่วยงาน", "By unit")}</h3><table class="mon-table"><thead><tr><th>${mt("หน่วยงาน", "Unit")}</th><th>IR</th><th>${mt("อุบัติเหตุ", "Accident")}</th><th>${mt("เปิดอยู่", "Open")}</th><th>${mt("รุนแรง (3)", "Sev. 3")}</th></tr></thead><tbody>${siteRows.map((x) => `<tr><td>${E(x.s)}</td><td class="num"><b>${x.n}</b></td><td class="num">${x.a || "·"}</td><td class="num">${x.o || "·"}</td><td class="num" style="${x.h ? "color:var(--st-critical);font-weight:700" : ""}">${x.h || "·"}</td></tr>`).join("") || `<tr><td colspan="5" class="muted-s">${mt("ไม่มี IR ในช่วงที่เลือก", "No IR in this period")}</td></tr>`}</tbody></table></div>
       <div class="card"><h3>${mt("สรุปตามประเภท IR · เลือกประเภทที่นับเป็น “อุบัติเหตุ” ของบอร์ด", "By IR type · choose the types that count as an “accident” on the board")}</h3>
         <div class="acc-scroll" style="max-height:340px"><table class="mon-table"><thead><tr><th>${adm ? mt("นับ", "Count") : ""}</th><th>${mt("ประเภท", "Type")}</th><th>L&amp;P</th><th>TW</th></tr></thead><tbody>${allTypes.map((t) => { const x = typeRows.find((y) => y.t === t) || { lp: 0, tw: 0 }; return `<tr><td>${adm ? `<input type="checkbox" data-ir-type="${E(t)}" ${types.includes(t) ? "checked" : ""}/>` : types.includes(t) ? "✔" : ""}</td><td>${E(t)}</td><td class="num">${x.lp || "·"}</td><td class="num">${x.tw || "·"}</td></tr>`; }).join("")}</tbody></table></div>
         <div class="muted-s" style="margin-top:6px;">${adm ? mt("ติ๊ก/เอาออกแล้วบอร์ดสถิติความปลอดภัยในแดชบอร์ดคำนวณใหม่ทันที", "Tick / untick – the Safety statistics board recalculates immediately") : mt("ผู้ดูแลระบบเป็นผู้กำหนดประเภทที่นับ", "Set by the administrator")}</div></div></div>
     <div class="card" style="margin-top:14px;"><h3>${mt("IR ล่าสุด", "Latest IR")} (${recent.length}/${recs.length})</h3><div class="acc-scroll" style="max-height:420px"><table class="mon-table"><thead><tr><th>No.</th><th>${mt("วันที่", "Date")}</th><th>${mt("รายงาน", "Report")}</th><th>${mt("หน่วยงาน", "Unit")}</th><th>${mt("ประเภท", "Type")}</th><th>${mt("รุนแรง", "Sev.")}</th><th>${mt("สถานะ", "Status")}</th><th>${mt("เข้าบอร์ด", "On board")}</th></tr></thead><tbody>
-      ${recent.map((r) => `<tr><td>${E(r.d.no || "")}</td><td>${mpFmtDate(r.d.date)}</td><td>${r.report === "lp" ? "Live &amp; Play" : "Township"}</td><td>${E(r.d.site)}</td><td>${E(r.d.type)}</td><td class="num">${E(r.d.severity || "")}</td><td>${drrStatusChip(r.d.status)}</td><td class="num">${irIsAcc(r, types) ? `<span style="color:var(--st-critical)">✖ ${mt("นับ", "counted")}</span>` : "·"}</td></tr>`).join("") || `<tr><td colspan="8" class="muted-s">${mt("ไม่มี IR", "No IR")}</td></tr>`}</tbody></table></div></div>
+      ${recent.map((r) => `<tr><td>${E(r.d.no || "")}</td><td>${mpFmtDate(r.d.date)}</td><td>${mpEsc(irRepName(r.report))}</td><td>${E(r.d.site)}</td><td>${E(r.d.type)}</td><td class="num">${E(r.d.severity || "")}</td><td>${drrStatusChip(r.d.status)}</td><td class="num">${irIsAcc(r, types) ? `<span style="color:var(--st-critical)">✖ ${mt("นับ", "counted")}</span>` : "·"}</td></tr>`).join("") || `<tr><td colspan="8" class="muted-s">${mt("ไม่มี IR", "No IR")}</td></tr>`}</tbody></table></div></div>
     <div class="card" style="margin-top:14px;"><h3>${mt("CAPA / Near-miss ที่บันทึกเอง (นอกเหนือจาก IR)", "Manually logged CAPA / near-miss (in addition to IR)")}</h3><div id="ir-capa"></div></div>`;
   root.querySelector("#ir-year").onchange = (e) => { IrUI.year = Number(e.target.value); rerender(); };
   root.querySelector("#ir-month").onchange = (e) => { IrUI.month = e.target.value; rerender(); };
   root.querySelector("#ir-site").onchange = (e) => { IrUI.site = e.target.value; rerender(); };
   root.querySelectorAll("[data-go]").forEach((b) => { b.onclick = () => navigate(b.dataset.go); });
-  root.querySelector("#ir-csv").onclick = () => ExportUtil.exportCSV(recs.slice().sort((a, b) => a.d.date.localeCompare(b.d.date)).map((r) => ({ report: r.report === "lp" ? "Live & Play" : "Township", no: r.d.no || "", date: r.d.date, site: r.d.site || "", type: r.d.type || "", severity: r.d.severity || "", status: r.d.status || "", counted: irIsAcc(r, types) ? "yes" : "" })), ["report", "no", "date", "site", "type", "severity", "status", "counted"].map((k) => ({ key: k, label: k })), `IR_${IrUI.year}`);
+  root.querySelector("#ir-csv").onclick = () => ExportUtil.exportCSV(recs.slice().sort((a, b) => a.d.date.localeCompare(b.d.date)).map((r) => ({ report: irRepName(r.report), no: r.d.no || "", date: r.d.date, site: r.d.site || "", type: r.d.type || "", severity: r.d.severity || "", status: r.d.status || "", counted: irIsAcc(r, types) ? "yes" : "" })), ["report", "no", "date", "site", "type", "severity", "status", "counted"].map((k) => ({ key: k, label: k })), `IR_${IrUI.year}`);
   root.querySelectorAll("[data-ir-type]").forEach((c) => { c.onchange = () => { const set = new Set(irAccTypes()); c.checked ? set.add(c.dataset.irType) : set.delete(c.dataset.irType); irSaveTypes([...set]); toast(mt("บันทึกแล้ว — บอร์ดความปลอดภัยคำนวณใหม่", "Saved — safety board recalculated")); rerender(); }; });
   renderCAPA(root.querySelector("#ir-capa"));
 }
 
 // ======================================================= dashboard: scope + statistics card ===
 const IrSafeUI = { group: "ALL", site: "ALL" };
-const IR_GROUPS = { ALL: ["BBG Group", "BBG Group"], lp: ["Live & Play", "Live & Play"], tw: ["Township", "Township"] };
+const IR_GROUPS = { ALL: ["BBG Group", "BBG Group"], lp: ["Live & Play", "Live & Play"], tw: ["Township", "Township"], wp: ["Workplace", "Workplace"] };
 const irSiteName = (r) => { const s = String(r.d.site || "").trim(); return r.report === "lp" ? s.replace(/\s*\(.*?\)\s*/g, "").trim() : s; };
 function irScopeRecs(group, site) { return irAll().filter((r) => (group === "ALL" || r.report === group) && (site === "ALL" || irSiteName(r) === site)); }
 function irSites(group) { return [...new Set(irAll().filter((r) => group === "ALL" || r.report === group).map(irSiteName).filter(Boolean))].sort(); }
@@ -5887,6 +5955,640 @@ function renderInjuryCard(host) {
   if (!host._tips) { mpWireTips(host); host._tips = true; }
 }
 
+/** Legal register seed from "สรุปใบอนุญาต 1.xlsx" (sheets รายละเอียด + สรุป). Loaded once into drrRecords (report "lgreg"). */
+const LG_IMPORT = [{"id": "lg-ekm-01", "report": "lgreg", "d": {"site": "Park X Ekkamai", "kind": "license", "name": "ใบอนุญาตประกอบกิจการประเภทที่ 2 บริษัท ภิรัชบุรี จำกัด (EKM)", "group": "ใบอนุญาตประกอบกิจการสถานที่เก็บ LPG ประเภทที่ 2", "form": "ธพ.น.2", "freq": "5Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-ekm-02", "report": "lgreg", "d": {"site": "Park X Ekkamai", "kind": "license", "name": "ใบรับแจ้งการประกอบกิจการควบคุมประเภทที่ 2 (แบบ ธพ.ป2)", "group": "ใบรับแจ้งการประกอบกิจการควบคุมประเภทที่ 2", "form": "แบบ ธพ.ป2", "freq": "once", "rule": "แจ้งก่อนประกอบกิจการ"}}, {"id": "lg-ekm-03", "report": "lgreg", "d": {"site": "Park X Ekkamai", "kind": "license", "name": "ใบรับรองการก่อสร้าง การดัดแปลง หรือการเคลื่อนย้ายอาคารประเภทควบคุมการใช้ (แบบ อ.5)", "group": "ใบรับรองการก่อสร้าง การดัดแปลง หรือการเคลื่อนย้ายอาคารประเภทควบคุมการใช้", "form": "อ.5", "freq": "once", "rule": "เมื่อดำเนินการแล้วเสร็จ"}}, {"id": "lg-ekm-04", "report": "lgreg", "d": {"site": "Park X Ekkamai", "kind": "report", "name": "รายงานผลการตรวจวัดคุณภาพน้ำทิ้งประจำเดือน", "group": "รายงานผลการตรวจวัดคุณภาพน้ำทิ้งประจำเดือน", "form": "", "freq": "1M", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-ekm-05", "report": "lgreg", "d": {"site": "Park X Ekkamai", "kind": "report", "name": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "group": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-ekm-06", "report": "lgreg", "d": {"site": "Park X Ekkamai", "kind": "report", "name": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "group": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-ekm-07", "report": "lgreg", "d": {"site": "Park X Ekkamai", "kind": "report", "name": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "group": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-ekm-08", "report": "lgreg", "d": {"site": "Park X Ekkamai", "kind": "report", "name": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "group": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "form": "", "freq": "", "rule": ""}}, {"id": "lg-ekm-09", "report": "lgreg", "d": {"site": "Park X Ekkamai", "kind": "report", "name": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "group": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "form": "", "freq": "", "rule": ""}}, {"id": "lg-ekm-10", "report": "lgreg", "d": {"site": "Park X Ekkamai", "kind": "report", "name": "รายงานการตรวจสอบลิฟต์และบันไดเลื่อน", "group": "รายงานการตรวจสอบลิฟต์และบันไดเลื่อน", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน", "note": "เพิ่มจากตาราง “สรุป” (อาคารนี้ถูกทำเครื่องหมายไว้) — โปรดตรวจสอบ"}}, {"id": "lg-ous-01", "report": "lgreg", "d": {"site": "One Udomsuk", "kind": "license", "name": "หนังสืออนุญาตให้ปลูกสร้างอาคาร อ.2", "group": "หนังสืออนุญาตให้ปลูกสร้างอาคาร", "form": "อ.2", "freq": "once", "rule": "ต่อการขออนุญาตก่อสร้าง"}}, {"id": "lg-ous-02", "report": "lgreg", "d": {"site": "One Udomsuk", "kind": "report", "name": "รายงานผลการตรวจวัดคุณภาพน้ำทิ้งประจำเดือน", "group": "รายงานผลการตรวจวัดคุณภาพน้ำทิ้งประจำเดือน", "form": "", "freq": "1M", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-ous-03", "report": "lgreg", "d": {"site": "One Udomsuk", "kind": "report", "name": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "group": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-ous-04", "report": "lgreg", "d": {"site": "One Udomsuk", "kind": "report", "name": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "group": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-ous-05", "report": "lgreg", "d": {"site": "One Udomsuk", "kind": "report", "name": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "group": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-ous-06", "report": "lgreg", "d": {"site": "One Udomsuk", "kind": "report", "name": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "group": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "form": "", "freq": "", "rule": ""}}, {"id": "lg-ous-07", "report": "lgreg", "d": {"site": "One Udomsuk", "kind": "report", "name": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "group": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "form": "", "freq": "", "rule": ""}}, {"id": "lg-ous-08", "report": "lgreg", "d": {"site": "One Udomsuk", "kind": "report", "name": "ข้อมูลระบบบำบัดน้ำเสีย (ทส.1) & รายงานสรุปผลการทำงานของระบบบำบัดน้ำเสีย (ทส.2)", "group": "ข้อมูลระบบบำบัดน้ำเสีย (ทส.1) & รายงานสรุปผลการทำงานของระบบบำบัดน้ำเสีย (ทส.2)", "form": "ทส.1/ทส.2", "freq": "1M", "rule": "ภายในวันที่ 15 ของเดือนถัดไป", "note": "เพิ่มจากตาราง “สรุป” (อาคารนี้ถูกทำเครื่องหมายไว้) — โปรดตรวจสอบ"}}, {"id": "lg-sls-01", "report": "lgreg", "d": {"site": "Sunny", "kind": "license", "name": "ใบอนุญาตประกอบกิจการประเภทที่ 3 บริษัท ภิรัชบุรี จำกัด (Sunny)", "group": "ใบอนุญาตประกอบกิจการสถานที่เก็บ LPG ประเภทที่ 3", "form": "ธพ.น.3", "freq": "1Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-sls-02", "report": "lgreg", "d": {"site": "Sunny", "kind": "license", "name": "ใบอนุญาตประกอบกิจการประเภทที่ 2 บริษัท เมนเนจเม้นท์ จำกัด (Sunny)", "group": "ใบอนุญาตประกอบกิจการสถานที่เก็บ LPG ประเภทที่ 2", "form": "ธพ.น.2", "freq": "5Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-sls-03", "report": "lgreg", "d": {"site": "Sunny", "kind": "report", "name": "รายงานผลการตรวจวัดคุณภาพน้ำทิ้งประจำเดือน", "group": "รายงานผลการตรวจวัดคุณภาพน้ำทิ้งประจำเดือน", "form": "", "freq": "1M", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-sls-04", "report": "lgreg", "d": {"site": "Sunny", "kind": "report", "name": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "group": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-sls-05", "report": "lgreg", "d": {"site": "Sunny", "kind": "report", "name": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "group": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-sls-06", "report": "lgreg", "d": {"site": "Sunny", "kind": "report", "name": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "group": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-sls-07", "report": "lgreg", "d": {"site": "Sunny", "kind": "report", "name": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "group": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "form": "", "freq": "", "rule": ""}}, {"id": "lg-sls-08", "report": "lgreg", "d": {"site": "Sunny", "kind": "report", "name": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "group": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "form": "", "freq": "", "rule": ""}}, {"id": "lg-sls-09", "report": "lgreg", "d": {"site": "Sunny", "kind": "report", "name": "รายงานการตรวจสอบลิฟต์และบันไดเลื่อน", "group": "รายงานการตรวจสอบลิฟต์และบันไดเลื่อน", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน", "note": "เพิ่มจากตาราง “สรุป” (อาคารนี้ถูกทำเครื่องหมายไว้) — โปรดตรวจสอบ"}}, {"id": "lg-bd-01", "report": "lgreg", "d": {"site": "BEAT Discovery", "kind": "license", "name": "ใบอนุญาตประกอบกิจการอันเป็นอันตรายต่อสุขภาพ (อภ.2) >>> ร้านคาเฟ่", "group": "ใบอนุญาตประกอบกิจการอันเป็นอันตรายต่อสุขภาพ", "form": "อภ.2", "freq": "1Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-bd-02", "report": "lgreg", "d": {"site": "BEAT Discovery", "kind": "license", "name": "หนังสือรับรองการแจ้งจัดตั้งสถานที่จำหน่ายหรือสถานที่สะสมอาหาร (แบบ สอ.4)", "group": "หนังสือรับรองการแจ้งจัดตั้งสถานที่จำหน่ายหรือสถานที่สะสมอาหาร", "form": "สอ.4", "freq": "1Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-bd-03", "report": "lgreg", "d": {"site": "BEAT Discovery", "kind": "doc", "name": "เอกสารผู้ประกอบกิจการ_คุณขวัญฤดี ตะวังทัน", "group": "เอกสารผู้ประกอบกิจการ_คุณขวัญฤดี ตะวังทัน", "form": "", "freq": "", "rule": ""}}, {"id": "lg-bd-04", "report": "lgreg", "d": {"site": "BEAT Discovery", "kind": "doc", "name": "เอกสารผู้สัมผัสอาหาร_คุณพิชญาภรณ์ บุญญานุวัตร", "group": "เอกสารผู้สัมผัสอาหาร_คุณพิชญาภรณ์ บุญญานุวัตร", "form": "", "freq": "", "rule": ""}}, {"id": "lg-bd-05", "report": "lgreg", "d": {"site": "BEAT Discovery", "kind": "report", "name": "รายงานผลการตรวจวัดคุณภาพน้ำทิ้งประจำเดือน", "group": "รายงานผลการตรวจวัดคุณภาพน้ำทิ้งประจำเดือน", "form": "", "freq": "1M", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-bd-06", "report": "lgreg", "d": {"site": "BEAT Discovery", "kind": "report", "name": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "group": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-bd-07", "report": "lgreg", "d": {"site": "BEAT Discovery", "kind": "report", "name": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "group": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-bd-08", "report": "lgreg", "d": {"site": "BEAT Discovery", "kind": "report", "name": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "group": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-bd-09", "report": "lgreg", "d": {"site": "BEAT Discovery", "kind": "report", "name": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "group": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "form": "", "freq": "", "rule": ""}}, {"id": "lg-bd-10", "report": "lgreg", "d": {"site": "BEAT Discovery", "kind": "report", "name": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "group": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "form": "", "freq": "", "rule": ""}}, {"id": "lg-ba-01", "report": "lgreg", "d": {"site": "BEAT Active", "kind": "license", "name": "ใบอนุญาตประกอบกิจการอันเป็นอันตรายต่อสุขภาพ (อภ.2) >>> สวนสนุก โบว์ลิ่ง ตู้เกม (BEAT Active)", "group": "ใบอนุญาตประกอบกิจการอันเป็นอันตรายต่อสุขภาพ", "form": "อภ.2", "freq": "1Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-ba-02", "report": "lgreg", "d": {"site": "BEAT Active", "kind": "license", "name": "ใบรับรองให้ใช้เครื่องเล่น (แบบ อค. 2) >>> เครื่องเล่นบี๊ท อักเมนเต็ด วอลล์ ,บี๊ท แอคทีฟ ไคลม์บิ้งยิม ,บี๊ท แทร็ป ชาเลนจ์ ,บี๊ท ออบเซอร์เวทอรี่ (BEAT Active)", "group": "ใบรับรองให้ใช้เครื่องเล่น", "form": "อค.2", "freq": "1Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-ba-03", "report": "lgreg", "d": {"site": "BEAT Active", "kind": "license", "name": "ใบรับรองการก่อสร้าง การดัดแปลง หรือการเคลื่อนย้ายอาคารประเภทควบคุมการใช้ (แบบ อ.5)", "group": "ใบรับรองการก่อสร้าง การดัดแปลง หรือการเคลื่อนย้ายอาคารประเภทควบคุมการใช้", "form": "อ.5", "freq": "once", "rule": "เมื่อดำเนินการแล้วเสร็จ"}}, {"id": "lg-ba-04", "report": "lgreg", "d": {"site": "BEAT Active", "kind": "license", "name": "ใบรับแจ้งการก่อสร้าง ดัดแปลง รื้อถอนอาคาร มาตรา 39 ตรี (แบบ ยผ4)", "group": "ใบรับแจ้งการก่อสร้าง ดัดแปลง รื้อถอนอาคาร มาตรา 39 ตรี", "form": "ยผ.4", "freq": "once", "rule": "ต่อการแจ้งดำเนินการแต่ละครั้ง"}}, {"id": "lg-ba-05", "report": "lgreg", "d": {"site": "BEAT Active", "kind": "license", "name": "ใบอนุญาตก่อสร้าง รื้อถอน เคลื่อนย้ายเครื่องเล่น (แบบ อค.1)", "group": "ใบอนุญาตก่อสร้าง รื้อถอน เคลื่อนย้ายเครื่องเล่น", "form": "อค.1", "freq": "once", "rule": "ครั้งเดียวต่อการดำเนินการแต่ละครั้ง"}}, {"id": "lg-ba-06", "report": "lgreg", "d": {"site": "BEAT Active", "kind": "report", "name": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "group": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "form": "", "freq": "", "rule": ""}}, {"id": "lg-ba-07", "report": "lgreg", "d": {"site": "BEAT Active", "kind": "report", "name": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "group": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "form": "", "freq": "", "rule": ""}}, {"id": "lg-ba-08", "report": "lgreg", "d": {"site": "BEAT Active", "kind": "report", "name": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "group": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-ba-09", "report": "lgreg", "d": {"site": "BEAT Active", "kind": "report", "name": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "group": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-ba-10", "report": "lgreg", "d": {"site": "BEAT Active", "kind": "report", "name": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "group": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-h23-01", "report": "lgreg", "d": {"site": "Hotel23", "kind": "license", "name": "ใบอนุญาตประกอบกิจการสถานที่เก็บ LPG ประเภทที่ 2", "group": "ใบอนุญาตประกอบกิจการสถานที่เก็บ LPG ประเภทที่ 2", "form": "ธพ.น.2", "freq": "5Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-h23-02", "report": "lgreg", "d": {"site": "Hotel23", "kind": "license", "name": "ใบอนุญาตประกอบธุรกิจโรงแรม", "group": "ใบอนุญาตประกอบธุรกิจโรงแรม", "form": "รร.", "freq": "5Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-h23-03", "report": "lgreg", "d": {"site": "Hotel23", "kind": "license", "name": "ใบอนุญาตประกอบกิจการอันเป็นอันตรายต่อสุขภาพ (อภ.) >> โรงแรม/ฟิตเนส/สระว่ายน้ำ", "group": "ใบอนุญาตประกอบกิจการอันเป็นอันตรายต่อสุขภาพ", "form": "อภ.2", "freq": "1Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-h23-04", "report": "lgreg", "d": {"site": "Hotel23", "kind": "report", "name": "รายงานผลการตรวจวัดคุณภาพน้ำทิ้งประจำเดือน", "group": "รายงานผลการตรวจวัดคุณภาพน้ำทิ้งประจำเดือน", "form": "", "freq": "1M", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-h23-05", "report": "lgreg", "d": {"site": "Hotel23", "kind": "report", "name": "การบันทึกรายละเอียดและข้อมูลผลการทำงานของระบบบำบัดน้ำเสีย (ทส.1) & รายงานสรุปผลการทำงานของระบบบำบัดน้ำเสีย (ทส.2)", "group": "ข้อมูลระบบบำบัดน้ำเสีย (ทส.1) & รายงานสรุปผลการทำงานของระบบบำบัดน้ำเสีย (ทส.2)", "form": "ทส.1/ทส.2", "freq": "1M", "rule": "ภายในวันที่ 15 ของเดือนถัดไป"}}, {"id": "lg-h23-06", "report": "lgreg", "d": {"site": "Hotel23", "kind": "report", "name": "การตรวจสอบอาคาร ประจำปี", "group": "การตรวจสอบอาคาร ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-h23-07", "report": "lgreg", "d": {"site": "Hotel23", "kind": "report", "name": "การจัดทำรายงานพลังงานประจำปี", "group": "การจัดทำรายงานพลังงานประจำปี", "form": "", "freq": "1Y", "rule": "ก่อนวันที่ 31 มีนาคมของปีถัดไป"}}, {"id": "lg-h23-08", "report": "lgreg", "d": {"site": "Hotel23", "kind": "report", "name": "รายงานผลการปฏิบัติตามมาตรการที่กำหนดไว้ในรายงานการประเมินผลกระทบสิ่งแวดล้อม (EIA Report)", "group": "รายงานผลการปฏิบัติตามมาตรการที่กำหนดไว้ในรายงานการประเมินผลกระทบสิ่งแวดล้อม (EIA Report)", "form": "", "freq": "6M", "rule": "ภายในวันที่ 30 ของเดือนมกราคมและกรกฎาคม"}}, {"id": "lg-h23-09", "report": "lgreg", "d": {"site": "Hotel23", "kind": "report", "name": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "group": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน", "note": "เพิ่มจากตาราง “สรุป” (อาคารนี้ถูกทำเครื่องหมายไว้) — โปรดตรวจสอบ"}}, {"id": "lg-h23-10", "report": "lgreg", "d": {"site": "Hotel23", "kind": "report", "name": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "group": "รายงานผลการตรวจสอบและรับรองระบบไฟฟ้าและบริภัณฑ์ไฟฟ้า ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน", "note": "เพิ่มจากตาราง “สรุป” (อาคารนี้ถูกทำเครื่องหมายไว้) — โปรดตรวจสอบ"}}, {"id": "lg-h23-11", "report": "lgreg", "d": {"site": "Hotel23", "kind": "report", "name": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "group": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน", "note": "เพิ่มจากตาราง “สรุป” (อาคารนี้ถูกทำเครื่องหมายไว้) — โปรดตรวจสอบ"}}, {"id": "lg-h23-12", "report": "lgreg", "d": {"site": "Hotel23", "kind": "report", "name": "การจัดทำรายงานผ่อนผันพลังงานประจำปี", "group": "การจัดทำรายงานผ่อนผันพลังงานประจำปี", "form": "", "freq": "6M", "rule": "ภายในวันที่ 30 ของเดือนมกราคมและกรกฎาคม", "note": "เพิ่มจากตาราง “สรุป” (อาคารนี้ถูกทำเครื่องหมายไว้) — โปรดตรวจสอบ"}}, {"id": "lg-smg-01", "report": "lgreg", "d": {"site": "SAMA Garden", "kind": "license", "name": "ใบอนุญาตประกอบกิจการอันเป็นอันตรายต่อสุขภาพ (อภ.2) >>> สวนสนุก โบว์ลิ่ง ตู้เกม (กิจกรรมเรือปั่นถีบ)", "group": "ใบอนุญาตประกอบกิจการอันเป็นอันตรายต่อสุขภาพ", "form": "อภ.2", "freq": "1Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-smg-02", "report": "lgreg", "d": {"site": "SAMA Garden", "kind": "license", "name": "หนังสือรับรองการแจ้งจัดตั้งสถานที่จำหน่าย ร้าน Tea Room (แบบ สอ.4)", "group": "หนังสือรับรองการแจ้งจัดตั้งสถานที่จำหน่าย", "form": "สอ.5", "freq": "1Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-smg-03", "report": "lgreg", "d": {"site": "SAMA Garden", "kind": "license", "name": "หนังสือรับรองการแจ้งจัดตั้งสถานที่จำหน่าย ร้าน GAYA Restaurent (แบบ สอ.5)", "group": "หนังสือรับรองการแจ้งจัดตั้งสถานที่จำหน่าย", "form": "สอ.5", "freq": "1Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-smg-04", "report": "lgreg", "d": {"site": "SAMA Garden", "kind": "license", "name": "ใบอนุญาตจำหน่ายสุรา ประเภท 2 ร้าน GAYA Restaurent", "group": "ใบอนุญาตจำหน่ายสุรา ประเภท 2", "form": "ภส.08-02", "freq": "1Y", "rule": "ก่อนครบกำหนด"}}, {"id": "lg-smg-05", "report": "lgreg", "d": {"site": "SAMA Garden", "kind": "license", "name": "หนังสือรับรองการแจ้งจัดตั้งสถานที่จำหน่ายหรือสถานที่สะสมอาหาร", "group": "หนังสือรับรองการแจ้งจัดตั้งสถานที่จำหน่ายหรือสถานที่สะสมอาหาร", "form": "สอ.4", "freq": "1Y", "rule": "ก่อนครบกำหนด", "note": "เพิ่มจากตาราง “สรุป” (อาคารนี้ถูกทำเครื่องหมายไว้) — โปรดตรวจสอบ"}}, {"id": "lg-smg-06", "report": "lgreg", "d": {"site": "SAMA Garden", "kind": "report", "name": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "group": "รายงานผลการฝึกซ้อมดับเพลิงและฝึกซ้อมหนีไฟ ประจำปี", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน"}}, {"id": "lg-smg-07", "report": "lgreg", "d": {"site": "SAMA Garden", "kind": "report", "name": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "group": "รายงานผลการดำเนินงานของเจ้าหน้าที่ความปลอดภัยในการทำงานระดับวิชาชีพ [จป.(ว)]", "form": "", "freq": "", "rule": ""}}, {"id": "lg-smg-08", "report": "lgreg", "d": {"site": "SAMA Garden", "kind": "report", "name": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "group": "แบบแจ้งการฝึกอบรมหรือการพัฒนาความรู้เกี่ยวกับความปลอดภัยในการทำงานเพิ่มเติม", "form": "", "freq": "", "rule": ""}}, {"id": "lg-smg-09", "report": "lgreg", "d": {"site": "SAMA Garden", "kind": "report", "name": "รายละเอียดของสารเคมีอันตรายในสถานประกอบการ (สอ.1)", "group": "รายละเอียดของสารเคมีอันตรายในสถานประกอบการ (สอ.1)", "form": "", "freq": "", "rule": ""}}, {"id": "lg-smg-10", "report": "lgreg", "d": {"site": "SAMA Garden", "kind": "report", "name": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "group": "รายงานผลการตรวจสุขภาพของลูกจ้างที่ผิดปกติหรือเจ็บป่วย (จผส.1)", "form": "", "freq": "1Y", "rule": "ภายในวันที่ 30 ของเดือน", "note": "เพิ่มจากตาราง “สรุป” (อาคารนี้ถูกทำเครื่องหมายไว้) — โปรดตรวจสอบ"}}];
+
+/**
+ * legal.js — LEGAL & STANDARDS › Legal Management
+ *   lg_plan  Legal Plan Schedule     register of licences / reports per building + 12-month due timeline
+ *   lg_insp  Legal Inspection Report results: report submitted, licence renewed, inspection done …
+ *   lg_sum   Legal summary report    compliance %, expiring / overdue, building × obligation matrix
+ * Data lives in the synced collection drrRecords (no Apps Script change needed):
+ *   report "lgreg" = one obligation of one building, report "lgchk" = one result, record "cfg-legal" = seeded flag.
+ * Seeded once from "สรุปใบอนุญาต 1.xlsx" (LG_IMPORT in legal-data.js).
+ */
+const LG_FREQ = { "1M": ["รายเดือน", "Monthly"], "6M": ["ทุก 6 เดือน", "Every 6 months"], "1Y": ["รายปี", "Yearly"], "5Y": ["ทุก 5 ปี", "Every 5 years"], once: ["ครั้งเดียว", "One-time"], "": ["ยังไม่กำหนดรอบ", "Not set"] };
+const LG_KIND = { license: ["ใบอนุญาต", "Licence"], report: ["รายงาน", "Report"], doc: ["เอกสาร", "Document"] };
+const LG_RESULT = { done: ["ดำเนินการ / ส่งแล้ว", "Done / submitted", "ok"], renewed: ["ต่ออายุ / ได้รับใบอนุญาตแล้ว", "Renewed / issued", "ok"], progress: ["อยู่ระหว่างดำเนินการ", "In progress", "warn"], fail: ["ไม่ผ่าน / ต้องแก้ไข", "Failed / to fix", "crit"] };
+const LG_TH_MONTHS = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+const LG_MON = () => mt("ม.ค.,ก.พ.,มี.ค.,เม.ย.,พ.ค.,มิ.ย.,ก.ค.,ส.ค.,ก.ย.,ต.ค.,พ.ย.,ธ.ค.", "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec").split(",");
+const LG_LEAD = 60, LG_SOON = 30; // licence renewal reminder / report "due soon" window (days)
+const LgUI = { site: "ALL", kind: "ALL", st: "ALL", year: new Date().getFullYear(), q: "", res: "ALL", month: "ALL" };
+const LG_CLS = { ok: "var(--st-good)", warn: "var(--st-serious)", crit: "var(--st-critical)", unset: "#94a3b8", none: "#94a3b8" };
+
+const lgItems = () => DB.get("drrRecords", []).filter((r) => r.report === "lgreg" && r.d);
+const lgChecks = () => DB.get("drrRecords", []).filter((r) => r.report === "lgchk" && r.d);
+const lgPad = (n) => String(n).padStart(2, "0");
+const lgDirty = () => { try { localStorage.setItem(DB._key("drrDirty"), "1"); } catch (e) { /* ignore */ } };
+
+/** load the register from the Excel once (stable ids, a synced flag stops other machines from loading it again) */
+function lgEnsureSeed() {
+  if (typeof LG_IMPORT === "undefined") return;
+  const raw = DB.full("drrRecords", []);
+  if (raw.some((r) => r.report === "lgreg" || r.id === "cfg-legal")) return;
+  const by = State.user ? State.user.username : "", byName = mpUserLabel(), at = new Date().toISOString();
+  const all = DB.get("drrRecords", []);
+  LG_IMPORT.forEach((x) => all.push({ id: x.id, report: "lgreg", d: Object.assign({}, x.d), by, byName, at }));
+  all.push({ id: "cfg-legal", report: "cfg", d: { seeded: at }, by, byName, at });
+  DB.set("drrRecords", all); lgDirty();
+}
+
+// ------------------------------------------------------------------ due-date engine ---
+function lgMonths(d) {
+  if (Array.isArray(d.months) && d.months.length) return d.months.map(Number).filter((m) => m >= 1 && m <= 12).sort((a, b) => a - b);
+  const rule = String(d.rule || "");
+  const named = LG_TH_MONTHS.map((n, i) => (rule.includes(n) ? i + 1 : 0)).filter(Boolean);
+  if (d.kind !== "report" && d.kind !== undefined && d.freq !== "1M" && d.freq !== "6M") return [];
+  if (d.freq === "1M") return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  if (d.freq === "6M") return named.length ? named : [1, 7];
+  if (d.freq === "1Y") return named.length ? named.slice(0, 1) : [];
+  return [];
+}
+function lgDue(d, year, m) {
+  const day = Number((String(d.rule || "").match(/วันที่\s*(\d{1,2})/) || [])[1]) || 30, next = /เดือนถัดไป/.test(d.rule || "");
+  let y = year, mm = m + (next ? 1 : 0); if (mm > 12) { mm -= 12; y++; }
+  const last = new Date(Date.UTC(y, mm, 0)).getUTCDate();
+  return `${y}-${lgPad(mm)}-${lgPad(Math.min(day, last))}`;
+}
+const lgDays = (iso) => mpDayNum(iso) - mpDayNum(todayISO());
+/** status of one obligation in a year: {cls, text, next, cells[12]} — cells: null | {s:"done|over|soon|plan|exp", tip} */
+function lgStatus(item, year, checks) {
+  const d = item.d, today = todayISO(), cells = Array(12).fill(null);
+  const mine = (checks || lgChecks()).filter((c) => c.d.itemId === item.id);
+  const okRes = (c) => c.d.result === "done" || c.d.result === "renewed";
+  const fmt = (iso) => mpFmtDate(iso);
+  if (d.kind === "report" && d.freq !== "once") {
+    const months = lgMonths(d);
+    if (!d.freq || !months.length) return { cls: "unset", text: d.freq ? mt("ยังไม่กำหนดเดือนที่ต้องส่ง", "Due month not set") : mt("ยังไม่กำหนดรอบ", "Frequency not set"), next: null, cells };
+    let over = 0, soon = 0, done = 0, due = 0, next = null;
+    months.forEach((m) => {
+      const key = `${year}-${lgPad(m)}`, dd = lgDue(d, year, m), c = mine.find((x) => x.d.period === key && okRes(x)), prog = mine.find((x) => x.d.period === key && x.d.result === "progress");
+      let s;
+      if (c) { s = "done"; done++; }
+      else if (dd < today) { s = "over"; over++; }
+      else if (lgDays(dd) <= LG_SOON) { s = "soon"; soon++; }
+      else s = "plan";
+      if (dd <= today || c) due++;
+      if (!c && dd >= today && (!next || dd < next)) next = dd;
+      cells[m - 1] = { s, tip: `${LG_MON()[m - 1]} · ${mt("กำหนดส่ง", "due")} ${fmt(dd)}${c ? ` · ✔ ${mt("ส่งแล้ว", "done")} ${fmt(c.d.date)}` : prog ? ` · ${mt("อยู่ระหว่างดำเนินการ", "in progress")}` : ""}` };
+    });
+    if (over) return { cls: "crit", text: mt(`ค้างส่ง ${over} รอบ`, `${over} overdue`), next, cells, over, soon, done, due };
+    if (soon) return { cls: "warn", text: `${mt("ครบกำหนด", "Due")} ${fmt(next)}`, next, cells, over, soon, done, due };
+    return { cls: "ok", text: due ? mt(`ส่งแล้ว ${done}/${due} รอบ`, `${done}/${due} done`) : `${mt("รอบถัดไป", "Next")} ${next ? fmt(next) : "–"}`, next, cells, over, soon, done, due };
+  }
+  if (d.freq === "once") {
+    const has = mine.some(okRes) || d.licenseNo || d.issueDate;
+    return has ? { cls: "ok", text: mt("มีแล้ว", "On file"), next: null, cells } : { cls: "none", text: mt("ยังไม่มีข้อมูล", "Not recorded"), next: null, cells };
+  }
+  // licence / document: by expiry date
+  const exp = d.expiryDate;
+  if (!exp) return { cls: d.freq ? "unset" : "unset", text: mt("ยังไม่ระบุวันหมดอายุ", "Expiry date not set"), next: null, cells };
+  const left = lgDays(exp);
+  if (Number(exp.slice(0, 4)) === year) cells[Number(exp.slice(5, 7)) - 1] = { s: left < 0 ? "over" : left <= LG_LEAD ? "soon" : "exp", tip: `${mt("หมดอายุ", "Expires")} ${fmt(exp)}` };
+  if (left < 0) return { cls: "crit", text: `${mt("หมดอายุแล้ว", "Expired")} ${fmt(exp)}`, next: exp, cells };
+  if (left <= LG_LEAD) return { cls: "warn", text: mt(`ต้องต่ออายุ ภายใน ${left} วัน`, `Renew within ${left} days`), next: exp, cells };
+  return { cls: "ok", text: `${mt("ใช้ได้ถึง", "Valid to")} ${fmt(exp)}`, next: exp, cells };
+}
+const lgChip = (st) => `<span class="lg-chip ${st.cls}">${st.cls === "ok" ? "✔" : st.cls === "warn" ? "●" : st.cls === "crit" ? "✖" : "–"} ${mpEsc(st.text)}</span>`;
+function lgSites(items) { return [...new Set((items || lgItems()).map((r) => r.d.site).filter(Boolean))].sort(); }
+function lgFiltered() {
+  const q = LgUI.q.toLowerCase();
+  return lgItems().filter((r) => (LgUI.site === "ALL" || r.d.site === LgUI.site) && (LgUI.kind === "ALL" || r.d.kind === LgUI.kind) && (!q || JSON.stringify(r.d).toLowerCase().includes(q)));
+}
+function lgYears() { const y = new Date().getFullYear(); return [y - 1, y, y + 1]; }
+const lgYearTxt = (y) => y + (DB.get("lang", "th") === "th" ? 543 : 0);
+
+// ------------------------------------------------------------------ shared toolbar ---
+function lgBar(extra, opts) {
+  const o = opts || {}, items = lgItems(), sites = lgSites(items), E = mpEsc;
+  return `<div class="drr-bar lg-bar">
+    <label class="dash-unit"><span>${mt("อาคาร", "Building")}</span><select id="lg-site"><option value="ALL">${mt("ทุกอาคาร", "All buildings")}</option>${sites.map((s) => `<option ${LgUI.site === s ? "selected" : ""}>${E(s)}</option>`).join("")}</select></label>
+    ${o.kind === false ? "" : `<label class="dash-unit"><span>${mt("ประเภท", "Type")}</span><select id="lg-kind"><option value="ALL">${mt("ทั้งหมด", "All")}</option>${Object.keys(LG_KIND).map((k) => `<option value="${k}" ${LgUI.kind === k ? "selected" : ""}>${mt(LG_KIND[k][0], LG_KIND[k][1])}</option>`).join("")}</select></label>`}
+    <label class="dash-unit"><span>${mt("ปี", "Year")}</span><select id="lg-year">${lgYears().map((y) => `<option value="${y}" ${LgUI.year === y ? "selected" : ""}>${lgYearTxt(y)}</option>`).join("")}</select></label>
+    ${o.status ? `<label class="dash-unit"><span>${mt("สถานะ", "Status")}</span><select id="lg-st"><option value="ALL">${mt("ทั้งหมด", "All")}</option><option value="crit" ${LgUI.st === "crit" ? "selected" : ""}>${mt("ค้างส่ง / หมดอายุ", "Overdue / expired")}</option><option value="warn" ${LgUI.st === "warn" ? "selected" : ""}>${mt("ใกล้ครบกำหนด", "Due soon")}</option><option value="ok" ${LgUI.st === "ok" ? "selected" : ""}>${mt("ปกติ", "OK")}</option><option value="unset" ${LgUI.st === "unset" ? "selected" : ""}>${mt("ยังไม่กำหนด / ไม่มีข้อมูล", "Not set")}</option></select></label>` : ""}
+    <input type="search" id="lg-q" placeholder="${mt("ค้นหา…", "Search…")}" value="${E(LgUI.q)}" style="max-width:180px">
+    <span style="flex:1"></span>${extra || ""}</div>`;
+}
+function lgWireBar(root, rerender) {
+  const on = (id, k, num) => { const el = root.querySelector(id); if (el) el.addEventListener("change", () => { LgUI[k] = num ? Number(el.value) : el.value; rerender(); }); };
+  on("#lg-site", "site"); on("#lg-kind", "kind"); on("#lg-year", "year", true); on("#lg-st", "st");
+  const q = root.querySelector("#lg-q"); if (q) { let t; q.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { LgUI.q = q.value; rerender(); const n = root.querySelector("#lg-q"); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 300); }); }
+}
+function lgSaveRecs(list) { const all = DB.get("drrRecords", []); list.forEach((rec) => { const i = all.findIndex((r) => r.id === rec.id); if (i >= 0) all[i] = rec; else all.push(rec); }); DB.set("drrRecords", all); lgDirty(); }
+const lgStamp = (rec) => Object.assign(rec, { by: State.user ? State.user.username : "", byName: mpUserLabel(), at: new Date().toISOString() });
+
+// ------------------------------------------------------------------ Legal Plan Schedule ---
+function renderLegalPlan(root) {
+  lgEnsureSeed();
+  const rerender = () => renderLegalPlan(root), E = mpEsc, adm = Auth.isAdmin(State.user), Y = LgUI.year, checks = lgChecks();
+  let items = lgFiltered().map((r) => ({ r, st: lgStatus(r, Y, checks) }));
+  if (LgUI.st !== "ALL") items = items.filter((x) => (LgUI.st === "unset" ? x.st.cls === "unset" || x.st.cls === "none" : x.st.cls === LgUI.st));
+  const cnt = (c) => items.filter((x) => (c === "unset" ? x.st.cls === "unset" || x.st.cls === "none" : x.st.cls === c)).length;
+  const bySite = {}; items.forEach((x) => { (bySite[x.r.d.site] = bySite[x.r.d.site] || []).push(x); });
+  const korder = { license: 0, doc: 1, report: 2 };
+  const MON = LG_MON(), cur = new Date().getFullYear() === Y ? new Date().getMonth() : -1;
+  const cell = (x, i) => { const c = x.st.cells[i]; if (!c) return `<td class="lg-m ${i === cur ? "now" : ""}"></td>`; const sym = { done: "✔", over: "!", soon: "●", plan: "○", exp: "⧗" }[c.s]; const click = x.r.d.kind === "report" && x.r.d.freq !== "once"; return `<td class="lg-m ${i === cur ? "now" : ""}"><button class="lg-dot ${c.s}" data-tip="${E(c.tip)}" ${click ? `data-rec="${x.r.id}" data-per="${Y}-${lgPad(i + 1)}"` : `data-rec="${x.r.id}"`}>${sym}</button></td>`; };
+  let html = lgBar(`<button class="btn ghost small" id="lg-csv">${mt("ส่งออก CSV", "Export CSV")}</button><button class="btn ghost small" id="lg-sheet">${mt("ส่งไป Google Sheet", "Send to Google Sheet")}</button>${adm ? `<button class="btn small" id="lg-add">+ ${mt("เพิ่มรายการ", "Add item")}</button>` : ""}`, { status: true });
+  html += `<div class="grid cols-5 lg-kpis">${drrTile(mt("รายการทั้งหมด", "Obligations"), items.length, `${lgSites(items.map((x) => x.r)).length} ${mt("อาคาร", "buildings")}`)}${drrTile(mt("ปกติ / ส่งแล้ว", "OK / done"), cnt("ok"), "", "var(--st-good)")}${drrTile(mt("ใกล้ครบกำหนด / ต้องต่ออายุ", "Due soon / renew"), cnt("warn"), `${mt("ภายใน", "within")} ${LG_SOON}–${LG_LEAD} ${mt("วัน", "days")}`, "var(--st-serious)")}${drrTile(mt("ค้างส่ง / หมดอายุ", "Overdue / expired"), cnt("crit"), "", "var(--st-critical)")}${drrTile(mt("ยังไม่กำหนด / ไม่มีข้อมูล", "Not set yet"), cnt("unset"), mt("กด ✎ เพื่อกรอกวันหมดอายุ / รอบส่ง", "edit to add expiry / frequency"), "#64748b")}</div>`;
+  html += `<div class="lg-legend"><span><b class="lg-dot done">✔</b>${mt("ส่ง/ดำเนินการแล้ว", "Done")}</span><span><b class="lg-dot soon">●</b>${mt("ใกล้ครบกำหนด", "Due soon")}</span><span><b class="lg-dot over">!</b>${mt("ค้างส่ง / หมดอายุ", "Overdue / expired")}</span><span><b class="lg-dot plan">○</b>${mt("ตามแผน", "Planned")}</span><span><b class="lg-dot exp">⧗</b>${mt("เดือนที่ใบอนุญาตหมดอายุ", "Licence expiry month")}</span><span class="muted-s">${mt("คลิกช่องเดือนของรายงานเพื่อบันทึกผลการส่ง", "Click a report month to record it")}</span></div>`;
+  const sites = Object.keys(bySite).sort();
+  if (!sites.length) html += `<div class="card"><div class="muted-s">${mt("ไม่พบรายการตามตัวกรอง", "No items match the filters")}</div></div>`;
+  sites.forEach((s) => {
+    const list = bySite[s].sort((a, b) => korder[a.r.d.kind] - korder[b.r.d.kind] || String(a.r.d.name).localeCompare(String(b.r.d.name), "th"));
+    const c = (k) => list.filter((x) => x.st.cls === k).length;
+    html += `<div class="card lg-site"><div class="lg-site-h"><h3>🏢 ${E(s)}</h3><span class="muted-s">${list.length} ${mt("รายการ", "items")}</span>${c("crit") ? `<span class="lg-chip crit">✖ ${c("crit")}</span>` : ""}${c("warn") ? `<span class="lg-chip warn">● ${c("warn")}</span>` : ""}${c("ok") ? `<span class="lg-chip ok">✔ ${c("ok")}</span>` : ""}</div>
+      <div class="acc-scroll" style="overflow-x:auto"><table class="mon-table lg-tbl"><thead><tr><th style="min-width:260px">${mt("รายการใบอนุญาต / รายงาน", "Licence / report")}</th><th>${mt("ความถี่ · ช่วงเวลา", "Frequency · timing")}</th><th>${mt("เลขที่ / วันหมดอายุ", "No. / expiry")}</th><th>${mt("สถานะ", "Status")}</th>${MON.map((m, i) => `<th class="lg-m ${i === cur ? "now" : ""}">${m}</th>`).join("")}<th></th></tr></thead><tbody>
+      ${list.map((x) => { const d = x.r.d; return `<tr><td><span class="lg-kind ${d.kind}">${mt(LG_KIND[d.kind][0], LG_KIND[d.kind][1])}</span> ${E(d.name)}${d.form ? ` <span class="muted-s">(${E(d.form)})</span>` : ""}${d.note ? `<div class="muted-s" style="color:#b45309">${E(d.note)}</div>` : ""}</td>
+        <td><b>${mt(LG_FREQ[d.freq || ""][0], LG_FREQ[d.freq || ""][1])}</b><div class="muted-s">${E(d.rule || "")}</div></td>
+        <td>${d.licenseNo ? E(d.licenseNo) : ""}${d.expiryDate ? `<div class="muted-s">${mt("หมดอายุ", "exp.")} ${mpFmtDate(d.expiryDate)}</div>` : d.kind === "report" ? "" : `<span class="muted-s">–</span>`}</td>
+        <td>${lgChip(x.st)}</td>${MON.map((_, i) => cell(x, i)).join("")}
+        <td class="nowrap"><button class="btn ghost small" data-chk="${x.r.id}" title="${mt("บันทึกผล", "Record result")}">+ ${mt("ผล", "Result")}</button> <button class="btn ghost small" data-edit="${x.r.id}" title="${mt("แก้ไข", "Edit")}">✎</button></td></tr>`; }).join("")}
+      </tbody></table></div></div>`;
+  });
+  root.innerHTML = html;
+  lgWireBar(root, rerender);
+  mpWireTips(root);
+  const byId = (id) => lgItems().find((r) => r.id === id);
+  root.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => lgOpenItem(byId(b.dataset.edit), rerender)));
+  root.querySelectorAll("[data-chk]").forEach((b) => b.addEventListener("click", () => lgOpenCheck({ item: byId(b.dataset.chk) }, rerender)));
+  root.querySelectorAll(".lg-dot[data-rec]").forEach((b) => b.addEventListener("click", () => {
+    const it = byId(b.dataset.rec), per = b.dataset.per, ex = per ? lgChecks().find((c) => c.d.itemId === it.id && c.d.period === per) : null;
+    lgOpenCheck({ item: it, period: per, rec: ex }, rerender);
+  }));
+  const add = root.querySelector("#lg-add"); if (add) add.addEventListener("click", () => lgOpenItem(null, rerender));
+  root.querySelector("#lg-csv").addEventListener("click", () => ExportUtil.exportCSV(items.map((x) => ({ site: x.r.d.site, kind: mt(LG_KIND[x.r.d.kind][0], LG_KIND[x.r.d.kind][1]), name: x.r.d.name, form: x.r.d.form || "", freq: mt(LG_FREQ[x.r.d.freq || ""][0], LG_FREQ[x.r.d.freq || ""][1]), rule: x.r.d.rule || "", licenseNo: x.r.d.licenseNo || "", expiryDate: x.r.d.expiryDate || "", status: x.st.text, next: x.st.next || "" })),
+    [{ key: "site", label: mt("อาคาร", "Building") }, { key: "kind", label: mt("ประเภท", "Type") }, { key: "name", label: mt("รายการ", "Item") }, { key: "form", label: mt("แบบ", "Form") }, { key: "freq", label: mt("ความถี่", "Frequency") }, { key: "rule", label: mt("ช่วงเวลา", "Timing") }, { key: "licenseNo", label: mt("เลขที่", "No.") }, { key: "expiryDate", label: mt("วันหมดอายุ", "Expiry") }, { key: "status", label: mt("สถานะ", "Status") }, { key: "next", label: mt("ครบกำหนดถัดไป", "Next due") }], `Legal_Plan_${Y}`));
+  lgWireSheetBtn(root);
+}
+function lgWireSheetBtn(root) {
+  const b = root.querySelector("#lg-sheet"); if (!b) return;
+  b.addEventListener("click", async () => { b.disabled = true; const old = b.textContent; b.textContent = "…"; try { const n = await drrPushSheets(true); toast(mt(`ส่งไป Google Sheet แล้ว (${n} แท็บ)`, `Sent (${n} tabs)`)); } catch (err) { alert(mt("ส่งไม่สำเร็จ: ", "Failed: ") + (err.message || err)); } b.disabled = false; b.textContent = old; });
+}
+
+/** add / edit one obligation */
+function lgOpenItem(rec, after) {
+  const isNew = !rec, d = rec ? Object.assign({}, rec.d) : { site: LgUI.site !== "ALL" ? LgUI.site : "", kind: "license", freq: "1Y", rule: "ก่อนครบกำหนด" }, E = mpEsc, adm = Auth.isAdmin(State.user);
+  const sites = [...new Set(lgSites().concat(typeof DRR_WW_SITES !== "undefined" ? [] : []))];
+  const months = lgMonths(d), autoM = !(Array.isArray(d.months) && d.months.length);
+  const modal = openModal(`<h3>${isNew ? mt("เพิ่มรายการใบอนุญาต / รายงาน", "Add licence / report") : mt("แก้ไขรายการ", "Edit item")}</h3>
+    <div class="form-grid lg-form">
+      <label>${mt("อาคาร", "Building")} *<input id="lg-f-site" list="lg-sites" value="${E(d.site || "")}" ${!adm && !isNew ? "disabled" : ""}><datalist id="lg-sites">${sites.map((s) => `<option value="${E(s)}">`).join("")}</datalist></label>
+      <label>${mt("ประเภท", "Type")}<select id="lg-f-kind">${Object.keys(LG_KIND).map((k) => `<option value="${k}" ${d.kind === k ? "selected" : ""}>${mt(LG_KIND[k][0], LG_KIND[k][1])}</option>`).join("")}</select></label>
+      <label class="wide">${mt("ชื่อรายการ", "Item")} *<input id="lg-f-name" value="${E(d.name || "")}"></label>
+      <label class="wide">${mt("หัวข้อในตารางสรุป (ใช้รวมรายการเดียวกันของทุกอาคาร)", "Summary group (same item across buildings)")}<input id="lg-f-group" value="${E(d.group || "")}" placeholder="${mt("เว้นว่าง = ใช้ชื่อรายการ", "blank = item name")}"></label>
+      <label>${mt("แบบ / เอกสารอ้างอิง", "Form / reference")}<input id="lg-f-form" value="${E(d.form || "")}"></label>
+      <label>${mt("ความถี่", "Frequency")}<select id="lg-f-freq">${Object.keys(LG_FREQ).map((k) => `<option value="${k}" ${String(d.freq || "") === k ? "selected" : ""}>${mt(LG_FREQ[k][0], LG_FREQ[k][1])}</option>`).join("")}</select></label>
+      <label class="wide">${mt("ช่วงเวลา / กำหนดส่ง", "Timing / deadline")}<input id="lg-f-rule" value="${E(d.rule || "")}" placeholder="${mt("เช่น ภายในวันที่ 30 ของเดือน / ก่อนครบกำหนด", "e.g. by the 30th of the month")}"></label>
+      <div class="wide" id="lg-f-mwrap"><div class="lbl">${mt("เดือนที่ต้องส่ง (สำหรับรายงาน)", "Due months (reports)")} <span class="muted-s">${autoM ? mt("· ระบบคำนวณจากความถี่ — ติ๊กเพื่อกำหนดเอง", "· from the frequency — tick to set") : ""}</span></div>
+        <div class="lg-mpick">${LG_MON().map((m, i) => `<label><input type="checkbox" data-mon="${i + 1}" ${months.includes(i + 1) ? "checked" : ""}> ${m}</label>`).join("")}</div></div>
+      <label>${mt("เลขที่ใบอนุญาต / เลขที่เอกสาร", "Licence / document no.")}<input id="lg-f-no" value="${E(d.licenseNo || "")}"></label>
+      <label>${mt("วันที่ออก", "Issue date")}<input type="date" id="lg-f-issue" value="${E(d.issueDate || "")}"></label>
+      <label>${mt("วันหมดอายุ", "Expiry date")}<input type="date" id="lg-f-exp" value="${E(d.expiryDate || "")}"></label>
+      <label>${mt("ผู้รับผิดชอบ", "Owner")}<input id="lg-f-owner" value="${E(d.owner || "")}"></label>
+      <label class="wide">${mt("หมายเหตุ", "Note")}<textarea id="lg-f-note" rows="2">${E(d.note || "")}</textarea></label>
+    </div>
+    <div class="actions">${!isNew && adm ? `<button class="btn ghost" id="lg-del" style="margin-right:auto;color:var(--st-critical)">${mt("ลบ", "Delete")}</button>` : ""}<button class="btn ghost" id="lg-cancel">${mt("ยกเลิก", "Cancel")}</button><button class="btn" id="lg-save">${mt("บันทึก", "Save")}</button></div>`);
+  const q = (s) => modal.querySelector(s);
+  const mw = () => { q("#lg-f-mwrap").style.display = q("#lg-f-kind").value === "report" ? "" : "none"; };
+  q("#lg-f-kind").addEventListener("change", mw); mw();
+  let touched = false; modal.querySelectorAll("[data-mon]").forEach((c) => c.addEventListener("change", () => { touched = true; }));
+  q("#lg-cancel").addEventListener("click", closeModal);
+  const del = q("#lg-del"); if (del) del.addEventListener("click", () => { if (!confirm(mt("ลบรายการนี้? (ผลการตรวจที่บันทึกไว้ยังอยู่)", "Delete this item?"))) return; DB.set("drrRecords", DB.get("drrRecords", []).filter((r) => r.id !== rec.id)); lgDirty(); closeModal(); after(); });
+  q("#lg-save").addEventListener("click", () => {
+    const nd = Object.assign({}, d, { site: q("#lg-f-site").value.trim() || d.site, kind: q("#lg-f-kind").value, name: q("#lg-f-name").value.trim(), group: q("#lg-f-group").value.trim(), form: q("#lg-f-form").value.trim(), freq: q("#lg-f-freq").value, rule: q("#lg-f-rule").value.trim(), licenseNo: q("#lg-f-no").value.trim(), issueDate: q("#lg-f-issue").value, expiryDate: q("#lg-f-exp").value, owner: q("#lg-f-owner").value.trim(), note: q("#lg-f-note").value.trim() });
+    if (!nd.site || !nd.name) { toast(mt("กรุณากรอกอาคารและชื่อรายการ", "Building and item are required")); return; }
+    if (!nd.group) nd.group = nd.name;
+    if (touched) nd.months = [...modal.querySelectorAll("[data-mon]:checked")].map((c) => Number(c.dataset.mon));
+    lgSaveRecs([lgStamp({ id: rec ? rec.id : uid("lg"), report: "lgreg", d: nd })]);
+    closeModal(); toast(mt("บันทึกแล้ว", "Saved")); after();
+  });
+}
+
+/** record a result (report submitted / licence renewed / inspection) */
+function lgOpenCheck(o, after) {
+  const E = mpEsc, rec = o.rec || null, d = rec ? Object.assign({}, rec.d) : { date: todayISO(), result: "done", itemId: o.item ? o.item.id : "", period: o.period || "" };
+  const items = lgItems(), item0 = items.find((r) => r.id === d.itemId) || o.item || null, site0 = item0 ? item0.d.site : (LgUI.site !== "ALL" ? LgUI.site : (lgSites()[0] || ""));
+  const itemOpts = (site) => items.filter((r) => r.d.site === site).map((r) => `<option value="${r.id}" ${r.id === d.itemId ? "selected" : ""}>${E(mt(LG_KIND[r.d.kind][0], LG_KIND[r.d.kind][1]))} · ${E(String(r.d.name).slice(0, 90))}</option>`).join("");
+  const modal = openModal(`<h3>${rec ? mt("แก้ไขผลการตรวจ / การส่ง", "Edit result") : mt("บันทึกผลการตรวจ / การส่งรายงาน / การต่ออายุ", "Record result")}</h3>
+    <div class="form-grid lg-form">
+      <label>${mt("อาคาร", "Building")}<select id="lc-site">${lgSites().map((s) => `<option ${s === site0 ? "selected" : ""}>${E(s)}</option>`).join("")}</select></label>
+      <label>${mt("วันที่ดำเนินการ / ตรวจ", "Date")} *<input type="date" id="lc-date" value="${E(d.date || "")}"></label>
+      <label class="wide">${mt("รายการ", "Item")} *<select id="lc-item">${itemOpts(site0)}</select></label>
+      <label id="lc-perw">${mt("รอบ (เดือน) ที่ส่ง", "Period (month)")}<input type="month" id="lc-per" value="${E(d.period || "")}"></label>
+      <label>${mt("ผล", "Result")}<select id="lc-res">${Object.keys(LG_RESULT).map((k) => `<option value="${k}" ${d.result === k ? "selected" : ""}>${mt(LG_RESULT[k][0], LG_RESULT[k][1])}</option>`).join("")}</select></label>
+      <label class="lc-lic">${mt("เลขที่ใบอนุญาต (ใหม่)", "Licence no. (new)")}<input id="lc-no" value="${E(d.licenseNo || "")}"></label>
+      <label class="lc-lic">${mt("วันหมดอายุ (ใหม่)", "New expiry date")}<input type="date" id="lc-exp" value="${E(d.expiryDate || "")}"></label>
+      <label class="wide">${mt("เลขที่หนังสือ / ลิงก์เอกสาร (Google Drive)", "Document no. / link")}<input id="lc-doc" value="${E(d.docRef || "")}" placeholder="https://drive.google.com/…"></label>
+      <label class="wide">${mt("รายละเอียด / ข้อพบ / หมายเหตุ", "Details / findings / note")}<textarea id="lc-note" rows="3">${E(d.note || "")}</textarea></label>
+    </div><div class="muted-s lc-hint"></div>
+    <div class="actions">${rec ? `<button class="btn ghost" id="lc-del" style="margin-right:auto;color:var(--st-critical)">${mt("ลบ", "Delete")}</button>` : ""}<button class="btn ghost" id="lc-cancel">${mt("ยกเลิก", "Cancel")}</button><button class="btn" id="lc-save">${mt("บันทึก", "Save")}</button></div>`);
+  const q = (s) => modal.querySelector(s);
+  const sync = () => {
+    const it = items.find((r) => r.id === q("#lc-item").value), isRep = it && it.d.kind === "report" && it.d.freq !== "once";
+    q("#lc-perw").style.display = isRep ? "" : "none"; modal.querySelectorAll(".lc-lic").forEach((x) => { x.style.display = isRep ? "none" : ""; });
+    q(".lc-hint").textContent = !it ? "" : isRep ? mt("รายงาน: เลือกเดือนของรอบที่ส่ง — ช่องเดือนในแผนจะเปลี่ยนเป็น ✔", "Report: choose the period — the plan shows ✔") : mt("ใบอนุญาต/เอกสาร: ถ้าใส่เลขที่และวันหมดอายุใหม่ ระบบจะอัปเดตทะเบียนให้อัตโนมัติ", "Licence: a new number / expiry date updates the register");
+    if (isRep && !q("#lc-per").value) q("#lc-per").value = todayISO().slice(0, 7);
+  };
+  q("#lc-site").addEventListener("change", () => { q("#lc-item").innerHTML = itemOpts(q("#lc-site").value); sync(); });
+  q("#lc-item").addEventListener("change", sync); sync();
+  q("#lc-cancel").addEventListener("click", closeModal);
+  const del = q("#lc-del"); if (del) del.addEventListener("click", () => { if (!confirm(mt("ลบผลนี้?", "Delete this result?"))) return; DB.set("drrRecords", DB.get("drrRecords", []).filter((r) => r.id !== rec.id)); lgDirty(); closeModal(); after(); });
+  q("#lc-save").addEventListener("click", () => {
+    const it = items.find((r) => r.id === q("#lc-item").value); if (!it || !q("#lc-date").value) { toast(mt("กรุณาเลือกรายการและวันที่", "Item and date are required")); return; }
+    const isRep = it.d.kind === "report" && it.d.freq !== "once";
+    const nd = { site: it.d.site, itemId: it.id, itemName: it.d.name, kind: it.d.kind, date: q("#lc-date").value, period: isRep ? q("#lc-per").value : "", result: q("#lc-res").value, licenseNo: isRep ? "" : q("#lc-no").value.trim(), expiryDate: isRep ? "" : q("#lc-exp").value, docRef: q("#lc-doc").value.trim(), note: q("#lc-note").value.trim() };
+    const out = [lgStamp({ id: rec ? rec.id : uid("lgc"), report: "lgchk", d: nd })];
+    if (!isRep && (nd.result === "done" || nd.result === "renewed") && (nd.licenseNo || nd.expiryDate)) {
+      const upd = Object.assign({}, it.d); if (nd.licenseNo) upd.licenseNo = nd.licenseNo; if (nd.expiryDate) upd.expiryDate = nd.expiryDate; upd.issueDate = upd.issueDate && !nd.expiryDate ? upd.issueDate : nd.date;
+      out.push(lgStamp({ id: it.id, report: "lgreg", d: upd }));
+    }
+    lgSaveRecs(out); closeModal(); toast(mt("บันทึกแล้ว", "Saved")); after();
+  });
+}
+
+// ------------------------------------------------------------------ Legal Inspection Report ---
+function renderLegalInspect(root) {
+  lgEnsureSeed();
+  const rerender = () => renderLegalInspect(root), E = mpEsc, Y = LgUI.year, checks = lgChecks(), items = lgItems();
+  // to-do: overdue + due within 30 days (any building in scope)
+  const todo = [];
+  items.filter((r) => LgUI.site === "ALL" || r.d.site === LgUI.site).forEach((r) => {
+    const st = lgStatus(r, Y, checks);
+    if (st.cls === "crit" || st.cls === "warn") {
+      if (r.d.kind === "report" && r.d.freq !== "once") st.cells.forEach((c, i) => { if (c && (c.s === "over" || c.s === "soon")) todo.push({ r, s: c.s, per: `${Y}-${lgPad(i + 1)}`, due: lgDue(r.d, Y, i + 1) }); });
+      else todo.push({ r, s: st.cls === "crit" ? "over" : "soon", per: "", due: r.d.expiryDate });
+    }
+  });
+  todo.sort((a, b) => String(a.due).localeCompare(String(b.due)));
+  const q = LgUI.q.toLowerCase();
+  const recs = checks.filter((c) => (LgUI.site === "ALL" || c.d.site === LgUI.site) && String(c.d.date || "").slice(0, 4) === String(Y) && (LgUI.res === "ALL" || c.d.result === LgUI.res) && (!q || JSON.stringify(c.d).toLowerCase().includes(q))).sort((a, b) => String(b.d.date).localeCompare(String(a.d.date)));
+  const n = (k) => recs.filter((c) => c.d.result === k).length;
+  let html = lgBar(`<label class="dash-unit"><span>${mt("ผล", "Result")}</span><select id="lg-res"><option value="ALL">${mt("ทั้งหมด", "All")}</option>${Object.keys(LG_RESULT).map((k) => `<option value="${k}" ${LgUI.res === k ? "selected" : ""}>${mt(LG_RESULT[k][0], LG_RESULT[k][1])}</option>`).join("")}</select></label><button class="btn ghost small" id="lg-csv">${mt("ส่งออก CSV", "Export CSV")}</button><button class="btn small" id="lg-add">+ ${mt("บันทึกผล", "Record result")}</button>`, { kind: false });
+  html += `<div class="grid cols-4 lg-kpis">${drrTile(mt("บันทึกผลในปีนี้", "Results this year"), recs.length, lgYearTxt(Y))}${drrTile(mt("ส่งแล้ว / ต่ออายุแล้ว", "Done / renewed"), n("done") + n("renewed"), "", "var(--st-good)")}${drrTile(mt("อยู่ระหว่างดำเนินการ", "In progress"), n("progress"), "", "var(--st-serious)")}${drrTile(mt("ไม่ผ่าน / ต้องแก้ไข", "Failed / to fix"), n("fail"), "", "var(--st-critical)")}</div>`;
+  html += `<div class="card"><h3>${mt("ต้องดำเนินการ (ค้างส่ง / ครบกำหนดภายใน 30 วัน / ใบอนุญาตใกล้หมดอายุ)", "To do (overdue / due in 30 days / licences to renew)")} <span class="muted-s">(${todo.length})</span></h3>
+    ${todo.length ? `<div class="acc-scroll" style="max-height:300px"><table class="mon-table"><thead><tr><th>${mt("กำหนด", "Due")}</th><th>${mt("อาคาร", "Building")}</th><th>${mt("รายการ", "Item")}</th><th>${mt("รอบ", "Period")}</th><th>${mt("สถานะ", "Status")}</th><th></th></tr></thead><tbody>
+    ${todo.slice(0, 80).map((x) => `<tr><td class="nowrap">${x.due ? mpFmtDate(x.due) : "–"}</td><td>${E(x.r.d.site)}</td><td>${E(x.r.d.name)}</td><td class="nowrap">${x.per ? LG_MON()[Number(x.per.slice(5)) - 1] + " " + lgYearTxt(Number(x.per.slice(0, 4))) : mt("ต่ออายุ", "Renewal")}</td><td>${x.s === "over" ? `<span class="lg-chip crit">✖ ${x.per ? mt("ค้างส่ง", "Overdue") : mt("หมดอายุแล้ว", "Expired")}</span>` : `<span class="lg-chip warn">● ${mt("ใกล้ครบกำหนด", "Due soon")}</span>`}</td><td><button class="btn small" data-todo="${x.r.id}" data-per="${x.per}">${mt("บันทึกผล", "Record")}</button></td></tr>`).join("")}
+    </tbody></table></div>` : `<div class="muted-s">✔ ${mt("ไม่มีรายการค้าง", "Nothing pending")}</div>`}</div>`;
+  html += `<div class="card" style="margin-top:14px;"><h3>${mt("ผลการตรวจ / การส่งรายงาน / การต่ออายุ", "Inspection & submission results")} <span class="muted-s">(${recs.length})</span></h3>
+    ${recs.length ? `<div class="acc-scroll" style="max-height:520px"><table class="mon-table"><thead><tr><th>${mt("วันที่", "Date")}</th><th>${mt("อาคาร", "Building")}</th><th>${mt("รายการ", "Item")}</th><th>${mt("รอบ", "Period")}</th><th>${mt("ผล", "Result")}</th><th>${mt("เลขที่ / หมดอายุ", "No. / expiry")}</th><th>${mt("เอกสาร", "Document")}</th><th>${mt("หมายเหตุ", "Note")}</th><th>${mt("โดย", "By")}</th><th></th></tr></thead><tbody>
+    ${recs.map((c) => { const r = LG_RESULT[c.d.result] || LG_RESULT.done, doc = String(c.d.docRef || ""); return `<tr><td class="nowrap">${mpFmtDate(c.d.date)}</td><td>${E(c.d.site)}</td><td>${E(c.d.itemName || "")}</td><td class="nowrap">${c.d.period ? LG_MON()[Number(c.d.period.slice(5)) - 1] + " " + lgYearTxt(Number(c.d.period.slice(0, 4))) : "–"}</td><td><span class="lg-chip ${r[2]}">${mt(r[0], r[1])}</span></td><td>${E(c.d.licenseNo || "")}${c.d.expiryDate ? `<div class="muted-s">${mpFmtDate(c.d.expiryDate)}</div>` : ""}</td><td>${/^https?:\/\//.test(doc) ? `<a href="${E(doc)}" target="_blank" rel="noopener">${mt("เปิด", "Open")} ↗</a>` : E(doc)}</td><td>${E(c.d.note || "")}</td><td class="muted-s">${E(c.byName || c.by || "")}</td><td><button class="btn ghost small" data-edit="${c.id}">✎</button></td></tr>`; }).join("")}
+    </tbody></table></div>` : `<div class="muted-s">${mt("ยังไม่มีผลที่บันทึกในปีนี้ — กด “+ บันทึกผล” หรือคลิกช่องเดือนในหน้า Legal Plan Schedule", "No results yet this year")}</div>`}</div>`;
+  root.innerHTML = html;
+  lgWireBar(root, rerender);
+  const rs = root.querySelector("#lg-res"); if (rs) rs.addEventListener("change", () => { LgUI.res = rs.value; rerender(); });
+  root.querySelector("#lg-add").addEventListener("click", () => lgOpenCheck({}, rerender));
+  root.querySelectorAll("[data-todo]").forEach((b) => b.addEventListener("click", () => lgOpenCheck({ item: items.find((r) => r.id === b.dataset.todo), period: b.dataset.per }, rerender)));
+  root.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => lgOpenCheck({ rec: checks.find((c) => c.id === b.dataset.edit) }, rerender)));
+  root.querySelector("#lg-csv").addEventListener("click", () => ExportUtil.exportCSV(recs.map((c) => ({ date: c.d.date, site: c.d.site, item: c.d.itemName || "", period: c.d.period || "", result: mt((LG_RESULT[c.d.result] || LG_RESULT.done)[0], (LG_RESULT[c.d.result] || LG_RESULT.done)[1]), licenseNo: c.d.licenseNo || "", expiryDate: c.d.expiryDate || "", docRef: c.d.docRef || "", note: c.d.note || "", by: c.byName || "" })),
+    ["date", "site", "item", "period", "result", "licenseNo", "expiryDate", "docRef", "note", "by"].map((k) => ({ key: k, label: k })), `Legal_Inspection_${Y}`));
+}
+
+// ------------------------------------------------------------------ Legal summary report ---
+function renderLegalSummary(root) {
+  lgEnsureSeed();
+  const rerender = () => renderLegalSummary(root), E = mpEsc, Y = LgUI.year, checks = lgChecks();
+  const all = lgItems().filter((r) => (LgUI.site === "ALL" || r.d.site === LgUI.site) && (LgUI.kind === "ALL" || r.d.kind === LgUI.kind)).map((r) => ({ r, st: lgStatus(r, Y, checks) }));
+  const assess = all.filter((x) => x.st.cls !== "unset" && x.st.cls !== "none"), okN = assess.filter((x) => x.st.cls === "ok").length;
+  const comp = assess.length ? (okN / assess.length) * 100 : null;
+  const lic = all.filter((x) => x.r.d.kind !== "report" && x.r.d.expiryDate);
+  const expired = lic.filter((x) => lgDays(x.r.d.expiryDate) < 0).length, expSoon = lic.filter((x) => { const n = lgDays(x.r.d.expiryDate); return n >= 0 && n <= LG_LEAD; }).length;
+  const rep = all.filter((x) => x.r.d.kind === "report"), over = rep.reduce((a, x) => a + (x.st.over || 0), 0), dueN = rep.reduce((a, x) => a + (x.st.due || 0), 0), doneN = rep.reduce((a, x) => a + (x.st.done || 0), 0);
+  const unset = all.length - assess.length;
+  const sites = lgSites(all.map((x) => x.r));
+  const bySite = sites.map((s) => { const l = all.filter((x) => x.r.d.site === s), a = l.filter((x) => x.st.cls !== "unset" && x.st.cls !== "none"), ok = a.filter((x) => x.st.cls === "ok").length; return { s, n: l.length, ok, warn: l.filter((x) => x.st.cls === "warn").length, crit: l.filter((x) => x.st.cls === "crit").length, unset: l.length - a.length, pct: a.length ? (ok / a.length) * 100 : null }; });
+  // matrix: summary group × building
+  const groups = [...new Set(all.map((x) => (x.r.d.kind === "report" ? "2" : x.r.d.kind === "doc" ? "1" : "0") + "|" + (x.r.d.group || x.r.d.name)))].sort((a, b) => a.localeCompare(b, "th"));
+  const cellOf = (g, s) => all.filter((x) => x.r.d.site === s && (x.r.d.group || x.r.d.name) === g);
+  const sym = { ok: "✔", warn: "●", crit: "✖", unset: "–", none: "–" };
+  const worst = (l) => (l.some((x) => x.st.cls === "crit") ? "crit" : l.some((x) => x.st.cls === "warn") ? "warn" : l.some((x) => x.st.cls === "ok") ? "ok" : "unset");
+  // upcoming 60 days
+  const up = [];
+  all.forEach((x) => {
+    const d = x.r.d;
+    if (d.kind === "report" && d.freq !== "once") lgMonths(d).forEach((m) => { [Y, Y + 1].forEach((yy) => { const dd = lgDue(d, yy, m), left = lgDays(dd); const done = checks.some((c) => c.d.itemId === x.r.id && c.d.period === `${yy}-${lgPad(m)}` && (c.d.result === "done" || c.d.result === "renewed")); if (left >= -LG_SOON && left <= LG_LEAD && !done) up.push({ x, date: dd, what: mt("ส่งรายงาน รอบ", "Report for") + " " + LG_MON()[m - 1], left }); }); });
+    else if (d.expiryDate) { const left = lgDays(d.expiryDate); if (left <= LG_LEAD) up.push({ x, date: d.expiryDate, what: mt("ใบอนุญาตหมดอายุ", "Licence expires"), left }); }
+  });
+  up.sort((a, b) => a.date.localeCompare(b.date));
+  const pctCol = (p) => (p === null ? "#94a3b8" : p >= 85 ? "var(--st-good)" : p >= 70 ? "var(--st-serious)" : "var(--st-critical)");
+  let html = lgBar(`<button class="btn ghost small" id="lg-sheet">${mt("ส่งไป Google Sheet", "Send to Google Sheet")}</button><button class="btn ghost small" data-go="lg_plan">Legal Plan Schedule ›</button>`, {});
+  html += `<div class="grid cols-5 lg-kpis">${drrTile(mt("ความสอดคล้องกฎหมาย", "Legal compliance"), comp === null ? "–" : comp.toFixed(1) + "%", `${okN}/${assess.length} ${mt("รายการปกติ", "items OK")}`, pctCol(comp))}${drrTile(mt("ใบอนุญาตหมดอายุ", "Licences expired"), expired, "", expired ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("ใกล้หมดอายุ (≤60 วัน)", "Expiring ≤60 days"), expSoon, "", expSoon ? "var(--st-serious)" : "var(--st-good)")}${drrTile(mt("รายงานค้างส่ง (รอบ)", "Reports overdue"), over, `${mt("ส่งแล้ว", "done")} ${doneN}/${dueN} ${mt("รอบที่ถึงกำหนด", "due")}`, over ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("ยังไม่กำหนด / ไม่มีข้อมูล", "Not set yet"), unset, mt("ไม่นับในความสอดคล้อง", "excluded from compliance"), "#64748b")}</div>`;
+  html += `<div class="grid cols-2"><div class="card"><h3>${mt("สรุปรายอาคาร", "By building")}</h3><table class="mon-table"><thead><tr><th>${mt("อาคาร", "Building")}</th><th class="num">${mt("รายการ", "Items")}</th><th class="num" style="color:var(--st-good)">✔</th><th class="num" style="color:var(--st-serious)">●</th><th class="num" style="color:var(--st-critical)">✖</th><th class="num">–</th><th style="min-width:150px">${mt("ความสอดคล้อง", "Compliance")}</th></tr></thead><tbody>
+    ${bySite.map((b) => `<tr><td>${E(b.s)}</td><td class="num">${b.n}</td><td class="num">${b.ok}</td><td class="num">${b.warn || ""}</td><td class="num"><b style="color:var(--st-critical)">${b.crit || ""}</b></td><td class="num muted-s">${b.unset || ""}</td><td><div class="lg-bar-c"><i style="width:${b.pct || 0}%;background:${pctCol(b.pct)}"></i></div><b style="color:${pctCol(b.pct)}">${b.pct === null ? "–" : b.pct.toFixed(0) + "%"}</b></td></tr>`).join("")}
+    </tbody></table></div>
+    <div class="card"><h3>${mt("ที่จะครบกำหนด / หมดอายุ ใน 60 วัน (และค้างไม่เกิน 30 วัน)", "Due / expiring in 60 days")} <span class="muted-s">(${up.length})</span></h3>
+    ${up.length ? `<div class="acc-scroll" style="max-height:330px"><table class="mon-table"><thead><tr><th>${mt("วันที่", "Date")}</th><th>${mt("อาคาร", "Building")}</th><th>${mt("รายการ", "Item")}</th><th>${mt("เหลือ", "Left")}</th></tr></thead><tbody>${up.slice(0, 60).map((u) => `<tr><td class="nowrap">${mpFmtDate(u.date)}</td><td>${E(u.x.r.d.site)}</td><td>${E(u.what)} · ${E(u.x.r.d.name)}</td><td class="num"><b style="color:${u.left < 0 ? "var(--st-critical)" : u.left <= LG_SOON ? "var(--st-serious)" : "inherit"}">${u.left < 0 ? mt(`เกิน ${-u.left} วัน`, `${-u.left}d late`) : u.left + " " + mt("วัน", "d")}</b></td></tr>`).join("")}</tbody></table></div>` : `<div class="muted-s">✔ ${mt("ไม่มีรายการใน 60 วันข้างหน้า", "Nothing in the next 60 days")}</div>`}</div></div>`;
+  html += `<div class="card" style="margin-top:14px;"><h3>${mt("ตารางสรุปใบอนุญาต / รายงาน แยกตามอาคาร", "Licences / reports by building")} <span class="muted-s">· ${lgYearTxt(Y)}</span></h3>
+    <div class="lg-legend"><span><b class="lg-sq ok">✔</b>${mt("ปกติ / ส่งแล้ว", "OK")}</span><span><b class="lg-sq warn">●</b>${mt("ใกล้ครบกำหนด", "Due soon")}</span><span><b class="lg-sq crit">✖</b>${mt("ค้างส่ง / หมดอายุ", "Overdue / expired")}</span><span><b class="lg-sq unset">–</b>${mt("ยังไม่กำหนด", "Not set")}</span><span class="muted-s">${mt("ช่องว่าง = ไม่เกี่ยวข้องกับอาคารนี้", "blank = not applicable")}</span></div>
+    <div style="overflow-x:auto"><table class="mon-table lg-matrix"><thead><tr><th style="min-width:280px">${mt("รายการ", "Item")}</th>${sites.map((s) => `<th class="ctr">${E(s)}</th>`).join("")}</tr></thead><tbody>
+    ${groups.map((gk) => { const g = gk.slice(2), k = gk[0]; return `<tr><td>${k === "2" ? `<span class="lg-kind report">${mt("รายงาน", "Report")}</span>` : k === "1" ? `<span class="lg-kind doc">${mt("เอกสาร", "Doc")}</span>` : `<span class="lg-kind license">${mt("ใบอนุญาต", "Licence")}</span>`} ${E(g)}</td>${sites.map((s) => { const l = cellOf(g, s); if (!l.length) return `<td></td>`; const w = worst(l); return `<td class="ctr"><span class="lg-sq ${w}" data-tip="${E(s)}\n${E(l.map((x) => x.r.d.name + " — " + x.st.text).join("\n"))}">${sym[w]}</span></td>`; }).join("")}</tr>`; }).join("")}
+    </tbody></table></div></div>`;
+  root.innerHTML = html;
+  lgWireBar(root, rerender); mpWireTips(root); lgWireSheetBtn(root);
+  root.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.go)));
+}
+
+/** readable Google Sheet tabs */
+function lgSheets(out) {
+  const Y = new Date().getFullYear(), checks = lgChecks();
+  out.push({ key: "lgreg", title: "Legal_Register", columns: ["id", "site", "kind", "name", "group", "form", "freq", "rule", "months", "licenseNo", "issueDate", "expiryDate", "status", "nextDue", "owner", "note", "editedBy", "editedAt"],
+    rows: lgItems().map((r) => { const d = r.d, st = lgStatus(r, Y, checks); return [r.id, d.site, d.kind, d.name, d.group || "", d.form || "", d.freq || "", d.rule || "", lgMonths(d).join(","), d.licenseNo || "", d.issueDate || "", d.expiryDate || "", st.text, st.next || "", d.owner || "", d.note || "", r.byName || r.by || "", r.at || ""]; }) });
+  out.push({ key: "lgchk", title: "Legal_Inspection", columns: ["id", "date", "site", "itemId", "item", "period", "result", "licenseNo", "expiryDate", "docRef", "note", "editedBy", "editedAt"],
+    rows: checks.sort((a, b) => String(a.d.date).localeCompare(String(b.d.date))).map((c) => [c.id, c.d.date, c.d.site, c.d.itemId, c.d.itemName || "", c.d.period || "", c.d.result, c.d.licenseNo || "", c.d.expiryDate || "", c.d.docRef || "", c.d.note || "", c.byName || c.by || "", c.at || ""]) });
+}
+
+/**
+ * quality.js — LEGAL & STANDARDS › Quality Standard Control
+ *   one set of pages per standard (ISO 9001, ISO 14001 + any the admin adds in Settings):
+ *     qs:<std>:plan    Audit Plan                    (records "qsplan")
+ *     qs:<std>:report  Audit report (findings / CAR) (records "qsfind")
+ *     qs:<std>:doc     List document control & update(records "qsdoc")
+ *   qs_overview = "Quality Standard Control" summary of every standard (DATA RECORD REPORT › Quality (Q)).
+ * Stored in drrRecords (synced). The list of standards is the synced record "cfg-qs".
+ * site "*" = applies to every building (BBG Group) and is visible to every user.
+ */
+const QS_DEFAULT = [{ id: "iso9001", name: "ISO 9001", title: "Quality Management System (QMS)" }, { id: "iso14001", name: "ISO 14001", title: "Environmental Management System (EMS)" }];
+const QS_AUDIT_TYPES = [["internal", "Internal Audit (ตรวจติดตามภายใน)"], ["external", "External Audit — Certification Body"], ["surveillance", "Surveillance Audit"], ["recert", "Recertification Audit"], ["mr", "Management Review (ทบทวนฝ่ายบริหาร)"], ["supplier", "Supplier / 2nd-party Audit"]];
+const QS_PLAN_ST = { planned: ["ตามแผน", "Planned", "plan"], done: ["ตรวจแล้ว", "Done", "ok"], postponed: ["เลื่อน", "Postponed", "warn"], cancelled: ["ยกเลิก", "Cancelled", "unset"] };
+const QS_FIND_TYPES = { major: ["Major NC", "ข้อบกพร่องหลัก", "crit"], minor: ["Minor NC", "ข้อบกพร่องย่อย", "warn"], obs: ["Observation", "ข้อสังเกต", "plan"], ofi: ["OFI", "โอกาสในการปรับปรุง", "plan"], good: ["Good point", "จุดเด่น", "ok"] };
+const QS_FIND_ST = { open: ["เปิด", "Open", "crit"], progress: ["กำลังแก้ไข", "In progress", "warn"], closed: ["ปิดแล้ว", "Closed", "ok"] };
+const QS_DOC_TYPES = ["Quality Manual / Policy", "Procedure (PR)", "Work Instruction (WI)", "Form (FM)", "Record", "External document", "Plan / Objective"];
+const QS_DOC_ST = { active: ["ใช้งาน", "Active", "ok"], revision: ["อยู่ระหว่างแก้ไข", "Under revision", "warn"], obsolete: ["ยกเลิกใช้", "Obsolete", "unset"] };
+const QsUI = { year: new Date().getFullYear(), site: "ALL", st: "ALL", q: "" };
+
+function qsStandards() { const r = DB.get("drrRecords", []).find((x) => x.id === "cfg-qs"); return r && Array.isArray(r.d.list) && r.d.list.length ? r.d.list : QS_DEFAULT; }
+function qsSaveStandards(list) {
+  const all = DB.get("drrRecords", []), i = all.findIndex((r) => r.id === "cfg-qs");
+  const rec = { id: "cfg-qs", report: "cfg", d: { list }, by: State.user ? State.user.username : "", byName: mpUserLabel(), at: new Date().toISOString() };
+  if (i >= 0) all[i] = rec; else all.push(rec);
+  DB.set("drrRecords", all);
+}
+const qsRecs = (rep, std) => DB.get("drrRecords", []).filter((r) => r.report === rep && r.d && (!std || r.d.std === std));
+const qsSiteName = (s) => (s === "*" || !s ? mt("ทุกอาคาร (BBG Group)", "All buildings (BBG Group)") : s);
+function qsSiteOptions(cur) {
+  const fromLegal = typeof lgSites === "function" ? lgSites() : [], fromUnits = DB.get("mpUnits", []).map((u) => u.name), fromRecs = DB.get("drrRecords", []).filter((r) => /^qs/.test(r.report) && r.d && r.d.site && r.d.site !== "*").map((r) => r.d.site);
+  const list = [...new Set(fromLegal.concat(fromUnits, fromRecs))].filter((s) => Scope.nameOk(s)).sort();
+  return (Scope.active() ? "" : `<option value="*" ${cur === "*" || !cur ? "selected" : ""}>${mpEsc(qsSiteName("*"))}</option>`) + list.map((s) => `<option ${cur === s ? "selected" : ""}>${mpEsc(s)}</option>`).join("");
+}
+const qsChip = (map, k) => { const v = map[k] || Object.values(map)[0]; return `<span class="lg-chip ${v[2]}">${mt(v[0], v[1])}</span>`; };
+const qsFindChip = (k) => { const v = QS_FIND_TYPES[k] || QS_FIND_TYPES.minor; return `<span class="lg-chip ${v[2]}" title="${mpEsc(v[1])}">${v[0]}</span>`; };
+const qsYear = (iso) => Number(String(iso || "").slice(0, 4));
+function qsNextReview(d) {
+  if (d.nextReview) return d.nextReview;
+  const m = Number(d.reviewMonths) || 0; if (!m || !d.effective) return "";
+  const [y, mo, da] = d.effective.split("-").map(Number), t = new Date(Date.UTC(y, mo - 1 + m, da));
+  return t.toISOString().slice(0, 10);
+}
+function qsSave(rec) { rec.by = State.user ? State.user.username : ""; rec.byName = mpUserLabel(); rec.at = new Date().toISOString(); const all = DB.get("drrRecords", []), i = all.findIndex((r) => r.id === rec.id); if (i >= 0) all[i] = rec; else all.push(rec); DB.set("drrRecords", all); if (typeof lgDirty === "function") lgDirty(); }
+function qsDel(id) { DB.set("drrRecords", DB.get("drrRecords", []).filter((r) => r.id !== id)); if (typeof lgDirty === "function") lgDirty(); }
+
+/** page title for the topbar */
+function qsTitle(view) {
+  const [, id, page] = view.split(":"), s = qsStandards().find((x) => x.id === id) || { name: id, title: "" };
+  const P = { plan: ["Audit Plan", "แผนการตรวจประเมิน (Internal / External audit)"], report: ["Audit report", "ผลการตรวจประเมิน · ข้อบกพร่อง (NC) · การแก้ไข (CAR)"], doc: ["List document control & update", "ทะเบียนควบคุมเอกสาร · Revision · การทบทวน"] }[page] || ["", ""];
+  return [`${s.name} — ${P[0]}`, `${s.title ? s.title + " · " : ""}${P[1]}`];
+}
+
+function qsBar(extra, opts) {
+  const o = opts || {}, y = new Date().getFullYear();
+  return `<div class="drr-bar lg-bar">
+    ${o.year === false ? "" : `<label class="dash-unit"><span>${mt("ปี", "Year")}</span><select id="qs-year">${[y - 1, y, y + 1].map((v) => `<option value="${v}" ${QsUI.year === v ? "selected" : ""}>${lgYearTxt(v)}</option>`).join("")}</select></label>`}
+    <label class="dash-unit"><span>${mt("อาคาร", "Building")}</span><select id="qs-site"><option value="ALL">${mt("ทั้งหมด", "All")}</option>${qsSiteOptions(QsUI.site === "ALL" ? "__" : QsUI.site)}</select></label>
+    ${o.st ? `<label class="dash-unit"><span>${mt("สถานะ", "Status")}</span><select id="qs-st"><option value="ALL">${mt("ทั้งหมด", "All")}</option>${Object.keys(o.st).map((k) => `<option value="${k}" ${QsUI.st === k ? "selected" : ""}>${mt(o.st[k][0], o.st[k][1])}</option>`).join("")}</select></label>` : ""}
+    <input type="search" id="qs-q" placeholder="${mt("ค้นหา…", "Search…")}" value="${mpEsc(QsUI.q)}" style="max-width:180px"><span style="flex:1"></span>${extra || ""}</div>`;
+}
+function qsWireBar(root, rerender) {
+  const on = (id, k, num) => { const el = root.querySelector(id); if (el) el.addEventListener("change", () => { QsUI[k] = num ? Number(el.value) : el.value; rerender(); }); };
+  on("#qs-year", "year", true); on("#qs-site", "site"); on("#qs-st", "st");
+  const q = root.querySelector("#qs-q"); if (q) { let t; q.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { QsUI.q = q.value; rerender(); const n = root.querySelector("#qs-q"); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } }, 300); }); }
+}
+const qsSiteOk = (r) => QsUI.site === "ALL" || r.d.site === QsUI.site || (QsUI.site !== "*" && r.d.site === "*");
+const qsQ = (r) => !QsUI.q || JSON.stringify(r.d).toLowerCase().includes(QsUI.q.toLowerCase());
+
+function renderQs(root, view) {
+  const [, id, page] = view.split(":"), std = qsStandards().find((x) => x.id === id);
+  if (!std) { root.innerHTML = `<div class="card">${mt("ไม่พบมาตรฐานนี้ — ตรวจสอบในหน้า ตั้งค่า", "Standard not found")}</div>`; return; }
+  if (QsUI._view !== view) { QsUI.st = "ALL"; QsUI._view = view; }
+  if (page === "plan") return qsRenderPlan(root, std, view);
+  if (page === "report") return qsRenderFindings(root, std, view);
+  return qsRenderDocs(root, std, view);
+}
+const qsTabs = (std, cur) => `<div class="qs-tabs">${[["plan", "Audit Plan"], ["report", "Audit report"], ["doc", "List document control & update"]].map((p) => `<button class="${cur === p[0] ? "on" : ""}" data-go="qs:${std.id}:${p[0]}">${p[1]}</button>`).join("")}<span class="muted-s">${mpEsc(std.name)} · ${mpEsc(std.title || "")}</span></div>`;
+function qsWireTabs(root) { root.querySelectorAll(".qs-tabs [data-go]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.go))); }
+
+// ------------------------------------------------------------------ Audit Plan ---
+function qsRenderPlan(root, std, view) {
+  const rerender = () => renderQs(root, view), E = mpEsc, Y = QsUI.year, today = todayISO();
+  let recs = qsRecs("qsplan", std.id).filter((r) => qsYear(r.d.date) === Y && qsSiteOk(r) && qsQ(r));
+  if (QsUI.st !== "ALL") recs = recs.filter((r) => (r.d.status || "planned") === QsUI.st);
+  recs.sort((a, b) => String(a.d.date).localeCompare(String(b.d.date)));
+  const isOver = (r) => (r.d.status || "planned") === "planned" && r.d.date < today;
+  const done = recs.filter((r) => r.d.status === "done").length, over = recs.filter(isOver).length, soon = recs.filter((r) => (r.d.status || "planned") === "planned" && r.d.date >= today && lgDays(r.d.date) <= 30).length;
+  const finds = qsRecs("qsfind", std.id);
+  const MON = LG_MON(), cur = new Date().getFullYear() === Y ? new Date().getMonth() : -1;
+  let html = qsTabs(std, "plan") + qsBar(`<button class="btn ghost small" id="qs-csv">${mt("ส่งออก CSV", "Export CSV")}</button><button class="btn small" id="qs-add">+ ${mt("เพิ่มแผนการตรวจ", "Add audit")}</button>`, { st: QS_PLAN_ST });
+  html += `<div class="grid cols-4 lg-kpis">${drrTile(mt("แผนการตรวจทั้งปี", "Audits planned"), recs.length, lgYearTxt(Y))}${drrTile(mt("ตรวจแล้ว", "Done"), done, recs.length ? ((done / recs.length) * 100).toFixed(0) + "%" : "", "var(--st-good)")}${drrTile(mt("ภายใน 30 วัน", "Within 30 days"), soon, "", "var(--st-serious)")}${drrTile(mt("เลยกำหนด ยังไม่ตรวจ", "Overdue"), over, "", over ? "var(--st-critical)" : "var(--st-good)")}</div>`;
+  html += `<div class="card"><h3>${mt("ตารางแผนการตรวจประเมิน", "Audit schedule")} ${E(std.name)} · ${lgYearTxt(Y)}</h3>
+    ${recs.length ? `<div style="overflow-x:auto"><table class="mon-table lg-tbl"><thead><tr><th>${mt("ประเภท", "Type")}</th><th style="min-width:200px">${mt("ขอบเขต / กระบวนการ / ข้อกำหนด", "Scope / process / clauses")}</th><th>${mt("อาคาร", "Building")}</th><th>${mt("ผู้ตรวจ", "Auditor")}</th><th>${mt("วันที่", "Date")}</th><th>${mt("สถานะ", "Status")}</th>${MON.map((m, i) => `<th class="lg-m ${i === cur ? "now" : ""}">${m}</th>`).join("")}<th>NC</th><th></th></tr></thead><tbody>
+    ${recs.map((r) => { const d = r.d, m = Number(String(d.date).slice(5, 7)) - 1, st = isOver(r) ? "over" : d.status === "done" ? "done" : d.status === "cancelled" ? "" : d.status === "postponed" ? "soon" : "plan"; const nc = finds.filter((f) => f.d.planId === r.id && (f.d.ftype === "major" || f.d.ftype === "minor")); const ncOpen = nc.filter((f) => f.d.status !== "closed").length;
+      return `<tr><td>${E((QS_AUDIT_TYPES.find((t) => t[0] === d.type) || ["", d.type || ""])[1])}</td><td>${E(d.scope || "")}${d.clauses ? `<div class="muted-s">${mt("ข้อกำหนด", "Clauses")} ${E(d.clauses)}</div>` : ""}</td><td>${E(qsSiteName(d.site))}</td><td>${E(d.auditor || "")}${d.auditee ? `<div class="muted-s">${mt("ผู้รับการตรวจ", "Auditee")}: ${E(d.auditee)}</div>` : ""}</td><td class="nowrap">${mpFmtDate(d.date)}${d.actualDate ? `<div class="muted-s">${mt("ตรวจจริง", "Actual")} ${mpFmtDate(d.actualDate)}</div>` : ""}</td><td>${isOver(r) ? `<span class="lg-chip crit">${mt("เลยกำหนด", "Overdue")}</span>` : qsChip(QS_PLAN_ST, d.status || "planned")}</td>
+      ${MON.map((_, i) => `<td class="lg-m ${i === cur ? "now" : ""}">${i === m && st ? `<span class="lg-dot ${st}" data-tip="${E(mpFmtDate(d.date))}">${{ done: "✔", over: "!", soon: "●", plan: "○" }[st]}</span>` : ""}</td>`).join("")}
+      <td class="num">${nc.length ? `<b style="color:${ncOpen ? "var(--st-critical)" : "var(--st-good)"}">${nc.length}</b><span class="muted-s">${ncOpen ? ` (${ncOpen} ${mt("เปิด", "open")})` : ""}</span>` : ""}</td><td class="nowrap"><button class="btn ghost small" data-find="${r.id}" title="${mt("บันทึกผลการตรวจ / NC", "Record findings")}">+ NC</button> <button class="btn ghost small" data-edit="${r.id}">✎</button></td></tr>`; }).join("")}
+    </tbody></table></div>` : `<div class="muted-s">${mt("ยังไม่มีแผนการตรวจในปีนี้ — กด “+ เพิ่มแผนการตรวจ”", "No audits planned this year")}</div>`}</div>`;
+  root.innerHTML = html;
+  qsWireTabs(root); qsWireBar(root, rerender); mpWireTips(root);
+  root.querySelector("#qs-add").addEventListener("click", () => qsOpenPlan(std, null, rerender));
+  root.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => qsOpenPlan(std, recs.find((r) => r.id === b.dataset.edit), rerender)));
+  root.querySelectorAll("[data-find]").forEach((b) => b.addEventListener("click", () => qsOpenFinding(std, null, rerender, b.dataset.find)));
+  root.querySelector("#qs-csv").addEventListener("click", () => ExportUtil.exportCSV(recs.map((r) => Object.assign({ site: qsSiteName(r.d.site) }, r.d)), ["type", "scope", "clauses", "site", "auditor", "auditee", "date", "actualDate", "status", "note"].map((k) => ({ key: k, label: k })), `${std.name}_AuditPlan_${Y}`));
+}
+function qsOpenPlan(std, rec, after) {
+  const E = mpEsc, d = rec ? Object.assign({}, rec.d) : { std: std.id, type: "internal", status: "planned", date: todayISO(), site: QsUI.site !== "ALL" ? QsUI.site : "*" };
+  const modal = openModal(`<h3>${std.name} · ${rec ? mt("แก้ไขแผนการตรวจ", "Edit audit") : mt("เพิ่มแผนการตรวจ", "Add audit")}</h3>
+    <div class="form-grid lg-form">
+      <label>${mt("ประเภทการตรวจ", "Audit type")}<select id="qp-type">${QS_AUDIT_TYPES.map((t) => `<option value="${t[0]}" ${d.type === t[0] ? "selected" : ""}>${E(t[1])}</option>`).join("")}</select></label>
+      <label>${mt("อาคาร / หน่วยงาน", "Building / unit")}<select id="qp-site">${qsSiteOptions(d.site)}</select></label>
+      <label class="wide">${mt("ขอบเขต / กระบวนการที่ตรวจ", "Scope / process audited")} *<input id="qp-scope" value="${E(d.scope || "")}"></label>
+      <label>${mt("ข้อกำหนดที่ตรวจ (Clause)", "Clauses")}<input id="qp-cl" value="${E(d.clauses || "")}" placeholder="4.1, 6.1, 7.5 …"></label>
+      <label>${mt("ผู้ตรวจ (Auditor / CB)", "Auditor / CB")}<input id="qp-aud" value="${E(d.auditor || "")}"></label>
+      <label>${mt("ผู้รับการตรวจ (Auditee)", "Auditee")}<input id="qp-auditee" value="${E(d.auditee || "")}"></label>
+      <label>${mt("วันที่ตามแผน", "Planned date")} *<input type="date" id="qp-date" value="${E(d.date || "")}"></label>
+      <label>${mt("สถานะ", "Status")}<select id="qp-st">${Object.keys(QS_PLAN_ST).map((k) => `<option value="${k}" ${(d.status || "planned") === k ? "selected" : ""}>${mt(QS_PLAN_ST[k][0], QS_PLAN_ST[k][1])}</option>`).join("")}</select></label>
+      <label>${mt("วันที่ตรวจจริง", "Actual date")}<input type="date" id="qp-act" value="${E(d.actualDate || "")}"></label>
+      <label class="wide">${mt("หมายเหตุ / สรุปผล", "Note / summary")}<textarea id="qp-note" rows="2">${E(d.note || "")}</textarea></label>
+    </div>
+    <div class="actions">${rec ? `<button class="btn ghost" id="qp-del" style="margin-right:auto;color:var(--st-critical)">${mt("ลบ", "Delete")}</button>` : ""}<button class="btn ghost" id="qp-cancel">${mt("ยกเลิก", "Cancel")}</button><button class="btn" id="qp-save">${mt("บันทึก", "Save")}</button></div>`);
+  const q = (s) => modal.querySelector(s);
+  q("#qp-cancel").addEventListener("click", closeModal);
+  const del = q("#qp-del"); if (del) del.addEventListener("click", () => { if (confirm(mt("ลบแผนการตรวจนี้?", "Delete this audit?"))) { qsDel(rec.id); closeModal(); after(); } });
+  q("#qp-save").addEventListener("click", () => {
+    const nd = Object.assign(d, { std: std.id, type: q("#qp-type").value, site: q("#qp-site").value, scope: q("#qp-scope").value.trim(), clauses: q("#qp-cl").value.trim(), auditor: q("#qp-aud").value.trim(), auditee: q("#qp-auditee").value.trim(), date: q("#qp-date").value, status: q("#qp-st").value, actualDate: q("#qp-act").value, note: q("#qp-note").value.trim() });
+    if (!nd.scope || !nd.date) { toast(mt("กรุณากรอกขอบเขตและวันที่", "Scope and date are required")); return; }
+    if (nd.status === "done" && !nd.actualDate) nd.actualDate = nd.date;
+    qsSave({ id: rec ? rec.id : uid("qsp"), report: "qsplan", d: nd }); closeModal(); toast(mt("บันทึกแล้ว", "Saved")); after();
+  });
+}
+
+// ------------------------------------------------------------------ Audit report (findings) ---
+function qsRenderFindings(root, std, view) {
+  const rerender = () => renderQs(root, view), E = mpEsc, Y = QsUI.year, today = todayISO();
+  let recs = qsRecs("qsfind", std.id).filter((r) => qsYear(r.d.date) === Y && qsSiteOk(r) && qsQ(r));
+  if (QsUI.st !== "ALL") recs = recs.filter((r) => (r.d.status || "open") === QsUI.st);
+  recs.sort((a, b) => String(b.d.date).localeCompare(String(a.d.date)));
+  const plans = qsRecs("qsplan", std.id);
+  const n = (t) => recs.filter((r) => r.d.ftype === t).length, nc = recs.filter((r) => r.d.ftype === "major" || r.d.ftype === "minor");
+  const open = nc.filter((r) => r.d.status !== "closed"), late = open.filter((r) => r.d.due && r.d.due < today), closedPct = nc.length ? ((nc.length - open.length) / nc.length) * 100 : null;
+  let html = qsTabs(std, "report") + qsBar(`<button class="btn ghost small" id="qs-csv">${mt("ส่งออก CSV", "Export CSV")}</button><button class="btn small" id="qs-add">+ ${mt("บันทึกผลการตรวจ / NC", "Add finding")}</button>`, { st: QS_FIND_ST });
+  html += `<div class="grid cols-5 lg-kpis">${drrTile("Major NC", n("major"), mt("ข้อบกพร่องหลัก", "major"), n("major") ? "var(--st-critical)" : "")}${drrTile("Minor NC", n("minor"), mt("ข้อบกพร่องย่อย", "minor"), n("minor") ? "var(--st-serious)" : "")}${drrTile("Observation / OFI", n("obs") + n("ofi"), mt("ข้อสังเกต / โอกาสปรับปรุง", "observations"))}${drrTile(mt("NC ที่ยังเปิด", "Open NC"), open.length, late.length ? `${late.length} ${mt("เกินกำหนดแก้ไข", "past due")}` : "", open.length ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("ปิด NC แล้ว", "NC closed"), closedPct === null ? "–" : closedPct.toFixed(0) + "%", `${nc.length - open.length}/${nc.length}`, "var(--st-good)")}</div>`;
+  html += `<div class="card"><h3>${mt("ผลการตรวจประเมิน / ข้อบกพร่อง และการแก้ไข (CAR)", "Findings & corrective actions")} <span class="muted-s">(${recs.length})</span></h3>
+    ${recs.length ? `<div class="acc-scroll" style="max-height:620px"><table class="mon-table"><thead><tr><th>${mt("วันที่", "Date")}</th><th>${mt("ประเภท", "Type")}</th><th>${mt("ข้อกำหนด", "Clause")}</th><th style="min-width:220px">${mt("รายละเอียดข้อพบ", "Finding")}</th><th style="min-width:180px">${mt("สาเหตุ / การแก้ไข", "Cause / action")}</th><th>${mt("อาคาร", "Building")}</th><th>${mt("ผู้รับผิดชอบ · กำหนด", "Owner · due")}</th><th>${mt("สถานะ", "Status")}</th><th></th></tr></thead><tbody>
+    ${recs.map((r) => { const d = r.d, lateR = d.status !== "closed" && d.due && d.due < today; return `<tr><td class="nowrap">${mpFmtDate(d.date)}</td><td>${qsFindChip(d.ftype)}</td><td>${E(d.clause || "")}</td><td>${E(d.detail || "")}${d.planId ? `<div class="muted-s">${E((plans.find((p) => p.id === d.planId) || { d: {} }).d.scope || "")}</div>` : ""}</td><td>${d.cause ? `<div><b>${mt("สาเหตุ", "Cause")}:</b> ${E(d.cause)}</div>` : ""}${d.action ? `<div><b>${mt("แก้ไข", "Action")}:</b> ${E(d.action)}</div>` : ""}</td><td>${E(qsSiteName(d.site))}</td><td>${E(d.owner || "")}${d.due ? `<div class="muted-s" ${lateR ? 'style="color:var(--st-critical);font-weight:700"' : ""}>${mpFmtDate(d.due)}${lateR ? " · " + mt("เกินกำหนด", "late") : ""}</div>` : ""}</td><td>${qsChip(QS_FIND_ST, d.status || "open")}${d.closedDate ? `<div class="muted-s">${mpFmtDate(d.closedDate)}</div>` : ""}</td><td><button class="btn ghost small" data-edit="${r.id}">✎</button></td></tr>`; }).join("")}
+    </tbody></table></div>` : `<div class="muted-s">${mt("ยังไม่มีผลการตรวจในปีนี้", "No findings this year")}</div>`}</div>`;
+  root.innerHTML = html;
+  qsWireTabs(root); qsWireBar(root, rerender);
+  root.querySelector("#qs-add").addEventListener("click", () => qsOpenFinding(std, null, rerender));
+  root.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => qsOpenFinding(std, recs.find((r) => r.id === b.dataset.edit), rerender)));
+  root.querySelector("#qs-csv").addEventListener("click", () => ExportUtil.exportCSV(recs.map((r) => Object.assign({}, r.d, { ftype: (QS_FIND_TYPES[r.d.ftype] || [""])[0], site: qsSiteName(r.d.site) })), ["date", "ftype", "clause", "detail", "cause", "action", "site", "owner", "due", "status", "closedDate", "verifiedBy"].map((k) => ({ key: k, label: k })), `${std.name}_AuditReport_${Y}`));
+}
+function qsOpenFinding(std, rec, after, planId) {
+  const E = mpEsc, plans = qsRecs("qsplan", std.id).sort((a, b) => String(b.d.date).localeCompare(String(a.d.date)));
+  const p0 = planId ? plans.find((p) => p.id === planId) : null;
+  const d = rec ? Object.assign({}, rec.d) : { std: std.id, ftype: "minor", status: "open", date: p0 ? p0.d.actualDate || p0.d.date : todayISO(), planId: planId || "", site: p0 ? p0.d.site : QsUI.site !== "ALL" ? QsUI.site : "*" };
+  const modal = openModal(`<h3>${std.name} · ${rec ? mt("แก้ไขผลการตรวจ", "Edit finding") : mt("บันทึกผลการตรวจ / NC", "Add finding")}</h3>
+    <div class="form-grid lg-form">
+      <label class="wide">${mt("จากการตรวจ (แผน)", "From audit")}<select id="qf-plan"><option value="">—</option>${plans.map((p) => `<option value="${p.id}" ${d.planId === p.id ? "selected" : ""}>${mpFmtDate(p.d.date)} · ${E(p.d.scope || "")}</option>`).join("")}</select></label>
+      <label>${mt("วันที่พบ", "Date")} *<input type="date" id="qf-date" value="${E(d.date || "")}"></label>
+      <label>${mt("ประเภทข้อพบ", "Finding type")}<select id="qf-type">${Object.keys(QS_FIND_TYPES).map((k) => `<option value="${k}" ${d.ftype === k ? "selected" : ""}>${QS_FIND_TYPES[k][0]} — ${QS_FIND_TYPES[k][1]}</option>`).join("")}</select></label>
+      <label>${mt("ข้อกำหนด (Clause)", "Clause")}<input id="qf-cl" value="${E(d.clause || "")}"></label>
+      <label>${mt("อาคาร / หน่วยงาน", "Building / unit")}<select id="qf-site">${qsSiteOptions(d.site)}</select></label>
+      <label class="wide">${mt("รายละเอียดข้อพบ", "Finding")} *<textarea id="qf-det" rows="3">${E(d.detail || "")}</textarea></label>
+      <label class="wide">${mt("สาเหตุ (Root cause)", "Root cause")}<textarea id="qf-cause" rows="2">${E(d.cause || "")}</textarea></label>
+      <label class="wide">${mt("การแก้ไข / ป้องกัน (Corrective action)", "Corrective action")}<textarea id="qf-act" rows="2">${E(d.action || "")}</textarea></label>
+      <label>${mt("ผู้รับผิดชอบ", "Owner")}<input id="qf-own" value="${E(d.owner || "")}"></label>
+      <label>${mt("กำหนดแก้ไขเสร็จ", "Due date")}<input type="date" id="qf-due" value="${E(d.due || "")}"></label>
+      <label>${mt("สถานะ", "Status")}<select id="qf-st">${Object.keys(QS_FIND_ST).map((k) => `<option value="${k}" ${(d.status || "open") === k ? "selected" : ""}>${mt(QS_FIND_ST[k][0], QS_FIND_ST[k][1])}</option>`).join("")}</select></label>
+      <label>${mt("วันที่ปิด", "Closed date")}<input type="date" id="qf-closed" value="${E(d.closedDate || "")}"></label>
+      <label>${mt("ผู้ทวนสอบ", "Verified by")}<input id="qf-ver" value="${E(d.verifiedBy || "")}"></label>
+    </div>
+    <div class="actions">${rec ? `<button class="btn ghost" id="qf-del" style="margin-right:auto;color:var(--st-critical)">${mt("ลบ", "Delete")}</button>` : ""}<button class="btn ghost" id="qf-cancel">${mt("ยกเลิก", "Cancel")}</button><button class="btn" id="qf-save">${mt("บันทึก", "Save")}</button></div>`);
+  const q = (s) => modal.querySelector(s);
+  q("#qf-plan").addEventListener("change", () => { const p = plans.find((x) => x.id === q("#qf-plan").value); if (p) { q("#qf-site").innerHTML = qsSiteOptions(p.d.site); } });
+  q("#qf-cancel").addEventListener("click", closeModal);
+  const del = q("#qf-del"); if (del) del.addEventListener("click", () => { if (confirm(mt("ลบผลการตรวจนี้?", "Delete this finding?"))) { qsDel(rec.id); closeModal(); after(); } });
+  q("#qf-save").addEventListener("click", () => {
+    const nd = Object.assign(d, { std: std.id, planId: q("#qf-plan").value, date: q("#qf-date").value, ftype: q("#qf-type").value, clause: q("#qf-cl").value.trim(), site: q("#qf-site").value, detail: q("#qf-det").value.trim(), cause: q("#qf-cause").value.trim(), action: q("#qf-act").value.trim(), owner: q("#qf-own").value.trim(), due: q("#qf-due").value, status: q("#qf-st").value, closedDate: q("#qf-closed").value, verifiedBy: q("#qf-ver").value.trim() });
+    if (!nd.date || !nd.detail) { toast(mt("กรุณากรอกวันที่และรายละเอียด", "Date and finding are required")); return; }
+    if (nd.status === "closed" && !nd.closedDate) nd.closedDate = todayISO();
+    qsSave({ id: rec ? rec.id : uid("qsf"), report: "qsfind", d: nd }); closeModal(); toast(mt("บันทึกแล้ว", "Saved")); after();
+  });
+}
+
+// ------------------------------------------------------------------ Document control ---
+function qsRenderDocs(root, std, view) {
+  const rerender = () => renderQs(root, view), E = mpEsc, today = todayISO();
+  let recs = qsRecs("qsdoc", std.id).filter((r) => qsSiteOk(r) && qsQ(r));
+  if (QsUI.st !== "ALL") recs = recs.filter((r) => (r.d.status || "active") === QsUI.st);
+  recs.sort((a, b) => String(a.d.code).localeCompare(String(b.d.code)));
+  const rv = (r) => qsNextReview(r.d), active = recs.filter((r) => (r.d.status || "active") === "active");
+  const over = active.filter((r) => rv(r) && rv(r) < today), soon = active.filter((r) => rv(r) && rv(r) >= today && lgDays(rv(r)) <= 30);
+  const upd30 = recs.filter((r) => r.d.effective && lgDays(r.d.effective) >= -30 && lgDays(r.d.effective) <= 0);
+  let html = qsTabs(std, "doc") + qsBar(`<button class="btn ghost small" id="qs-csv">${mt("ส่งออก CSV", "Export CSV")}</button><button class="btn small" id="qs-add">+ ${mt("เพิ่มเอกสาร", "Add document")}</button>`, { year: false, st: QS_DOC_ST });
+  html += `<div class="grid cols-5 lg-kpis">${drrTile(mt("เอกสารที่ใช้งาน", "Active documents"), active.length, `${recs.length} ${mt("ทั้งหมด", "total")}`)}${drrTile(mt("ถึงรอบทบทวน ≤30 วัน", "Review ≤30 days"), soon.length, "", soon.length ? "var(--st-serious)" : "")}${drrTile(mt("เลยรอบทบทวน", "Review overdue"), over.length, "", over.length ? "var(--st-critical)" : "var(--st-good)")}${drrTile(mt("อยู่ระหว่างแก้ไข", "Under revision"), recs.filter((r) => r.d.status === "revision").length, "", "var(--st-serious)")}${drrTile(mt("อัปเดตใน 30 วัน", "Updated in 30 days"), upd30.length, "", "var(--series-1)")}</div>`;
+  html += `<div class="card"><h3>${mt("ทะเบียนควบคุมเอกสาร (Document Master List)", "Document master list")} <span class="muted-s">(${recs.length})</span></h3>
+    ${recs.length ? `<div class="acc-scroll" style="max-height:640px"><table class="mon-table"><thead><tr><th>${mt("รหัส", "Code")}</th><th style="min-width:220px">${mt("ชื่อเอกสาร", "Title")}</th><th>${mt("ประเภท", "Type")}</th><th class="ctr">Rev.</th><th>${mt("วันที่มีผล", "Effective")}</th><th>${mt("ทบทวนครั้งถัดไป", "Next review")}</th><th>${mt("ผู้รับผิดชอบ", "Owner")}</th><th>${mt("อาคาร", "Building")}</th><th>${mt("สถานะ", "Status")}</th><th></th></tr></thead><tbody>
+    ${recs.map((r) => { const d = r.d, nx = rv(r), lateR = (d.status || "active") === "active" && nx && nx < today, soonR = !lateR && nx && lgDays(nx) <= 30 && (d.status || "active") === "active"; const link = String(d.link || ""); return `<tr><td class="nowrap"><b>${E(d.code || "")}</b></td><td>${/^https?:\/\//.test(link) ? `<a href="${E(link)}" target="_blank" rel="noopener">${E(d.title || "")} ↗</a>` : E(d.title || "")}${d.change ? `<div class="muted-s">${mt("แก้ไขล่าสุด", "Last change")}: ${E(d.change)}</div>` : ""}</td><td>${E(d.dtype || "")}</td><td class="ctr"><b>${E(d.rev || "")}</b></td><td class="nowrap">${d.effective ? mpFmtDate(d.effective) : "–"}</td><td class="nowrap">${nx ? `<span style="${lateR ? "color:var(--st-critical);font-weight:700" : soonR ? "color:var(--st-serious);font-weight:700" : ""}">${mpFmtDate(nx)}</span>${lateR ? `<div class="muted-s" style="color:var(--st-critical)">${mt("เลยรอบทบทวน", "overdue")}</div>` : ""}` : "–"}</td><td>${E(d.owner || "")}</td><td>${E(qsSiteName(d.site))}</td><td>${qsChip(QS_DOC_ST, d.status || "active")}</td><td class="nowrap"><button class="btn ghost small" data-upd="${r.id}" title="${mt("อัปเดต Revision", "Update revision")}">⟳ ${mt("อัปเดต", "Update")}</button> <button class="btn ghost small" data-edit="${r.id}">✎</button></td></tr>`; }).join("")}
+    </tbody></table></div>` : `<div class="muted-s">${mt("ยังไม่มีเอกสาร — กด “+ เพิ่มเอกสาร”", "No documents yet")}</div>`}</div>`;
+  root.innerHTML = html;
+  qsWireTabs(root); qsWireBar(root, rerender);
+  root.querySelector("#qs-add").addEventListener("click", () => qsOpenDoc(std, null, rerender));
+  root.querySelectorAll("[data-edit]").forEach((b) => b.addEventListener("click", () => qsOpenDoc(std, recs.find((r) => r.id === b.dataset.edit), rerender)));
+  root.querySelectorAll("[data-upd]").forEach((b) => b.addEventListener("click", () => qsOpenDoc(std, recs.find((r) => r.id === b.dataset.upd), rerender, true)));
+  root.querySelector("#qs-csv").addEventListener("click", () => ExportUtil.exportCSV(recs.map((r) => Object.assign({}, r.d, { nextReview: qsNextReview(r.d), site: qsSiteName(r.d.site) })), ["code", "title", "dtype", "rev", "effective", "reviewMonths", "nextReview", "owner", "site", "status", "change", "link"].map((k) => ({ key: k, label: k })), `${std.name}_DocumentControl`));
+}
+function qsOpenDoc(std, rec, after, bump) {
+  const E = mpEsc, d = rec ? Object.assign({}, rec.d) : { std: std.id, dtype: QS_DOC_TYPES[1], rev: "00", status: "active", reviewMonths: 12, effective: todayISO(), site: QsUI.site !== "ALL" ? QsUI.site : "*" };
+  const hist = Array.isArray(d.history) ? d.history : [];
+  const nextRev = (r) => { const m = String(r || "").match(/^(\D*)(\d+)$/); return m ? m[1] + String(Number(m[2]) + 1).padStart(m[2].length, "0") : r; };
+  const modal = openModal(`<h3>${std.name} · ${bump ? mt("อัปเดตเอกสาร (Revision ใหม่)", "Update document (new revision)") : rec ? mt("แก้ไขเอกสาร", "Edit document") : mt("เพิ่มเอกสาร", "Add document")}</h3>
+    <div class="form-grid lg-form">
+      <label>${mt("รหัสเอกสาร", "Code")} *<input id="qd-code" value="${E(d.code || "")}" ${bump ? "disabled" : ""}></label>
+      <label>${mt("ประเภท", "Type")}<select id="qd-type" ${bump ? "disabled" : ""}>${QS_DOC_TYPES.map((t) => `<option ${d.dtype === t ? "selected" : ""}>${E(t)}</option>`).join("")}</select></label>
+      <label class="wide">${mt("ชื่อเอกสาร", "Title")} *<input id="qd-title" value="${E(d.title || "")}" ${bump ? "disabled" : ""}></label>
+      <label>Revision<input id="qd-rev" value="${E(bump ? nextRev(d.rev) : d.rev || "")}"></label>
+      <label>${mt("วันที่มีผลบังคับใช้", "Effective date")}<input type="date" id="qd-eff" value="${E(bump ? todayISO() : d.effective || "")}"></label>
+      <label>${mt("รอบทบทวน (เดือน)", "Review cycle (months)")}<input type="number" min="0" id="qd-rm" value="${E(d.reviewMonths === undefined ? 12 : d.reviewMonths)}"></label>
+      <label>${mt("กำหนดทบทวนครั้งถัดไป (เว้นว่าง = คำนวณ)", "Next review (blank = auto)")}<input type="date" id="qd-nx" value="${E(bump ? "" : d.nextReview || "")}"></label>
+      <label>${mt("ผู้รับผิดชอบ", "Owner")}<input id="qd-own" value="${E(d.owner || "")}"></label>
+      <label>${mt("อาคาร / หน่วยงาน", "Building / unit")}<select id="qd-site">${qsSiteOptions(d.site)}</select></label>
+      <label>${mt("สถานะ", "Status")}<select id="qd-st">${Object.keys(QS_DOC_ST).map((k) => `<option value="${k}" ${(d.status || "active") === k ? "selected" : ""}>${mt(QS_DOC_ST[k][0], QS_DOC_ST[k][1])}</option>`).join("")}</select></label>
+      <label class="wide">${mt("ลิงก์เอกสาร (Google Drive)", "Document link")}<input id="qd-link" value="${E(d.link || "")}" placeholder="https://drive.google.com/…"></label>
+      <label class="wide">${mt("รายละเอียดการแก้ไข / อัปเดต", "Change description")}${bump ? " *" : ""}<textarea id="qd-chg" rows="2">${E(bump ? "" : d.change || "")}</textarea></label>
+    </div>
+    ${hist.length ? `<div class="mon-t" style="margin-top:8px;">${mt("ประวัติการแก้ไข", "Revision history")}</div><table class="mon-table"><thead><tr><th>Rev.</th><th>${mt("วันที่", "Date")}</th><th>${mt("รายละเอียด", "Change")}</th><th>${mt("โดย", "By")}</th></tr></thead><tbody>${hist.slice().reverse().map((h) => `<tr><td>${E(h.rev)}</td><td>${h.date ? mpFmtDate(h.date) : ""}</td><td>${E(h.note || "")}</td><td class="muted-s">${E(h.by || "")}</td></tr>`).join("")}</tbody></table>` : ""}
+    <div class="actions">${rec && !bump ? `<button class="btn ghost" id="qd-del" style="margin-right:auto;color:var(--st-critical)">${mt("ลบ", "Delete")}</button>` : ""}<button class="btn ghost" id="qd-cancel">${mt("ยกเลิก", "Cancel")}</button><button class="btn" id="qd-save">${mt("บันทึก", "Save")}</button></div>`);
+  const q = (s) => modal.querySelector(s);
+  q("#qd-cancel").addEventListener("click", closeModal);
+  const del = q("#qd-del"); if (del) del.addEventListener("click", () => { if (confirm(mt("ลบเอกสารนี้ออกจากทะเบียน?", "Delete this document?"))) { qsDel(rec.id); closeModal(); after(); } });
+  q("#qd-save").addEventListener("click", () => {
+    const nd = Object.assign(d, { std: std.id, code: q("#qd-code").value.trim(), dtype: q("#qd-type").value, title: q("#qd-title").value.trim(), rev: q("#qd-rev").value.trim(), effective: q("#qd-eff").value, reviewMonths: Number(q("#qd-rm").value) || 0, nextReview: q("#qd-nx").value, owner: q("#qd-own").value.trim(), site: q("#qd-site").value, status: q("#qd-st").value, link: q("#qd-link").value.trim(), change: q("#qd-chg").value.trim() });
+    if (!nd.code || !nd.title) { toast(mt("กรุณากรอกรหัสและชื่อเอกสาร", "Code and title are required")); return; }
+    if (bump && !nd.change) { toast(mt("กรุณาระบุรายละเอียดการแก้ไข", "Describe the change")); return; }
+    const isNewRev = !rec || bump || (rec && rec.d.rev !== nd.rev);
+    nd.history = hist.concat(isNewRev ? [{ rev: nd.rev, date: nd.effective, note: nd.change || (rec ? "" : mt("ขึ้นทะเบียนเอกสาร", "Registered")), by: mpUserLabel() }] : []);
+    qsSave({ id: rec ? rec.id : uid("qsd"), report: "qsdoc", d: nd }); closeModal(); toast(mt("บันทึกแล้ว", "Saved")); after();
+  });
+}
+
+// ------------------------------------------------------------------ overview (DATA RECORD REPORT › Q) ---
+function renderQsOverview(root) {
+  const E = mpEsc, Y = new Date().getFullYear(), today = todayISO(), adm = Auth.isAdmin(State.user);
+  const cards = qsStandards().map((s) => {
+    const plans = qsRecs("qsplan", s.id).filter((r) => qsYear(r.d.date) === Y), done = plans.filter((r) => r.d.status === "done").length;
+    const next = plans.filter((r) => (r.d.status || "planned") === "planned" && r.d.date >= today).sort((a, b) => a.d.date.localeCompare(b.d.date))[0];
+    const overP = plans.filter((r) => (r.d.status || "planned") === "planned" && r.d.date < today).length;
+    const f = qsRecs("qsfind", s.id), openMaj = f.filter((r) => r.d.ftype === "major" && r.d.status !== "closed").length, openMin = f.filter((r) => r.d.ftype === "minor" && r.d.status !== "closed").length, lateF = f.filter((r) => (r.d.ftype === "major" || r.d.ftype === "minor") && r.d.status !== "closed" && r.d.due && r.d.due < today).length;
+    const docs = qsRecs("qsdoc", s.id).filter((r) => (r.d.status || "active") === "active"), docOver = docs.filter((r) => { const n = qsNextReview(r.d); return n && n < today; }).length;
+    const pct = plans.length ? (done / plans.length) * 100 : null, bad = openMaj || overP || lateF || docOver;
+    return `<div class="card qs-card ${bad ? "bad" : ""}"><div class="qs-card-h"><div><h3>${E(s.name)}</h3><div class="muted-s">${E(s.title || "")}</div></div>${bad ? `<span class="lg-chip crit">✖ ${mt("ต้องติดตาม", "Follow up")}</span>` : `<span class="lg-chip ok">✔ ${mt("ปกติ", "OK")}</span>`}</div>
+      <div class="qs-stats">
+        <div><span>${mt("การตรวจตามแผน", "Audits")} ${lgYearTxt(Y)}</span><b>${done}/${plans.length}</b><div class="lg-bar-c"><i style="width:${pct || 0}%;background:var(--st-good)"></i></div>${overP ? `<small style="color:var(--st-critical)">${overP} ${mt("เลยกำหนด", "overdue")}</small>` : ""}</div>
+        <div><span>${mt("ตรวจครั้งถัดไป", "Next audit")}</span><b>${next ? mpFmtDate(next.d.date) : "–"}</b>${next ? `<small>${E(next.d.scope || "")}</small>` : ""}</div>
+        <div><span>${mt("NC ที่ยังเปิด", "Open NC")}</span><b style="color:${openMaj + openMin ? "var(--st-critical)" : "var(--st-good)"}">${openMaj + openMin}</b><small>Major ${openMaj} · Minor ${openMin}${lateF ? ` · <b style="color:var(--st-critical)">${lateF} ${mt("เกินกำหนด", "late")}</b>` : ""}</small></div>
+        <div><span>${mt("เอกสารที่ใช้งาน", "Active documents")}</span><b>${docs.length}</b><small ${docOver ? 'style="color:var(--st-critical);font-weight:700"' : ""}>${docOver} ${mt("เลยรอบทบทวน", "review overdue")}</small></div>
+      </div>
+      <div class="v3d-act"><button class="btn small" data-go="qs:${s.id}:plan">Audit Plan ›</button><button class="btn ghost small" data-go="qs:${s.id}:report">Audit report ›</button><button class="btn ghost small" data-go="qs:${s.id}:doc">Document control ›</button></div></div>`;
+  }).join("");
+  root.innerHTML = `<div class="drr-bar lg-bar"><span class="muted-s">${mt("สรุปการควบคุมมาตรฐานคุณภาพทุกมาตรฐาน — เพิ่มมาตรฐานอื่นได้ที่ ⚙ ตั้งค่า", "All quality standards — add more in ⚙ Settings")}</span><span style="flex:1"></span>${adm ? `<button class="btn ghost small" id="qs-manage">⚙ ${mt("จัดการมาตรฐาน", "Manage standards")}</button>` : ""}</div><div class="grid cols-2">${cards}</div>`;
+  root.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.go)));
+  const m = root.querySelector("#qs-manage"); if (m) m.addEventListener("click", () => openSettingsModal());
+}
+
+/** Settings modal section (admin): list of standards */
+function qsSettingsHtml() {
+  return `<div class="settings-section"><h4>${mt("มาตรฐาน — Quality Standard Control", "Standards — Quality Standard Control")}</h4><div class="desc" style="margin-bottom:8px;">${mt("เพิ่ม / แก้ไขมาตรฐานที่ต้องควบคุม (แต่ละมาตรฐานจะมี Audit Plan · Audit report · List document control & update)", "Add / edit standards (each gets Audit Plan · Audit report · Document control)")}</div>
+    <div id="qs-std-list">${qsStandards().map((s) => qsStdRow(s)).join("")}</div>
+    <div style="display:flex;gap:8px;margin-top:6px;"><button class="btn ghost small" type="button" id="qs-std-add">+ ${mt("เพิ่มมาตรฐาน", "Add standard")}</button><button class="btn small" type="button" id="qs-std-save">${mt("บันทึกมาตรฐาน", "Save standards")}</button></div></div>`;
+}
+const qsStdRow = (s) => `<div class="qs-std-row" data-id="${mpEsc(s.id || "")}"><input class="qs-n" value="${mpEsc(s.name || "")}" placeholder="ISO 45001"><input class="qs-t" value="${mpEsc(s.title || "")}" placeholder="${mt("ชื่อเต็ม เช่น Occupational Health & Safety", "Full title")}"><button class="btn ghost small qs-x" type="button" title="${mt("ลบ", "Remove")}">✕</button></div>`;
+function qsWireSettings(modal) {
+  const list = modal.querySelector("#qs-std-list"); if (!list) return;
+  const wireX = () => list.querySelectorAll(".qs-x").forEach((b) => { b.onclick = () => { const row = b.closest(".qs-std-row"), id = row.dataset.id, used = id && DB.get("drrRecords", []).some((r) => /^qs/.test(r.report) && r.d && r.d.std === id); if (used && !confirm(mt("มาตรฐานนี้มีข้อมูลแล้ว — ซ่อนออกจากเมนู? (ข้อมูลยังเก็บไว้)", "This standard has data — hide it? (data is kept)"))) return; row.remove(); }; });
+  wireX();
+  modal.querySelector("#qs-std-add").addEventListener("click", () => { list.insertAdjacentHTML("beforeend", qsStdRow({})); wireX(); });
+  modal.querySelector("#qs-std-save").addEventListener("click", () => {
+    const rows = [...list.querySelectorAll(".qs-std-row")].map((r) => ({ id: r.dataset.id || "", name: r.querySelector(".qs-n").value.trim(), title: r.querySelector(".qs-t").value.trim() })).filter((x) => x.name);
+    rows.forEach((x) => { if (!x.id) { let base = x.name.toLowerCase().replace(/[^a-z0-9]/g, "") || "std", id = base, n = 2; while (rows.some((y) => y !== x && y.id === id)) id = base + n++; x.id = id; } });
+    if (!rows.length) { toast(mt("ต้องมีอย่างน้อย 1 มาตรฐาน", "Keep at least one standard")); return; }
+    qsSaveStandards(rows); toast(mt("บันทึกมาตรฐานแล้ว", "Standards saved")); renderShell(); navigate(State.view);
+  });
+}
+
+function qsSheets(out) {
+  const stdName = (id) => (qsStandards().find((s) => s.id === id) || { name: id }).name;
+  out.push({ key: "qsplan", title: "QS_AuditPlan", columns: ["id", "standard", "type", "scope", "clauses", "site", "auditor", "auditee", "date", "actualDate", "status", "note", "editedBy", "editedAt"], rows: qsRecs("qsplan").map((r) => [r.id, stdName(r.d.std), r.d.type, r.d.scope || "", r.d.clauses || "", qsSiteName(r.d.site), r.d.auditor || "", r.d.auditee || "", r.d.date || "", r.d.actualDate || "", r.d.status || "", r.d.note || "", r.byName || "", r.at || ""]) });
+  out.push({ key: "qsfind", title: "QS_AuditReport", columns: ["id", "standard", "date", "type", "clause", "detail", "cause", "action", "site", "owner", "due", "status", "closedDate", "verifiedBy", "editedBy", "editedAt"], rows: qsRecs("qsfind").map((r) => [r.id, stdName(r.d.std), r.d.date || "", (QS_FIND_TYPES[r.d.ftype] || [""])[0], r.d.clause || "", r.d.detail || "", r.d.cause || "", r.d.action || "", qsSiteName(r.d.site), r.d.owner || "", r.d.due || "", r.d.status || "", r.d.closedDate || "", r.d.verifiedBy || "", r.byName || "", r.at || ""]) });
+  out.push({ key: "qsdoc", title: "QS_DocumentControl", columns: ["id", "standard", "code", "title", "type", "rev", "effective", "reviewMonths", "nextReview", "owner", "site", "status", "change", "link", "editedBy", "editedAt"], rows: qsRecs("qsdoc").map((r) => [r.id, stdName(r.d.std), r.d.code || "", r.d.title || "", r.d.dtype || "", r.d.rev || "", r.d.effective || "", r.d.reviewMonths || "", qsNextReview(r.d), r.d.owner || "", qsSiteName(r.d.site), r.d.status || "", r.d.change || "", r.d.link || "", r.byName || "", r.at || ""]) });
+}
+
 /**
  * qshe3d.js  —  "3D QSHE" view (V1.01)
  *  - page `v3d`        : 3D model of every building; click a building / floor to work with its QSHE data
@@ -5962,7 +6664,7 @@ function v3dData() {
     const o = out[b.id]; o.sites.add(r.d.site);
     const rep = r.report === "ts1" || r.report === "ts2" || r.report === "tsprof" ? "ts" : r.report;
     o.drr[rep] = (o.drr[rep] || 0) + 1;
-    if ((r.report === "lp" || r.report === "tw") && r.d.date) o.ir.push(r);
+    if ((r.report === "lp" || r.report === "tw" || r.report === "wp") && r.d.date) o.ir.push(r);
   });
   try {
     psdFindings().forEach((f) => { const b = v3dAssign(f.site, bs); if (b) out[b.id].psd.push(Object.assign({ st: (psdFor(f.key) || {}).status || "open" }, f)); });
@@ -7256,7 +7958,7 @@ const BackupMgr = {
     if (!this.validUrl(c.url) || !c.token) { if (manual) throw new Error(mt("ยังไม่ได้ตั้งค่า Google Sheet", "Google Sheet is not set up")); return false; }
     const t = this.tables();
     const res = await this.call({ action: "tables", by: State.user ? State.user.username : "", tables: t });
-    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v11 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v10 and deploy a new version") : (res.error || "failed"));
+    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v12 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v10 and deploy a new version") : (res.error || "failed"));
     this.saveMeta({ tablesAt: new Date().toISOString(), tablesStatus: "ok" });
     localStorage.removeItem(DB._key("pubDirty"));
     return true;
@@ -7312,7 +8014,7 @@ const APPS_SCRIPT_CODE = `/**
  * (Execute as: Me, Who has access: Anyone).  After editing: Deploy > Manage deployments > New version.
  */
 const TOKEN = '__TOKEN__';   // must equal the Token in the app
-const VERSION = 11;
+const VERSION = 12;
 const CHUNK = 45000;         // one cell holds at most 50,000 characters
 const MAXCH = 8;             // max cells per record / photo
 const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords', 'auditLog', 'users', 'psdAnalyses', 'v3dBuildings'];
@@ -7499,7 +8201,7 @@ function tables_(ss, p) {
  * Controls: only whitelisted report keys, bounded size, one writer at a time (lock),
  * each tab is rewritten in full from the app's synced data (d_drrRecords stays the source of truth),
  * every write is logged in _Log. Do not type into R_* tabs - changes there are overwritten. */
-var REPORT_KEYS = { lp: 'R_LivePlay_Incidents', tw: 'R_Township_Incidents', food: 'R_Food_Testing', ww: 'R_Wastewater', ts1: 'R_TS1_Daily', ts2: 'R_TS2_Monthly', tsprof: 'R_TS_SiteProfile', mwa: 'R_MWA_RawWater', psd: 'R_PSD_Analysis' };
+var REPORT_KEYS = { lp: 'R_LivePlay_Incidents', tw: 'R_Township_Incidents', food: 'R_Food_Testing', ww: 'R_Wastewater', ts1: 'R_TS1_Daily', ts2: 'R_TS2_Monthly', tsprof: 'R_TS_SiteProfile', mwa: 'R_MWA_RawWater', psd: 'R_PSD_Analysis', wp: 'R_Workplace_Incidents', lgreg: 'R_Legal_Register', lgchk: 'R_Legal_Inspection', qsplan: 'R_QS_AuditPlan', qsfind: 'R_QS_AuditReport', qsdoc: 'R_QS_DocumentControl' };
 var REPORT_MAX_ROWS = 5000, REPORT_MAX_COLS = 60, REPORT_MAX_CELL = 2000;
 function reportSheet_(ss, p) {
   var list = p.reports || [], done = [], total = 0;
@@ -7826,7 +8528,7 @@ function startApp(user) {
   MpImg.migrate().catch(() => {});
   renderShell();
   navigate("dashboard");
-  SyncMgr.onChange(() => { if (State.view === "v3d" && !document.getElementById("modal-overlay")) { v3dRefresh(); return; } if (["dashboard", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd", "capa"].includes(State.view) && !document.getElementById("modal-overlay") && !document.activeElement?.closest?.("input,textarea,select")) renderView(); });
+  SyncMgr.onChange(() => { if (State.view === "v3d" && !document.getElementById("modal-overlay")) { v3dRefresh(); return; } if ((["dashboard", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "drr_wp", "psd", "capa", "lg_plan", "lg_insp", "lg_sum", "qs_overview"].includes(State.view) || String(State.view).startsWith("qs:")) && !document.getElementById("modal-overlay") && !document.activeElement?.closest?.("input,textarea,select")) renderView(); });
   SyncMgr.start();
   BackupMgr.autoCheck();
   BackupMgr.startTimer();
@@ -7869,15 +8571,37 @@ const NAV_ITEMS = [
     ]
   },
   {
+    groupKey: "nav_legal_group",
+    visKey: "legal",
+    items: () => [
+      { sub: 1, label: "Legal Management" },
+      { id: "lg_plan", label: "Legal Plan Schedule" },
+      { id: "lg_insp", label: "Legal Inspection Report" },
+      { id: "lg_sum", label: "Legal summary report" },
+      { sub: 1, label: "Quality Standard Control" }
+    ].concat(...qsStandards().map((s) => [
+      { sub: 2, label: s.name },
+      { id: `qs:${s.id}:plan`, label: "Audit Plan", lvl: 2 },
+      { id: `qs:${s.id}:report`, label: "Audit report", lvl: 2 },
+      { id: `qs:${s.id}:doc`, label: "List document control & update", lvl: 2 }
+    ]))
+  },
+  {
     groupKey: "nav_drr_group",
     visKey: "datareports",
     items: [
+      { sub: 1, label: "Quality (Q)", cls: "q" },
+      { id: "qs_overview", label: "Quality Standard Control" },
+      { sub: 1, label: "Safety (S)", cls: "s" },
       { id: "drr_lp", labelKey: "nav_drr_lp" },
       { id: "drr_tw", labelKey: "nav_drr_tw" },
+      { id: "drr_wp", labelKey: "nav_drr_wp" },
+      { sub: 1, label: "Health (H)", cls: "h" },
       { id: "drr_food", labelKey: "nav_drr_food" },
+      { sub: 1, label: "Environment (E)", cls: "e" },
+      { id: "drr_mwa", labelKey: "nav_drr_mwa" },
       { id: "drr_ww", labelKey: "nav_drr_ww" },
-      { id: "drr_ts", labelKey: "nav_drr_ts" },
-      { id: "drr_mwa", labelKey: "nav_drr_mwa" }
+      { id: "drr_ts", labelKey: "nav_drr_ts" }
     ]
   },
   {
@@ -7913,13 +8637,15 @@ function renderShell() {
   NAV_ITEMS.forEach((group) => {
     if (group.admin && !isAdmin) return;
     if (group.visKey && moduleVisibility[group.visKey] === false) return;
+    const all = typeof group.items === "function" ? group.items() : group.items;
     const items = group.isModuleGroup
-      ? group.items.filter((it) => moduleVisibility[it.id] !== false)
-      : group.items;
+      ? all.filter((it) => moduleVisibility[it.id] !== false)
+      : all;
     if (!items.length) return;
     nav += `<div class="nav-group-label">${t(group.groupKey)}</div>`;
     items.forEach((it) => {
-      nav += `<button class="nav-item" data-nav="${it.id}"><span class="dot"></span>${t(it.labelKey)}</button>`;
+      if (it.sub) { nav += `<div class="nav-sub lvl${it.sub} ${it.cls || ""}">${mpEsc(it.label)}</div>`; return; }
+      nav += `<button class="nav-item ${it.lvl ? "lvl" + it.lvl : ""}" data-nav="${it.id}"><span class="dot"></span>${it.label ? mpEsc(it.label) : t(it.labelKey)}</button>`;
     });
   });
 
@@ -8003,13 +8729,16 @@ function renderTopbar() {
     drr_lp: ["title_drr_lp", "sub_drr_lp"], drr_tw: ["title_drr_tw", "sub_drr_tw"], drr_food: ["title_drr_food", "sub_drr_food"],
     drr_ww: ["title_drr_ww", "sub_drr_ww"], drr_ts: ["title_drr_ts", "sub_drr_ts"], drr_mwa: ["title_drr_mwa", "sub_drr_mwa"],
     backup: ["title_backup", "sub_backup"],
-    reports: ["title_reports", "sub_reports"]
+    reports: ["title_reports", "sub_reports"],
+    drr_wp: ["title_drr_wp", "sub_drr_wp"],
+    lg_plan: ["title_lg_plan", "sub_lg_plan"], lg_insp: ["title_lg_insp", "sub_lg_insp"], lg_sum: ["title_lg_sum", "sub_lg_sum"], qs_overview: ["title_qs_overview", "sub_qs_overview"]
   };
   const [titleKey, subKey] = titleKeys[State.view] || ["", ""];
-  const title = titleKey ? t(titleKey) : "";
-  const subtitle = subKey ? t(subKey) : "";
+  const dyn = String(State.view).startsWith("qs:") ? qsTitle(State.view) : null;
+  const title = dyn ? dyn[0] : titleKey ? t(titleKey) : "";
+  const subtitle = dyn ? dyn[1] : subKey ? t(subKey) : "";
   const buildings = accessibleBuildings();
-  const showBuildingPicker = !["buildings", "users", "backup", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd", "capa", "v3d", "v3d_setup"].includes(State.view);
+  const showBuildingPicker = !String(State.view).startsWith("qs:") && !["buildings", "users", "backup", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd", "capa", "v3d", "v3d_setup", "drr_wp", "lg_plan", "lg_insp", "lg_sum", "qs_overview"].includes(State.view);
 
   document.getElementById("topbar").innerHTML = `
     <div>
@@ -8074,17 +8803,23 @@ function renderViewInner(root) {
     case "capa": return renderIncidents(root);
     case "psd": return renderPsd(root);
     case "v3d": return renderV3d(root);
+    case "lg_plan": return renderLegalPlan(root);
+    case "lg_insp": return renderLegalInspect(root);
+    case "lg_sum": return renderLegalSummary(root);
+    case "qs_overview": return renderQsOverview(root);
     case "v3d_setup": return renderV3dSetup(root);
     case "buildings": return renderBuildings(root);
     case "users": return renderUsers(root);
-    case "drr_lp": case "drr_tw": case "drr_food": case "drr_ww": case "drr_ts": case "drr_mwa": return renderDrr(root, State.view);
+    case "drr_lp": case "drr_tw": case "drr_wp": case "drr_food": case "drr_ww": case "drr_ts": case "drr_mwa": return renderDrr(root, State.view);
     case "mp_plan": return renderMpPlan(root);
     case "mp_risk": return renderMpRisk(root);
     case "mp_check": return renderMpCheck(root);
     case "mp_form": return renderMpForm(root);
     case "reports": return renderReports(root);
     case "backup": return renderBackup(root);
-    default: root.innerHTML = "<div class='card'>ไม่พบหน้านี้</div>";
+    default:
+      if (String(State.view).startsWith("qs:")) return renderQs(root, State.view);
+      root.innerHTML = "<div class='card'>ไม่พบหน้านี้</div>";
   }
 }
 
@@ -8407,6 +9142,7 @@ function openSettingsModal() {
     return `<label class="checkbox-pill"><input type="checkbox" data-module-toggle="${m.id}" ${checked ? "checked" : ""}/> ${m.nameTh} (${m.name})</label>`;
   }).join("") +
     `<label class="checkbox-pill"><input type="checkbox" data-module-toggle="masterplan" ${moduleVisibility.masterplan !== false ? "checked" : ""}/> ${t("settings_mp_label")}</label>` +
+    `<label class="checkbox-pill"><input type="checkbox" data-module-toggle="legal" ${moduleVisibility.legal !== false ? "checked" : ""}/> ${t("settings_legal_label")}</label>` +
     `<label class="checkbox-pill"><input type="checkbox" data-module-toggle="datareports" ${moduleVisibility.datareports !== false ? "checked" : ""}/> ${t("settings_drr_label")}</label>`;
 
   const modal = openModal(`
@@ -8433,6 +9169,7 @@ function openSettingsModal() {
         : ""
     }
     <div class="settings-section" id="sync-sec"></div>
+    ${isAdmin ? qsSettingsHtml() : ""}
     ${isAdmin ? `<div class="settings-section"><h4>${mt("โมเดล 3D (หลังบ้าน)", "3D model (back office)")}</h4><div class="desc" style="margin-bottom:8px;">${mt("อัปโหลดภาพ 3D และกำหนดชื่อชั้น / ห้อง ของแต่ละอาคาร", "Upload 3D pictures and define floors / rooms of each building")}</div><button class="btn small" id="open-v3d-setup" type="button">${mt("ตั้งค่าอาคาร 3D", "3D building setup")} ›</button>
       <div class="desc" style="margin:12px 0 6px;">${mt("เกณฑ์สี “สถิติสูงสุดไม่เกิดอุบัติเหตุ” ในหน้า 3D", "Colour bands for the “best record without accident” card on the 3D page")}</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;"><span style="color:var(--st-good);font-weight:700;">● ${mt("เขียว มากกว่า", "Green over")}</span><input type="number" id="v3-safe-g" min="1" style="width:76px" value="${v3dSafeCfg().green}"> ${mt("วัน", "days")}
@@ -8468,6 +9205,7 @@ function openSettingsModal() {
   }
 
   const v3b = modal.querySelector("#open-v3d-setup"); if (v3b) v3b.addEventListener("click", () => { closeModal(); navigate("v3d_setup"); });
+  if (isAdmin) qsWireSettings(modal);
   const v3s = modal.querySelector("#v3-safe-save");
   if (v3s) v3s.addEventListener("click", () => {
     const g = Math.round(Number(modal.querySelector("#v3-safe-g").value)), r = Math.round(Number(modal.querySelector("#v3-safe-r").value));
