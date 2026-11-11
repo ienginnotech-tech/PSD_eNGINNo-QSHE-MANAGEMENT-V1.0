@@ -6376,10 +6376,12 @@ function v3dBuildCampus() {
       });
     });
     const cap = bx(g, B.w * 0.5, 0.35, B.d * 0.4, 0xcbd5e1, 0, topY, 0); cap.castShadow = true;
-    const beacon = sp(g, 0.22, 0, 0, topY + 0.8, 0); beacon.material = new T.MeshBasicMaterial({ color: V3_ST[d.status || "none"] }); V3.disp.push(beacon.material);
+    const beacon = sp(g, 0.22, 0, 0, topY + 0.8, 0); beacon.material = new T.MeshBasicMaterial({ color: d.irStat && d.irStat.open ? 0xef4444 : 0x22c55e }); V3.disp.push(beacon.material);
     const it = { b, g, cx: p.x, cz: p.z, topY, bx: B, beacon };
     V3.items.push(it);
-    v3dLabel(g, 0, topY + 1.6, 0, "bld " + (d.status || "none"), () => `<i></i>${mpEsc(b.name)}${d.irStat && d.irStat.open ? `<em class="c">IR ${d.irStat.open}</em>` : ""}${d.psdOpen ? `<em class="w">PSD ${d.psdOpen}</em>` : ""}`, () => v3dSelect(b.id));
+    const band = v3dSafeBand((d.irStat || irStats([], false)).best), rp = d.S ? d.S.pct : null;
+    const lb = v3dLabel(g, 0, topY + 1.6, 0, "bld", () => `<i style="background:${rp === null ? "#94a3b8" : mpScoreColor(rp)}" title="Risk Level ${rp === null ? "–" : mpFmtPct(rp)}"></i>${mpEsc(b.name)}${d.irStat && d.irStat.open ? `<em class="c">IR ${d.irStat.open}</em>` : ""}${d.psdOpen ? `<em class="w">PSD ${d.psdOpen}</em>` : ""}`, () => v3dSelect(b.id));
+    lb.el.style.borderColor = band.color; lb.el.style.boxShadow = `0 0 0 1px ${band.color}, 0 2px 6px rgba(15,23,42,.25)`; lb.el.title = `${b.name}\n${mt("สถิติสูงสุดไม่เกิดอุบัติเหตุ", "Best record")} ${(d.irStat || {}).best || 0} ${mt("วัน", "days")} · ${mt(band.th, band.en)}\nRisk Level ${rp === null ? "–" : mpFmtPct(rp)}\nIR ${mt("เปิดอยู่", "open")} ${(d.irStat || {}).open || 0}`;
     V3.anims.push((dt, t) => { beacon.scale.setScalar(0.22 * (1 + Math.sin(t * 3 + p.x) * 0.2)); });
   });
   // a few people walking on the plaza
@@ -6697,7 +6699,7 @@ function v3dKpisHtml(b, D) {
   return k(band.cls, mt("สถิติสูงสุดไม่เกิดอุบัติเหตุ", "Best record without accident"), `${st.best} <em>${mt("วัน", "days")}</em>`, band.color, `<i style="color:${band.color}">●</i> ${mt(band.th, band.en)}`) +
     k(pct === null ? "" : pct < 70 ? "crit" : pct < 85 ? "warn" : "ok", "Risk Level", pct === null ? "–" : mpFmtPct(pct), mpScoreColor(pct), ov ? `<i style="color:${mpScoreColor(pct)}">${ov.icon}</i> ${mt(ov.th, ov.en)}` : mt("ยังไม่ประเมิน", "Not assessed")) +
     k(crit ? "crit" : high ? "warn" : "ok", mt("วิกฤต + สูง ที่ยังไม่แก้", "Open critical + high"), crit + high, crit ? "var(--st-critical)" : high ? "var(--st-serious)" : "var(--st-good)", `<i style="color:${mpRiskColor("critical")}">✖</i> ${mpRiskLabel("critical")} ${crit} · <i style="color:${mpRiskColor("high")}">▲</i> ${mpRiskLabel("high")} ${high}`) +
-    k(fixedPct === null ? "" : fixedPct >= 85 ? "ok" : fixedPct >= 70 ? "warn" : "crit", mt("หลังแก้ไข", "After editing"), `${fixedN} <em>${mt("ข้อ", "items")}</em>`, "", fixedPct === null ? mt("ยังไม่มีข้อแดง/ส้ม", "no red / orange items") : `${mt("แก้ไขแล้ว", "corrected")} <b style="color:${mpScoreColor(fixedPct)}">${fixedPct.toFixed(1)}%</b> ${mt("จาก", "of")} ${bt} ${mt("ข้อ", "items")}`) +
+    k("ok", mt("หลังแก้ไข", "After editing"), `${fixedN} <em>${mt("ข้อ", "items")}</em>`, "var(--st-good)", fixedPct === null ? mt("ยังไม่มีข้อแดง/ส้ม", "no red / orange items") : `${mt("แก้ไขแล้ว", "corrected")} <b style="color:var(--st-good)">${fixedPct.toFixed(1)}%</b> ${mt("จาก", "of")} ${bt} ${mt("ข้อ", "items")}`) +
     (() => { const n = sum((o) => o.irStat.open); return k(n ? "crit" : "ok", "IR " + mt("เปิดอยู่", "open"), n, n ? "var(--st-critical)" : "var(--st-good)", n ? mt("ยังไม่ปิดเรื่อง", "not closed yet") : "✔ " + mt("ปิดครบแล้ว", "all closed")); })() +
     (() => { const n = sum((o) => o.psdOpen); return k(n ? "warn" : "ok", "PSD " + mt("ค้างวิเคราะห์", "pending"), n, n ? "#d97706" : "var(--st-good)", n ? mt("ผลรายงานไม่ผ่าน รอวิเคราะห์", "failed results to analyse") : "✔ " + mt("ไม่มีค้าง", "none pending")); })() +
     k("dark", mt("เยี่ยมสำรวจครั้งล่าสุด", "Last inspection visit"), last ? mpFmtDate(last.date) : "–", "", last ? `${mpEsc(lu ? lu.name : "")} · ${ago ? ago + " " + mt("วันที่แล้ว", "days ago") : mt("วันนี้", "today")}` : mt("ยังไม่มีการตรวจ", "no visit yet"));
