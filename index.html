@@ -1346,6 +1346,11 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .v3d-board .sf-date { font-size: 14px; padding: 4px 8px; min-width: 0; }
 .v3d-board .sf-prog .muted-s, .v3d-board .sf-by summary { font-size: 11px; } .v3d-board .mon-table { font-size: 11px; }
 
+/* 3D: building label blinks slowly while it still has open IR */
+@keyframes v3dIrBlink { 0%, 100% { box-shadow: 0 0 0 1px rgba(239,68,68,.25), 0 2px 6px rgba(15,23,42,.25); border-color: #ef4444; } 50% { box-shadow: 0 0 0 5px rgba(239,68,68,.55), 0 0 16px rgba(239,68,68,.65); border-color: #fecaca; } }
+.v3l.bld.irblink { animation: v3dIrBlink 2.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .v3l.bld.irblink { animation: none; box-shadow: 0 0 0 3px rgba(239,68,68,.6); } }
+
 </style>
 </head>
 <body>
@@ -6381,6 +6386,7 @@ function v3dBuildCampus() {
     V3.items.push(it);
     const band = v3dSafeBand((d.irStat || irStats([], false)).best), rp = d.S ? d.S.pct : null;
     const lb = v3dLabel(g, 0, topY + 1.6, 0, "bld", () => `<i style="background:${rp === null ? "#94a3b8" : mpScoreColor(rp)}" title="Risk Level ${rp === null ? "–" : mpFmtPct(rp)}"></i>${mpEsc(b.name)}${d.irStat && d.irStat.open ? `<em class="c">IR ${d.irStat.open}</em>` : ""}${d.psdOpen ? `<em class="w">PSD ${d.psdOpen}</em>` : ""}`, () => v3dSelect(b.id));
+    if (d.irStat && d.irStat.open) lb.el.classList.add("irblink"); // still has open IR: slow blink to remind the team
     lb.el.style.borderColor = band.color; lb.el.style.boxShadow = `0 0 0 1px ${band.color}, 0 2px 6px rgba(15,23,42,.25)`; lb.el.title = `${b.name}\n${mt("สถิติสูงสุดไม่เกิดอุบัติเหตุ", "Best record")} ${(d.irStat || {}).best || 0} ${mt("วัน", "days")} · ${mt(band.th, band.en)}\nRisk Level ${rp === null ? "–" : mpFmtPct(rp)}\nIR ${mt("เปิดอยู่", "open")} ${(d.irStat || {}).open || 0}`;
     V3.anims.push((dt, t) => { beacon.scale.setScalar(0.22 * (1 + Math.sin(t * 3 + p.x) * 0.2)); });
   });
