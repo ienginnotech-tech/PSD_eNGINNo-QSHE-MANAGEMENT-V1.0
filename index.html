@@ -6712,13 +6712,21 @@ const V3D_SEED = (() => {
   const sls = (L, ids) => ids.map((n) => blk("sls-" + String(n).toLowerCase(), "อาคาร " + n, [["1", T], ["2", T], ["3", T]]));
   const ous = (L) => blk("ous-" + L.toLowerCase(), "อาคาร " + L, [["G", "ร้านอาหาร"], ["2", "สำนักงานให้เช่า"], ["3", "สำนักงานให้เช่า"], ["4", "สำนักงานให้เช่า"]]);
   return [
-    { id: "v3d-sama", bu: "tw", name: "SAMA Garden", unitName: "SAMA Garden", type: "ต้นไม้ / ร้านอาหาร / กาแฟ", desc: "1 อาคาร 1 ชั้น + ชั้นลอย (1M) จำหน่ายต้นไม้สวยงาม ร้านอาหาร ร้านกาแฟ ชั้นลอยเป็นร้านอาหารเป็นหลัก", blocks: [blk("sama", "อาคาร 1", [["G", "จำหน่ายต้นไม้ + ร้านอาหาร + ร้านกาแฟ"], ["1M", "ร้านอาหาร (ชั้นลอย)"]])] },
+    { id: "v3d-sama", bu: "tw", name: "BU SAMA GARDEN", unitName: "SAMA Garden", type: "ต้นไม้ / ร้านอาหาร / กาแฟ", desc: "1 อาคาร 1 ชั้น + ชั้นลอย (1M) จำหน่ายต้นไม้สวยงาม ร้านอาหาร ร้านกาแฟ ชั้นลอยเป็นร้านอาหารเป็นหลัก", blocks: [blk("sama", "อาคาร 1", [["G", "จำหน่ายต้นไม้ + ร้านอาหาร + ร้านกาแฟ"], ["1M", "ร้านอาหาร (ชั้นลอย)"]])] },
     { id: "v3d-beat-a", bu: "lp", name: "BEAT Active", unitName: "BEAT Active", type: "สวนสนุก", desc: "1 อาคาร 1 ชั้น + ชั้นลอย (1M) อุปกรณ์เป็นเครื่องเล่นสวนสนุกเป็นหลัก", blocks: [blk("beata", "อาคาร 1", [["G", "เครื่องเล่นสวนสนุก"], ["1M", "เครื่องเล่น / พื้นที่กิจกรรม (ชั้นลอย)"]])] },
     { id: "v3d-ekm", bu: "lp", name: "Park X Ekkamai (EKM)", unitName: "Park X Ekkamai (EKM)", type: "ลานจอดรถให้เช่า + ร้านอาหาร", desc: "1 อาคาร 8 ชั้น + B1 อาคารจอดรถให้เช่าเป็นหลัก ร้านอาหารชั้น G และชั้น 8", blocks: [blk("ekm", "อาคาร 1", [["B1", "ชั้นใต้ดิน"], ["G", "ร้านอาหาร"], ["2", "ลานจอดรถ"], ["3", "ลานจอดรถ"], ["4", "ลานจอดรถ"], ["5", "ลานจอดรถ"], ["6", "ลานจอดรถ"], ["7", "ลานจอดรถ"], ["8", "ร้านอาหาร"]])] },
     { id: "v3d-beat-d", bu: "lp", name: "BEAT Discovery", unitName: "BEAT Discovery", type: "สนามกีฬา", desc: "อาคาร 2 ชั้น สนามแบดมินตันและเทนนิส", blocks: [blk("beatd", "อาคาร 1", [["1", "สนามแบดมินตัน"], ["2", "สนามเทนนิส"]])] },
     { id: "v3d-ous", bu: "lp", name: "One Udomsuk (OUS)", unitName: "One Udomsuk (OUS)", type: "สำนักงานให้เช่า + ร้านอาหาร", desc: "5 อาคาร (A–E) อาคารละ 4 ชั้น สำนักงานให้เช่า ชั้น G เป็นร้านอาหาร", blocks: ["A", "B", "C", "D", "E"].map(ous) },
     { id: "v3d-bd-retail", bu: "lp", name: "BEAT Discovery (Retail)", unitName: "BEAT Discovery (Retail)", type: "ร้านค้าให้เช่า + คลินิก", desc: "อยู่ในพื้นที่เดียวกับ BEAT Discovery · 1 อาคาร 2 ชั้น ร้านค้าให้เช่า ชั้น 2 เป็นคลินิกสุขภาพความงาม", blocks: [blk("bdr", "อาคาร 1", [["1", "ร้านค้าให้เช่า"], ["2", "คลินิกสุขภาพและความงาม"]])] },
     { id: "v3d-hotel", bu: "lp", name: "SAMA Living Hotel Asoke", unitName: "SAMA Living Hotel Asoke", type: "โรงแรม", desc: "1 อาคาร 8 ชั้น + Roof top + ชั้นใต้ดิน B1, B2 โรงแรมห้องพัก", blocks: [blk("hotel", "อาคาร 1", [["B2", "ชั้นใต้ดิน"], ["B1", "ชั้นใต้ดิน"]].concat([["G", "ล็อบบี้ / ห้องอาหาร (โรงแรม)"]], [2, 3, 4, 5, 6, 7, 8].map((n) => [String(n), "ห้องพักโรงแรม"]), [["Roof", "Roof top"]]))] },
+    // ---- Township BU (BITEC BURI) — floors are a starting point, adjust in ⚙ Settings → 3D building setup
+    { id: "v3d-tw-life", bu: "tw", name: "BU Lifestyle (M170)", unitName: "BU Lifestyle (M170)", type: "BITEC LIVE · Lifestyle", desc: "อาคาร BITEC LIVE (ตำแหน่งหมายเลข 2) · ชั้นเป็นค่าเริ่มต้น โปรดตรวจสอบ", blocks: [blk("twlife", "อาคาร 1", [["G", "ฮอลล์จัดแสดง / คอนเสิร์ต"], ["2", "ที่นั่งชั้นบน / ห้อง VIP"]])] },
+    { id: "v3d-tw-venue", bu: "tw", name: "BU Venue Management", unitName: "BU Venue Management", type: "Venue", desc: "อาคารฮอลล์ (ตำแหน่งหมายเลข 3) · ชั้นเป็นค่าเริ่มต้น โปรดตรวจสอบ", blocks: [blk("twvenue", "อาคาร 1", [["G", "ฮอลล์แสดงสินค้า / จัดงาน"], ["2", "ห้องประชุม / ห้องสัมมนา"]])] },
+    { id: "v3d-tw-retail", bu: "tw", name: "BU Retail", unitName: "BU Retail", type: "ร้านค้าให้เช่า", desc: "อาคารร้านค้า (ตำแหน่งหมายเลข 4) · ชั้นเป็นค่าเริ่มต้น โปรดตรวจสอบ", blocks: [blk("twretail", "อาคาร 1", [["G", "ร้านค้าให้เช่า"], ["2", "ร้านค้าให้เช่า"]])] },
+    { id: "v3d-tw-food", bu: "tw", name: "BU Food", unitName: "BU Food", type: "SAMA FOODTORY · ร้านอาหาร", desc: "อาคาร SAMA FOODTORY (ตำแหน่งหมายเลข 5) · ชั้นเป็นค่าเริ่มต้น โปรดตรวจสอบ", blocks: [blk("twfood", "อาคาร 1", [["G", "ร้านอาหาร / Food court"], ["2", "ร้านอาหาร"]])] },
+    { id: "v3d-tw-township", bu: "tw", name: "BU Township", unitName: "BU Township", type: "BITEC EVENT & BITEC CONNECT", desc: "อาคารฮอลล์แสดงสินค้า BITEC EVENT & CONNECT (ตำแหน่งหมายเลข 1) · ชั้นเป็นค่าเริ่มต้น โปรดตรวจสอบ",
+      blocks: [blk("twtown-a", "ฮอลล์ 1", [["G", "ฮอลล์แสดงสินค้า (Exhibition Hall)"], ["2", "ห้องประชุม / ห้องสัมมนา"]]), blk("twtown-b", "ฮอลล์ 2", [["G", "ฮอลล์แสดงสินค้า (Exhibition Hall)"], ["2", "ห้องประชุม / ห้องสัมมนา"]]), blk("twtown-c", "ฮอลล์ 3", [["G", "ฮอลล์แสดงสินค้า (Exhibition Hall)"], ["2", "ห้องประชุม / ห้องสัมมนา"]])] },
+    { id: "v3d-tw-work", bu: "tw", name: "BU Workplace (M170)", unitName: "BU Workplace (M170)", type: "BHIRAJ TOWER · สำนักงาน", desc: "อาคาร BHIRAJ TOWER (ตำแหน่งหมายเลข 6) · จำนวนชั้นเป็นค่าเริ่มต้น โปรดแก้ให้ตรงอาคารจริง", blocks: [blk("twwork", "อาคาร 1", [["G", "Lobby / ร้านค้าให้เช่า"]].concat(nums(2, 12, T, false)))] },
     // ---- Workplace BU
     { id: "v3d-ubc2", bu: "wp", name: "UBC II", unitName: "UBC II", type: "อาคารสำนักงานให้เช่า", desc: "1 อาคาร · B1–B5 ลานจอดรถ · G1–G2 Lobby / ร้านค้าเช่า · P1–P7 ลานจอดรถ · 10–24 ผู้เช่า (ไม่มีชั้น 13) · ดาดฟ้า · ลานจอดเฮลิคอปเตอร์",
       blocks: [blk("ubc2", "อาคาร 1", [5, 4, 3, 2, 1].map((n) => ["B" + n, "ชั้นใต้ดิน · " + P]).concat([["G1", "Lobby / ร้านค้าให้เช่า"], ["G2", "Lobby / ร้านค้าให้เช่า"]], [1, 2, 3, 4, 5, 6, 7].map((n) => ["P" + n, P]), nums(10, 24, T, true), [["Roof", "ดาดฟ้า (Roof top)"], ["Helipad", "ลานจอดเฮลิคอปเตอร์"]]))] },
@@ -6740,10 +6748,10 @@ const V3D_SEED = (() => {
 })();
 
 const V3_BU = [["tw", "Township", "Township", "#0ea5e9"], ["lp", "Live & Play", "Live & Play", "#f97316"], ["wp", "Workplace", "Workplace", "#6366f1"]];
-const v3dBuOf = (b) => (b && V3_BU.some((x) => x[0] === b.bu) ? b.bu : b && (b.id === "v3d-sama" || /SAMA Garden/i.test(b.name || "")) ? "tw" : "lp");
+const v3dBuOf = (b) => (b && V3_BU.some((x) => x[0] === b.bu) ? b.bu : b && (b.id === "v3d-sama" || /SAMA Garden/i.test(b.name || "") || /^v3d-tw-/.test(b.id || "")) ? "tw" : "lp");
 function v3dEnsure() {
   try {
-    if (DB._raw("v3dBuildings", null) === null) { DB.set("v3dBuildings", JSON.parse(JSON.stringify(V3D_SEED)), { raw: true }); DB.set("v3dSeedWp", 1); return; }
+    if (DB._raw("v3dBuildings", null) === null) { DB.set("v3dBuildings", JSON.parse(JSON.stringify(V3D_SEED)), { raw: true }); DB.set("v3dSeedWp", 1); DB.set("v3dSeedTw", 1); return; }
     // v1.01 · 3 BU zones: give every building its BU (SAMA Garden → Township) and add the Workplace buildings once
     const all = DB._raw("v3dBuildings", []); let ch = false;
     all.forEach((b) => { if (!b.bu) { b.bu = v3dBuOf(b); ch = true; } });
@@ -6751,11 +6759,20 @@ function v3dEnsure() {
       V3D_SEED.filter((x) => x.bu === "wp" && !all.some((b) => b.id === x.id)).forEach((x) => { all.push(JSON.parse(JSON.stringify(x))); ch = true; });
       DB.set("v3dSeedWp", 1);
     }
+    if (!DB.get("v3dSeedTw", 0)) { // Township = BITEC BURI: 6 BU buildings + SAMA Garden shown as "BU SAMA GARDEN"
+      V3D_SEED.filter((x) => /^v3d-tw-/.test(x.id) && !all.some((b) => b.id === x.id)).forEach((x) => { all.push(JSON.parse(JSON.stringify(x))); ch = true; });
+      const sg = all.find((b) => b.id === "v3d-sama"); if (sg && sg.name === "SAMA Garden") { sg.name = "BU SAMA GARDEN"; if (!sg.unitName) sg.unitName = "SAMA Garden"; ch = true; }
+      DB.set("v3dSeedTw", 1);
+    }
     if (ch) DB.set("v3dBuildings", all, { raw: true });
   } catch (e) { /* ignore */ }
 }
 /** buildings shown under the current BU filter */
-function v3dBuList(bs) { const all = bs || DB.get("v3dBuildings", []); return V3.bu && V3.bu !== "all" ? all.filter((b) => v3dBuOf(b) === V3.bu) : all; }
+function v3dBuList(bs) {
+  const all = bs || DB.get("v3dBuildings", []), ord = (b) => V3_BU.findIndex((x) => x[0] === v3dBuOf(b));
+  const list = V3.bu && V3.bu !== "all" ? all.filter((b) => v3dBuOf(b) === V3.bu) : all;
+  return list.map((b, i) => [b, i]).sort((x, y) => ord(x[0]) - ord(y[0]) || x[1] - y[1]).map((x) => x[0]); // Township → Live & Play → Workplace
+}
 
 // ------------------------------------------------------------ name matching ---
 const v3dNorm = (s) => Scope.norm(s);
@@ -6826,6 +6843,8 @@ function v3dFloorColor(use, name) {
   const u = String(use || "") + " " + String(name || "");
   if (/ใต้ดิน|^B\d/i.test(u)) return 0x64748b;
   if (/เฮลิคอปเตอร์|helipad/i.test(u)) return 0xfacc15;
+  if (/ฮอลล์|Exhibition|คอนเสิร์ต/i.test(u)) return 0x2dd4bf;
+  if (/ห้องประชุม|ที่นั่งชั้นบน/.test(u)) return 0x38bdf8;
   if (/chiller|ห้องเครื่อง/i.test(u)) return 0x475569;
   if (/ห้างสรรพสินค้า|The Mall/i.test(u)) return 0xfbbf24;
   if (/สัมมนา/.test(u)) return 0x38bdf8;
@@ -7085,6 +7104,9 @@ function v3dDefaultRooms(fl) {
   if (/ใต้ดิน|^B\d/i.test(u)) return R([["ลานจอดรถใต้ดิน", "parking"], ["ห้องเครื่อง / ปั๊มน้ำ", "mech"]]);
   if (/จอดรถ/.test(u)) return R([["ลานจอดรถ", "parking"], ["โถงลิฟต์ / บันได", "lobby"]]);
   if (/เฮลิคอปเตอร์|helipad/i.test(u)) return R([["ลานจอดเฮลิคอปเตอร์", "roof"]]);
+  if (/ฮอลล์|Exhibition|คอนเสิร์ต/i.test(u)) return R([["ฮอลล์ A", "lobby"], ["ฮอลล์ B", "lobby"], ["Foyer / ลงทะเบียน", "lobby"], ["ห้องน้ำ", "toilet"]]);
+  if (/ห้องประชุม|ที่นั่งชั้นบน/.test(u)) return R([["ห้องประชุม 1", "meeting"], ["ห้องประชุม 2", "meeting"], ["ห้องประชุม 3", "meeting"], ["ห้องน้ำ", "toilet"]]);
+  if (/Food court/i.test(u)) return R([["Food court", "dining"], ["ร้านอาหาร 1", "dining"], ["ครัว", "kitchen"], ["ห้องน้ำ", "toilet"]]);
   if (/Roof|ดาดฟ้า/i.test(u)) return R([["Roof top", "roof"]]);
   if (/chiller|ห้องเครื่อง/i.test(u)) return R([["ห้องเครื่อง Chiller Plant", "mech"], ["ห้องควบคุม", "mech"], ["ห้องปั๊ม", "mech"]]);
   if (/สัมมนา/.test(u)) return R([["ห้องสัมมนา 1", "meeting"], ["ห้องสัมมนา 2", "meeting"], ["Foyer", "lobby"], ["ห้องน้ำ", "toilet"]]);
