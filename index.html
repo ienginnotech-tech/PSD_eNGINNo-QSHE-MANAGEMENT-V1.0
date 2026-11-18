@@ -1216,6 +1216,12 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 
 /* ===== 3D QSHE (V1.01) — light IFM style ===== */
 .ver-up { margin-left: 6px; padding: 1px 6px; border-radius: 8px; background: #f59e0b; color: #1c1917; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.bu-sw { display: inline-flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+.bu-sw button { display: inline-flex; align-items: center; gap: 7px; border: 1.5px solid color-mix(in srgb, var(--bu) 45%, transparent); background: #fff; color: #1e293b; border-radius: 10px; padding: 7px 14px; font: inherit; font-weight: 700; font-size: 13px; cursor: pointer; transition: background .15s, color .15s; }
+.bu-sw button i { width: 10px; height: 10px; border-radius: 3px; background: var(--bu); }
+.bu-sw button:hover { background: color-mix(in srgb, var(--bu) 10%, #fff); }
+.bu-sw button.on { background: var(--bu); color: #fff; border-color: var(--bu); } .bu-sw button.on i { background: #fff; }
+.v3l.zone { background: #fff; color: #0f172a; font-weight: 800; font-size: 13px; padding: 5px 12px; border-radius: 10px; border: 1px solid #cbd5e1; box-shadow: 0 2px 8px rgba(15,23,42,.18); cursor: pointer; white-space: nowrap; } .v3l.zone i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; } .v3l.zone small { color: #64748b; font-weight: 600; margin-left: 4px; }
 .mode-sw { display: inline-flex; border: 1px solid var(--border, #cbd5e1); border-radius: 10px; overflow: hidden; margin-left: 12px; flex-shrink: 0; }
 .mode-sw button { border: 0; background: transparent; padding: 7px 16px; font-weight: 700; cursor: pointer; color: inherit; font-family: inherit; }
 .mode-sw button.on { background: #ea580c; color: #fff; }
@@ -1269,7 +1275,7 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .v3d-fbad { display: inline-block; min-width: 16px; padding: 0 4px; margin-left: 3px; border-radius: 8px; background: #dc2626; color: #fff; font-style: normal; font-size: 10.5px; line-height: 16px; text-align: center; }
 .v3d-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--mu); padding: 20px; z-index: 2; }
 .v3d-ftabs { position: absolute; left: 10px; top: 10px; right: 120px; z-index: 4; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
-.v3d-ftabs .row { display: flex; flex-wrap: wrap; gap: 4px; background: rgba(255,255,255,.92); border: 1px solid #e2e8f0; border-radius: 10px; padding: 4px; width: max-content; max-width: 100%; pointer-events: auto; box-shadow: 0 2px 8px rgba(15,23,42,.08); }
+.v3d-ftabs .row { max-height: 96px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 4px; background: rgba(255,255,255,.92); border: 1px solid #e2e8f0; border-radius: 10px; padding: 4px; width: max-content; max-width: 100%; pointer-events: auto; box-shadow: 0 2px 8px rgba(15,23,42,.08); }
 .v3d-ftabs button { border: 0; background: transparent; color: #334155; border-radius: 8px; padding: 5px 10px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .v3d-ftabs button:hover { background: #f1f5f9; } .v3d-ftabs button.on { background: #f97316; color: #fff; }
 .v3d-nbcard { position: absolute; left: 10px; top: 92px; z-index: 4; width: 206px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 10px; box-shadow: 0 4px 14px rgba(15,23,42,.12); }
@@ -4758,7 +4764,8 @@ function drrFloorBuilding(site) { if (!site || typeof v3dAssign !== "function") 
 function drrFloorOpts(site) {
   const b = drrFloorBuilding(site), out = [], seen = new Set();
   if (!b) return out;
-  (b.blocks || []).forEach((blk) => [...(blk.floors || [])].reverse().forEach((f) => { const k = String(f.name).trim(); if (seen.has(k)) return; seen.add(k); out.push({ v: k, t: v3dFloorTitle(f) + ((b.blocks || []).length > 1 ? " · " + blk.name : "") + (f.use ? " · " + f.use : "") }); }));
+  const many = (b.blocks || []).length > 1;
+  (b.blocks || []).forEach((blk) => [...(blk.floors || [])].reverse().forEach((f) => { const k = (many ? blk.name + " / " : "") + String(f.name).trim(); if (seen.has(k)) return; seen.add(k); out.push({ v: k, t: (many ? blk.name + " · " : "") + v3dFloorTitle(f) + (f.use ? " · " + f.use : "") }); }));
   return out;
 }
 function drrDefaults(rtype) {
@@ -6700,21 +6707,55 @@ const V3D_SEED = (() => {
     for (let i = 2; i <= top; i++) out.push([String(i), use]);
     return out;
   };
+  const nums = (a, z, use, skip13) => { const o = []; for (let i = a; i <= z; i++) { if (skip13 && i === 13) continue; o.push([String(i), use]); } return o; };
+  const T = "สำนักงานผู้เช่า", P = "ลานจอดรถ";
+  const sls = (L, ids) => ids.map((n) => blk("sls-" + String(n).toLowerCase(), "อาคาร " + n, [["1", T], ["2", T], ["3", T]]));
   const ous = (L) => blk("ous-" + L.toLowerCase(), "อาคาร " + L, [["G", "ร้านอาหาร"], ["2", "สำนักงานให้เช่า"], ["3", "สำนักงานให้เช่า"], ["4", "สำนักงานให้เช่า"]]);
   return [
-    { id: "v3d-sama", name: "SAMA Garden", unitName: "SAMA Garden", type: "ต้นไม้ / ร้านอาหาร / กาแฟ", desc: "1 อาคาร 1 ชั้น + ชั้นลอย (1M) จำหน่ายต้นไม้สวยงาม ร้านอาหาร ร้านกาแฟ ชั้นลอยเป็นร้านอาหารเป็นหลัก", blocks: [blk("sama", "อาคาร 1", [["G", "จำหน่ายต้นไม้ + ร้านอาหาร + ร้านกาแฟ"], ["1M", "ร้านอาหาร (ชั้นลอย)"]])] },
-    { id: "v3d-beat-a", name: "BEAT Active", unitName: "BEAT Active", type: "สวนสนุก", desc: "1 อาคาร 1 ชั้น + ชั้นลอย (1M) อุปกรณ์เป็นเครื่องเล่นสวนสนุกเป็นหลัก", blocks: [blk("beata", "อาคาร 1", [["G", "เครื่องเล่นสวนสนุก"], ["1M", "เครื่องเล่น / พื้นที่กิจกรรม (ชั้นลอย)"]])] },
-    { id: "v3d-ekm", name: "Park X Ekkamai (EKM)", unitName: "Park X Ekkamai (EKM)", type: "ลานจอดรถให้เช่า + ร้านอาหาร", desc: "1 อาคาร 8 ชั้น + B1 อาคารจอดรถให้เช่าเป็นหลัก ร้านอาหารชั้น G และชั้น 8", blocks: [blk("ekm", "อาคาร 1", [["B1", "ชั้นใต้ดิน"], ["G", "ร้านอาหาร"], ["2", "ลานจอดรถ"], ["3", "ลานจอดรถ"], ["4", "ลานจอดรถ"], ["5", "ลานจอดรถ"], ["6", "ลานจอดรถ"], ["7", "ลานจอดรถ"], ["8", "ร้านอาหาร"]])] },
-    { id: "v3d-beat-d", name: "BEAT Discovery", unitName: "BEAT Discovery", type: "สนามกีฬา", desc: "อาคาร 2 ชั้น สนามแบดมินตันและเทนนิส", blocks: [blk("beatd", "อาคาร 1", [["1", "สนามแบดมินตัน"], ["2", "สนามเทนนิส"]])] },
-    { id: "v3d-ous", name: "One Udomsuk (OUS)", unitName: "One Udomsuk (OUS)", type: "สำนักงานให้เช่า + ร้านอาหาร", desc: "5 อาคาร (A–E) อาคารละ 4 ชั้น สำนักงานให้เช่า ชั้น G เป็นร้านอาหาร", blocks: ["A", "B", "C", "D", "E"].map(ous) },
-    { id: "v3d-bd-retail", name: "BEAT Discovery (Retail)", unitName: "BEAT Discovery (Retail)", type: "ร้านค้าให้เช่า + คลินิก", desc: "อยู่ในพื้นที่เดียวกับ BEAT Discovery · 1 อาคาร 2 ชั้น ร้านค้าให้เช่า ชั้น 2 เป็นคลินิกสุขภาพความงาม", blocks: [blk("bdr", "อาคาร 1", [["1", "ร้านค้าให้เช่า"], ["2", "คลินิกสุขภาพและความงาม"]])] },
-    { id: "v3d-hotel", name: "SAMA Living Hotel Asoke", unitName: "SAMA Living Hotel Asoke", type: "โรงแรม", desc: "1 อาคาร 8 ชั้น + Roof top + ชั้นใต้ดิน B1, B2 โรงแรมห้องพัก", blocks: [blk("hotel", "อาคาร 1", [["B2", "ชั้นใต้ดิน"], ["B1", "ชั้นใต้ดิน"]].concat([["G", "ล็อบบี้ / ห้องอาหาร (โรงแรม)"]], [2, 3, 4, 5, 6, 7, 8].map((n) => [String(n), "ห้องพักโรงแรม"]), [["Roof", "Roof top"]]))] }
+    { id: "v3d-sama", bu: "tw", name: "SAMA Garden", unitName: "SAMA Garden", type: "ต้นไม้ / ร้านอาหาร / กาแฟ", desc: "1 อาคาร 1 ชั้น + ชั้นลอย (1M) จำหน่ายต้นไม้สวยงาม ร้านอาหาร ร้านกาแฟ ชั้นลอยเป็นร้านอาหารเป็นหลัก", blocks: [blk("sama", "อาคาร 1", [["G", "จำหน่ายต้นไม้ + ร้านอาหาร + ร้านกาแฟ"], ["1M", "ร้านอาหาร (ชั้นลอย)"]])] },
+    { id: "v3d-beat-a", bu: "lp", name: "BEAT Active", unitName: "BEAT Active", type: "สวนสนุก", desc: "1 อาคาร 1 ชั้น + ชั้นลอย (1M) อุปกรณ์เป็นเครื่องเล่นสวนสนุกเป็นหลัก", blocks: [blk("beata", "อาคาร 1", [["G", "เครื่องเล่นสวนสนุก"], ["1M", "เครื่องเล่น / พื้นที่กิจกรรม (ชั้นลอย)"]])] },
+    { id: "v3d-ekm", bu: "lp", name: "Park X Ekkamai (EKM)", unitName: "Park X Ekkamai (EKM)", type: "ลานจอดรถให้เช่า + ร้านอาหาร", desc: "1 อาคาร 8 ชั้น + B1 อาคารจอดรถให้เช่าเป็นหลัก ร้านอาหารชั้น G และชั้น 8", blocks: [blk("ekm", "อาคาร 1", [["B1", "ชั้นใต้ดิน"], ["G", "ร้านอาหาร"], ["2", "ลานจอดรถ"], ["3", "ลานจอดรถ"], ["4", "ลานจอดรถ"], ["5", "ลานจอดรถ"], ["6", "ลานจอดรถ"], ["7", "ลานจอดรถ"], ["8", "ร้านอาหาร"]])] },
+    { id: "v3d-beat-d", bu: "lp", name: "BEAT Discovery", unitName: "BEAT Discovery", type: "สนามกีฬา", desc: "อาคาร 2 ชั้น สนามแบดมินตันและเทนนิส", blocks: [blk("beatd", "อาคาร 1", [["1", "สนามแบดมินตัน"], ["2", "สนามเทนนิส"]])] },
+    { id: "v3d-ous", bu: "lp", name: "One Udomsuk (OUS)", unitName: "One Udomsuk (OUS)", type: "สำนักงานให้เช่า + ร้านอาหาร", desc: "5 อาคาร (A–E) อาคารละ 4 ชั้น สำนักงานให้เช่า ชั้น G เป็นร้านอาหาร", blocks: ["A", "B", "C", "D", "E"].map(ous) },
+    { id: "v3d-bd-retail", bu: "lp", name: "BEAT Discovery (Retail)", unitName: "BEAT Discovery (Retail)", type: "ร้านค้าให้เช่า + คลินิก", desc: "อยู่ในพื้นที่เดียวกับ BEAT Discovery · 1 อาคาร 2 ชั้น ร้านค้าให้เช่า ชั้น 2 เป็นคลินิกสุขภาพความงาม", blocks: [blk("bdr", "อาคาร 1", [["1", "ร้านค้าให้เช่า"], ["2", "คลินิกสุขภาพและความงาม"]])] },
+    { id: "v3d-hotel", bu: "lp", name: "SAMA Living Hotel Asoke", unitName: "SAMA Living Hotel Asoke", type: "โรงแรม", desc: "1 อาคาร 8 ชั้น + Roof top + ชั้นใต้ดิน B1, B2 โรงแรมห้องพัก", blocks: [blk("hotel", "อาคาร 1", [["B2", "ชั้นใต้ดิน"], ["B1", "ชั้นใต้ดิน"]].concat([["G", "ล็อบบี้ / ห้องอาหาร (โรงแรม)"]], [2, 3, 4, 5, 6, 7, 8].map((n) => [String(n), "ห้องพักโรงแรม"]), [["Roof", "Roof top"]]))] },
+    // ---- Workplace BU
+    { id: "v3d-ubc2", bu: "wp", name: "UBC II", unitName: "UBC II", type: "อาคารสำนักงานให้เช่า", desc: "1 อาคาร · B1–B5 ลานจอดรถ · G1–G2 Lobby / ร้านค้าเช่า · P1–P7 ลานจอดรถ · 10–24 ผู้เช่า (ไม่มีชั้น 13) · ดาดฟ้า · ลานจอดเฮลิคอปเตอร์",
+      blocks: [blk("ubc2", "อาคาร 1", [5, 4, 3, 2, 1].map((n) => ["B" + n, "ชั้นใต้ดิน · " + P]).concat([["G1", "Lobby / ร้านค้าให้เช่า"], ["G2", "Lobby / ร้านค้าให้เช่า"]], [1, 2, 3, 4, 5, 6, 7].map((n) => ["P" + n, P]), nums(10, 24, T, true), [["Roof", "ดาดฟ้า (Roof top)"], ["Helipad", "ลานจอดเฮลิคอปเตอร์"]]))] },
+    { id: "v3d-bte", bu: "wp", name: "BTE", unitName: "BTE", type: "อาคารสำนักงาน + ศูนย์การค้า", desc: "3 อาคาร · A The Mall (ตึกเดียว) · B G–5 ลานจอดรถ · C G–3M ลานจอดรถ ชั้น 4 ห้องเครื่อง Chiller Plant · D (อยู่บนอาคาร C) 5–44 ผู้เช่า (ไม่มีชั้น 13) · 45 ห้องสัมมนา · ลานจอดเฮลิคอปเตอร์",
+      blocks: [Object.assign(blk("bte-a", "อาคาร A (The Mall)", [["The Mall", "ห้างสรรพสินค้า The Mall"]]), { mass: 6 }),
+        blk("bte-b", "อาคาร B", [["G", P], ["1", P], ["2", P], ["3", P], ["4", P], ["5", P]]),
+        blk("bte-c", "อาคาร C", [["G", P], ["1", P], ["1M", P], ["2", P], ["2M", P], ["3", P], ["3M", P], ["4", "ห้องเครื่อง Chiller Plant"]]),
+        Object.assign(blk("bte-d", "อาคาร D", nums(5, 44, T, true).concat([["45", "ห้องสัมมนา"], ["Helipad", "ลานจอดเฮลิคอปเตอร์"]])), { on: "อาคาร C" })] },
+    { id: "v3d-btb", bu: "wp", name: "BTB", unitName: "BTB", type: "อาคารสำนักงานให้เช่า", desc: "1 อาคาร · B1–B3 ลานจอดรถ · G–30 ผู้เช่า (ไม่มีชั้น 13)",
+      blocks: [blk("btb", "อาคาร 1", [3, 2, 1].map((n) => ["B" + n, "ชั้นใต้ดิน · " + P]).concat([["G", T]], nums(1, 30, T, true)))] },
+    { id: "v3d-sls-a", bu: "wp", name: "SLS Campus A", unitName: "SLS", type: "Campus", desc: "SLS · Campus A 6 อาคาร (A1–A6) อาคารละ 3 ชั้น", blocks: sls("A", ["A1", "A2", "A3", "A4", "A5", "A6"]) },
+    { id: "v3d-sls-b", bu: "wp", name: "SLS Campus B", unitName: "SLS", type: "Campus", desc: "SLS · Campus B 6 อาคาร (B1–B6) อาคารละ 3 ชั้น", blocks: sls("B", ["B1", "B2", "B3", "B4", "B5", "B6"]) },
+    { id: "v3d-sls-c", bu: "wp", name: "SLS Campus C", unitName: "SLS", type: "Campus", desc: "SLS · Campus C 3 อาคาร (C1, C5, C6) อาคารละ 3 ชั้น", blocks: sls("C", ["C1", "C5", "C6"]) },
+    { id: "v3d-sls-p1", bu: "wp", name: "SLS Carpark P1", unitName: "SLS", type: "อาคารจอดรถ", desc: "SLS · Carpark P1 · G–6 + Roof", blocks: [blk("sls-p1", "Carpark P1", [["G", P], ["1", P], ["2", P], ["3", P], ["4", P], ["5", P], ["6", P], ["Roof", "Roof top · " + P]])] },
+    { id: "v3d-sls-p2", bu: "wp", name: "SLS Carpark P2", unitName: "SLS", type: "อาคารจอดรถ", desc: "SLS · Carpark P2 · G–6", blocks: [blk("sls-p2", "Carpark P2", [["G", P], ["1", P], ["2", P], ["3", P], ["4", P], ["5", P], ["6", P]])] },
+    { id: "v3d-bcs", bu: "wp", name: "BCS", unitName: "BCS", type: "อาคารผู้เช่า + สำนักงาน", desc: "4 อาคาร · A 4 ชั้น (A1–A4) · B 2 ชั้น (B1–B2) · C 1 ชั้น (C1) ผู้เช่า · E 1 ชั้น (E1) สำนักงาน",
+      blocks: [blk("bcs-a", "อาคาร A", [["A1", T], ["A2", T], ["A3", T], ["A4", T]]), blk("bcs-b", "อาคาร B", [["B1", T], ["B2", T]]), blk("bcs-c", "อาคาร C", [["C1", T]]), blk("bcs-e", "อาคาร E", [["E1", "สำนักงาน (Office)"]])] }
   ];
 })();
 
+const V3_BU = [["tw", "Township", "Township", "#0ea5e9"], ["lp", "Live & Play", "Live & Play", "#f97316"], ["wp", "Workplace", "Workplace", "#6366f1"]];
+const v3dBuOf = (b) => (b && V3_BU.some((x) => x[0] === b.bu) ? b.bu : b && (b.id === "v3d-sama" || /SAMA Garden/i.test(b.name || "")) ? "tw" : "lp");
 function v3dEnsure() {
-  try { if (DB._raw("v3dBuildings", null) === null) DB.set("v3dBuildings", JSON.parse(JSON.stringify(V3D_SEED)), { raw: true }); } catch (e) { /* ignore */ }
+  try {
+    if (DB._raw("v3dBuildings", null) === null) { DB.set("v3dBuildings", JSON.parse(JSON.stringify(V3D_SEED)), { raw: true }); DB.set("v3dSeedWp", 1); return; }
+    // v1.01 · 3 BU zones: give every building its BU (SAMA Garden → Township) and add the Workplace buildings once
+    const all = DB._raw("v3dBuildings", []); let ch = false;
+    all.forEach((b) => { if (!b.bu) { b.bu = v3dBuOf(b); ch = true; } });
+    if (!DB.get("v3dSeedWp", 0)) {
+      V3D_SEED.filter((x) => x.bu === "wp" && !all.some((b) => b.id === x.id)).forEach((x) => { all.push(JSON.parse(JSON.stringify(x))); ch = true; });
+      DB.set("v3dSeedWp", 1);
+    }
+    if (ch) DB.set("v3dBuildings", all, { raw: true });
+  } catch (e) { /* ignore */ }
 }
+/** buildings shown under the current BU filter */
+function v3dBuList(bs) { const all = bs || DB.get("v3dBuildings", []); return V3.bu && V3.bu !== "all" ? all.filter((b) => v3dBuOf(b) === V3.bu) : all; }
 
 // ------------------------------------------------------------ name matching ---
 const v3dNorm = (s) => Scope.norm(s);
@@ -6784,22 +6825,27 @@ const V3_CSS = { ok: "#22c55e", warn: "#f59e0b", crit: "#ef4444", none: "#94a3b8
 function v3dFloorColor(use, name) {
   const u = String(use || "") + " " + String(name || "");
   if (/ใต้ดิน|^B\d/i.test(u)) return 0x64748b;
+  if (/เฮลิคอปเตอร์|helipad/i.test(u)) return 0xfacc15;
+  if (/chiller|ห้องเครื่อง/i.test(u)) return 0x475569;
+  if (/ห้างสรรพสินค้า|The Mall/i.test(u)) return 0xfbbf24;
+  if (/สัมมนา/.test(u)) return 0x38bdf8;
   if (/จอดรถ/.test(u)) return 0x94a3b8;
   if (/คลินิก|ร้านค้า/.test(u)) return 0xf472b6;
   if (/โรงแรม|ห้องพัก/.test(u)) return 0xa78bfa;
   if (/Roof/i.test(u)) return 0xcbd5e1;
   if (/สนาม|เครื่องเล่น|สวนสนุก/.test(u)) return 0x4ade80;
   if (/ร้านอาหาร|กาแฟ|ต้นไม้/.test(u)) return 0xfb923c;
-  if (/สำนักงาน/.test(u)) return 0x60a5fa;
+  if (/สำนักงาน|ผู้เช่า/.test(u)) return 0x60a5fa;
   return 0x7dd3fc;
 }
 
 // ------------------------------------------------------------------ 3D state ---
 // mode: no building selected = campus (all buildings) · building selected = floor plans (all floors or one floor)
-const V3 = { T: null, R: null, NB: null, failed: false, sel: null, blk: null, flr: null, tab: "ov", explode: false, raf: 0, cam: null, items: [], rooms: [], agents: [], anims: [], pick: [], labels: [], fgroups: [], disp: [], data: {}, count: {}, panel: true, auto: false, lastT: 0 };
+const V3 = { T: null, R: null, NB: null, failed: false, sel: null, blk: null, flr: null, tab: "ov", explode: false, raf: 0, cam: null, items: [], rooms: [], agents: [], anims: [], pick: [], labels: [], fgroups: [], disp: [], data: {}, count: {}, panel: true, auto: false, lastT: 0, bu: "all" };
 const V3_ROLES = [["staff", "พนักงาน", "Staff", "#3b82f6"], ["tech", "ช่าง", "Technician", "#f97316"], ["clean", "แม่บ้าน", "Housekeeping", "#ec4899"], ["sec", "รปภ.", "Security", "#7c3aed"], ["contractor", "ผู้รับเหมา", "Contractor", "#eab308"], ["guest", "ลูกค้า/ผู้มาติดต่อ", "Visitor", "#22c55e"]];
 const V3_RC = { staff: 0x3b82f6, tech: 0xf97316, clean: 0xec4899, sec: 0x7c3aed, contractor: 0xeab308, guest: 0x22c55e };
-const V3_FH = 4.8, V3_FHX = 9; // floor spacing in the whole-building view (normal / exploded)
+const V3_FH = 4.8, V3_FHX = 9;
+const v3dFH = (ex) => (ex ? Math.max(V3_FHX * ((V3.fhN || V3_FH) / V3_FH), 4.8) : V3.fhN || V3_FH); // floor spacing in the whole-building view (normal / exploded)
 
 async function v3dLoadThree() {
   if (V3.T) return V3.T;
@@ -7038,7 +7084,12 @@ function v3dDefaultRooms(fl) {
   if (/ต้นไม้/.test(u)) return R([["โซนจำหน่ายต้นไม้", "garden"], ["ร้านกาแฟ", "cafe"], ["ร้านอาหาร", "dining"], ["ครัว", "kitchen"], ["ห้องน้ำ", "toilet"]]);
   if (/ใต้ดิน|^B\d/i.test(u)) return R([["ลานจอดรถใต้ดิน", "parking"], ["ห้องเครื่อง / ปั๊มน้ำ", "mech"]]);
   if (/จอดรถ/.test(u)) return R([["ลานจอดรถ", "parking"], ["โถงลิฟต์ / บันได", "lobby"]]);
-  if (/Roof/i.test(u)) return R([["Roof top", "roof"]]);
+  if (/เฮลิคอปเตอร์|helipad/i.test(u)) return R([["ลานจอดเฮลิคอปเตอร์", "roof"]]);
+  if (/Roof|ดาดฟ้า/i.test(u)) return R([["Roof top", "roof"]]);
+  if (/chiller|ห้องเครื่อง/i.test(u)) return R([["ห้องเครื่อง Chiller Plant", "mech"], ["ห้องควบคุม", "mech"], ["ห้องปั๊ม", "mech"]]);
+  if (/สัมมนา/.test(u)) return R([["ห้องสัมมนา 1", "meeting"], ["ห้องสัมมนา 2", "meeting"], ["Foyer", "lobby"], ["ห้องน้ำ", "toilet"]]);
+  if (/ห้างสรรพสินค้า|The Mall/i.test(u)) return R([["ร้านค้า 1", "shop"], ["ร้านค้า 2", "shop"], ["ร้านค้า 3", "shop"], ["Food court", "dining"], ["ห้องน้ำ", "toilet"]]);
+  if (/Lobby/i.test(u)) return R([["Lobby", "lobby"], ["ร้านค้า 1", "shop"], ["ร้านค้า 2", "shop"], ["ห้องน้ำ", "toilet"]]);
   if (/ห้องพัก/.test(u)) { const p = String(fl.name).replace(/\D/g, "") || "1"; return [1, 2, 3, 4, 5, 6, 7, 8].map((k) => ({ name: "ห้อง " + p + "0" + k, type: "guestroom" })); }
   if (/ล็อบบี้|โรงแรม/.test(u)) return R([["ล็อบบี้ / ต้อนรับ", "lobby"], ["ห้องอาหาร", "dining"], ["ครัว", "kitchen"], ["ห้องน้ำ", "toilet"]]);
   if (/แบด/.test(u)) return R([["สนามแบดมินตัน", "court_b"], ["ห้องพักนักกีฬา", "lobby"]]);
@@ -7125,14 +7176,22 @@ function v3dClearScene() {
   V3.labels.forEach((L) => L.el.remove()); V3.labels = [];
 }
 function v3dBuildingBox(b) {
-  const n = (b.blocks || []).length || 1, many = n > 1;
+  const n = (b.blocks || []).filter((k) => !k.on).length || 1, many = n > 1;
   const bw = many ? 4 : 6.4, bd = many ? 4.6 : 5.6, gap = 0.8;
   return { bw, bd, gap, w: n * bw + (n - 1) * gap, d: bd };
 }
-function v3dLevels(blk) {
+function v3dLevels(blk, b) {
   const fls = blk.floors || [], gIdx = fls.findIndex((x) => /^G/i.test(String(x.name).trim()));
-  const nb = gIdx >= 0 ? gIdx : fls.filter((x) => /^B\d|ใต้ดิน/i.test(String(x.name) + String(x.use))).length;
-  return fls.map((f, i) => ({ f, lv: i - nb }));
+  const nb = gIdx >= 0 ? gIdx : fls.filter((x) => /ใต้ดิน|basement/i.test(String(x.use || ""))).length;
+  let off = 0;
+  if (blk.on && b) { const t = (b.blocks || []).find((k) => k !== blk && !k.on && (k.name === blk.on || k.id === blk.on)); if (t) off = Math.max(0, ...v3dLevels(t).map((x) => x.lv + 1)) + (t.mass ? t.mass - 1 : 0); }
+  return fls.map((f, i) => ({ f, lv: i - nb + off }));
+}
+/** x slot of a block (blocks marked "on" stand on top of another block) */
+function v3dBlockSlot(b, blk) {
+  const base = (b.blocks || []).filter((k) => !k.on);
+  if (blk.on) { const t = base.find((k) => k.name === blk.on || k.id === blk.on); if (t) return base.indexOf(t); }
+  const i = base.indexOf(blk); return i < 0 ? 0 : i;
 }
 function v3dFacade(fl, colHex, w) {
   const cv = document.createElement("canvas"); cv.width = 256; cv.height = 64; const c = cv.getContext("2d");
@@ -7145,37 +7204,57 @@ function v3dFacade(fl, colHex, w) {
 }
 /** campus: every building as a massing model with floor facades */
 function v3dBuildCampus() {
-  const T = V3.T, R = V3.R, bs = DB.get("v3dBuildings", []);
-  const rowMax = 44, space = 6; let x = 0, z = 0, rowD = 0; const places = [];
-  bs.forEach((b) => { const bx_ = v3dBuildingBox(b); if (x > 0 && x + bx_.w > rowMax) { x = 0; z += rowD + space; rowD = 0; } places.push({ b, bx: bx_, x: x + bx_.w / 2, z: z + bx_.d / 2 }); x += bx_.w + space; rowD = Math.max(rowD, bx_.d); });
-  const maxX = Math.max(10, ...places.map((p) => p.x + p.bx.w / 2)), maxZ = Math.max(10, ...places.map((p) => p.z + p.bx.d / 2));
+  const T = V3.T, R = V3.R, bs = v3dBuList();
+  // one zone per BU (Township · Live & Play · Workplace), side by side; buildings packed in rows inside each zone
+  const space = 6, zgap = 16, places = [], zones = [];
+  let zx = 0;
+  V3_BU.forEach(([bu, th, en, col]) => {
+    const list = bs.filter((b) => v3dBuOf(b) === bu); if (!list.length) return;
+    const widest = Math.max(...list.map((b) => v3dBuildingBox(b).w)), rowMax = Math.max(widest, list.length > 4 ? 46 : 30);
+    let x = 0, z = 0, rowD = 0, w = 0; const ps = [];
+    list.forEach((b) => { const bx_ = v3dBuildingBox(b); if (x > 0 && x + bx_.w > rowMax) { x = 0; z += rowD + space; rowD = 0; } ps.push({ b, bx: bx_, x: x + bx_.w / 2, z: z + bx_.d / 2 }); x += bx_.w + space; w = Math.max(w, x - space); rowD = Math.max(rowD, bx_.d); });
+    const d = z + rowD;
+    ps.forEach((p) => { p.x += zx; places.push(p); });
+    zones.push({ bu, th, en, col, x0: zx, w, d });
+    zx += w + zgap;
+  });
+  const maxX = Math.max(10, zx - zgap), maxZ = Math.max(10, ...zones.map((z) => z.d));
   places.forEach((p) => { p.x -= maxX / 2; p.z -= maxZ / 2; });
   V3.bounds = { w: maxX, d: maxZ };
-  // plaza, paths, trees
+  // very tall towers (Workplace) are drawn with a lower storey height so the campus stays readable
+  const topLv = Math.max(1, ...bs.map((b) => Math.max(0, ...(b.blocks || []).map((k) => Math.max(0, ...v3dLevels(k, b).map((x) => x.lv + (k.mass || 1)))))));
+  const LH = topLv > 16 ? Math.max(0.42, 16 / topLv) : 1;
+  // plaza + a tinted pad and a name sign for every BU zone
   const plaza = bx(R.root, maxX + 10, 0.1, maxZ + 10, 0xd8dee6, 0, -0.1, 0); plaza.castShadow = false;
+  zones.forEach((zn) => {
+    const cx = zn.x0 + zn.w / 2 - maxX / 2, pad = bx(R.root, zn.w + 5, 0.04, maxZ + 5, new T.MeshStandardMaterial({ color: zn.col, transparent: true, opacity: 0.16, roughness: 1 }), cx, -0.02, 0); pad.castShadow = false; V3.disp.push(pad.material);
+    v3dLabel(R.root, cx, 0.4, maxZ / 2 + 3.2, "zone", () => `<i style="background:${zn.col}"></i>${mpEsc(mt(zn.th, zn.en))} <small>${bs.filter((b) => v3dBuOf(b) === zn.bu).length} ${mt("อาคาร", "bldg")}</small>`, () => v3dSetBu(zn.bu));
+  });
   const tr = v3Rnd("campus"), c0 = { g: R.root, rnd: tr };
   for (let k = 0; k < 18; k++) { const side = k % 4, t = tr(); const px = side < 2 ? (t - 0.5) * (maxX + 6) : (side === 2 ? -1 : 1) * (maxX / 2 + 3.5), pz = side < 2 ? (side === 0 ? -1 : 1) * (maxZ / 2 + 3.5) : (t - 0.5) * (maxZ + 6); v3Tree(c0, px, pz, 0.55 + tr() * 0.3); }
   places.forEach((p) => {
     const { b, bx: B } = p, d = V3.data[b.id] || {}, g = grp(R.root, p.x, 0, p.z);
     const pl = bx(g, B.w + 1.6, 0.06, B.d + 1.6, 0xbfc8d4, 0, -0.04, 0); pl.castShadow = false;
-    let topY = 0, minY = 0;
-    (b.blocks || []).forEach((blk, bi) => {
-      const ox = -B.w / 2 + B.bw / 2 + bi * (B.bw + B.gap);
-      v3dLevels(blk).forEach(({ f, lv }) => {
+    let topY = 0, minY = 0, topX = 0, topW = B.w;
+    (b.blocks || []).forEach((blk) => {
+      const ox = -B.w / 2 + B.bw / 2 + v3dBlockSlot(b, blk) * (B.bw + B.gap), mh = blk.mass > 1 ? blk.mass : 1, tw = blk.on ? 0.82 : 1;
+      v3dLevels(blk, b).forEach(({ f, lv }) => {
         const col = v3dFloorColor(f.use, f.name), tex = v3dFacade(f, col, B.bw), side = new T.MeshStandardMaterial({ map: tex, roughness: 0.4, metalness: 0.1, transparent: lv < 0, opacity: lv < 0 ? 0.55 : 1 });
-        const plain = v3M(0xe5e7eb); V3.disp.push(side);
-        const m = new T.Mesh(v3G().box, [side, side, plain, plain, side, side]); m.scale.set(B.bw, 0.92, B.bd); m.position.set(ox, lv * 1 + 0.46, 0); m.castShadow = lv >= 0; m.receiveShadow = true;
+        if (mh > 1) { tex.repeat.set(tex.repeat.x, mh); tex.wrapT = T.RepeatWrapping; }
+        const plain = v3M(0xe5e7eb), hh = (0.92 * mh + (mh - 1) * 0.08) * LH;
+        V3.disp.push(side);
+        const m = new T.Mesh(v3G().box, [side, side, plain, plain, side, side]); m.scale.set(B.bw * tw, hh, B.bd * tw); m.position.set(ox, lv * LH + hh / 2, 0); m.castShadow = lv >= 0; m.receiveShadow = true;
         m.userData = { b, fl: f, blk }; g.add(m); V3.pick.push(m);
-        const slab = bx(g, B.bw + 0.18, 0.08, B.bd + 0.18, 0xf1f5f9, ox, lv * 1 + 0.92, 0); slab.castShadow = false;
-        topY = Math.max(topY, lv + 1); minY = Math.min(minY, lv);
+        const slab = bx(g, B.bw * tw + 0.18, 0.08, B.bd * tw + 0.18, 0xf1f5f9, ox, (lv + mh) * LH - 0.08, 0); slab.castShadow = false;
+        if ((lv + mh) * LH > topY) { topY = (lv + mh) * LH; topX = ox; topW = B.bw * tw; } minY = Math.min(minY, lv * LH);
       });
     });
-    const cap = bx(g, B.w * 0.5, 0.35, B.d * 0.4, 0xcbd5e1, 0, topY, 0); cap.castShadow = true;
-    const beacon = sp(g, 0.22, 0, 0, topY + 0.8, 0); beacon.material = new T.MeshBasicMaterial({ color: d.irStat && d.irStat.open ? 0xef4444 : 0x22c55e }); V3.disp.push(beacon.material);
+    const cap = bx(g, Math.min(B.w * 0.5, topW * 0.7), 0.35, B.d * 0.4, 0xcbd5e1, topX, topY, 0); cap.castShadow = true;
+    const beacon = sp(g, 0.22, 0, topX, topY + 0.8, 0); beacon.material = new T.MeshBasicMaterial({ color: d.irStat && d.irStat.open ? 0xef4444 : 0x22c55e }); V3.disp.push(beacon.material);
     const it = { b, g, cx: p.x, cz: p.z, topY, bx: B, beacon };
     V3.items.push(it);
     const band = v3dSafeBand((d.irStat || irStats([], false)).best), rp = d.S ? d.S.pct : null;
-    const lb = v3dLabel(g, 0, topY + 1.6, 0, "bld", () => `<i style="background:${rp === null ? "#94a3b8" : mpScoreColor(rp)}" title="Risk Level ${rp === null ? "–" : mpFmtPct(rp)}"></i>${mpEsc(b.name)}${d.irStat && d.irStat.open ? `<em class="c">IR ${d.irStat.open}</em>` : ""}${d.psdOpen ? `<em class="w">PSD ${d.psdOpen}</em>` : ""}`, () => v3dSelect(b.id));
+    const lb = v3dLabel(g, topX, topY + 1.6, 0, "bld", () => `<i style="background:${rp === null ? "#94a3b8" : mpScoreColor(rp)}" title="Risk Level ${rp === null ? "–" : mpFmtPct(rp)}"></i>${mpEsc(b.name)}${d.irStat && d.irStat.open ? `<em class="c">IR ${d.irStat.open}</em>` : ""}${d.psdOpen ? `<em class="w">PSD ${d.psdOpen}</em>` : ""}`, () => v3dSelect(b.id));
     if (d.irStat && d.irStat.open) lb.el.classList.add("irblink"); // still has open IR: slow blink to remind the team
     lb.el.style.borderColor = band.color; lb.el.style.boxShadow = `0 0 0 1px ${band.color}, 0 2px 6px rgba(15,23,42,.25)`; lb.el.title = `${b.name}\n${mt("สถิติสูงสุดไม่เกิดอุบัติเหตุ", "Best record")} ${(d.irStat || {}).best || 0} ${mt("วัน", "days")} · ${mt(band.th, band.en)}\nRisk Level ${rp === null ? "–" : mpFmtPct(rp)}\nIR ${mt("เปิดอยู่", "open")} ${(d.irStat || {}).open || 0}`;
     V3.anims.push((dt, t) => { beacon.scale.setScalar(0.22 * (1 + Math.sin(t * 3 + p.x) * 0.2)); });
@@ -7194,12 +7273,17 @@ function v3dBuildBuilding(b) {
     if (fl) { v3dBuildFloor(R.root, b, blk, fl, 0, 0, 0, { dense: 1, labels: true, badge: false }); V3.bounds = { w: P.w, d: P.d, h: 3 }; v3dGround(P.w + 30, P.d + 30, -0.45); return; }
     V3.flr = null;
   }
-  const shown = V3.blk ? blocks.filter((k) => k.id === V3.blk) : blocks, n = shown.length, H = V3.explode ? V3_FHX : V3_FH;
+  const shown = V3.blk ? blocks.filter((k) => k.id === V3.blk) : blocks;
+  V3.fhN = Math.max(0, ...shown.map((k) => (k.floors || []).length + (k.on ? 8 : 0))) > 16 ? 2.6 : V3_FH; // tall towers: floors closer together
+  const H = v3dFH(V3.explode);
+  const cols = [...new Set(shown.map((k) => (V3.blk ? 0 : v3dBlockSlot(b, k))))], n = cols.length;
+  const nFl = shown.reduce((a, k) => a + (k.floors || []).length, 0), thin = Math.min(1, 14 / Math.max(1, nFl));
   let minLv = 0, maxLv = 0;
-  shown.forEach((blk, i) => {
-    const x = (i - (n - 1) / 2) * (P.w + 6);
-    v3dLevels(blk).forEach(({ f, lv }) => {
-      const fg = v3dBuildFloor(R.root, b, blk, f, x, lv * H, 0, { dense: n > 1 ? 0.35 : 0.6, labels: false, badge: true });
+  shown.forEach((blk) => {
+    const x = (cols.indexOf(V3.blk ? 0 : v3dBlockSlot(b, blk)) - (n - 1) / 2) * (P.w + 6);
+    const LV = v3dLevels(blk, b);
+    LV.forEach(({ f, lv }, li) => {
+      const fg = v3dBuildFloor(R.root, b, blk, f, x, lv * H, 0, { dense: Math.max(0.08, (n > 1 ? 0.35 : 0.6) * thin), labels: false, badge: LV.length <= 16 || li === 0 || li === LV.length - 1 || li % 5 === 0 || v3dFloorIncidents(b, f).length > 0 });
       fg.userData.lv = lv; V3.fgroups.push(fg); minLv = Math.min(minLv, lv); maxLv = Math.max(maxLv, lv);
     });
     if (n > 1) v3dLabel(R.root, x, (maxLv + 1) * H + 1, 0, "blk", () => mpEsc(blk.name), () => { V3.blk = blk.id; v3dRebuild(true); });
@@ -7296,8 +7380,14 @@ function v3dFlKey(x) {
 function v3dFloorIncidents(b, fl) {
   if (!b || !fl) return [];
   const o = (V3.data || {})[b.id]; if (!o) return [];
-  const k = v3dFlKey(fl.name);
-  return o.ir.filter((r) => r.d.floor && (r.d.floor === fl.id || v3dFlKey(r.d.floor) === k)).sort((x, y) => (y.d.date || "").localeCompare(x.d.date || ""));
+  const k = v3dFlKey(fl.name), blk = (b.blocks || []).find((x) => (x.floors || []).includes(fl)) || {};
+  return o.ir.filter((r) => {
+    const v = String(r.d.floor || "").trim(); if (!v) return false;
+    if (v === fl.id) return true;
+    const m = v.split(" / ");
+    if (m.length > 1) return v3dNorm(m[0]) === v3dNorm(blk.name || "") && v3dFlKey(m.slice(1).join(" / ")) === k;
+    return v3dFlKey(v) === k;
+  }).sort((x, y) => (y.d.date || "").localeCompare(x.d.date || ""));
 }
 const v3dIsProperty = (t) => /Property|Trespass to property|ทรัพย์/i.test(String(t || ""));
 /** tooltip body: green = never happened on this floor · red = list with body parts / property */
@@ -7333,10 +7423,17 @@ function v3dHover(e) {
   tip.style.display = "block"; tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 300) + "px"; tip.style.top = e.clientY - r.top + 14 + "px";
 }
 function v3dBoardFollow(id) {
-  IrSafeUI.group = "ALL"; IrSafeUI.site = "ALL";
+  IrSafeUI.group = V3.bu && V3.bu !== "all" ? V3.bu : "ALL"; IrSafeUI.site = "ALL";
   if (!id) return;
   const bs = DB.get("v3dBuildings", []), r = irAll().find((x) => { const bb = v3dAssign(irSiteName(x), bs) || v3dAssign(x.d.site, bs); return bb && bb.id === id; });
   if (r) { IrSafeUI.group = r.report; IrSafeUI.site = irSiteName(r); }
+}
+function v3dSetBu(bu) {
+  V3.bu = bu && bu !== V3.bu ? bu : "all";
+  V3.sel = null; V3.flr = null; V3.blk = null;
+  IrSafeUI.group = V3.bu === "all" ? "ALL" : V3.bu; IrSafeUI.site = "ALL";
+  document.querySelectorAll("#topbar [data-bu]").forEach((x) => x.classList.toggle("on", x.dataset.bu === V3.bu));
+  if (V3.R) v3dRebuild(true); else v3dRenderSide();
 }
 function v3dSelect(id) { v3dBoardFollow(id); V3.sel = id || null; V3.flr = null; V3.blk = null; if (V3.R) v3dRebuild(true); else v3dRenderSide(); }
 function v3dSetFloor(fid) { V3.flr = fid || null; if (V3.R) v3dRebuild(true); else v3dRenderSide(); }
@@ -7361,7 +7458,7 @@ function v3dNbBuild() {
   const NB = V3.NB; while (NB.g.children.length) NB.g.remove(NB.g.children[0]); NB.mats.forEach((m) => { if (m.map) m.map.dispose(); m.dispose(); }); NB.mats = []; NB.pick = [];
   const blk = (b.blocks || []).find((k) => k.id === V3.blk) || (V3.flr && (b.blocks || []).find((k) => (k.floors || []).some((f) => f.id === V3.flr))) || (b.blocks || [])[0];
   if (!blk) return;
-  const lv = v3dLevels(blk), FW = 4;
+  const lv = v3dLevels(blk, b), FW = 4;
   lv.forEach(({ f, lv: L }) => {
     const sel = V3.flr === f.id, col = v3dFloorColor(f.use, f.name), hot = v3dFloorIncidents(b, f).length > 0;
     const cv = document.createElement("canvas"); cv.width = 256; cv.height = 64; const c = cv.getContext("2d");
@@ -7391,7 +7488,7 @@ function v3dFrame(ts) {
   if (!document.getElementById("v3d-stage") || !V3.R) { V3.raf = 0; return; }
   V3.raf = requestAnimationFrame(v3dFrame);
   const R = V3.R, t = ts / 1000, dt = Math.min(0.05, V3.lastT ? t - V3.lastT : 0.016); V3.lastT = t;
-  const H = V3.explode ? V3_FHX : V3_FH;
+  const H = v3dFH(V3.explode);
   V3.fgroups.forEach((g) => { const ty = g.userData.lv * H; g.position.y += (ty - g.position.y) * Math.min(1, dt * 5); });
   V3.agents.forEach((a) => v3dUpAgent(a, dt, t));
   V3.anims.forEach((f) => f(dt, t));
@@ -7472,7 +7569,7 @@ function renderV3d(root) {
     </div></div>`;
   const q = (s) => root.querySelector(s);
   q("#v3d-home").addEventListener("click", () => v3dPreset());
-  q("#v3d-exp").addEventListener("click", (e) => { V3.explode = !V3.explode; e.currentTarget.classList.toggle("on", V3.explode); if (V3.sel && !V3.flr) { const B = V3.bounds; if (B) { const H = V3.explode ? V3_FHX : V3_FH, f = H / (V3.explode ? V3_FH : V3_FHX); B.h *= f; B.lo = (B.lo || 0) * f; } v3dPreset(); } });
+  q("#v3d-exp").addEventListener("click", (e) => { V3.explode = !V3.explode; e.currentTarget.classList.toggle("on", V3.explode); if (V3.sel && !V3.flr) { const B = V3.bounds; if (B) { const H = v3dFH(V3.explode), f = H / v3dFH(!V3.explode); B.h *= f; B.lo = (B.lo || 0) * f; } v3dPreset(); } });
   q("#v3d-rot").addEventListener("click", (e) => { V3.auto = !V3.auto; e.currentTarget.classList.toggle("on", V3.auto); });
   q("#v3d-zin").addEventListener("click", () => V3.cam && v3dZoomTo(V3.cam.t.dist / 1.45));
   q("#v3d-zout").addEventListener("click", () => V3.cam && v3dZoomTo(V3.cam.t.dist * 1.45));
@@ -7518,15 +7615,15 @@ function v3dSafeBand(days) {
   return { cls: "crit", color: "var(--st-critical)", th: `ต้องปรับปรุง (น้อยกว่า ${c.red} วัน)`, en: `Improve (under ${c.red} days)` };
 }
 /** KPI cards: best record · Risk Level · open critical+high · after-fix · IR open · PSD pending · last visit */
-function v3dKpisHtml(b, D) {
-  const bs = DB.get("v3dBuildings", []), all = (b ? [b] : bs).map((x) => D[x.id]).filter(Boolean);
-  const units = b ? (D[b.id] && D[b.id].unit ? [D[b.id].unit] : []) : DB.get("mpUnits", []), ids = units.map((u) => u.id), range = mpPeriodRange();
+function v3dKpisHtml(b, D, list) {
+  const bs = DB.get("v3dBuildings", []), all = (b ? [b] : list || bs).map((x) => D[x.id]).filter(Boolean);
+  const units = b ? (D[b.id] && D[b.id].unit ? [D[b.id].unit] : []) : list ? [...new Set(all.map((o) => o.unit).filter(Boolean))] : DB.get("mpUnits", []), ids = units.map((u) => u.id), range = mpPeriodRange();
   const S = ids.length ? mpStats(ids, range) : null, pct = S ? S.pct : null;
   let bt = 0, at = 0;
   units.forEach((u) => { const a = mpStats([u.id], range), base = mpBaselineStats(u.id) || a; if (!a.done) return; bt += base.risk.critical + base.risk.high; at += a.risk.critical + a.risk.high; });
   const fixedN = Math.max(0, bt - at), fixedPct = bt ? (fixedN / bt) * 100 : null;
   const crit = S ? S.risk.critical : 0, high = S ? S.risk.high : 0;
-  const st = b ? (D[b.id] || {}).irStat || irStats([], false) : irStats(irAll(), false), band = v3dSafeBand(st.best);
+  const st = b ? (D[b.id] || {}).irStat || irStats([], false) : list ? irStats(V3.bu && V3.bu !== "all" ? irAll().filter((r) => r.report === V3.bu) : [].concat(...all.map((o) => o.ir)), false) : irStats(irAll(), false), band = v3dSafeBand(st.best);
   let last = null; DB.get("mpScores", []).forEach((r) => { if (ids.includes(r.unitId) && r.date && (!last || r.date > last.date)) last = r; });
   const lu = last ? units.find((u) => u.id === last.unitId) : null, ago = last ? Math.max(0, mpDayNum(todayISO()) - mpDayNum(last.date)) : 0;
   const ov = mpOverallStatusOf(pct), sum = (f) => all.reduce((a, o) => a + f(o), 0);
@@ -7542,7 +7639,9 @@ function v3dKpisHtml(b, D) {
 function v3dFloorTitle(f) {
   const n = String(f.name).trim();
   if (/^G/i.test(n)) return "Ground Floor (" + n + ")";
-  if (/^B\d/i.test(n)) return mt("ใต้ดิน ", "Basement ") + n;
+  if (/^B\d/i.test(n) && !/ผู้เช่า|สำนักงาน|office/i.test(f.use || "")) return mt("ใต้ดิน ", "Basement ") + n;
+  if (/helipad/i.test(n)) return mt("ลานจอดเฮลิคอปเตอร์", "Helipad");
+  if (/^(The Mall)$/i.test(n) || /^[A-Z]\d+$/i.test(n) || /^P\d/i.test(n)) return n;
   if (/roof/i.test(n)) return "Roof top";
   if (/M$/i.test(n)) return mt("ชั้นลอย ", "Mezz. ") + n;
   return mt("ชั้น ", "Floor ") + n;
@@ -7553,11 +7652,12 @@ function v3dRenderSide() {
   const bs = DB.get("v3dBuildings", []), D = V3.data, b = V3.sel ? bs.find((x) => x.id === V3.sel) : null;
   // building chips
   const bc = document.getElementById("v3d-bchips");
-  bc.innerHTML = `<button class="${!V3.sel ? "on" : ""}" data-campus="1">🏙 ${mt("ภาพรวมทุกอาคาร", "All buildings")}</button>` + bs.map((x) => { const o = D[x.id] || {}; return `<button class="${V3.sel === x.id ? "on" : ""}" data-sel="${x.id}"><i style="background:${V3_CSS[o.status || "none"]}"></i>${mpEsc(x.name)}</button>`; }).join("");
+  const buN = V3_BU.find((x) => x[0] === V3.bu);
+  bc.innerHTML = `<button class="${!V3.sel ? "on" : ""}" data-campus="1">🏙 ${buN ? mt("ภาพรวม ", "All · ") + buN[1] : mt("ภาพรวมทุกอาคาร", "All buildings")}</button>` + v3dBuList(bs).map((x) => { const o = D[x.id] || {}; return `<button class="${V3.sel === x.id ? "on" : ""}" data-sel="${x.id}"><i style="background:${V3_CSS[o.status || "none"]}"></i>${mpEsc(x.name)}</button>`; }).join("");
   bc.querySelector("[data-campus]").addEventListener("click", () => v3dSelect(null));
   bc.querySelectorAll("[data-sel]").forEach((x) => x.addEventListener("click", () => { V3.tab = "ov"; v3dSelect(x.dataset.sel); }));
   // KPIs (white cards) — same numbers and colours as the back office
-  document.getElementById("v3d-kpis").innerHTML = v3dKpisHtml(b, D);
+  document.getElementById("v3d-kpis").innerHTML = v3dKpisHtml(b, D, b ? null : V3.bu && V3.bu !== "all" ? v3dBuList(bs) : null);
   v3dRenderLeft();
   // floor tabs
   const ft = document.getElementById("v3d-ftabs");
@@ -7661,7 +7761,7 @@ function v3dRenderLeft() {
   if (inj) renderInjuryCard(inj);
 }
 function v3dAllTable() {
-  const bs = DB.get("v3dBuildings", []), D = V3.data || {};
+  const bs = v3dBuList(), D = V3.data || {};
   return `<table class="v3d-t"><thead><tr><th>${mt("อาคาร", "Building")}</th><th>Risk Level</th><th>IR</th><th>PSD</th></tr></thead><tbody>` + bs.map((b) => {
     const o = D[b.id] || { irStat: { open: 0 }, psdOpen: 0 };
     return `<tr data-pick="${b.id}"><td><i class="v3d-dot" style="background:${V3_CSS[o.status || "none"]}"></i>${mpEsc(b.name)}</td><td style="font-weight:700;color:${o.S ? mpScoreColor(o.S.pct) : "inherit"}">${o.S ? mpFmtPct(o.S.pct) : "–"}</td><td>${o.irStat.open}</td><td>${o.psdOpen}</td></tr>`;
@@ -7685,22 +7785,31 @@ async function v3dLoadImg(id) {
 // ------------------------------------------------------------- mode switch ---
 function v3dModeSwitchHtml() {
   const on = (v) => (State.view === v ? "on" : "");
-  return `<div class="mode-sw" role="group" aria-label="3D / back office"><button data-mode="v3d" class="${on("v3d")}">3D</button><button data-mode="dashboard" class="${State.view === "v3d" ? "" : "on"}">${mt("หลังบ้าน", "Back office")}</button></div>`;
+  const bu = State.view === "v3d" ? `<div class="bu-sw" role="group" aria-label="BU">${V3_BU.map(([id, th, en, col]) => `<button data-bu="${id}" class="${V3.bu === id ? "on" : ""}" style="--bu:${col}" title="${mt("แสดงเฉพาะ ", "Show only ")}${th}${mt(" · กดซ้ำเพื่อดูทั้งหมด", " · click again for all")}"><i></i>${mt(th, en)}</button>`).join("")}</div>` : "";
+  return bu + `<div class="mode-sw" role="group" aria-label="3D / back office"><button data-mode="v3d" class="${on("v3d")}">3D</button><button data-mode="dashboard" class="${State.view === "v3d" ? "" : "on"}">${mt("หลังบ้าน", "Back office")}</button></div>`;
 }
 function v3dWireModeSwitch() {
   document.querySelectorAll("#topbar [data-mode]").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.mode)));
+  document.querySelectorAll("#topbar [data-bu]").forEach((b) => b.addEventListener("click", () => v3dSetBu(b.dataset.bu)));
 }
 
 // --------------------------------------------------------------- setup page ---
 function v3dFloorsToText(b) {
-  return (b.blocks || []).map((k) => `# ${k.name}\n` + (k.floors || []).map((f) => [f.name, f.use || "", f.rooms || ""].join(" | ").replace(/( \| )+$/, "")).join("\n")).join("\n\n");
+  return (b.blocks || []).map((k) => `# ${k.name}${k.on ? ` [บน:${k.on}]` : ""}${k.mass > 1 ? ` [สูง:${k.mass}]` : ""}\n` + (k.floors || []).map((f) => [f.name, f.use || "", f.rooms || ""].join(" | ").replace(/( \| )+$/, "")).join("\n")).join("\n\n");
 }
 function v3dTextToBlocks(txt, bid, old) {
   const blocks = []; let cur = null;
   const oldF = {}; (old || []).forEach((k) => (k.floors || []).forEach((f) => { oldF[k.name + "|" + f.name] = f; }));
   String(txt || "").split(/\r?\n/).forEach((ln) => {
     const s = ln.trim(); if (!s) return;
-    if (s[0] === "#") { cur = { id: bid + "-b" + (blocks.length + 1), name: s.replace(/^#+\s*/, "") || "อาคาร " + (blocks.length + 1), floors: [] }; blocks.push(cur); return; }
+    if (s[0] === "#") {
+      let nm = s.replace(/^#+\s*/, ""); const on = (nm.match(/\[(?:บน|on)\s*:\s*([^\]]+)\]/i) || [])[1], mass = Number((nm.match(/\[(?:สูง|mass)\s*:\s*(\d+)\]/i) || [])[1]);
+      nm = nm.replace(/\[[^\]]*\]/g, "").trim();
+      const ob = (old || []).find((k) => k.name === nm);
+      cur = { id: ob ? ob.id : bid + "-b" + (blocks.length + 1), name: nm || "อาคาร " + (blocks.length + 1), floors: [] };
+      if (on) cur.on = on.trim(); if (mass > 1) cur.mass = mass;
+      blocks.push(cur); return;
+    }
     if (!cur) { cur = { id: bid + "-b1", name: "อาคาร 1", floors: [] }; blocks.push(cur); }
     const p = s.split("|").map((x) => x.trim());
     cur.floors.push({ id: cur.id + "-" + (p[0] || "").replace(/[^A-Za-z0-9ก-๙]/g, "") + "-" + (cur.floors.length + 1), name: p[0] || String(cur.floors.length + 1), use: p[1] || "", rooms: p[2] || "" });
@@ -7722,15 +7831,15 @@ function renderV3dSetup(root) {
   const bs = DB.get("v3dBuildings", []);
   root.innerHTML = `<div class="card"><div class="muted-s" style="margin-bottom:10px">${mt("กำหนดอาคาร ชั้น และห้องสำหรับโมเดล 3D — ใส่ชั้นจากล่างขึ้นบน บรรทัดละ 1 ชั้น รูปแบบ: <code>ชื่อชั้น | การใช้งาน | ห้อง/พื้นที่ (คั่นด้วย ,)</code> · ขึ้นบรรทัด <code># ชื่ออาคาร</code> เพื่อเพิ่มอาคารย่อย (เช่น OUS A–E) · ช่อง “ชื่อที่ใช้เชื่อมข้อมูล” ต้องตรงกับชื่อหน่วยงานใน Checklist / Data Record Report เพื่อดึงตัวเลขมาแสดงอัตโนมัติ", "Define buildings, blocks and floors for the 3D model. One floor per line (bottom first): name | use | rooms. '# Block name' starts a new block. 'Data link name' must match the unit/site name used in the Checklist and Data Record Reports.")}</div>
     <div id="v3s-list">${bs.map((b, i) => v3dSetupCard(b, i, bs.length)).join("")}</div>
-    <div class="actions" style="justify-content:flex-start;gap:8px"><button class="btn" id="v3s-add">+ ${mt("เพิ่มอาคาร", "Add building")}</button><button class="btn ghost" id="v3s-reset">${mt("คืนค่าตัวอย่าง (7 อาคาร)", "Restore demo (7 buildings)")}</button><button class="btn ghost" id="v3s-view">${mt("ดูโมเดล 3D", "View 3D")} ›</button></div></div>`;
+    <div class="actions" style="justify-content:flex-start;gap:8px"><button class="btn" id="v3s-add">+ ${mt("เพิ่มอาคาร", "Add building")}</button><button class="btn ghost" id="v3s-reset">${mt("คืนค่าตัวอย่าง", "Restore demo")} (${V3D_SEED.length} ${mt("อาคาร", "buildings")})</button><button class="btn ghost" id="v3s-view">${mt("ดูโมเดล 3D", "View 3D")} ›</button></div></div>`;
   const rerender = () => renderV3dSetup(root);
   root.querySelector("#v3s-view").addEventListener("click", () => navigate("v3d"));
   root.querySelector("#v3s-add").addEventListener("click", () => {
     const all = DB.get("v3dBuildings", []); const id = uid("v3d");
-    all.push({ id, name: mt("อาคารใหม่", "New building"), unitName: "", type: "", desc: "", blocks: v3dTextToBlocks("# อาคาร 1\nG | \n2 | ", id) }); DB.set("v3dBuildings", all); rerender();
+    all.push({ id, bu: V3.bu && V3.bu !== "all" ? V3.bu : "lp", name: mt("อาคารใหม่", "New building"), unitName: "", type: "", desc: "", blocks: v3dTextToBlocks("# อาคาร 1\nG | \n2 | ", id) }); DB.set("v3dBuildings", all); rerender();
   });
   root.querySelector("#v3s-reset").addEventListener("click", () => {
-    if (!confirm(mt("คืนค่าเป็นอาคารตัวอย่าง 7 แห่ง? (ข้อมูล QSHE ไม่ถูกแตะต้อง)", "Restore the 7 demo buildings? (QSHE data is not touched)"))) return;
+    if (!confirm(mt(`คืนค่าเป็นอาคารตัวอย่าง ${V3D_SEED.length} แห่ง? (ข้อมูล QSHE ไม่ถูกแตะต้อง)`, `Restore the ${V3D_SEED.length} demo buildings? (QSHE data is not touched)`))) return;
     DB.set("v3dBuildings", JSON.parse(JSON.stringify(V3D_SEED))); V3.sel = null; rerender();
   });
   root.querySelectorAll(".v3s-card").forEach((card) => {
@@ -7743,6 +7852,7 @@ function renderV3dSetup(root) {
     });
     q("[data-save]").addEventListener("click", () => {
       const all = DB.get("v3dBuildings", []), b = all.find((x) => x.id === id); if (!b) return;
+      b.bu = q("[data-bu]").value || v3dBuOf(b);
       b.name = q("[data-name]").value.trim() || b.name; b.unitName = q("[data-unit]").value.trim(); b.type = q("[data-type]").value.trim(); b.desc = q("[data-desc]").value.trim();
       b.blocks = v3dTextToBlocks(q("[data-floors]").value, id, b.blocks);
       DB.set("v3dBuildings", all); toast(mt("บันทึกแล้ว", "Saved")); rerender();
@@ -7767,10 +7877,11 @@ function v3dMove(id, d, done) {
 }
 function v3dSetupCard(b, i, n) {
   const E = mpEsc, nf = (b.blocks || []).reduce((a, k) => a + (k.floors || []).length, 0);
-  return `<details class="v3s-card" data-id="${b.id}" ${n <= 1 ? "open" : ""}><summary><b>${i + 1}. ${E(b.name)}</b> <small>${(b.blocks || []).length} ${mt("อาคารย่อย", "blocks")} · ${nf} ${mt("ชั้น", "floors")}${b.img ? " · 🖼" : ""}</small></summary>
+  return `<details class="v3s-card" data-id="${b.id}" ${n <= 1 ? "open" : ""}><summary><b>${i + 1}. ${E(b.name)}</b> <small>${(V3_BU.find((x) => x[0] === v3dBuOf(b)) || [])[1]} · ${(b.blocks || []).length} ${mt("อาคารย่อย", "blocks")} · ${nf} ${mt("ชั้น", "floors")}${b.img ? " · 🖼" : ""}</small></summary>
     <div class="v3s-grid">
       <label>${mt("ชื่ออาคาร", "Name")}<input data-name value="${E(b.name)}"></label>
       <label>${mt("ชื่อที่ใช้เชื่อมข้อมูล (หน่วยงาน/Site)", "Data link name (unit/site)")}<input data-unit value="${E(b.unitName || "")}" placeholder="One Udomsuk (OUS)"></label>
+      <label>BU<select data-bu>${V3_BU.map(([id, th]) => `<option value="${id}" ${v3dBuOf(b) === id ? "selected" : ""}>${th}</option>`).join("")}</select></label>
       <label>${mt("ประเภท", "Type")}<input data-type value="${E(b.type || "")}"></label>
       <label>${mt("รายละเอียด", "Description")}<input data-desc value="${E(b.desc || "")}"></label>
     </div>
