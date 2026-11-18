@@ -4697,7 +4697,7 @@ function drrOpenForm(rep, rec, after) {
         <div class="bp-hint" id="${id}-hint">${auto.length ? `✨ ${mt("ระบบเลือกให้จาก Incident Detail — ตรวจสอบ/แก้ไขได้ก่อนบันทึก", "Pre-selected from the Incident Detail — check before saving")}` : ""}</div>
         <button type="button" class="btn ghost small" id="${id}-detect" style="margin-top:4px;">🔍 ${mt("ตรวจหาจาก Incident Detail", "Detect from Incident Detail")}</button>`;
     }
-    if (f.type === "floor") return `<input id="${id}" list="${id}-l" value="${drrEsc(val)}" autocomplete="off" placeholder="${mt("เช่น B1, G, 1M, 5, Roof", "e.g. B1, G, 1M, 5, Roof")}" /><datalist id="${id}-l">${drrFloorOpts(d.site).map((s) => `<option value="${drrEsc(s.v)}">${drrEsc(s.t)}</option>`).join("")}</datalist><div class="bp-hint" id="${id}-hint"></div>`;
+    if (f.type === "floor") return `<select id="${id}-sel" class="drr-flsel"></select><input id="${id}" value="${drrEsc(val)}" autocomplete="off" placeholder="${mt("พิมพ์ชื่อชั้น เช่น B1, G, 1M, 5, Roof", "Type the floor, e.g. B1, G, 1M, 5, Roof")}" style="margin-top:6px" /><div class="bp-hint" id="${id}-hint"></div>`;
     if (f.type === "list") return `<input id="${id}" list="${id}-l" value="${drrEsc(val)}" autocomplete="off" /><datalist id="${id}-l">${sites.map((s) => `<option value="${drrEsc(s)}">`).join("")}</datalist>`;
     return `<input id="${id}" type="${f.type}" ${f.type === "number" ? 'step="any"' : ""} value="${drrEsc(val)}" ${f.auto ? "" : ""} />`;
   };
@@ -4709,12 +4709,19 @@ function drrOpenForm(rep, rec, after) {
   drrWireSpecial(modal, rtype);
   const flEl = modal.querySelector("#drr-f-floor"), siteEl = modal.querySelector("#drr-f-site");
   if (flEl) {
-    const fill = () => {
-      const opts = drrFloorOpts(siteEl ? siteEl.value : d.site), b = drrFloorBuilding(siteEl ? siteEl.value : d.site);
-      modal.querySelector("#drr-f-floor-l").innerHTML = opts.map((o) => `<option value="${drrEsc(o.v)}">${drrEsc(o.t)}</option>`).join("");
-      modal.querySelector("#drr-f-floor-hint").textContent = b ? `🏢 ${mt("ชั้นของ", "Floors of")} ${b.name} (${opts.length}) · ${mt("ใช้แสดงจุดเกิดเหตุในหน้า 3D", "shown on the 3D page")}` : mt("ยังไม่พบอาคารในโมเดล 3D — พิมพ์ชื่อชั้นเองได้", "No matching 3D building — type the floor");
+    const sel = modal.querySelector("#drr-f-floor-sel"), hint = modal.querySelector("#drr-f-floor-hint");
+    const fill = (fromSite) => {
+      const site = siteEl ? siteEl.value : d.site, opts = drrFloorOpts(site), b = drrFloorBuilding(site);
+      if (fromSite === true && opts.length && !opts.some((o) => v3dFlKey(o.v) === v3dFlKey(flEl.value))) flEl.value = "";
+      const cur = flEl.value.trim();
+      const hit = opts.find((o) => o.v === cur) || (cur ? opts.find((o) => v3dFlKey(o.v) === v3dFlKey(cur)) : null);
+      sel.innerHTML = `<option value="">${b ? mt("— เลือกชั้นที่เกิดเหตุ —", "— choose the floor —") : mt("— เลือกหน่วยงาน/อาคารก่อน —", "— choose the unit / building first —")}</option>` + opts.map((o) => `<option value="${drrEsc(o.v)}">${drrEsc(o.t)}</option>`).join("") + `<option value="__other">✏ ${mt("อื่น ๆ (พิมพ์เอง)", "Other (type)")}</option>`;
+      if (hit) { sel.value = hit.v; flEl.value = hit.v; } else if (cur) sel.value = "__other"; else sel.value = "";
+      flEl.style.display = sel.value === "__other" ? "" : "none";
+      hint.textContent = b ? `🏢 ${b.name} · ${opts.length} ${mt("ชั้น", "floors")} · ${mt("ใช้แสดงจุดเกิดเหตุในหน้า 3D", "shown on the 3D page")}` : site ? mt("ยังไม่พบอาคารนี้ในโมเดล 3D — เลือก “อื่น ๆ” แล้วพิมพ์ชื่อชั้น", "This unit is not in the 3D model — choose “Other” and type the floor") : "";
     };
-    if (siteEl) { siteEl.addEventListener("change", fill); siteEl.addEventListener("input", fill); }
+    sel.addEventListener("change", () => { if (sel.value === "__other") { flEl.style.display = ""; flEl.value = ""; flEl.focus(); } else { flEl.value = sel.value; flEl.style.display = "none"; } });
+    if (siteEl) { siteEl.addEventListener("change", () => fill(true)); siteEl.addEventListener("input", () => fill(true)); }
     fill();
   }
   const bp = modal.querySelector("#drr-f-bodyPart");
