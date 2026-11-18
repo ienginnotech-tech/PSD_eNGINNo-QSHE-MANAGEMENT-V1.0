@@ -1230,8 +1230,25 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .v3d-kpi span { display: block; font-size: 11px; color: var(--mu); } .v3d-kpi b { font-size: 20px; }
 .v3d-kpi.ok { border-color: #86efac; } .v3d-kpi.ok b { color: #16a34a; } .v3d-kpi.crit { border-color: #fca5a5; } .v3d-kpi.crit b { color: #dc2626; }
 .v3d-kpi.warn { border-color: #fcd34d; } .v3d-kpi.warn b { color: #d97706; } .v3d-kpi.info { border-color: #7dd3fc; } .v3d-kpi.info b { color: #0284c7; } .v3d-kpi.dark { border-color: #94a3b8; }
-.v3d-main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 10px; height: calc(100vh - 250px); min-height: 560px; }
-.v3d-main.nopanel { grid-template-columns: minmax(0, 1fr) 0; } .v3d-main.nopanel .v3d-right { display: none; }
+.v3d-main { display: grid; grid-template-columns: 340px minmax(0, 1fr) 340px; gap: 10px; height: calc(100vh - 250px); min-height: 560px; }
+.v3d-main.nopanel { grid-template-columns: 340px minmax(0, 1fr) 0; }
+.v3d-left { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; overflow-x: hidden; min-width: 0; padding-right: 2px; }
+.v3d-left > div > .card { margin: 0; height: auto !important; padding: 12px; border-radius: 12px; }
+.v3d-left h3 { font-size: 14.5px; }
+.v3d-left .toolbar { flex-wrap: wrap; gap: 6px; }
+.v3d-left .ir-minis { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+.v3d-left .ir-mini .muted-s { font-size: 10.5px; line-height: 1.25; }
+.v3d-left select { font-size: 12.5px; padding: 4px 8px; height: auto; }
+.v3d-left .btn.small { padding: 4px 9px; font-size: 12px; }
+.v3d-left .ir-mini { padding: 4px 6px; } .v3d-left .ir-mini .big { font-size: 1.2rem !important; }
+.v3d-left .ir-units { max-height: 190px !important; }
+.v3d-left .mon-table { font-size: 11.5px; } .v3d-left .mon-table th, .v3d-left .mon-table td { padding: 4px 5px; }
+.v3d-left .inj-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.v3d-left .inj-k b { font-size: 18px; }
+.v3d-left .inj-main { grid-template-columns: 1fr; gap: 8px; }
+.v3d-left .inj-svg { max-height: 210px; }
+.v3d-left .inj-bar { grid-template-columns: minmax(80px, 42%) minmax(0, 1fr) 22px 40px; font-size: 12px; gap: 6px; }
+@media (max-width: 1400px) { .v3d-main { grid-template-columns: 300px minmax(0, 1fr) 300px; } .v3d-main.nopanel { grid-template-columns: 300px minmax(0, 1fr) 0; } } .v3d-main.nopanel .v3d-right { display: none; }
 .v3d-stage { position: relative; background: #e9eef3; border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; min-width: 0; }
 .v3d-stage canvas#v3d-canvas { width: 100%; height: 100%; display: block; cursor: grab; }
 .v3d-labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
@@ -1242,7 +1259,14 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .v3l.bld { font-size: 12px; padding: 3px 9px; } .v3l.bld i { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }
 .v3l.bld.ok i { background: #22c55e; } .v3l.bld.warn i { background: #f59e0b; } .v3l.bld.crit i { background: #ef4444; } .v3l.bld.crit { border-color: #ef4444; }
 .v3l em { font-style: normal; font-size: 10px; padding: 0 5px; border-radius: 6px; } .v3l em.c { background: #dc2626; } .v3l em.w { background: #d97706; }
-.v3d-tip { position: absolute; display: none; background: rgba(15,27,51,.94); color: #fff; border-radius: 8px; padding: 6px 10px; font-size: 12px; pointer-events: none; max-width: 240px; z-index: 6; } .v3d-tip span { color: #cbd5e1; }
+.v3d-tip { position: absolute; display: none; background: rgba(15,27,51,.94); color: #fff; border-radius: 8px; padding: 6px 10px; font-size: 12px; pointer-events: none; max-width: 290px; z-index: 6; line-height: 1.45; border-left: 4px solid transparent; } .v3d-tip span { color: #cbd5e1; }
+.v3d-tip.ok { border-left-color: #22c55e; } .v3d-tip.bad { border-left-color: #ef4444; }
+.v3t-ok { margin-top: 5px; padding: 4px 8px; border-radius: 6px; background: #16a34a; color: #fff; font-weight: 700; }
+.v3t-bad { margin-top: 5px; padding: 4px 8px; border-radius: 6px; background: #dc2626; color: #fff; font-weight: 700; }
+.v3t-p { margin-top: 4px; color: #fecaca; font-weight: 600; }
+.v3t-r { margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,.12); font-size: 11.5px; } .v3t-r span { display: block; color: #cbd5e1; } .v3t-r em { font-style: normal; background: #f59e0b; color: #111; border-radius: 4px; padding: 0 4px; font-size: 10px; font-weight: 700; }
+.v3t-more { margin-top: 3px; color: #94a3b8; font-size: 11px; }
+.v3d-fbad { display: inline-block; min-width: 16px; padding: 0 4px; margin-left: 3px; border-radius: 8px; background: #dc2626; color: #fff; font-style: normal; font-size: 10.5px; line-height: 16px; text-align: center; }
 .v3d-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--mu); padding: 20px; z-index: 2; }
 .v3d-ftabs { position: absolute; left: 10px; top: 10px; right: 120px; z-index: 4; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
 .v3d-ftabs .row { display: flex; flex-wrap: wrap; gap: 4px; background: rgba(255,255,255,.92); border: 1px solid #e2e8f0; border-radius: 10px; padding: 4px; width: max-content; max-width: 100%; pointer-events: auto; box-shadow: 0 2px 8px rgba(15,23,42,.08); }
@@ -1290,7 +1314,7 @@ body.theme-ocean { --series-1: #2a78d6; --series-2: #eb6834; }
 .v3s-fl textarea { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
 .v3s-gen { font-size: 12px; margin: 6px 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; } .v3s-gen input[type=number] { width: 56px; }
 .v3s-img { display: flex; align-items: center; gap: 10px; margin: 8px 0; } .v3s-img img { height: 70px; border-radius: 6px; }
-@media (max-width: 1100px) { .v3d-main { grid-template-columns: 1fr; height: auto; } .v3d-stage { height: 70vh; } .v3d-kpis { grid-template-columns: repeat(3, 1fr); } .v3s-grid { grid-template-columns: 1fr; } .v3d-nbcard { display: none !important; } .v3d-hint { display: none; } .v3d-ptoggle { display: none; } }
+@media (max-width: 1100px) { .v3d-main, .v3d-main.nopanel { grid-template-columns: 1fr; height: auto; } .v3d-left { order: 3; overflow: visible; } .v3d-stage { height: 70vh; } .v3d-kpis { grid-template-columns: repeat(3, 1fr); } .v3s-grid { grid-template-columns: 1fr; } .v3d-nbcard { display: none !important; } .v3d-hint { display: none; } .v3d-ptoggle { display: none; } }
 /* dashboard: safety board above the plan card (left) · injured body parts card */
 .dash-lcol { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .dash-lcol .safety { height: auto !important; gap: 10px; }
@@ -4596,6 +4620,7 @@ function drrIncidentFields(rep) {
     { k: "time", label: mt("เวลา", "Time"), type: "time" },
     tw ? { k: "areaType", label: mt("ประเภทสถานที่", "Area type"), type: "select", opts: DRR_AREA_TYPES } : { k: "site", label: mt("หน่วยงาน / อาคาร (Area)", "Unit / building (Area)"), type: "list", report: rep, req: true },
     { k: "location", label: "Location", type: "text" },
+    { k: "floor", label: mt("ชั้น (Floor)", "Floor"), type: "floor" },
     { k: "type", label: "Incident Type", type: "select", opts: drrOpt(DRR_INCIDENT_TYPES), req: true },
     tw ? { k: "accountable", label: "Accountable", type: "select", opts: DRR_ACCOUNTABLE } : { k: "accountable", label: "Accountable", type: "text" },
     tw ? { k: "site", label: mt("Responsible (หน่วยงาน BU)", "Responsible (BU)"), type: "list", report: rep, req: true } : { k: "responsible", label: "Responsible", type: "text" },
@@ -4621,9 +4646,9 @@ function drrIncidentFields(rep) {
   return f.filter(Boolean);
 }
 const DRR_TABLE_COLS = {
-  lp: ["no", "date", "time", "site", "location", "type", "severity", "rootCause", "detail", "loss", "status"],
-  tw: ["no", "date", "time", "areaType", "location", "type", "site", "severity", "rootCause", "detail", "loss", "status"],
-  wp: ["no", "date", "time", "site", "location", "type", "severity", "rootCause", "detail", "loss", "status"]
+  lp: ["no", "date", "time", "site", "location", "floor", "type", "severity", "rootCause", "detail", "loss", "status"],
+  tw: ["no", "date", "time", "areaType", "location", "floor", "type", "site", "severity", "rootCause", "detail", "loss", "status"],
+  wp: ["no", "date", "time", "site", "location", "floor", "type", "severity", "rootCause", "detail", "loss", "status"]
 };
 const drrStatusChip = (s) => s === "closed" ? `<span class="st-chip"><i style="color:var(--st-good)">✔</i>Closed</span>` : `<span class="st-chip"><i style="color:var(--st-serious)">▲</i>Open</span>`;
 
@@ -4672,6 +4697,7 @@ function drrOpenForm(rep, rec, after) {
         <div class="bp-hint" id="${id}-hint">${auto.length ? `✨ ${mt("ระบบเลือกให้จาก Incident Detail — ตรวจสอบ/แก้ไขได้ก่อนบันทึก", "Pre-selected from the Incident Detail — check before saving")}` : ""}</div>
         <button type="button" class="btn ghost small" id="${id}-detect" style="margin-top:4px;">🔍 ${mt("ตรวจหาจาก Incident Detail", "Detect from Incident Detail")}</button>`;
     }
+    if (f.type === "floor") return `<input id="${id}" list="${id}-l" value="${drrEsc(val)}" autocomplete="off" placeholder="${mt("เช่น B1, G, 1M, 5, Roof", "e.g. B1, G, 1M, 5, Roof")}" /><datalist id="${id}-l">${drrFloorOpts(d.site).map((s) => `<option value="${drrEsc(s.v)}">${drrEsc(s.t)}</option>`).join("")}</datalist><div class="bp-hint" id="${id}-hint"></div>`;
     if (f.type === "list") return `<input id="${id}" list="${id}-l" value="${drrEsc(val)}" autocomplete="off" /><datalist id="${id}-l">${sites.map((s) => `<option value="${drrEsc(s)}">`).join("")}</datalist>`;
     return `<input id="${id}" type="${f.type}" ${f.type === "number" ? 'step="any"' : ""} value="${drrEsc(val)}" ${f.auto ? "" : ""} />`;
   };
@@ -4681,6 +4707,16 @@ function drrOpenForm(rep, rec, after) {
     ${special}
     <div class="actions">${!isNew ? `<button class="btn danger" id="drr-del" style="margin-right:auto;">${mt("ลบ", "Delete")}</button>` : ""}<button class="btn ghost" id="drr-cancel">${mt("ยกเลิก", "Cancel")}</button><button class="btn" id="drr-save">${mt("บันทึก", "Save")}</button></div>`);
   drrWireSpecial(modal, rtype);
+  const flEl = modal.querySelector("#drr-f-floor"), siteEl = modal.querySelector("#drr-f-site");
+  if (flEl) {
+    const fill = () => {
+      const opts = drrFloorOpts(siteEl ? siteEl.value : d.site), b = drrFloorBuilding(siteEl ? siteEl.value : d.site);
+      modal.querySelector("#drr-f-floor-l").innerHTML = opts.map((o) => `<option value="${drrEsc(o.v)}">${drrEsc(o.t)}</option>`).join("");
+      modal.querySelector("#drr-f-floor-hint").textContent = b ? `🏢 ${mt("ชั้นของ", "Floors of")} ${b.name} (${opts.length}) · ${mt("ใช้แสดงจุดเกิดเหตุในหน้า 3D", "shown on the 3D page")}` : mt("ยังไม่พบอาคารในโมเดล 3D — พิมพ์ชื่อชั้นเองได้", "No matching 3D building — type the floor");
+    };
+    if (siteEl) { siteEl.addEventListener("change", fill); siteEl.addEventListener("input", fill); }
+    fill();
+  }
   const bp = modal.querySelector("#drr-f-bodyPart");
   if (bp) {
     bp.addEventListener("click", (e) => { const b = e.target.closest("[data-bp]"); if (!b) return; const none = b.dataset.bp === "none"; if (none) bp.querySelectorAll(".bp-chip").forEach((x) => { if (x !== b) x.classList.remove("on"); }); else bp.querySelector('[data-bp="none"]').classList.remove("on"); b.classList.toggle("on"); });
@@ -4709,6 +4745,14 @@ function drrOpenForm(rep, rec, after) {
     drrSave({ id, report: rtype, d: nd });
     closeModal(); toast(mt("บันทึกแล้ว", "Saved")); after();
   });
+}
+/** floors of the 3D building that matches an incident site (for the Floor field) */
+function drrFloorBuilding(site) { if (!site || typeof v3dAssign !== "function") return null; try { const bs = DB.get("v3dBuildings", []); if (!bs.length) return null; const n = String(site).replace(/\s*\(.*?\)\s*/g, " ").trim(); return v3dAssign(n, bs) || v3dAssign(site, bs); } catch (e) { return null; } }
+function drrFloorOpts(site) {
+  const b = drrFloorBuilding(site), out = [], seen = new Set();
+  if (!b) return out;
+  (b.blocks || []).forEach((blk) => [...(blk.floors || [])].reverse().forEach((f) => { const k = String(f.name).trim(); if (seen.has(k)) return; seen.add(k); out.push({ v: k, t: v3dFloorTitle(f) + ((b.blocks || []).length > 1 ? " · " + blk.name : "") + (f.use ? " · " + f.use : "") }); }));
+  return out;
 }
 function drrDefaults(rtype) {
   const today = todayISO();
@@ -5887,7 +5931,7 @@ function irWireScope(host, refresh) {
   if (g) g.onchange = () => { IrSafeUI.group = g.value; IrSafeUI.site = "ALL"; refresh(); };
   if (s) s.onchange = () => { IrSafeUI.site = s.value; refresh(); };
 }
-function irRefreshDash() { renderSafetyBoard(document.getElementById("dash-safety")); renderIrDashCard(document.getElementById("dash-ir")); renderInjuryCard(document.getElementById("dash-body")); const v3 = document.getElementById("v3d-safety"); if (v3) renderSafetyBoard(v3); }
+function irRefreshDash() { renderSafetyBoard(document.getElementById("dash-safety")); renderIrDashCard(document.getElementById("dash-ir")); renderInjuryCard(document.getElementById("dash-body")); const v3 = document.getElementById("v3d-safety"); if (v3) renderSafetyBoard(v3); if (document.getElementById("v3d-left")) v3dRenderLeft(); }
 
 function renderIrDashCard(host) {
   if (!host) return;
@@ -7196,6 +7240,7 @@ function v3dWireInput(el) {
   const ptrs = new Map(); let moved = 0, last = null, pinch = 0;
   el.style.touchAction = "none";
   el.addEventListener("contextmenu", (e) => e.preventDefault());
+  el.addEventListener("pointerleave", () => { const tip = document.getElementById("v3d-tip"); if (tip) tip.style.display = "none"; v3dHl(null); });
   el.addEventListener("pointerdown", (e) => { el.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); moved = 0; last = { x: e.clientX, y: e.clientY }; if (ptrs.size === 2) pinch = 0; V3.cam.drag = true; });
   el.addEventListener("pointermove", (e) => {
     const c = V3.cam; if (!c) return;
@@ -7233,15 +7278,52 @@ function v3dPickAt(e) {
   } else if (u.b) { if (V3.sel !== u.b.id) v3dSelect(u.b.id); }
 }
 let v3dHoverT = 0;
+/** floor key: "ชั้น 5" = "Floor 5" = "5" · "G" = "Ground" · "Roof top" = "RF" */
+function v3dFlKey(x) {
+  let k = String(x == null ? "" : x).toLowerCase().replace(/ชั้นใต้ดิน|ใต้ดิน|basement/g, "b").replace(/ชั้นลอย|mezz\.?|mezzanine/g, "m").replace(/ชั้น|floor|level|fl\.?|lv\.?/g, "").replace(/[\s_\-.()]/g, "");
+  if (/^(g|gf|ground|groundfloor|1g|ล่าง)$/.test(k)) return "g";
+  if (/^(roof|rooftop|rf|r|ดาดฟ้า)$/.test(k)) return "roof";
+  return k.replace(/^0+(\d)/, "$1");
+}
+/** incidents (Live & Play / Township / Workplace) recorded on this floor of this building */
+function v3dFloorIncidents(b, fl) {
+  if (!b || !fl) return [];
+  const o = (V3.data || {})[b.id]; if (!o) return [];
+  const k = v3dFlKey(fl.name);
+  return o.ir.filter((r) => r.d.floor && (r.d.floor === fl.id || v3dFlKey(r.d.floor) === k)).sort((x, y) => (y.d.date || "").localeCompare(x.d.date || ""));
+}
+const v3dIsProperty = (t) => /Property|Trespass to property|ทรัพย์/i.test(String(t || ""));
+/** tooltip body: green = never happened on this floor · red = list with body parts / property */
+function v3dFloorTipHtml(b, fl, head) {
+  const list = v3dFloorIncidents(b, fl), E = mpEsc;
+  if (!list.length) return { ok: true, html: `${head}<div class="v3t-ok">✔ ${mt("ชั้นนี้ไม่เคยเกิดอุบัติเหตุ", "No incident ever recorded on this floor")}</div>` };
+  const open = list.filter((r) => r.d.status !== "closed").length, human = {}, prop = [];
+  list.forEach((r) => { if (v3dIsProperty(r.d.type)) { prop.push(r); return; } drrBodyOf(r.d).ids.forEach((id) => { human[id] = (human[id] || 0) + 1; }); });
+  const parts = Object.keys(human).sort((a, z) => human[z] - human[a]).map((id) => `${E(drrBodyName(id))} ${human[id]}`).join(" · ");
+  const rows = list.slice(0, 4).map((r) => {
+    const pr = v3dIsProperty(r.d.type), bp = pr ? null : drrBodyOf(r.d).ids.map(drrBodyName).join(", ");
+    const what = pr ? `💼 ${mt("ทรัพย์สิน", "Property")}${r.d.assetOwner ? " · " + E(r.d.assetOwner) : ""}${Number(r.d.loss) ? " · " + Number(r.d.loss).toLocaleString() + " ฿" : ""}` : bp ? `🩹 ${E(bp)}` : "";
+    return `<div class="v3t-r"><b>${mpFmtDate(r.d.date)}</b> ${E(String(r.d.type || "").split(" · ")[0])}${r.d.status !== "closed" ? ` <em>Open</em>` : ""}${r.d.location ? `<span>📍 ${E(r.d.location)}</span>` : ""}${what ? `<span>${what}</span>` : ""}</div>`;
+  }).join("");
+  return { ok: false, html: `${head}<div class="v3t-bad">⚠ ${mt("เคยเกิดเหตุที่ชั้นนี้", "Incidents on this floor")} ${list.length} ${mt("ครั้ง", "time(s)")}${open ? ` · Open ${open}` : ""}${list.length >= 2 ? ` · ${mt("จุดเกิดซ้ำ", "recurring spot")}` : ""}</div>${parts ? `<div class="v3t-p">🩹 ${mt("อวัยวะ", "Body parts")}: ${parts}</div>` : ""}${prop.length ? `<div class="v3t-p">💼 ${mt("ทรัพย์สินเสียหาย", "Property")} ${prop.length} ${mt("ครั้ง", "time(s)")}</div>` : ""}${rows}${list.length > 4 ? `<div class="v3t-more">+${list.length - 4} ${mt("รายการ", "more")}</div>` : ""}` };
+}
+function v3dHl(mat, ok) {
+  if (V3.hl && V3.hl.mat !== mat) { try { V3.hl.mat.emissive.setHex(V3.hl.e); V3.hl.mat.emissiveIntensity = V3.hl.i; } catch (e) { /* ignore */ } V3.hl = null; }
+  if (!mat || !mat.emissive) return;
+  if (!V3.hl) V3.hl = { mat, e: mat.emissive.getHex(), i: mat.emissiveIntensity };
+  mat.emissive.setHex(ok ? 0x16a34a : 0xdc2626); mat.emissiveIntensity = 0.45;
+}
 function v3dHover(e) {
   const now = performance.now(); if (now - v3dHoverT < 70) return; v3dHoverT = now;
   const tip = document.getElementById("v3d-tip"); if (!tip) return;
-  const h = v3dRayHit(e); if (!h) { tip.style.display = "none"; return; }
+  const h = v3dRayHit(e); if (!h) { tip.style.display = "none"; v3dHl(null); return; }
   const u = h.object.userData, r = document.getElementById("v3d-stage").getBoundingClientRect();
-  if (u.rc) { const d = u.rc.def, tn = V3_RTN[d.type] || ["", ""]; tip.innerHTML = `<b>${mpEsc(d.name)}</b><br><span>${mpEsc(mt(tn[0], tn[1]))} · ${mt("ชั้น", "Floor")} ${mpEsc(u.rc.fl.name)}${u.rc.n ? ` · 👤 ${u.rc.n}` : ""}</span>`; }
-  else if (u.b) tip.innerHTML = `<b>${mpEsc(u.b.name)}</b><br><span>${mt("ชั้น", "Floor")} ${mpEsc(u.fl.name)} · ${mpEsc(u.fl.use || "")}</span>`;
-  else { tip.style.display = "none"; return; }
-  tip.style.display = "block"; tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 230) + "px"; tip.style.top = e.clientY - r.top + 14 + "px";
+  let T_ = null;
+  if (u.rc) { const d = u.rc.def, tn = V3_RTN[d.type] || ["", ""], b = DB.get("v3dBuildings", []).find((x) => x.id === V3.sel); T_ = v3dFloorTipHtml(b, u.rc.fl, `<b>${mpEsc(d.name)}</b><br><span>${mpEsc(mt(tn[0], tn[1]))} · ${mt("ชั้น", "Floor")} ${mpEsc(u.rc.fl.name)}${u.rc.n ? ` · 👤 ${u.rc.n}` : ""}</span>`); v3dHl(null); }
+  else if (u.b) { T_ = v3dFloorTipHtml(u.b, u.fl, `<b>${mpEsc(u.b.name)}</b><br><span>${mt("ชั้น", "Floor")} ${mpEsc(u.fl.name)} · ${mpEsc(u.fl.use || "")}</span>`); v3dHl(Array.isArray(h.object.material) ? h.object.material[0] : h.object.material, T_.ok); }
+  else { tip.style.display = "none"; v3dHl(null); return; }
+  tip.innerHTML = T_.html; tip.classList.toggle("ok", T_.ok); tip.classList.toggle("bad", !T_.ok);
+  tip.style.display = "block"; tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 300) + "px"; tip.style.top = e.clientY - r.top + 14 + "px";
 }
 function v3dBoardFollow(id) {
   IrSafeUI.group = "ALL"; IrSafeUI.site = "ALL";
@@ -7274,12 +7356,12 @@ function v3dNbBuild() {
   if (!blk) return;
   const lv = v3dLevels(blk), FW = 4;
   lv.forEach(({ f, lv: L }) => {
-    const sel = V3.flr === f.id, col = v3dFloorColor(f.use, f.name);
+    const sel = V3.flr === f.id, col = v3dFloorColor(f.use, f.name), hot = v3dFloorIncidents(b, f).length > 0;
     const cv = document.createElement("canvas"); cv.width = 256; cv.height = 64; const c = cv.getContext("2d");
     c.fillStyle = "#" + col.toString(16).padStart(6, "0"); c.fillRect(0, 0, 256, 64); c.fillStyle = "rgba(255,255,255,.5)"; for (let x = 0; x <= 256; x += 32) c.fillRect(x, 0, 2, 64); c.fillRect(0, 0, 256, 5);
     c.fillStyle = "rgba(0,0,0,.5)"; c.fillRect(8, 10, 118, 44); c.fillStyle = "#fff"; c.font = "bold 28px Arial"; c.textBaseline = "middle"; c.fillText(String(f.name).slice(0, 5), 16, 33);
     const t = new T.CanvasTexture(cv); t.colorSpace = T.SRGBColorSpace;
-    const side = new T.MeshStandardMaterial({ map: t, roughness: 0.35, transparent: L < 0, opacity: L < 0 ? 0.8 : 1, emissive: sel ? 0xf97316 : 0x000000, emissiveIntensity: sel ? 0.35 : 0 }), plain = new T.MeshStandardMaterial({ color: 0xd1d5db });
+    const side = new T.MeshStandardMaterial({ map: t, roughness: 0.35, transparent: L < 0, opacity: L < 0 ? 0.8 : 1, emissive: sel ? 0xf97316 : hot ? 0xdc2626 : 0x000000, emissiveIntensity: sel ? 0.35 : hot ? 0.4 : 0 }), plain = new T.MeshStandardMaterial({ color: 0xd1d5db });
     NB.mats.push(side, plain);
     const m = new T.Mesh(new T.BoxGeometry(FW, 0.9, FW), [side, side, plain, plain, side, side]); m.position.y = L + 0.5; if (sel) m.scale.set(1.08, 1, 1.08);
     m.userData = { fid: f.id, blk: blk.id }; NB.g.add(m); NB.pick.push(m);
@@ -7360,6 +7442,7 @@ function renderV3d(root) {
     <div class="v3d-bchips" id="v3d-bchips"></div>
     <div class="v3d-kpis" id="v3d-kpis"></div>
     <div class="v3d-main ${V3.panel ? "" : "nopanel"}" id="v3d-main">
+      <aside class="v3d-left" id="v3d-left"><div id="v3d-ir"></div><div id="v3d-inj"></div></aside>
       <div class="v3d-stage" id="v3d-stage"><div class="v3d-labels" id="v3d-labels"></div><div id="v3d-tip" class="v3d-tip"></div>
         <div class="v3d-msg" id="v3d-msg"><div>${mt("กำลังโหลดโมเดล 3D…", "Loading 3D…")}</div></div>
         <div class="v3d-ftabs" id="v3d-ftabs"></div>
@@ -7468,6 +7551,7 @@ function v3dRenderSide() {
   bc.querySelectorAll("[data-sel]").forEach((x) => x.addEventListener("click", () => { V3.tab = "ov"; v3dSelect(x.dataset.sel); }));
   // KPIs (white cards) — same numbers and colours as the back office
   document.getElementById("v3d-kpis").innerHTML = v3dKpisHtml(b, D);
+  v3dRenderLeft();
   // floor tabs
   const ft = document.getElementById("v3d-ftabs");
   if (!b) ft.innerHTML = "";
@@ -7475,10 +7559,15 @@ function v3dRenderSide() {
     const blocks = b.blocks || [], blk = blocks.find((x) => x.id === V3.blk) || blocks.find((x) => (x.floors || []).some((f) => f.id === V3.flr)) || blocks[0];
     let h = "";
     if (blocks.length > 1) h += `<div class="row">${`<button class="${!V3.blk ? "on" : ""}" data-blk="">${mt("ทุกอาคารย่อย", "All blocks")}</button>`}${blocks.map((x) => `<button class="${V3.blk === x.id ? "on" : ""}" data-blk="${x.id}">${mpEsc(x.name)}</button>`).join("")}</div>`;
-    h += `<div class="row"><button class="${!V3.flr ? "on" : ""}" data-fl="">🏢 ${mt("ทั้งอาคาร", "Whole building")}</button>` + (blk ? [...(blk.floors || [])].reverse().map((f) => `<button class="${V3.flr === f.id ? "on" : ""}" data-fl="${f.id}" data-fb="${blk.id}">${mpEsc(v3dFloorTitle(f))}</button>`).join("") : "") + `</div>`;
+    h += `<div class="row"><button class="${!V3.flr ? "on" : ""}" data-fl="">🏢 ${mt("ทั้งอาคาร", "Whole building")}</button>` + (blk ? [...(blk.floors || [])].reverse().map((f) => `<button class="${V3.flr === f.id ? "on" : ""}" data-fl="${f.id}" data-fb="${blk.id}">${mpEsc(v3dFloorTitle(f))}${(() => { const n = v3dFloorIncidents(b, f).length; return n ? ` <i class="v3d-fbad" title="">${n}</i>` : ""; })()}</button>`).join("") : "") + `</div>`;
     ft.innerHTML = h;
     ft.querySelectorAll("[data-blk]").forEach((x) => x.addEventListener("click", () => { V3.blk = x.dataset.blk || null; V3.flr = null; if (V3.R) v3dRebuild(true); else v3dRenderSide(); }));
     ft.querySelectorAll("[data-fl]").forEach((x) => x.addEventListener("click", () => { if (x.dataset.fb) V3.blk = x.dataset.fb; v3dSetFloor(x.dataset.fl || null); }));
+    ft.querySelectorAll("[data-fl][data-fb]").forEach((x) => {
+      const bk = blocks.find((k) => k.id === x.dataset.fb), fl = bk && (bk.floors || []).find((f) => f.id === x.dataset.fl); if (!fl) return;
+      x.addEventListener("mouseenter", () => { const tip = document.getElementById("v3d-tip"), st = document.getElementById("v3d-stage"); if (!tip || !st) return; const T_ = v3dFloorTipHtml(b, fl, `<b>${mpEsc(b.name)}</b><br><span>${mpEsc(v3dFloorTitle(fl))}${fl.use ? " · " + mpEsc(fl.use) : ""}</span>`); tip.innerHTML = T_.html; tip.classList.toggle("ok", T_.ok); tip.classList.toggle("bad", !T_.ok); const r = st.getBoundingClientRect(), xr = x.getBoundingClientRect(); tip.style.display = "block"; tip.style.left = Math.max(6, Math.min(xr.left - r.left, r.width - 300)) + "px"; tip.style.top = (xr.bottom - r.top + 6) + "px"; });
+      x.addEventListener("mouseleave", () => { const tip = document.getElementById("v3d-tip"); if (tip) tip.style.display = "none"; });
+    });
     const nbc = document.getElementById("v3d-nbcard"); if (nbc) nbc.style.top = ft.offsetHeight + 18 + "px";
     const nt = document.getElementById("v3d-nbt"); if (nt) nt.textContent = "🏢 " + b.name + (blocks.length > 1 && blk ? " · " + blk.name : "");
   }
@@ -7557,6 +7646,12 @@ function v3dRenderPanel() {
   P.querySelectorAll("[data-drr-add]").forEach((x) => x.addEventListener("click", () => { const rep = x.dataset.drrAdd; DrrUI.site = site(rep); drrOpenForm(rep, null, v3dRefresh); }));
   P.querySelectorAll("[data-plan]").forEach((x) => x.addEventListener("change", () => { const all = DB.get("mpPlans", []), p = all.find((y) => y.id === x.dataset.plan); if (p) { p.status = x.value; DB.set("mpPlans", all); toast(mt("บันทึกแล้ว", "Saved")); v3dRefresh(); } }));
   const sb = document.createElement("div"); sb.className = "v3d-board"; sb.id = "v3d-safety"; P.appendChild(sb); renderSafetyBoard(sb);
+}
+/** left column of the 3D page: IR statistics + injured body parts (follow the selected building, same as the safety board) */
+function v3dRenderLeft() {
+  const ir = document.getElementById("v3d-ir"), inj = document.getElementById("v3d-inj");
+  if (ir) renderIrDashCard(ir);
+  if (inj) renderInjuryCard(inj);
 }
 function v3dAllTable() {
   const bs = DB.get("v3dBuildings", []), D = V3.data || {};
