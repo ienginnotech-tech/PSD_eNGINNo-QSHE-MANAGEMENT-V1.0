@@ -155,6 +155,19 @@ a { color: var(--green); }
   letter-spacing: 0.05em;
 }
 
+.usr-id { display: flex; align-items: center; gap: 10px; } .usr-av { width: 34px; height: 34px; border-radius: 50%; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+.usr-off td { opacity: .55; } .usr-table td { vertical-align: middle; }
+.tb-brand { display: flex; align-items: center; gap: 14px; }
+.tb-logo { height: 52px; width: auto; background: #fff; border-radius: 10px; padding: 5px 10px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(15,23,42,.06); }
+@media (max-width: 700px) { .tb-logo { height: 38px; } }
+.otp-badge { font-size: .78rem; color: #A7F3D0; background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.35); border-radius: 10px; padding: 8px 10px; margin-bottom: 14px; line-height: 1.45; }
+.otp-remember { display: flex; align-items: center; gap: 8px; color: #CFE3D6; font-size: .85rem; margin: -4px 0 14px; cursor: pointer; } .otp-remember span { color: #6B8A80; font-size: .78rem; }
+.otp-to { color: #CFE3D6; font-size: .88rem; margin-bottom: 12px; text-align: center; } .otp-to b { color: #fff; }
+.otp-boxes { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
+.otp-boxes input { width: 46px; height: 56px; text-align: center; font-size: 26px; font-weight: 800; border-radius: 12px; border: 1.5px solid #2F4F45; background: #0B1F19; color: #fff; outline: none; }
+.otp-boxes input:focus { border-color: #34D399; box-shadow: 0 0 0 3px rgba(52,211,153,.25); }
+.otp-links { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: .82rem; } .otp-links a { color: #9fb4c8; } .otp-links span { color: #6B8A80; }
+@media (max-width: 420px) { .otp-boxes input { width: 38px; height: 50px; font-size: 22px; } }
 .auth-card {
   background: var(--auth-card);
   border: 1px solid var(--auth-card-border);
@@ -1467,74 +1480,31 @@ td .lg-bar-c { display: inline-block; width: calc(100% - 46px); vertical-align: 
         <div class="auth-sub">Platform · V1.0 · 2026</div>
       </div>
 
-      <!-- ---- Login card ---- -->
+      <!-- ---- Sign-in: invite-only, e-mail + 6-digit OTP ---- -->
       <div class="auth-card" id="login-card">
+        <div class="otp-badge">🔒 ระบบเชิญเท่านั้น (Invite-only) · เข้าสู่ระบบด้วยอีเมล + รหัส OTP 6 หลัก</div>
         <div id="login-error" class="auth-error hidden"></div>
-
-        <form id="login-form">
+        <div id="login-info" class="auth-success hidden"></div>
+        <form id="otp-email-form" autocomplete="on">
           <div class="field-dark">
-            <label>USERNAME</label>
-            <input type="text" id="login-username" autocomplete="username" placeholder="ชื่อผู้ใช้" required />
+            <label>EMAIL</label>
+            <input type="email" id="login-email" autocomplete="email" inputmode="email" placeholder="name@bhirajburi.co.th" required />
           </div>
-          <div class="field-dark">
-            <label>PASSWORD</label>
-            <div class="password-wrap">
-              <input type="password" id="login-password" autocomplete="current-password" placeholder="รหัสผ่าน" required />
-              <button type="button" class="eye-toggle" id="toggle-login-pw" aria-label="แสดง/ซ่อนรหัสผ่าน">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <button type="submit" class="btn-glow block">เข้าสู่ระบบ</button>
+          <label class="otp-remember"><input type="checkbox" id="login-remember" checked /> จดจำเครื่องนี้ 30 วัน <span>(ไม่ติ๊ก = 12 ชั่วโมง)</span></label>
+          <button type="submit" class="btn-glow block" id="otp-send">ส่งรหัส OTP ไปที่อีเมล</button>
         </form>
-
-        <div class="auth-divider"><span>หรือ</span></div>
-        <button class="btn-outline-dark block" id="show-register-btn" type="button">ลงทะเบียนผู้ใช้ใหม่</button>
-        <div style="text-align:center;margin-top:12px;"><a href="#" id="login-connect" style="color:#9fb4c8;font-size:.82rem;" onclick="return false">เครื่องใหม่? เชื่อมต่อ Google Sheet เพื่อดึงรายชื่อผู้ใช้</a></div>
-        <div id="login-connect-box" class="hidden" style="margin-top:10px;">
-          <div class="field-dark"><label>รหัสเชื่อมต่อทีม (QSHE1.…)</label><input type="text" id="login-connect-code" placeholder="วางรหัสที่ได้จากผู้ดูแลระบบ" /></div>
-          <button class="btn-outline-dark block" id="login-connect-go" type="button">เชื่อมต่อ</button>
-          <div id="login-connect-msg" style="color:#9fb4c8;font-size:.8rem;margin-top:6px;"></div>
-        </div>
-      </div>
-
-      <!-- ---- Register card ---- -->
-      <div class="auth-card hidden" id="register-card">
-        <div id="register-error" class="auth-error hidden"></div>
-        <div id="register-success" class="auth-success hidden"></div>
-
-        <form id="register-form">
-          <div class="field-dark">
-            <label>ชื่อ-นามสกุล</label>
-            <input type="text" id="reg-name" placeholder="ชื่อ นามสกุล" required />
-          </div>
-          <div class="field-dark">
-            <label>USERNAME</label>
-            <input type="text" id="reg-username" placeholder="ตั้งชื่อผู้ใช้" required />
-          </div>
-          <div class="field-dark">
-            <label>PASSWORD</label>
-            <div class="password-wrap">
-              <input type="password" id="reg-password" placeholder="ตั้งรหัสผ่าน" required />
-              <button type="button" class="eye-toggle" id="toggle-reg-pw" aria-label="แสดง/ซ่อนรหัสผ่าน">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
-            </div>
-          </div>
-          <div class="field-dark">
-            <label>อาคาร/BU ที่ต้องการเข้าใช้งาน (ถ้าทราบ)</label>
-            <select id="reg-building">
-              <option value="">ยังไม่ระบุ — ให้ผู้ดูแลระบบกำหนด</option>
-            </select>
-          </div>
-          <button type="submit" class="btn-glow block">ส่งคำขอลงทะเบียน</button>
+        <form id="otp-code-form" class="hidden" autocomplete="off">
+          <div class="otp-to">ส่งรหัสไปที่ <b id="otp-to-email"></b></div>
+          <div class="otp-boxes" id="otp-boxes"><input inputmode="numeric" maxlength="1" aria-label="digit" /><input inputmode="numeric" maxlength="1" aria-label="digit" /><input inputmode="numeric" maxlength="1" aria-label="digit" /><input inputmode="numeric" maxlength="1" aria-label="digit" /><input inputmode="numeric" maxlength="1" aria-label="digit" /><input inputmode="numeric" maxlength="1" aria-label="digit" /></div>
+          <button type="submit" class="btn-glow block" id="otp-verify">ยืนยันและเข้าสู่ระบบ</button>
+          <div class="otp-links"><a href="#" id="otp-resend" onclick="return false">ส่งรหัสอีกครั้ง</a><span id="otp-count"></span><a href="#" id="otp-back" onclick="return false">เปลี่ยนอีเมล</a></div>
         </form>
-
-        <div class="auth-divider"><span>หรือ</span></div>
-        <button class="btn-outline-dark block" id="show-login-btn" type="button">กลับไปหน้าเข้าสู่ระบบ</button>
-
-        <div class="auth-hint">
-          บัญชีใหม่จะยังใช้งานไม่ได้จนกว่าผู้ดูแลระบบจะอนุมัติและกำหนดสิทธิ์
+        <div class="auth-hint">ยังไม่มีสิทธิ์? ติดต่อผู้ดูแลระบบเพื่อเพิ่มอีเมลของคุณ · ไม่มีการสมัครเอง ไม่มีรหัสผ่าน</div>
+        <div style="text-align:center;margin-top:10px;"><a href="#" id="login-server" style="color:#9fb4c8;font-size:.8rem;" onclick="return false">⚙ ตั้งค่าเซิร์ฟเวอร์ (เครื่องใหม่)</a></div>
+        <div id="login-server-box" class="hidden" style="margin-top:10px;">
+          <div class="field-dark"><label>Apps Script Web App URL</label><input type="text" id="login-api" placeholder="https://script.google.com/macros/s/.../exec" /></div>
+          <button class="btn-outline-dark block" id="login-api-save" type="button">บันทึก / ทดสอบ</button>
+          <div id="login-api-msg" style="color:#9fb4c8;font-size:.8rem;margin-top:6px;"></div>
         </div>
       </div>
 
@@ -1643,7 +1613,7 @@ const I18N = {
     nav_admin_group: "ผู้ดูแลระบบ",
     nav_buildings: "อาคาร / BU",
     nav_v3d_setup: "ตั้งค่าโมเดล 3D",
-    title_v3d: "3D QSHE — โมเดลอาคาร",
+    title_v3d: "PSD eNGINNo 3D-QSHE MANAGEMENT",
     sub_v3d: "คลิกอาคาร/ชั้น เพื่อทำงาน Checklist · IR · PSD · Data Record Report · Action Plan ผ่านภาพ 3D",
     title_v3d_setup: "ตั้งค่าโมเดล 3D",
     sub_v3d_setup: "กำหนดอาคาร ชั้น ห้อง และอัปโหลดภาพ 3D",
@@ -1786,7 +1756,7 @@ const I18N = {
     nav_admin_group: "Administration",
     nav_buildings: "Buildings / BU",
     nav_v3d_setup: "3D model setup",
-    title_v3d: "3D QSHE — Building model",
+    title_v3d: "PSD eNGINNo 3D-QSHE MANAGEMENT",
     sub_v3d: "Click a building / floor to work with Checklist · IR · PSD · Data Record Reports · Action Plan in 3D",
     title_v3d_setup: "3D model setup",
     sub_v3d_setup: "Define buildings, floors, rooms and upload 3D pictures",
@@ -1941,7 +1911,6 @@ const SEED = {
     {
       id: "u-admin",
       username: "admin",
-      password: "qshe2026", // demo-only auth, see README security note
       name: "ผู้ดูแลระบบ",
       role: "admin",
       status: "active",
@@ -2009,7 +1978,7 @@ const Scope = {
       bset.add(b.id); if (b.code) bset.add(b.code); add(b.name);
     });
     bset.forEach((k) => (this.CODE_ALIASES[k] || []).forEach(add));
-    const c = { bset, al, uset: new Set(), uname: u.username };
+    const c = { bset, al, uset: new Set(), uname: u.username, alias: u.alias || "" };
     this._c = c;
     DB._raw("mpUnits", []).forEach((x) => { if (this.nameOk(x.name)) c.uset.add(x.id); });
     return c;
@@ -2033,9 +2002,9 @@ const Scope = {
       case "capas": return c.bset.has(r.buildingId) || (!!r.unitId && c.uset.has(r.unitId));
       case "mpUnits": return c.uset.has(r.id);
       case "mpScores": case "mpForms": return c.uset.has(r.unitId);
-      case "drrRecords": { const d = r.d || {}; return r.report === "cfg" || d.site === "*" || this.nameOk(d.site) || r.by === c.uname; }
+      case "drrRecords": { const d = r.d || {}; return r.report === "cfg" || d.site === "*" || this.nameOk(d.site) || r.by === c.uname || (!!c.alias && r.by === c.alias); }
       case "v3dBuildings": return this.nameOk(r.name) || this.nameOk(r.unitName);
-      case "psdAnalyses": return this.nameOk(r.bu) || this.nameOk(r.location) || this.nameOk(r.site) || r.by === c.uname;
+      case "psdAnalyses": return this.nameOk(r.bu) || this.nameOk(r.location) || this.nameOk(r.site) || r.by === c.uname || (!!c.alias && r.by === c.alias);
     }
     return true;
   }
@@ -2068,7 +2037,7 @@ const DB = {
    * On each write we stamp changed records with `_u` (ISO time) and remember deletions as tombstones,
    * so all existing code that calls DB.set(name, array) becomes sync-aware without further changes.
    */
-  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords", "auditLog", "users", "psdAnalyses", "v3dBuildings"],
+  SYNC: ["buildings", "processStatus", "okrs", "kpis", "capas", "mpPlans", "mpUnits", "mpScores", "mpForms", "accessLog", "drrRecords", "auditLog", "psdAnalyses", "v3dBuildings"],
   _stable(r) {
     const c = Object.assign({}, r); delete c._u; return JSON.stringify(c);
   },
@@ -2152,7 +2121,7 @@ const DB = {
     }
   },
   ensureSeeded() {
-    if (this.get("users", null) === null) this.set("users", SEED.users);
+    // users are no longer kept in the browser: the server (Apps Script tab _Users) holds the invite list
     if (typeof v3dEnsure === "function") v3dEnsure();
     if (this.get("buildings", null) === null) this.set("buildings", SEED.buildings, { raw: true });
     if (this.get("processStatus", null) === null) this.set("processStatus", SEED.processStatus, { raw: true });
@@ -2223,86 +2192,80 @@ function sha256Hex(msg) {
   return H.map((v) => ("00000000" + (v >>> 0).toString(16)).slice(-8)).join("");
 }
 
-/** accounts issued by the administrator (salted hashes only, no plain text). Applied once per CRED_VER on every machine, then synced. */
-const CRED_VER = 1;
-const SEED_ACCOUNTS = [
-  { username: "Oneudomsuk", name: "อานันท์ ประดับมุข", building: "007", salt: "seed-oneudomsuk", hash: "d85247b03bbdccebbeb6993059874a7ffa9fef8c1b5363c53d9662387a3a81aa" },
-  { username: "Parkxekkamai", name: "อนุรักษ์ จุลนันท์", building: "003", salt: "seed-parkxekkamai", hash: "541f09b086feea5056608cf61ff67a3cc7f2cac5707b7717347e7badb192441e" },
-  { username: "Sunny", name: "สมิทธ์", building: "008", salt: "seed-sunny", hash: "8782af83542bd78452d0dbbbdde218539b9b2f30db5bd590151cfbbf2f720c10" },
-  { username: "Beatdiscovery", name: "จตุพล โคตรคำ", building: "004", salt: "seed-beatdiscovery", hash: "c566abd018136e22fc7d26fa19008e35b42f6b4ff6a26d6f94bb57710c2e4d16" },
-  { username: "Samagarden", name: "วิษณุ จรจิตร", building: "001", salt: "seed-samagarden", hash: "b7a37e7e5b1a798e93120a1015261d363d66ced3e1cf320864318c5bf2d4d11a" },
-  { username: "Beatactive", name: "ธนภร คชเสนี", building: "002", salt: "seed-beatactive", hash: "ed514629114e3c72b5c4f6c3e7728b8e61a9c81e0f5cf180e74f8e85340a3baa" },
-  { username: "Hotel23", name: "อัคคพงษ์ ประสพจันทร์", building: "005", salt: "seed-hotel23", hash: "5b68d8b559c897fdf3cdbbd35455dcd1f5def0e758cfd595d70a01f045f46676" }
-
-];
+/**
+ * Sign-in (v1.01 security): invite-only, e-mail + 6-digit one-time code sent by the Apps Script backend.
+ * No passwords and no self-registration in the app. The server keeps the user list (_Users), issues a session
+ * token and checks it on every request, so a suspended or deleted user is cut off on every device at once.
+ */
+const Api = {
+  url() { const s = DB.full("syncCfg", {}) || {}, b = DB.full("backupCfg", {}) || {}; return [s.url, b.url].find((u) => BackupMgr.validUrl(u)) || ""; },
+  setUrl(u) {
+    u = String(u || "").trim();
+    DB.set("syncCfg", Object.assign({}, DB.full("syncCfg", {}) || {}, { url: u, on: true }));
+    const b = DB.full("backupCfg", {}) || {}; if (!BackupMgr.validUrl(b.url)) DB.set("backupCfg", Object.assign({ auto: true }, b, { url: u }));
+  },
+  device() { const ua = navigator.userAgent; return (/Mobile|Android|iPhone/.test(ua) ? "Mobile" : "Desktop") + " · " + ((ua.match(/(Edg|Chrome|Firefox|Safari)\/[\d.]+/) || [""])[0]); },
+  /** POST to the backend. Adds the session; an expired / revoked session sends the user back to sign-in. */
+  async call(payload, noAuth) {
+    const url = this.url();
+    if (!url) throw new Error(mt("ยังไม่ได้ตั้งค่าเซิร์ฟเวอร์ (Apps Script URL)", "Server (Apps Script URL) is not set"));
+    const s = Auth.currentUser();
+    const body = Object.assign({}, payload, noAuth ? {} : { session: s ? s.token : "" });
+    let r;
+    try { r = await (await fetch(url, { method: "POST", body: JSON.stringify(body), headers: { "Content-Type": "text/plain;charset=utf-8" } })).json(); }
+    catch (e) { throw new Error(mt("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจสอบอินเทอร์เน็ต / URL", "Cannot reach the server – check the connection / URL")); }
+    if (r && r.auth && !noAuth) Auth.expired();
+    if (r && r.error === "bad token") r.error = mt("เซิร์ฟเวอร์ยังเป็นสคริปต์เวอร์ชันเก่า — วางโค้ด Apps Script v13 แล้ว Deploy เวอร์ชันใหม่", "The server still runs an old script – paste Apps Script v13 and deploy a new version");
+    return r;
+  }
+};
 
 const Auth = {
-  newSalt() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36); },
-  hashPw(salt, pw) { return sha256Hex(salt + "|" + pw); },
-  /** put a password on a user record as salt+hash (never plain text) */
-  setPassword(u, pw) { u.salt = Auth.newSalt(); u.passHash = Auth.hashPw(u.salt, pw); delete u.password; return u; },
-  checkPassword(u, pw) { return u.passHash ? Auth.hashPw(u.salt || "", pw) === u.passHash : (u.password !== undefined && u.password === pw); },
-  /** make sure the issued accounts exist, are active and carry the issued password (once per CRED_VER) */
-  ensureAccounts() {
-    try {
-      const users = DB.get("users", []);
-      let ch = false;
-      SEED_ACCOUNTS.forEach((a) => {
-        let u = users.find((x) => String(x.username).toLowerCase() === a.username.toLowerCase());
-        if (!u) { u = { id: "u-" + a.username.toLowerCase(), username: a.username, name: a.name, role: "user", buildingIds: [a.building] }; users.push(u); }
-        else if ((u.credVer || 0) >= CRED_VER) return;
-        u.salt = a.salt; u.passHash = a.hash; delete u.password; u.status = "active"; u.credVer = CRED_VER;
-        if (!u.buildingIds || !u.buildingIds.length) u.buildingIds = [a.building];
-        ch = true;
-      });
-      if (ch) DB.set("users", users);
-    } catch (e) { /* ignore */ }
-  },
-  /** convert legacy plain-text passwords to hashes. Local only (raw) so it never overrides what the centre holds. */
-  migrateUsers() {
-    try {
-      const users = DB.get("users", []);
-      let ch = false;
-      users.forEach((u) => { if (u && u.password !== undefined) { if (!u.passHash) Auth.setPassword(u, String(u.password)); else delete u.password; ch = true; } });
-      if (ch) DB.set("users", users, { raw: true });
-    } catch (e) { /* ignore */ }
-  },
   currentUser() {
-    return DB.get("session", null);
+    const s = DB.get("session", null);
+    if (!s || !s.token || !s.exp || s.exp < Date.now()) return null;   // old password sessions are not accepted any more
+    return s;
   },
-  login(username, password) {
-    Auth.ensureAccounts();
-    const users = DB.get("users", []);
-    const match = users.find(
-      (u) => u.username.toLowerCase() === String(username).trim().toLowerCase() && Auth.checkPassword(u, password)
-    );
-    if (!match) return { ok: false, error: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" };
-    if (match.status === "pending") {
-      return { ok: false, error: "บัญชีนี้ยังรอการอนุมัติจากผู้ดูแลระบบ กรุณาติดต่อผู้ดูแลระบบ" };
+  /** step 1: ask the server to e-mail a 6-digit code (same answer whether or not the e-mail is invited) */
+  async requestOtp(email) {
+    const r = await Api.call({ action: "otpRequest", email: String(email || "").trim().toLowerCase(), device: Api.device() }, true);
+    if (r.ok) return r;
+    const m = { email: "รูปแบบอีเมลไม่ถูกต้อง", wait: `กรุณารอ ${r.wait || 45} วินาที แล้วขอรหัสใหม่`, limit: "ขอรหัสบ่อยเกินไป กรุณารอ 1 ชั่วโมง หรือติดต่อผู้ดูแลระบบ", "unknown action": "เซิร์ฟเวอร์ยังเป็นสคริปต์เวอร์ชันเก่า — ผู้ดูแลระบบต้องวางโค้ด Apps Script v13 และ Deploy เวอร์ชันใหม่" };
+    throw new Error(m[r.error] || r.error || "ส่งรหัสไม่สำเร็จ");
+  },
+  /** step 2: check the code → session */
+  async verifyOtp(email, code, remember) {
+    const r = await Api.call({ action: "otpVerify", email: String(email || "").trim().toLowerCase(), code, remember: !!remember, device: Api.device() }, true);
+    if (!r.ok) {
+      const m = { code: `รหัสไม่ถูกต้อง (เหลืออีก ${r.left} ครั้ง)`, locked: "ใส่รหัสผิดเกิน 5 ครั้ง — กรุณาขอรหัสใหม่", expired: "รหัสหมดอายุหรือไม่ถูกต้อง — กรุณาขอรหัสใหม่" };
+      throw new Error(m[r.error] || r.error || "ยืนยันรหัสไม่สำเร็จ");
     }
-    const session = { id: match.id, username: match.username, name: match.name, role: match.role, buildingIds: match.buildingIds };
+    const u = r.user || {};
+    const session = { id: u.email, username: u.email, email: u.email, alias: u.alias || "", name: u.name || u.email, role: u.role === "admin" ? "admin" : "user", buildingIds: (u.buildingIds && u.buildingIds.length ? u.buildingIds : ["ALL"]), token: r.session, exp: Number(r.expires) || Date.now() + 12 * 36e5 };
+    DB.set("session", session);
     session.logId = Auth.logIn(session);
     DB.set("session", session);
-    return { ok: true, user: session };
+    return session;
   },
-  register({ username, password, name, buildingId }) {
-    username = String(username || "").trim();
-    name = String(name || "").trim();
-    if (!username || !password || !name) return { ok: false, error: "กรุณากรอกข้อมูลให้ครบถ้วน" };
-    const users = DB.get("users", []);
-    if (users.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
-      return { ok: false, error: "มีชื่อผู้ใช้นี้อยู่แล้วในระบบ" };
-    }
-    users.push(Auth.setPassword({
-      id: uid("u"),
-      username,
-      name,
-      role: "pending",
-      status: "pending",
-      buildingIds: buildingId ? [buildingId] : []
-    }, password));
-    DB.set("users", users);
-    return { ok: true };
+  /** refresh name / role / buildings from the server (an Admin may have changed them) */
+  async refresh() {
+    const s = Auth.currentUser(); if (!s) return null;
+    try {
+      const r = await Api.call({ action: "me" });
+      if (!r || !r.ok || !r.user) return s;
+      const u = r.user, n = Object.assign({}, s, { name: u.name || s.name, role: u.role === "admin" ? "admin" : "user", alias: u.alias || "", buildingIds: u.buildingIds && u.buildingIds.length ? u.buildingIds : ["ALL"] });
+      const changed = n.role !== s.role || JSON.stringify(n.buildingIds) !== JSON.stringify(s.buildingIds);
+      DB.set("session", n);
+      if (changed && State.user) { State.user = n; Scope.reset(); renderShell(); renderView(); }
+      return n;
+    } catch (e) { return s; }
+  },
+  /** the server refused the session (expired, suspended or deleted): back to sign-in */
+  expired() {
+    if (Auth._expired) return; Auth._expired = true;
+    localStorage.removeItem(DB_PREFIX + "session");
+    try { alert(mt("เซสชันหมดอายุหรือบัญชีถูกระงับ — กรุณาเข้าสู่ระบบใหม่", "Your session has ended or the account was suspended – please sign in again")); } catch (e) { /* ignore */ }
+    location.reload();
   },
   /** access log: one row per sign-in, closed when the user signs out (shown to admins only) */
   logIn(session) {
@@ -2326,6 +2289,8 @@ const Auth = {
   },
   logout() {
     Auth.logOut();
+    const s = DB.get("session", null);
+    if (s && s.token) { try { Api.call({ action: "logout" }).catch(() => {}); } catch (e) { /* ignore */ } }
     localStorage.removeItem(DB_PREFIX + "session");
   },
   isAdmin(user) {
@@ -7975,7 +7940,7 @@ const SyncMgr = {
   saveCfg(c) { DB.set("syncCfg", c); },
   meta() { return DB.full("syncMeta", {}); },
   saveMeta(p) { DB.set("syncMeta", Object.assign(this.meta(), p)); },
-  enabled() { const c = this.cfg(); return !!(c.on && BackupMgr.validUrl(c.url) && c.token); },
+  enabled() { return !!(Api.url() && Auth.currentUser()); },
 
   // ---- connection code ----
   makeCode(url, token) {
@@ -7989,19 +7954,12 @@ const SyncMgr = {
     if (!o || !BackupMgr.validUrl(o.u) || !o.t) throw new Error(mt("รหัสเชื่อมต่อไม่ถูกต้อง", "Invalid connection code"));
     return { url: o.u, token: o.t };
   },
-  /** low-level call using the sync connection (never the blind fallback) */
-  async call(payload) {
-    const c = this.cfg();
-    if (!BackupMgr.validUrl(c.url) || !c.token) throw new Error(mt("ยังไม่ได้เชื่อมต่อ", "Not connected"));
-    const r = await fetch(c.url.trim(), { method: "POST", body: JSON.stringify(Object.assign({ token: c.token }, payload)), headers: { "Content-Type": "text/plain;charset=utf-8" } });
-    return r.json();
-  },
+  /** low-level call: goes through Api (adds the signed-in session) */
+  async call(payload) { return Api.call(payload); },
+  /** legacy "QSHE1." connection codes now only carry the server URL (the token gives no access any more) */
   connect(code) {
     const o = this.parseCode(code);
-    this.saveCfg({ url: o.url, token: o.token, on: true });
-    // the same connection also serves backups
-    const b = BackupMgr.cfg();
-    if (!b.url) BackupMgr.saveCfg(Object.assign(b, { url: o.url, token: o.token, auto: false }));
+    Api.setUrl(o.url);
     DB.set("syncMeta", {});
     return this.run(true);
   },
@@ -8159,7 +8117,7 @@ const SyncMgr = {
     if (!el) return;
     const c = this.cfg();
     const m = this.meta();
-    if (!c.on) { el.innerHTML = `<span title="${mt("ข้อมูลเก็บในเครื่องนี้เท่านั้น", "Data is kept on this computer only")}">○ ${mt("ไม่ได้เชื่อมข้อมูลกลาง", "Local only")}</span>`; return; }
+    if (!this.enabled()) { el.innerHTML = `<span title="${mt("ข้อมูลเก็บในเครื่องนี้เท่านั้น", "Data is kept on this computer only")}">○ ${mt("ไม่ได้เชื่อมข้อมูลกลาง", "Local only")}</span>`; return; }
     if (state === "busy") { el.innerHTML = `⟳ ${mt("กำลังซิงก์…", "Syncing…")}`; return; }
     if (m.status === "error") { el.innerHTML = `<span title="${mpEsc(m.lastError || "")}">▲ ${mt("ซิงก์ไม่สำเร็จ", "Sync failed")}</span>`; return; }
     const t = m.lastAt ? new Date(m.lastAt).toLocaleTimeString(mt("th-TH", "en-GB"), { hour: "2-digit", minute: "2-digit" }) : "–";
@@ -8232,28 +8190,12 @@ const BackupMgr = {
       const ds = DATASETS[k];
       t[k] = { headers: ds.headers.map((h) => h.label), rows: ds.rows().map((r) => ds.headers.map((h) => (r[h.key] === undefined || r[h.key] === null ? "" : r[h.key]))) };
     });
-    // user list for reference only – no passwords
-    t.users = { headers: ["username", "name", "role", "status", "buildings"], rows: DB.full("users", []).map((u) => [u.username, u.name, u.role, u.status || "active", (u.buildingIds || []).join(" ")]) };
+    // (the user list lives only on the server – tab _Users – and is never published from the app)
     return t;
   },
 
-  // ---------- Google Apps Script ----------
-  async call(payload) {
-    const c = this.cfg();
-    if (!this.validUrl(c.url)) throw new Error(mt("URL ของ Apps Script ไม่ถูกต้อง (ต้องขึ้นต้นด้วย https://script.google.com/)", "Invalid Apps Script URL (must start with https://script.google.com/)"));
-    if (!c.token) throw new Error(mt("ยังไม่ได้ตั้งรหัสลับ (Token)", "Token is empty"));
-    const body = JSON.stringify(Object.assign({ token: c.token }, payload));
-    const init = { method: "POST", body, headers: { "Content-Type": "text/plain;charset=utf-8" } };
-    try {
-      const r = await fetch(c.url.trim(), init);
-      return await r.json();
-    } catch (e) {
-      if (payload.action !== "save") throw new Error(mt("เชื่อมต่อไม่ได้ ตรวจสอบ URL / การ Deploy (Who has access = Anyone)", "Cannot connect. Check the URL and deployment (Who has access = Anyone)"));
-      // response not readable (CORS) – send once more blind so the write still happens
-      await fetch(c.url.trim(), Object.assign({}, init, { mode: "no-cors" }));
-      return { ok: true, unconfirmed: true };
-    }
-  },
+  // ---------- Google Apps Script (signed-in session, see Api) ----------
+  async call(payload) { return Api.call(payload); },
   async backupToSheet(reason) {
     const snapshot = await this.collect({ users: false, photos: false });
     const res = await this.call({ action: "save", reason: reason || "manual", by: snapshot.by, tables: this.tables(), snapshot });
@@ -8264,10 +8206,10 @@ const BackupMgr = {
   /** refresh the readable tabs of the Google Sheet (no snapshot, no users) - used after every sync so nobody has to press "backup" */
   async publishTables(manual) {
     const c = this.cfg();
-    if (!this.validUrl(c.url) || !c.token) { if (manual) throw new Error(mt("ยังไม่ได้ตั้งค่า Google Sheet", "Google Sheet is not set up")); return false; }
+    if (!SyncMgr.enabled()) { if (manual) throw new Error(mt("ยังไม่ได้ตั้งค่า Google Sheet", "Google Sheet is not set up")); return false; }
     const t = this.tables();
     const res = await this.call({ action: "tables", by: State.user ? State.user.username : "", tables: t });
-    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v12 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v10 and deploy a new version") : (res.error || "failed"));
+    if (!res.ok) throw new Error(res.error === "unknown action" ? mt("Apps Script เป็นเวอร์ชันเก่า — วางโค้ด v13 แล้ว Deploy เวอร์ชันใหม่", "Apps Script is an old version — paste v10 and deploy a new version") : (res.error || "failed"));
     this.saveMeta({ tablesAt: new Date().toISOString(), tablesStatus: "ok" });
     localStorage.removeItem(DB._key("pubDirty"));
     return true;
@@ -8288,7 +8230,7 @@ const BackupMgr = {
   async autoCheck() {
     if (!State.user || !Auth.isAdmin(State.user)) return;
     const c = this.cfg();
-    if (!c.auto || !this.validUrl(c.url) || !c.token) return;
+    if (c.auto === false || !SyncMgr.enabled()) return;
     if (this.daysSince(this.meta().sheetAt) < BACKUP_DAYS) return;
     try {
       await this.backupToSheet("auto");
@@ -8314,41 +8256,74 @@ const BackupMgr = {
 };
 
 const APPS_SCRIPT_CODE = `/**
- * PSD eNGINNo QSHE Management - Google Sheet backend  (script version 7)
- *  - backup tabs + _Snapshot (restore)
- *  - central data sync (tabs d_*), so Admin sees everything entered on every computer
- *  - photo storage (tab _photos)
- *  - readable report tabs R_* for the DATA RECORD REPORT module (action reportSheet)
- * Paste into Extensions > Apps Script of the Google Sheet, then Deploy > New deployment > Web app
- * (Execute as: Me, Who has access: Anyone).  After editing: Deploy > Manage deployments > New version.
+ * PSD eNGINNo QSHE Management - Google Sheet backend  (script version 13)
+ *
+ *  SECURITY (v13): invite-only sign-in with e-mail + 6-digit one-time code (OTP)
+ *   - only e-mails that an Admin added in the app (tab _Users) can sign in - there is no self-registration
+ *   - the code is e-mailed by this script, valid 10 minutes, max 5 tries, rate-limited
+ *   - every request needs a session issued by this script (12 h, or 30 days on "remember this device")
+ *   - suspending / deleting a user ends all of that user's sessions on every device at once
+ *   - codes and sessions are stored only as SHA-256 hashes with a secret salt
+ *   - settings (buildings, 3D model, checklist forms, config records) can only be changed by Admins
+ *   - the old shared Token / connection code no longer gives access
+ *
+ *  First Admin: the Google account that deploys this script (Execute as: Me) is added as Admin automatically.
+ *
+ *  Setup: paste into Extensions > Apps Script of the Google Sheet (replace everything), then
+ *  Deploy > Manage deployments > Edit > Version: New version > Deploy   (keep: Execute as Me, Who has access: Anyone).
+ *  The first deploy asks for permission to send e-mail (MailApp) - allow it.
  */
-const TOKEN = '__TOKEN__';   // must equal the Token in the app
-const VERSION = 12;
+const VERSION = 13;
+const APP_NAME = 'PSD eNGINNo QSHE Management';
+const APP_URL = 'https://ienginnotech-tech.github.io/PSD_eNGINNo-QSHE-MANAGEMENT-V1.0/';
+const ALLOWED_DOMAINS = [];          // e.g. ['bhirajburi.co.th'] - empty = any e-mail an Admin adds
+const OTP_TTL_SEC = 600, OTP_MAX_TRIES = 5, OTP_COOLDOWN_SEC = 45, OTP_PER_HOUR = 6, OTP_GLOBAL_PER_HOUR = 300;
+const SESSION_HOURS = 12, SESSION_REMEMBER_DAYS = 30;
 const CHUNK = 45000;         // one cell holds at most 50,000 characters
 const MAXCH = 8;             // max cells per record / photo
-const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords', 'auditLog', 'users', 'psdAnalyses', 'v3dBuildings'];
+const COLLS = ['buildings', 'processStatus', 'okrs', 'kpis', 'capas', 'mpPlans', 'mpUnits', 'mpScores', 'mpForms', 'accessLog', 'drrRecords', 'auditLog', 'psdAnalyses', 'v3dBuildings'];
+const ADMIN_ONLY = ['buildings', 'v3dBuildings', 'mpForms'];   // only Admins may change these collections (plus drrRecords config records)
+const USER_COLS = ['email', 'name', 'role', 'buildings', 'status', 'phone', 'alias', 'createdAt', 'invitedBy', 'lastLogin', 'note'];
+const SES_COLS = ['hash', 'email', 'created', 'expires', 'device', 'lastSeen'];
 
 function doPost(e) {
   try {
     var p = JSON.parse(e.postData.contents);
-    if (!p.token || p.token !== TOKEN) return out_({ ok: false, error: 'bad token' });
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    // ---- public actions (no session) ----
     switch (p.action) {
-      case 'ping': return out_({ ok: true, sheet: ss.getName(), version: VERSION });
-      case 'latest': return out_(readSnapshot_(ss));
-      case 'save': return out_(save_(ss, p));
+      case 'ping': return out_({ ok: true, version: VERSION, auth: 'otp' });
+      case 'otpRequest': return out_(otpRequest_(p));
+      case 'otpVerify': return out_(withLock_(function () { return otpVerify_(p); }));
+    }
+    // ---- everything else needs a valid session ----
+    var me = auth_(p.session);
+    if (!me) return out_({ ok: false, error: 'auth', auth: true });
+    var ss = SpreadsheetApp.getActiveSpreadsheet(), adm = me.role === 'admin';
+    var deny = function () { return out_({ ok: false, error: 'forbidden' }); };
+    switch (p.action) {
+      case 'me': return out_({ ok: true, user: pub_(me), sheet: ss.getName(), version: VERSION });
+      case 'logout': endSession_(p.session); log_(me.email, 'logout', ''); return out_({ ok: true });
+      case 'sync': return out_(withLock_(function () { return sync_(ss, p, me); }));
       case 'tables': return out_(withLock_(function () { return tables_(ss, p); }));
-      case 'sync': return out_(withLock_(function () { return sync_(ss, p); }));
+      case 'reportSheet': return out_(withLock_(function () { return reportSheet_(ss, p, me); }));
       case 'photoPut': return out_(withLock_(function () { return photoPut_(ss, p); }));
       case 'photoGet': return out_(photoGet_(ss, p));
-      case 'reportSheet': return out_(withLock_(function () { return reportSheet_(ss, p); }));
       case 'photoDel': return out_(withLock_(function () { return photoDel_(ss, p); }));
+      case 'save': return adm ? out_(save_(ss, p, me)) : deny();
+      case 'latest': return adm ? out_(readSnapshot_(ss)) : deny();
+      case 'userList': return adm ? out_(userList_()) : deny();
+      case 'userSave': return adm ? out_(withLock_(function () { return userSave_(p, me); })) : deny();
+      case 'userBulk': return adm ? out_(withLock_(function () { return userBulk_(p, me); })) : deny();
+      case 'userDelete': return adm ? out_(withLock_(function () { return userDelete_(p, me); })) : deny();
+      case 'userInvite': return adm ? out_(userInvite_(p, me)) : deny();
+      case 'userRevoke': return adm ? out_(withLock_(function () { revokeAll_(normEmail_(p.email)); return { ok: true }; })) : deny();
     }
     return out_({ ok: false, error: 'unknown action' });
   } catch (err) {
-    return out_({ ok: false, error: String(err) });
+    return out_({ ok: false, error: String(err && err.message || err) });
   }
 }
+function doGet() { return out_({ ok: true, app: APP_NAME, version: VERSION }); }
 
 function withLock_(fn) {
   var lock = LockService.getScriptLock();
@@ -8356,9 +8331,239 @@ function withLock_(fn) {
   try { return fn(); } finally { lock.releaseLock(); }
 }
 
-/* ---------- backup (unchanged from version 1) ---------- */
-function save_(ss, p) {
-  var names = Object.keys(p.tables || {});
+/* ======================= sign-in: users, OTP, sessions ======================= */
+function secret_() {
+  var pr = PropertiesService.getScriptProperties(), s = pr.getProperty('SECRET');
+  if (!s) { s = Utilities.getUuid() + Utilities.getUuid(); pr.setProperty('SECRET', s); }
+  return s;
+}
+function sha_(s) {
+  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(s), Utilities.Charset.UTF_8)
+    .map(function (b) { return ('0' + (b & 255).toString(16)).slice(-2); }).join('');
+}
+function normEmail_(e) { return String(e || '').trim().toLowerCase(); }
+function validEmail_(e) { return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(e) && e.length <= 120; }
+function domainOk_(e) { return !ALLOWED_DOMAINS.length || ALLOWED_DOMAINS.some(function (d) { return e.slice(-(d.length + 1)) === '@' + d.toLowerCase(); }); }
+function cache_() { return CacheService.getScriptCache(); }
+function ss_() { return SpreadsheetApp.getActiveSpreadsheet(); }
+function sysSheet_(name, cols) {
+  var ss = ss_(), sh = ss.getSheetByName(name);
+  if (!sh) {
+    sh = ss.insertSheet(name);
+    sh.getRange(1, 1, 1, cols.length).setValues([cols]).setFontWeight('bold').setBackground('#fde68a');
+    sh.getRange('A:Z').setNumberFormat('@');
+    sh.setFrozenRows(1);
+    try { sh.protect().setDescription('managed by the QSHE app').setWarningOnly(true); } catch (e) {}
+  }
+  return sh;
+}
+function usersAll_() {
+  var c = cache_(), hit = c.get('users');
+  if (hit) return JSON.parse(hit);
+  var sh = sysSheet_('_Users', USER_COLS), n = Math.max(sh.getLastRow() - 1, 0);
+  var rows = n ? sh.getRange(2, 1, n, USER_COLS.length).getValues() : [];
+  var list = rows.filter(function (r) { return r[0]; }).map(function (r) {
+    var o = {}; USER_COLS.forEach(function (k, i) { o[k] = String(r[i] === null || r[i] === undefined ? '' : r[i]); });
+    o.email = normEmail_(o.email); o.role = o.role === 'admin' ? 'admin' : 'user'; o.status = o.status === 'suspended' ? 'suspended' : 'active';
+    return o;
+  });
+  // first run: the Google account that deployed the script becomes the first Admin
+  if (!list.some(function (u) { return u.role === 'admin' && u.status === 'active'; })) {
+    var owner = normEmail_(Session.getEffectiveUser().getEmail());
+    if (owner) {
+      var ex = list.filter(function (u) { return u.email === owner; })[0];
+      if (ex) { ex.role = 'admin'; ex.status = 'active'; ex.buildings = 'ALL'; }
+      else list.push({ email: owner, name: 'ผู้ดูแลระบบ', role: 'admin', buildings: 'ALL', status: 'active', phone: '', alias: 'admin', createdAt: new Date().toISOString(), invitedBy: 'system', lastLogin: '', note: 'owner' });
+      writeUsers_(list);
+    }
+  }
+  c.put('users', JSON.stringify(list), 60);
+  return list;
+}
+function writeUsers_(list) {
+  var sh = sysSheet_('_Users', USER_COLS);
+  if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, USER_COLS.length).clearContent();
+  if (list.length) sh.getRange(2, 1, list.length, USER_COLS.length).setNumberFormat('@').setValues(list.map(function (u) { return USER_COLS.map(function (k) { return String(u[k] || ''); }); }));
+  cache_().remove('users');
+}
+function findUser_(email) { email = normEmail_(email); return usersAll_().filter(function (u) { return u.email === email; })[0] || null; }
+function bIds_(u) { return String(u.buildings || '').split(',').map(function (s) { return s.trim(); }).filter(String); }
+function pub_(u) { return { email: u.email, name: u.name || u.email, role: u.role, buildingIds: bIds_(u).length ? bIds_(u) : [], alias: u.alias || '', status: u.status }; }
+
+function otpRequest_(p) {
+  var email = normEmail_(p.email), c = cache_();
+  if (!validEmail_(email)) return { ok: false, error: 'email' };
+  var last = c.get('otpLast:' + email);
+  if (last) return { ok: false, error: 'wait', wait: Math.max(1, OTP_COOLDOWN_SEC - Math.floor((Date.now() - Number(last)) / 1000)) };
+  var hour = Number(c.get('otpHour:' + email) || 0), glob = Number(c.get('otpGlobal') || 0);
+  if (hour >= OTP_PER_HOUR || glob >= OTP_GLOBAL_PER_HOUR) return { ok: false, error: 'limit' };
+  c.put('otpLast:' + email, String(Date.now()), OTP_COOLDOWN_SEC);
+  c.put('otpHour:' + email, String(hour + 1), 3600);
+  c.put('otpGlobal', String(glob + 1), 3600);
+  var u = findUser_(email);
+  // the answer is the same whether or not the e-mail is invited (no one can probe the user list)
+  if (u && u.status === 'active') {
+    var code = String(parseInt(Utilities.getUuid().replace(/-/g, '').slice(0, 12), 16) % 1000000);
+    while (code.length < 6) code = '0' + code;
+    c.put('otp:' + email, JSON.stringify({ h: sha_(secret_() + '|' + email + '|' + code), t: 0 }), OTP_TTL_SEC);
+    MailApp.sendEmail({
+      to: email,
+      subject: 'รหัสเข้าสู่ระบบ ' + APP_NAME + ': ' + code,
+      htmlBody: mailBox_('รหัสเข้าสู่ระบบ (OTP)',
+        '<p>สวัสดีคุณ ' + esc_(u.name || email) + '</p><p>รหัสสำหรับเข้าสู่ระบบ ' + APP_NAME + ' ของคุณคือ</p>' +
+        '<div style="font-size:34px;font-weight:800;letter-spacing:10px;color:#0f5132;background:#ecfdf5;border-radius:12px;padding:14px 0;text-align:center;">' + code + '</div>' +
+        '<p style="color:#64748b;font-size:13px;">รหัสใช้ได้ 10 นาที และใช้ได้ครั้งเดียว · หากคุณไม่ได้ขอรหัสนี้ ไม่ต้องทำอะไร และแจ้งผู้ดูแลระบบ</p>'),
+      name: APP_NAME
+    });
+    log_(email, 'otp-sent', String(p.device || ''));
+  } else {
+    log_(email, 'otp-refused', u ? 'suspended' : 'not invited');
+  }
+  return { ok: true };
+}
+function otpVerify_(p) {
+  var email = normEmail_(p.email), code = String(p.code || '').replace(/\\D/g, ''), c = cache_(), key = 'otp:' + email;
+  var raw = c.get(key);
+  if (!raw) return { ok: false, error: 'expired' };
+  var o = JSON.parse(raw);
+  if (o.h !== sha_(secret_() + '|' + email + '|' + code)) {
+    o.t++;
+    if (o.t >= OTP_MAX_TRIES) { c.remove(key); log_(email, 'otp-locked', ''); return { ok: false, error: 'locked' }; }
+    c.put(key, JSON.stringify(o), OTP_TTL_SEC);
+    return { ok: false, error: 'code', left: OTP_MAX_TRIES - o.t };
+  }
+  c.remove(key);
+  var u = findUser_(email);
+  if (!u || u.status !== 'active') return { ok: false, error: 'expired' };
+  var token = (Utilities.getUuid() + Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, '');
+  var now = Date.now(), exp = now + (p.remember ? SESSION_REMEMBER_DAYS * 864e5 : SESSION_HOURS * 36e5), h = sha_(secret_() + '|' + token);
+  var sh = sysSheet_('_Sessions', SES_COLS);
+  pruneSessions_(sh);
+  sh.appendRow([h, email, new Date(now).toISOString(), String(exp), String(p.device || '').slice(0, 120), new Date(now).toISOString()]);
+  c.put('ses:' + h, JSON.stringify({ e: email, x: exp }), 21600);
+  var list = usersAll_(); list.forEach(function (x) { if (x.email === email) x.lastLogin = new Date(now).toISOString(); }); writeUsers_(list);
+  log_(email, 'login', String(p.device || ''));
+  return { ok: true, session: token, expires: exp, user: pub_(u) };
+}
+function auth_(token) {
+  if (!token || String(token).length < 40) return null;
+  var h = sha_(secret_() + '|' + token), c = cache_(), hit = c.get('ses:' + h), s = null;
+  if (hit) s = JSON.parse(hit);
+  else {
+    var sh = sysSheet_('_Sessions', SES_COLS), n = Math.max(sh.getLastRow() - 1, 0);
+    var rows = n ? sh.getRange(2, 1, n, 4).getValues() : [];
+    for (var i = 0; i < rows.length; i++) if (String(rows[i][0]) === h) { s = { e: normEmail_(rows[i][1]), x: Number(rows[i][3]) }; break; }
+    if (!s) return null;
+    c.put('ses:' + h, JSON.stringify(s), 21600);
+  }
+  if (!s.x || s.x < Date.now()) return null;
+  var u = findUser_(s.e);
+  return u && u.status === 'active' ? u : null;   // suspended / deleted users are refused immediately
+}
+function endSession_(token) {
+  var h = sha_(secret_() + '|' + token); cache_().remove('ses:' + h);
+  var sh = sysSheet_('_Sessions', SES_COLS), n = Math.max(sh.getLastRow() - 1, 0);
+  var rows = n ? sh.getRange(2, 1, n, 1).getValues() : [];
+  for (var i = rows.length - 1; i >= 0; i--) if (String(rows[i][0]) === h) sh.deleteRow(i + 2);
+}
+function revokeAll_(email) {
+  var sh = sysSheet_('_Sessions', SES_COLS), n = Math.max(sh.getLastRow() - 1, 0), c = cache_();
+  var rows = n ? sh.getRange(2, 1, n, 2).getValues() : [];
+  for (var i = rows.length - 1; i >= 0; i--) if (normEmail_(rows[i][1]) === email) { c.remove('ses:' + rows[i][0]); sh.deleteRow(i + 2); }
+  log_(email, 'sessions-revoked', '');
+}
+function pruneSessions_(sh) {
+  var n = Math.max(sh.getLastRow() - 1, 0); if (n < 50) return;
+  var rows = sh.getRange(2, 1, n, 4).getValues(), now = Date.now();
+  for (var i = rows.length - 1; i >= 0; i--) if (Number(rows[i][3]) < now) sh.deleteRow(i + 2);
+}
+function sessionCounts_() {
+  var sh = sysSheet_('_Sessions', SES_COLS), n = Math.max(sh.getLastRow() - 1, 0), now = Date.now(), o = {};
+  (n ? sh.getRange(2, 1, n, 4).getValues() : []).forEach(function (r) { if (Number(r[3]) > now) { var e = normEmail_(r[1]); o[e] = (o[e] || 0) + 1; } });
+  return o;
+}
+function log_(email, what, detail) {
+  try { sysSheet_('_AccessLog', ['at', 'email', 'event', 'detail']).appendRow([new Date().toISOString(), email, what, detail]); } catch (e) {}
+}
+
+/* ---------- user management (Admin only) ---------- */
+function userList_() {
+  var sc = sessionCounts_();
+  return { ok: true, users: usersAll_().map(function (u) { var o = pub_(u); o.phone = u.phone; o.createdAt = u.createdAt; o.invitedBy = u.invitedBy; o.lastLogin = u.lastLogin; o.note = u.note; o.sessions = sc[u.email] || 0; return o; }) };
+}
+function cleanUser_(x, me) {
+  var email = normEmail_(x.email);
+  if (!validEmail_(email)) throw new Error('อีเมลไม่ถูกต้อง: ' + (x.email || ''));
+  if (!domainOk_(email)) throw new Error('อนุญาตเฉพาะอีเมล @' + ALLOWED_DOMAINS.join(', @'));
+  var b = (x.buildingIds || []).map(String).filter(String);
+  return { email: email, name: String(x.name || '').slice(0, 80), role: x.role === 'admin' ? 'admin' : 'user', buildings: b.indexOf('ALL') >= 0 || !b.length ? 'ALL' : b.join(','),
+    status: x.status === 'suspended' ? 'suspended' : 'active', phone: String(x.phone || '').slice(0, 30), alias: String(x.alias || '').slice(0, 40), note: String(x.note || '').slice(0, 200) };
+}
+function upsert_(list, x, me) {
+  var u = cleanUser_(x, me), ex = list.filter(function (y) { return y.email === u.email; })[0], isNew = !ex;
+  if (ex) {
+    if (ex.email === me.email && (u.role !== 'admin' || u.status !== 'active')) throw new Error('ไม่สามารถลดสิทธิ์หรือระงับบัญชีของตัวเองได้');
+    var wasActive = ex.status === 'active', changedScope = ex.role !== u.role || ex.buildings !== u.buildings;
+    Object.keys(u).forEach(function (k) { ex[k] = u[k]; });
+    if ((wasActive && u.status !== 'active') || changedScope) revokeAll_(u.email);   // takes effect on every device now
+  } else {
+    u.createdAt = new Date().toISOString(); u.invitedBy = me.email; u.lastLogin = '';
+    list.push(u);
+  }
+  return { u: ex || u, isNew: isNew };
+}
+function userSave_(p, me) {
+  var list = usersAll_(), r = upsert_(list, p.user || {}, me);
+  writeUsers_(list);
+  if (r.isNew && p.notify !== false && r.u.status === 'active') invite_(r.u, me, p.appUrl);
+  log_(me.email, r.isNew ? 'user-add' : 'user-edit', r.u.email + ' ' + r.u.role + ' ' + r.u.status);
+  return { ok: true, user: pub_(r.u), created: r.isNew };
+}
+function userBulk_(p, me) {
+  var list = usersAll_(), added = 0, updated = 0, errors = [], newOnes = [];
+  (p.users || []).slice(0, 200).forEach(function (x) {
+    try { var r = upsert_(list, x, me); if (r.isNew) { added++; newOnes.push(r.u); } else updated++; } catch (e) { errors.push(String(e.message || e)); }
+  });
+  writeUsers_(list);
+  if (p.notify !== false) newOnes.forEach(function (u) { try { invite_(u, me, p.appUrl); } catch (e) { errors.push(u.email + ': ' + e); } });
+  log_(me.email, 'user-bulk', added + ' added / ' + updated + ' updated');
+  return { ok: true, added: added, updated: updated, errors: errors };
+}
+function userDelete_(p, me) {
+  var email = normEmail_(p.email);
+  if (email === me.email) return { ok: false, error: 'ไม่สามารถลบบัญชีของตัวเองได้' };
+  var list = usersAll_().filter(function (u) { return u.email !== email; });
+  writeUsers_(list); revokeAll_(email); log_(me.email, 'user-delete', email);
+  return { ok: true };
+}
+function userInvite_(p, me) {
+  var u = findUser_(p.email);
+  if (!u) return { ok: false, error: 'not found' };
+  invite_(u, me, p.appUrl); return { ok: true };
+}
+function invite_(u, me, appUrl) {
+  var base = /^https:\\/\\//.test(String(appUrl || '')) ? String(appUrl).split('?')[0] : APP_URL;
+  var link = base + '?api=' + encodeURIComponent(ScriptApp.getService().getUrl()) + '&email=' + encodeURIComponent(u.email);
+  MailApp.sendEmail({
+    to: u.email,
+    subject: 'คุณได้รับสิทธิ์เข้าใช้งาน ' + APP_NAME,
+    htmlBody: mailBox_('ยินดีต้อนรับสู่ ' + APP_NAME,
+      '<p>สวัสดีคุณ ' + esc_(u.name || u.email) + '</p><p>ผู้ดูแลระบบ (' + esc_(me.email) + ') ได้เพิ่มคุณเป็นผู้ใช้งาน สิทธิ์: <b>' + (u.role === 'admin' ? 'ผู้ดูแลระบบ' : 'ผู้ใช้งาน') + '</b></p>' +
+      '<p><a href="' + link + '" style="display:inline-block;background:#0f5132;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;">เปิดระบบ ' + APP_NAME + '</a></p>' +
+      '<p style="color:#475569;font-size:13px;">วิธีเข้าใช้: เปิดลิงก์ด้านบน → ใส่อีเมลนี้ → กด “ส่งรหัส OTP” → นำรหัส 6 หลักที่ได้รับทางอีเมลมาใส่ (ไม่มีรหัสผ่าน)</p>'),
+    name: APP_NAME
+  });
+}
+function mailBox_(title, body) {
+  return '<div style="font-family:Tahoma,Arial,sans-serif;max-width:520px;margin:auto;border:1px solid #e2e8f0;border-radius:14px;overflow:hidden;">' +
+    '<div style="background:#0f5132;color:#fff;padding:14px 20px;font-weight:700;">' + esc_(title) + '</div><div style="padding:18px 20px;font-size:14px;color:#0f172a;">' + body + '</div>' +
+    '<div style="background:#f8fafc;color:#94a3b8;font-size:11px;padding:10px 20px;">' + APP_NAME + ' · ระบบเชิญเท่านั้น (Invite-only)</div></div>';
+}
+function esc_(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+/* ---------- backup ---------- */
+function save_(ss, p, me) {
+  var names = Object.keys(p.tables || {}).filter(function (n) { return TABLE_NAMES_OK.test(n) && n.charAt(0) !== '_' && n.indexOf('d_') !== 0; });
   names.forEach(function (n) { writeTable_(ss, n, p.tables[n]); });
   var snap = sheet_(ss, '_Snapshot');
   snap.clear();
@@ -8366,7 +8571,7 @@ function save_(ss, p) {
   var rows = [['savedAt', new Date().toISOString()]];
   for (var i = 0, k = 1; i < json.length; i += CHUNK, k++) rows.push([String(k), json.substr(i, CHUNK)]);
   snap.getRange(1, 1, rows.length, 2).setNumberFormat('@').setValues(rows);
-  sheet_(ss, '_Log').appendRow([new Date(), String(p.by || ''), String(p.reason || ''), names.length + ' tables']);
+  sheet_(ss, '_Log').appendRow([new Date(), me.email, String(p.reason || ''), names.length + ' tables']);
   return { ok: true, tables: names.length };
 }
 function readSnapshot_(ss) {
@@ -8408,11 +8613,18 @@ function chunk_(json) {
   return out;
 }
 function pad_(row) { while (row.length < 4 + MAXCH) row.push(''); return row; }
+/** may this user write this record? (Admins: everything · users: not the settings) */
+function canWrite_(me, c, rec) {
+  if (me.role === 'admin') return true;
+  if (ADMIN_ONLY.indexOf(c) >= 0) return false;
+  if (c === 'drrRecords' && rec && rec.report === 'cfg') return false;
+  return true;
+}
 
-function sync_(ss, p) {
+function sync_(ss, p, me) {
   var now = Date.now();
   var since = Number(p.since || 0);
-  var res = { ok: true, serverTime: now, changes: {}, deletes: [], photoKeys: [] };
+  var res = { ok: true, serverTime: now, changes: {}, deletes: [], photoKeys: [], refused: 0 };
   COLLS.forEach(function (c) {
     var sh = dataSheet_(ss, c);
     var n = Math.max(sh.getLastRow() - 1, 0);
@@ -8423,6 +8635,7 @@ function sync_(ss, p) {
     var incoming = ((p.changes || {})[c]) || [];
     incoming.forEach(function (rec) {
       if (!rec || !rec.id) return;
+      if (!canWrite_(me, c, rec)) { res.refused++; return; }
       var i = idx[rec.id];
       if (i !== undefined && String(meta[i][1]) >= String(rec._u)) return;      // server copy is newer
       var row = pad_([rec.id, rec._u, String(now), '0'].concat(chunk_(JSON.stringify(rec))));
@@ -8431,6 +8644,7 @@ function sync_(ss, p) {
     });
     (p.deletes || []).forEach(function (d) {
       if (d.c !== c || !d.id) return;
+      if (!canWrite_(me, c, null) || (c === 'drrRecords' && me.role !== 'admin' && /^cfg-/.test(d.id))) { res.refused++; return; }
       var i = idx[d.id];
       var row = pad_([d.id, d._u, String(now), '1']);
       if (i !== undefined) {
@@ -8492,12 +8706,12 @@ function photoDel_(ss, p) {
   return { ok: true };
 }
 
-/* ---------- live tables (version 7): the readable tabs are refreshed after every sync, without touching _Snapshot ---------- */
+/* ---------- live tables: the readable tabs are refreshed after every sync, without touching _Snapshot ---------- */
 var TABLE_NAMES_OK = /^[A-Za-z0-9_]{1,40}$/;
 function tables_(ss, p) {
   var names = Object.keys(p.tables || {}), n = 0;
   names.forEach(function (k) {
-    if (!TABLE_NAMES_OK.test(k) || k.charAt(0) === '_' || k.indexOf('d_') === 0 || k.indexOf('R_') === 0) return;   // never overwrite internal tabs
+    if (!TABLE_NAMES_OK.test(k) || k.charAt(0) === '_' || k.indexOf('d_') === 0 || k.indexOf('R_') === 0 || k === 'users') return;   // never overwrite internal tabs
     var t = p.tables[k];
     if (!t || !t.headers || t.headers.length > REPORT_MAX_COLS) return;
     t.rows = (t.rows || []).slice(0, 20000);
@@ -8506,13 +8720,13 @@ function tables_(ss, p) {
   return { ok: true, tables: n, at: new Date().toISOString() };
 }
 
-/* ---------- DATA RECORD REPORT: readable tabs (version 4) ----------
+/* ---------- DATA RECORD REPORT: readable tabs ----------
  * Controls: only whitelisted report keys, bounded size, one writer at a time (lock),
  * each tab is rewritten in full from the app's synced data (d_drrRecords stays the source of truth),
  * every write is logged in _Log. Do not type into R_* tabs - changes there are overwritten. */
 var REPORT_KEYS = { lp: 'R_LivePlay_Incidents', tw: 'R_Township_Incidents', food: 'R_Food_Testing', ww: 'R_Wastewater', ts1: 'R_TS1_Daily', ts2: 'R_TS2_Monthly', tsprof: 'R_TS_SiteProfile', mwa: 'R_MWA_RawWater', psd: 'R_PSD_Analysis', wp: 'R_Workplace_Incidents', lgreg: 'R_Legal_Register', lgchk: 'R_Legal_Inspection', qsplan: 'R_QS_AuditPlan', qsfind: 'R_QS_AuditReport', qsdoc: 'R_QS_DocumentControl' };
 var REPORT_MAX_ROWS = 5000, REPORT_MAX_COLS = 60, REPORT_MAX_CELL = 2000;
-function reportSheet_(ss, p) {
+function reportSheet_(ss, p, me) {
   var list = p.reports || [], done = [], total = 0;
   list.forEach(function (r) {
     var name = REPORT_KEYS[String(r.key)];
@@ -8523,6 +8737,7 @@ function reportSheet_(ss, p) {
       var o = [];
       for (var i = 0; i < cols.length; i++) {
         var v = row[i]; v = v === null || v === undefined ? '' : String(v);
+        if (/^[=+\\-@]/.test(v)) v = "'" + v;            // never let a cell become a formula
         o.push(v.length > REPORT_MAX_CELL ? v.slice(0, REPORT_MAX_CELL) : v);
       }
       return o;
@@ -8534,7 +8749,7 @@ function reportSheet_(ss, p) {
     sh.setFrozenRows(1);
     done.push(name); total += rows.length;
   });
-  sheet_(ss, '_Log').appendRow([new Date(), String(p.by || ''), 'reportSheet', done.length + ' tabs / ' + total + ' rows']);
+  sheet_(ss, '_Log').appendRow([new Date(), me.email, 'reportSheet', done.length + ' tabs / ' + total + ' rows']);
   return { ok: true, tabs: done.length, rows: total };
 }
 
@@ -8566,14 +8781,13 @@ function renderBackup(root) {
     <div class="card" id="sync-card">
       <h3>★ ${mt("ข้อมูลกลาง — ให้ Admin เห็นข้อมูลของทุกหน่วยงาน", "Central data — so Admin sees every unit's data")}</h3>
       <div class="desc">${mt("ปกติข้อมูลเก็บในเบราว์เซอร์ของแต่ละเครื่อง ถ้าเปิดซิงก์ ข้อมูลที่กรอกจะส่งขึ้น Google Sheet และดึงลงทุกเครื่องอัตโนมัติ (เมื่อมีการแก้ไขและทุก 2 นาที) · รายชื่อผู้ใช้ซิงก์ด้วย (รหัสผ่านเป็นแฮช)", "Normally data stays in each computer's browser. With sync on, entries go to the Google Sheet and are pulled to every computer automatically (on change and every 2 minutes) · the user list syncs too (passwords as hashes)")}</div>
-      ${BackupMgr.validUrl(c.url) && c.token ? `
-        <div class="field"><label>${mt("รหัสเชื่อมต่อทีม (ส่งให้ผู้ใช้วางในเมนู ตั้งค่า)", "Team connection code (share with users – they paste it in Settings)")}</label>
-        <input type="text" id="sy-code-show" readonly value="${mpEsc(SyncMgr.makeCode(c.url, c.token))}" /></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn small" id="sy-copy">${mt("คัดลอกรหัส", "Copy code")}</button>
-        <div class="muted-s" style="width:100%;">${mt("ตารางอ่านง่ายใน Google Sheet อัปเดตอัตโนมัติหลังซิงก์ทุกครั้ง · ล่าสุด", "Readable tables in the Google Sheet refresh automatically after every sync · last")}: ${fmt(m.tablesAt)}${m.tablesStatus && m.tablesStatus !== "ok" ? ` · <span style="color:var(--st-critical)">${mpEsc(m.tablesStatus)}</span>` : ""}</div>
-        ${SyncMgr.enabled() ? `<button class="btn ghost small" id="sy-run">${mt("ซิงก์ตอนนี้", "Sync now")}</button>` : `<button class="btn small" id="sy-start">${mt("เปิดซิงก์บนเครื่องนี้", "Turn on sync on this computer")}</button>`}</div>
-        <div class="mp-banner" style="margin-top:10px;">ⓘ ${mt("เครื่องแรกที่เปิดซิงก์ควรเป็นเครื่องที่มีข้อมูลจริงอยู่ · ต้องวางโค้ด Apps Script เวอร์ชันใหม่ (Code.gs v3) แล้ว Deploy → New version ก่อน · หากสองคนแก้รายการเดียวกันพร้อมกัน ฉบับที่บันทึกทีหลังจะทับ", "The first computer to turn sync on should be the one holding the real data · paste the new Apps Script (Code.gs v3) and Deploy → New version first · if two people edit the same record at once, the later save wins")}</div>`
-      : `<div class="empty-state">${mt("ตั้งค่า Google Sheet (หัวข้อ B ด้านล่าง) ก่อน แล้วรหัสเชื่อมต่อจะปรากฏที่นี่", "Set up the Google Sheet (section B below) first – the connection code appears here")}</div>`}
+      ${Api.url() ? `
+        <div class="field"><label>${mt("ลิงก์สำหรับเครื่องใหม่ (ตั้งค่าเซิร์ฟเวอร์ให้อัตโนมัติ · ไม่ใช่รหัสผ่าน ผู้ใช้ยังต้องได้รับเชิญและยืนยัน OTP)", "Link for new devices (sets the server automatically · not a password – users still need an invitation + OTP)")}</label>
+        <input type="text" id="sy-code-show" readonly value="${mpEsc(location.origin + location.pathname + "?api=" + encodeURIComponent(Api.url()))}" /></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn small" id="sy-copy">${mt("คัดลอกลิงก์", "Copy link")}</button>
+        <button class="btn ghost small" id="sy-run">${mt("ซิงก์ตอนนี้", "Sync now")}</button></div>
+        <div class="muted-s" style="margin-top:6px;">${mt("ซิงก์ล่าสุด", "Last sync")}: ${SyncMgr.meta().lastAt ? fmt(SyncMgr.meta().lastAt) : "–"}${SyncMgr.meta().status === "error" ? " · ▲ " + mpEsc(SyncMgr.meta().lastError || "") : ""} · ${mt("ตารางอ่านง่ายใน Google Sheet", "Readable tables")}: ${fmt(m.tablesAt)}</div>`
+      : `<div class="empty-state">${mt("ตั้งค่า Apps Script URL (หัวข้อ B ด้านล่าง) ก่อน", "Set the Apps Script URL (section B below) first")}</div>`}
     </div>
 
     <div class="card">
@@ -8593,8 +8807,7 @@ function renderBackup(root) {
       <div class="desc">${mt("ส่งข้อมูลไปเก็บใน Google Sheet ของคุณเอง: 1 ชีตต่อชุดข้อมูล + ชีต _Snapshot สำหรับกู้คืน (ไม่รวมรหัสผ่านผู้ใช้และรูปภาพ) การสำรองอัตโนมัติทำงานเมื่อมี Admin เปิดแอปอยู่", "Sends data to your own Google Sheet: one tab per dataset plus a _Snapshot tab for restore (no user passwords, no photos). The automatic run happens while an admin has the app open.")}</div>
       <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="field"><label>Apps Script Web App URL</label><input type="text" id="bk-url" placeholder="https://script.google.com/macros/s/.../exec" value="${mpEsc(c.url)}" /></div>
-        <div class="field"><label>${mt("รหัสลับ (Token)", "Token (shared secret)")}</label>
-          <div style="display:flex;gap:6px;"><input type="text" id="bk-token" value="${mpEsc(c.token)}" /><button class="btn ghost small" id="bk-gen" type="button">${mt("สร้างให้", "Generate")}</button></div></div>
+        <div class="field"><label>${mt("ความปลอดภัย", "Security")}</label><div class="muted-s" style="line-height:1.5;">🔒 ${mt("v13: ไม่มี Token แล้ว — ทุกคำขอต้องมาจากผู้ใช้ที่เข้าระบบด้วยอีเมล + OTP · ผู้ใช้จัดการที่หน้า ผู้ใช้งานระบบ", "v13: no shared token – every request must come from a user signed in with e-mail + OTP · manage users on the Users page")}</div></div>
       </div>
       <label class="checkbox-pill"><input type="checkbox" id="bk-auto" ${c.auto ? "checked" : ""} /> ${mt("สำรองอัตโนมัติทุก 7 วัน", "Back up automatically every 7 days")}</label>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
@@ -8627,13 +8840,11 @@ function renderBackup(root) {
     </div>`;
 
   const msg = (txt, bad) => { const el = document.getElementById("bk-msg"); el.textContent = txt; el.style.color = bad ? "var(--text)" : "var(--muted)"; el.style.fontWeight = bad ? "700" : "400"; if (bad) el.textContent = "▲ " + txt; };
-  const readCfg = () => ({ url: document.getElementById("bk-url").value.trim(), token: document.getElementById("bk-token").value.trim(), auto: document.getElementById("bk-auto").checked });
-  const drawCode = () => { document.getElementById("bk-code").textContent = APPS_SCRIPT_CODE.replace("__TOKEN__", (document.getElementById("bk-token").value.trim() || "PUT-YOUR-TOKEN-HERE").replace(/[^\w-]/g, "")); };
+  const readCfg = () => { const u = document.getElementById("bk-url").value.trim(); if (BackupMgr.validUrl(u)) Api.setUrl(u); return { url: u, token: "", auto: document.getElementById("bk-auto").checked }; };
+  const drawCode = () => { document.getElementById("bk-code").textContent = APPS_SCRIPT_CODE; };
   drawCode();
   const busy = (b, on) => { b.disabled = on; b.style.opacity = on ? 0.6 : 1; };
 
-  document.getElementById("bk-token").addEventListener("input", drawCode);
-  document.getElementById("bk-gen").addEventListener("click", () => { document.getElementById("bk-token").value = BackupMgr.newToken(); drawCode(); });
   document.getElementById("bk-copy-code").addEventListener("click", () => {
     const code = document.getElementById("bk-code").textContent;
     (navigator.clipboard ? navigator.clipboard.writeText(code) : Promise.reject()).then(() => toast(mt("คัดลอกแล้ว", "Copied")), () => {
@@ -8648,15 +8859,13 @@ function renderBackup(root) {
   });
   const syCopy = document.getElementById("sy-copy");
   if (syCopy) syCopy.addEventListener("click", () => { const i = document.getElementById("sy-code-show"); i.select(); try { navigator.clipboard.writeText(i.value); } catch (e) { document.execCommand("copy"); } toast(mt("คัดลอกแล้ว", "Copied")); });
-  const syStart = document.getElementById("sy-start");
-  if (syStart) syStart.addEventListener("click", async () => { syStart.disabled = true; await SyncMgr.connect(SyncMgr.makeCode(c.url, c.token)); renderBackup(root); });
   const syRun = document.getElementById("sy-run");
   if (syRun) syRun.addEventListener("click", async () => { syRun.disabled = true; await SyncMgr.run(); renderBackup(root); });
   document.getElementById("bk-test").addEventListener("click", async (e) => {
     const cfg = readCfg();
     if (cfg.url && !BackupMgr.validUrl(cfg.url)) return msg(mt("URL ต้องขึ้นต้นด้วย https://script.google.com/", "URL must start with https://script.google.com/"), true);
     BackupMgr.saveCfg(cfg); busy(e.target, true); msg(mt("กำลังทดสอบ…", "Testing…"));
-    try { const r = await BackupMgr.call({ action: "ping" }); r.ok ? msg(mt("เชื่อมต่อสำเร็จ — ชีต: ", "Connected — sheet: ") + (r.sheet || "")) : msg(r.error === "bad token" ? mt("Token ไม่ตรงกับในโค้ด Apps Script", "Token does not match the Apps Script code") : String(r.error), true); }
+    try { const r = await BackupMgr.call({ action: "me" }); r.ok ? msg(mt("เชื่อมต่อสำเร็จ — ชีต: ", "Connected — sheet: ") + (r.sheet || "")) : msg(r.error === "bad token" ? mt("Token ไม่ตรงกับในโค้ด Apps Script", "Token does not match the Apps Script code") : String(r.error), true); }
     catch (err) { msg(err.message, true); }
     busy(e.target, false);
   });
@@ -8717,13 +8926,22 @@ const State = {
 // ---------------------------------------------------------------- boot ---
 document.addEventListener("DOMContentLoaded", () => {
   DB.ensureSeeded();
-  Auth.migrateUsers();
-  Auth.ensureAccounts();
+  // invitation link: ?api=<Apps Script URL>&email=<address> configures this device for sign-in
+  try {
+    const q = new URLSearchParams(location.search), api = q.get("api"), em = q.get("email");
+    if (api && BackupMgr.validUrl(api)) Api.setUrl(api);
+    if (em) sessionStorage.setItem("qsheInviteEmail", em);
+    if (api || em) history.replaceState(null, "", location.pathname + location.hash);
+  } catch (e) { /* ignore */ }
+  // passwords are gone: remove the hashed password list a previous version kept in this browser
+  try { if (!DB.full("authV2", 0)) { localStorage.removeItem(DB._key("users")); DB.set("authV2", 1); } } catch (e) { /* ignore */ }
   applyUiPrefs();
   const session = Auth.currentUser();
   if (session) {
     startApp(session);
+    Auth.refresh();
   } else {
+    localStorage.removeItem(DB_PREFIX + "session");
     showLogin();
   }
 });
@@ -8743,77 +8961,74 @@ function applyUiPrefs() {
 function showLogin() {
   document.getElementById("app-shell").classList.add("hidden");
   document.getElementById("login-screen").classList.remove("hidden");
-
-  const loginCard = document.getElementById("login-card");
-  const registerCard = document.getElementById("register-card");
-
-  // populate the "requested building" dropdown on the register form
-  const buildingSelect = document.getElementById("reg-building");
-  const buildings = DB.get("buildings", []);
-  buildingSelect.innerHTML =
-    `<option value="">ยังไม่ระบุ — ให้ผู้ดูแลระบบกำหนด</option>` +
-    buildings.map((b) => `<option value="${b.id}">${b.name}</option>`).join("");
-
-  document.getElementById("show-register-btn").addEventListener("click", () => {
-    loginCard.classList.add("hidden");
-    registerCard.classList.remove("hidden");
-  });
-  const lc = document.getElementById("login-connect");
-  if (lc) {
-    const box = document.getElementById("login-connect-box");
-    lc.addEventListener("click", () => box.classList.toggle("hidden"));
-    document.getElementById("login-connect-go").addEventListener("click", async () => {
-      const msg = document.getElementById("login-connect-msg");
-      try {
-        msg.textContent = "กำลังเชื่อมต่อ…";
-        await SyncMgr.connect(document.getElementById("login-connect-code").value);
-        const n = DB.get("users", []).length;
-        msg.textContent = SyncMgr.meta().status === "error" ? "เชื่อมต่อไม่สำเร็จ: " + (SyncMgr.meta().lastError || "") : "เชื่อมต่อแล้ว — พบผู้ใช้ " + n + " บัญชี ลองเข้าสู่ระบบได้เลย";
-      } catch (e) { msg.textContent = e.message || String(e); }
-    });
-  }
-  document.getElementById("show-login-btn").addEventListener("click", () => {
-    registerCard.classList.add("hidden");
-    loginCard.classList.remove("hidden");
-  });
-
-  wirePasswordToggle("toggle-login-pw", "login-password");
-  wirePasswordToggle("toggle-reg-pw", "reg-password");
-
-  document.getElementById("login-form").onsubmit = (e) => {
-    e.preventDefault();
-    const username = document.getElementById("login-username").value;
-    const password = document.getElementById("login-password").value;
-    const res = Auth.login(username, password);
-    const errEl = document.getElementById("login-error");
-    if (!res.ok) {
-      errEl.textContent = res.error;
-      errEl.classList.remove("hidden");
-      return;
-    }
-    errEl.classList.add("hidden");
-    startApp(res.user);
+  const $ = (id) => document.getElementById(id);
+  const err = (t) => { $("login-info").classList.add("hidden"); $("login-error").textContent = t; $("login-error").classList.toggle("hidden", !t); };
+  const info = (t) => { $("login-error").classList.add("hidden"); $("login-info").textContent = t; $("login-info").classList.toggle("hidden", !t); };
+  const boxes = [...document.querySelectorAll("#otp-boxes input")];
+  const emailF = $("otp-email-form"), codeF = $("otp-code-form");
+  let email = "", cd = null;
+  const last = sessionStorage.getItem("qsheInviteEmail") || DB.full("lastEmail", "");
+  if (last) $("login-email").value = last;
+  // server box: shown automatically on a new device without a server URL
+  const sb = $("login-server-box");
+  $("login-api").value = Api.url();
+  if (!Api.url()) { sb.classList.remove("hidden"); info("เครื่องใหม่: เปิดลิงก์จากอีเมลเชิญ หรือวาง Apps Script URL ที่ได้จากผู้ดูแลระบบ"); }
+  $("login-server").onclick = () => sb.classList.toggle("hidden");
+  $("login-api-save").onclick = async () => {
+    const u = $("login-api").value.trim(), m = $("login-api-msg");
+    if (!BackupMgr.validUrl(u)) { m.textContent = "URL ต้องขึ้นต้นด้วย https://script.google.com/"; return; }
+    Api.setUrl(u); m.textContent = "กำลังทดสอบ…";
+    try { const r = await Api.call({ action: "ping" }, true); m.textContent = r.ok && r.auth === "otp" ? "✔ เชื่อมต่อเซิร์ฟเวอร์แล้ว (v" + r.version + ")" : r.ok ? "▲ เซิร์ฟเวอร์ยังเป็นสคริปต์เวอร์ชันเก่า — ต้องวางโค้ด v13" : "▲ " + (r.error || ""); if (r.ok) { info(""); sb.classList.add("hidden"); } }
+    catch (e) { m.textContent = "▲ " + e.message; }
   };
-
-  document.getElementById("register-form").onsubmit = (e) => {
-    e.preventDefault();
-    const name = document.getElementById("reg-name").value;
-    const username = document.getElementById("reg-username").value;
-    const password = document.getElementById("reg-password").value;
-    const buildingId = document.getElementById("reg-building").value;
-    const errEl = document.getElementById("register-error");
-    const okEl = document.getElementById("register-success");
-    const res = Auth.register({ name, username, password, buildingId });
-    if (!res.ok) {
-      okEl.classList.add("hidden");
-      errEl.textContent = res.error;
-      errEl.classList.remove("hidden");
-      return;
-    }
-    errEl.classList.add("hidden");
-    okEl.textContent = "ส่งคำขอลงทะเบียนเรียบร้อย รอผู้ดูแลระบบอนุมัติสิทธิ์การใช้งาน";
-    okEl.classList.remove("hidden");
-    document.getElementById("register-form").reset();
+  const countdown = (sec) => {
+    clearInterval(cd); const a = $("otp-resend"), c = $("otp-count"); let n = sec;
+    a.style.pointerEvents = "none"; a.style.opacity = .45;
+    const tick = () => { c.textContent = n > 0 ? `ขอใหม่ได้ใน ${n} วิ` : ""; if (n-- <= 0) { clearInterval(cd); a.style.pointerEvents = ""; a.style.opacity = 1; } };
+    tick(); cd = setInterval(tick, 1000);
+  };
+  const send = async () => {
+    email = $("login-email").value.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err("กรุณาใส่อีเมลให้ถูกต้อง"); return; }
+    if (!Api.url()) { sb.classList.remove("hidden"); err("ยังไม่ได้ตั้งค่าเซิร์ฟเวอร์ — วาง Apps Script URL ก่อน"); return; }
+    const b = $("otp-send"); b.disabled = true; b.textContent = "กำลังส่งรหัส…";
+    try {
+      await Auth.requestOtp(email);
+      DB.set("lastEmail", email);
+      $("otp-to-email").textContent = email;
+      emailF.classList.add("hidden"); codeF.classList.remove("hidden");
+      info("ถ้าอีเมลนี้ได้รับสิทธิ์ใช้งาน คุณจะได้รับรหัส 6 หลักภายใน 1 นาที (ตรวจกล่อง Spam ด้วย) · รหัสใช้ได้ 10 นาที");
+      boxes.forEach((x) => { x.value = ""; }); boxes[0].focus(); countdown(45);
+    } catch (e) { err(e.message); }
+    b.disabled = false; b.textContent = "ส่งรหัส OTP ไปที่อีเมล";
+  };
+  emailF.onsubmit = (e) => { e.preventDefault(); send(); };
+  $("otp-resend").onclick = () => { emailF.classList.add("hidden"); send(); };
+  $("otp-back").onclick = () => { codeF.classList.add("hidden"); emailF.classList.remove("hidden"); info(""); err(""); clearInterval(cd); };
+  boxes.forEach((x, i) => {
+    x.addEventListener("input", () => {
+      const v = x.value.replace(/\D/g, "");
+      if (v.length > 1) { v.split("").slice(0, 6 - i).forEach((d, k) => { boxes[i + k].value = d; }); (boxes[Math.min(5, i + v.length)] || x).focus(); }
+      else { x.value = v; if (v && boxes[i + 1]) boxes[i + 1].focus(); }
+      if (boxes.every((b) => b.value)) codeF.requestSubmit ? codeF.requestSubmit() : codeF.onsubmit(new Event("submit"));
+    });
+    x.addEventListener("keydown", (e) => { if (e.key === "Backspace" && !x.value && boxes[i - 1]) { boxes[i - 1].focus(); boxes[i - 1].value = ""; } });
+    x.addEventListener("paste", (e) => { const t = (e.clipboardData || window.clipboardData).getData("text").replace(/\D/g, "").slice(0, 6); if (!t) return; e.preventDefault(); t.split("").forEach((d, k) => { if (boxes[k]) boxes[k].value = d; }); (boxes[t.length] || boxes[5]).focus(); if (t.length === 6) codeF.requestSubmit ? codeF.requestSubmit() : codeF.onsubmit(new Event("submit")); });
+  });
+  let busy = false;
+  codeF.onsubmit = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (busy) return;
+    const code = boxes.map((b) => b.value).join("");
+    if (code.length !== 6) { err("กรุณาใส่รหัส 6 หลัก"); return; }
+    busy = true; const b = $("otp-verify"); b.disabled = true; b.textContent = "กำลังตรวจสอบ…";
+    try {
+      const sess = await Auth.verifyOtp(email, code, $("login-remember").checked);
+      sessionStorage.removeItem("qsheInviteEmail");
+      err(""); info("");
+      startApp(sess);
+    } catch (ex) { err(ex.message); boxes.forEach((x) => { x.value = ""; }); boxes[0].focus(); }
+    busy = false; b.disabled = false; b.textContent = "ยืนยันและเข้าสู่ระบบ";
   };
 }
 
@@ -9174,9 +9389,10 @@ function renderTopbar() {
   const showBuildingPicker = !String(State.view).startsWith("qs:") && !["buildings", "users", "backup", "mp_plan", "mp_risk", "mp_check", "mp_form", "drr_lp", "drr_tw", "drr_food", "drr_ww", "drr_ts", "drr_mwa", "psd", "capa", "v3d", "v3d_setup", "drr_wp", "lg_plan", "lg_insp", "lg_sum", "qs_overview"].includes(State.view);
 
   document.getElementById("topbar").innerHTML = `
-    <div>
-      <h2>${title}</h2>
-      <div class="subtitle">${subtitle}</div>
+    <div class="${State.view === "v3d" ? "tb-brand" : ""}">
+      ${State.view === "v3d" ? `<img class="tb-logo" src="${LOGO_DATA_URI}" alt="Bhiraj Buri Group" />` : ""}
+      <div><h2>${title}</h2>
+      <div class="subtitle">${subtitle}</div></div>
     </div>
     ${["dashboard", "v3d"].includes(State.view) ? v3dModeSwitchHtml() : ""}
     ${State.view === "dashboard" ? dashToolsHtml() : ""}
@@ -9242,7 +9458,7 @@ function renderViewInner(root) {
     case "qs_overview": return renderQsOverview(root);
     case "v3d_setup": return renderV3dSetup(root);
     case "buildings": return renderBuildings(root);
-    case "users": return renderUsers(root);
+    case "users": UsrUI.list = null; return renderUsers(root);
     case "drr_lp": case "drr_tw": case "drr_wp": case "drr_food": case "drr_ww": case "drr_ts": case "drr_mwa": return renderDrr(root, State.view);
     case "mp_plan": return renderMpPlan(root);
     case "mp_risk": return renderMpRisk(root);
@@ -10152,72 +10368,148 @@ function openBuildingForm(existing) {
 }
 
 // -------------------------------------------------------------- users ---
+/** Users & roles (Admin only) — the list lives on the server (tab _Users); invite-only, e-mail + OTP sign-in */
+const UsrUI = { q: "", role: "ALL", list: null, err: "" };
+async function usrLoad() {
+  try { const r = await Api.call({ action: "userList" }); if (!r.ok) throw new Error(r.error === "forbidden" ? mt("เฉพาะผู้ดูแลระบบ", "Admins only") : r.error === "unknown action" ? mt("เซิร์ฟเวอร์ยังเป็นสคริปต์เวอร์ชันเก่า — วางโค้ด Apps Script v13 แล้ว Deploy เวอร์ชันใหม่", "Old server script – deploy Apps Script v13") : r.error); UsrUI.list = r.users || []; UsrUI.err = ""; }
+  catch (e) { UsrUI.err = e.message || String(e); UsrUI.list = UsrUI.list || []; }
+}
+function usrScopeText(u, buildings) {
+  const ids = u.buildingIds || [];
+  if (!ids.length || ids.includes("ALL")) return mt("ทุกอาคาร", "All buildings");
+  return ids.map((id) => { const b = buildings.find((x) => x.id === id || x.code === id); return b ? (b.code ? b.code + " · " : "") + b.name : id; }).join(", ");
+}
 function renderUsers(root) {
-  if (!Auth.isAdmin(State.user)) {
-    root.innerHTML = `<div class="card empty-state">เฉพาะผู้ดูแลระบบเท่านั้นที่จัดการหน้านี้ได้</div>`;
-    return;
-  }
-  const users = DB.get("users", []);
-  const buildings = DB.get("buildings", []);
-  const pendingCount = users.filter((u) => u.status === "pending").length;
+  if (!Auth.isAdmin(State.user)) { root.innerHTML = `<div class="card empty-state">เฉพาะผู้ดูแลระบบเท่านั้นที่จัดการหน้านี้ได้</div>`; return; }
+  if (UsrUI.list === null) { root.innerHTML = `<div class="card empty-state">${mt("กำลังโหลดรายชื่อผู้ใช้จากเซิร์ฟเวอร์…", "Loading users from the server…")}</div>`; usrLoad().then(() => { if (State.view === "users") renderUsers(root); }); return; }
+  const E = mpEsc, buildings = DB.get("buildings", []), all = UsrUI.list, me = (State.user.email || State.user.username || "").toLowerCase();
+  const q = UsrUI.q.trim().toLowerCase();
+  const shown = all.filter((u) => (UsrUI.role === "ALL" || (UsrUI.role === "suspended" ? u.status === "suspended" : u.role === UsrUI.role && u.status !== "suspended")) && (!q || [u.email, u.name, u.alias, usrScopeText(u, buildings)].join(" ").toLowerCase().includes(q)));
+  const nAct = all.filter((u) => u.status !== "suspended").length, nSus = all.length - nAct, nAdm = all.filter((u) => u.role === "admin" && u.status !== "suspended").length, nNever = all.filter((u) => !u.lastLogin).length;
   root.innerHTML = `
-    ${
-      pendingCount
-        ? `<div class="card" style="border-color:var(--gold);background:var(--gold-soft);">
-             <h3 style="color:var(--yellow);">มีคำขอลงทะเบียนใหม่รออนุมัติ ${pendingCount} รายการ</h3>
-             <div class="desc">ตรวจสอบและกำหนดสิทธิ์/อาคารให้ผู้ใช้งานใหม่ในตารางด้านล่าง</div>
-           </div>`
-        : ""
-    }
-    <div class="toolbar">
-      <div></div>
-      <button class="btn" id="add-user-btn">+ เพิ่มผู้ใช้งาน</button>
+    ${UsrUI.err ? `<div class="mp-banner" style="border-color:var(--st-critical);">▲ ${E(UsrUI.err)}</div>` : ""}
+    <div class="grid cols-4" style="margin-bottom:12px;">
+      <div class="stat-card" style="border-top:3px solid var(--st-good)"><div class="label">${mt("ใช้งานได้", "Active")}</div><div class="value">${nAct}</div><div class="sub">${mt("ผู้ดูแลระบบ", "Admins")} ${nAdm}</div></div>
+      <div class="stat-card" style="border-top:3px solid var(--st-warning)"><div class="label">${mt("ยังไม่เคยเข้าใช้", "Never signed in")}</div><div class="value">${nNever}</div><div class="sub">${mt("ส่งอีเมลเชิญซ้ำได้", "re-send the invitation")}</div></div>
+      <div class="stat-card" style="border-top:3px solid var(--st-critical)"><div class="label">${mt("ระงับ", "Suspended")}</div><div class="value">${nSus}</div><div class="sub">${mt("เข้าระบบไม่ได้ทุกเครื่อง", "blocked on every device")}</div></div>
+      <div class="stat-card"><div class="label">${mt("เครื่องที่กำลังเข้าระบบ", "Signed-in devices")}</div><div class="value">${all.reduce((a, u) => a + (u.sessions || 0), 0)}</div><div class="sub">${mt("เซสชันที่ยังไม่หมดอายุ", "sessions not expired")}</div></div>
+    </div>
+    <div class="mp-banner" style="margin-bottom:8px;">🔒 <b>${mt("ระบบเชิญเท่านั้น (Invite-only)", "Invite-only")}</b> — ${mt("Admin เพิ่มอีเมล + กำหนดอาคาร/สิทธิ์ → ผู้ใช้ได้รับอีเมลแจ้งสิทธิ์ → เข้าระบบด้วยอีเมล + รหัส OTP 6 หลัก (ไม่มีรหัสผ่าน) · ระงับ / ลบ = ตัดสิทธิ์ทุกเครื่องทันที · เปลี่ยนสิทธิ์/อาคาร = ผู้ใช้ต้องเข้าระบบใหม่", "Admin adds the e-mail + buildings/role → the user gets an e-mail → signs in with e-mail + 6-digit OTP (no password) · suspend / delete = cut off on every device at once")}</div>
+    <div class="mp-banner" style="margin-bottom:12px;">☁ ${mt("รายชื่อเก็บใน Google Sheet แท็บ _Users (ไม่ซิงก์ลงเครื่องผู้ใช้) · รหัส OTP และเซสชันเก็บเป็น SHA-256 + salt · ประวัติการเข้าระบบอยู่ในแท็บ _AccessLog", "Users live in the Google Sheet tab _Users (never synced to devices) · OTP codes and sessions are stored as SHA-256 + salt · sign-in history in tab _AccessLog")}</div>
+    <div class="toolbar" style="gap:8px;flex-wrap:wrap;">
+      <input type="search" id="usr-q" placeholder="${mt("ค้นหาชื่อ / อีเมล / อาคาร…", "Search name / e-mail / building…")}" value="${E(UsrUI.q)}" style="flex:1;min-width:220px;" />
+      <select id="usr-role"><option value="ALL">${mt("ทุกบทบาท", "All roles")}</option><option value="admin" ${UsrUI.role === "admin" ? "selected" : ""}>${mt("ผู้ดูแลระบบ", "Admin")}</option><option value="user" ${UsrUI.role === "user" ? "selected" : ""}>${mt("ผู้ใช้งาน", "User")}</option><option value="suspended" ${UsrUI.role === "suspended" ? "selected" : ""}>${mt("ระงับ", "Suspended")}</option></select>
+      <button class="btn" id="usr-add">+ ${mt("เพิ่มผู้ใช้ (อีเมล)", "Add user (e-mail)")}</button>
+      <button class="btn ghost" id="usr-bulk">📋 ${mt("เพิ่มหลายอีเมล", "Add many e-mails")}</button>
+      <button class="btn ghost" id="usr-reload" title="${mt("โหลดใหม่", "Reload")}">⟳</button>
     </div>
     <div class="card">
-      <table>
-        <thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อ-นามสกุล</th><th>สิทธิ์</th><th>เข้าถึงอาคาร</th><th>สถานะ</th><th></th></tr></thead>
-        <tbody>
-          ${users
-            .map((u) => {
-              const scope = u.buildingIds.includes("ALL")
-                ? "ทุกอาคาร"
-                : u.buildingIds.map((id) => (buildings.find((b) => b.id === id) || {}).code || "?").join(", ") || "-";
-              const isPending = u.status === "pending";
-              return `
-              <tr>
-                <td>${u.username}</td>
-                <td>${u.name}</td>
-                <td><span class="badge ${u.role === "admin" ? "gold" : "grey"}">${u.role === "admin" ? "ผู้ดูแลระบบ" : u.role === "pending" ? "ยังไม่กำหนด" : "ผู้ใช้งาน"}</span></td>
-                <td>${scope}</td>
-                <td><span class="badge ${isPending ? "gold" : "green"}">${isPending ? "รออนุมัติ" : "ใช้งานได้"}</span></td>
-                <td style="white-space:nowrap;">
-                  ${isPending ? `<button class="icon-btn" data-approve-u="${u.id}" style="color:var(--green);font-weight:700;">${t("btn_approve")}</button>` : `<button class="icon-btn" data-edit-u="${u.id}">${t("btn_edit")}</button>`}
-                  ${u.username !== "admin" ? `<button class="icon-btn danger" data-del-u="${u.id}">${t("btn_delete")}</button>` : ""}
-                </td>
-              </tr>`;
-            })
-            .join("")}
-        </tbody>
+      <table class="usr-table">
+        <thead><tr><th>${mt("ผู้ใช้", "User")}</th><th>${mt("สิทธิ์", "Role")}</th><th>${mt("เข้าถึงอาคาร", "Buildings")}</th><th>${mt("เข้าล่าสุด", "Last sign-in")}</th><th></th></tr></thead>
+        <tbody>${shown.length ? shown.map((u) => `
+          <tr class="${u.status === "suspended" ? "usr-off" : ""}">
+            <td><div class="usr-id"><span class="usr-av" style="background:${u.role === "admin" ? "#b91c1c" : "#0f766e"}">${E((u.name || u.email).trim().charAt(0).toUpperCase())}</span><div><b>${E(u.name || "–")}</b>${u.email === me ? ` <span class="badge grey">${mt("คุณ", "you")}</span>` : ""}${u.alias ? ` <span class="muted-s">@${E(u.alias)}</span>` : ""}<div class="muted-s">${E(u.email)}${u.phone ? " · " + E(u.phone) : ""}</div></div></div></td>
+            <td><span class="badge ${u.role === "admin" ? "gold" : "grey"}">${u.role === "admin" ? mt("ผู้ดูแลระบบ (Admin)", "Admin") : mt("ผู้ใช้งาน", "User")}</span><div class="muted-s">${u.status === "suspended" ? "⛔ " + mt("ระงับ", "suspended") : "● " + mt("ใช้งาน", "active")}${u.sessions ? ` · 💻 ${u.sessions}` : ""}</div></td>
+            <td style="max-width:280px;">${E(usrScopeText(u, buildings))}</td>
+            <td>${u.lastLogin ? mpFmtWhen(u.lastLogin) : `<span class="muted-s">${mt("ยังไม่เคยเข้า", "never")}</span>`}</td>
+            <td style="white-space:nowrap;text-align:right;">
+              <button class="icon-btn" data-u-edit="${E(u.email)}">✎ ${t("btn_edit")}</button>
+              ${u.email !== me ? `<button class="icon-btn" data-u-sus="${E(u.email)}">${u.status === "suspended" ? mt("เปิดใช้", "Activate") : mt("ระงับ", "Suspend")}</button>
+              <button class="icon-btn" data-u-inv="${E(u.email)}" title="${mt("ส่งอีเมลเชิญซ้ำ", "Re-send invitation")}">✉</button>
+              ${u.sessions ? `<button class="icon-btn" data-u-rev="${E(u.email)}" title="${mt("ออกจากระบบทุกเครื่อง", "Sign out everywhere")}">⏏</button>` : ""}
+              <button class="icon-btn danger" data-u-del="${E(u.email)}">${t("btn_delete")}</button>` : ""}
+            </td>
+          </tr>`).join("") : `<tr><td colspan="5" class="muted-s">${mt("ไม่พบผู้ใช้", "No users")}</td></tr>`}</tbody>
       </table>
     </div>
-  `;
-  root.querySelectorAll("[data-edit-u]").forEach((b) =>
-    b.addEventListener("click", () => openUserForm(users.find((x) => x.id === b.dataset.editU)))
-  );
-  root.querySelectorAll("[data-approve-u]").forEach((b) =>
-    b.addEventListener("click", () => openUserForm(users.find((x) => x.id === b.dataset.approveU), true))
-  );
-  root.querySelectorAll("[data-del-u]").forEach((b) =>
-    b.addEventListener("click", () => {
-      if (!confirm("ลบผู้ใช้งานนี้หรือไม่?")) return;
-      DB.set("users", DB.get("users", []).filter((x) => x.id !== b.dataset.delU));
-      toast("ลบแล้ว");
-      navigate("users");
-    })
-  );
-  document.getElementById("add-user-btn").addEventListener("click", () => openUserForm(null));
+    <details class="chk-more" style="margin-top:10px;"><summary><b>${mt("ตารางสิทธิ์ตามบทบาท", "Permissions by role")}</b></summary>
+      <table style="margin-top:8px;"><thead><tr><th>${mt("การใช้งาน", "Action")}</th><th>Admin</th><th>${mt("ผู้ใช้งาน", "User")}</th></tr></thead><tbody>
+        <tr><td>${mt("ดู / บันทึกข้อมูลของอาคารที่ได้รับสิทธิ์ (Checklist, IR, Data Record, PSD, CAPA ฯลฯ)", "View / record data of assigned buildings")}</td><td>✔ ${mt("ทุกอาคาร", "all")}</td><td>✔</td></tr>
+        <tr><td>${mt("ตั้งค่าอาคาร, โมเดล 3D, แบบฟอร์ม PCRA/ICRA, ค่าตั้งของรายงาน", "Buildings, 3D model, PCRA/ICRA forms, report settings")}</td><td>✔</td><td>✖ ${mt("(เซิร์ฟเวอร์ปฏิเสธ)", "(refused by the server)")}</td></tr>
+        <tr><td>${mt("จัดการผู้ใช้, สำรอง/กู้คืนจาก Google Sheet", "Users, Google Sheet backup / restore")}</td><td>✔</td><td>✖</td></tr>
+      </tbody></table></details>`;
+  const reload = async () => { await usrLoad(); renderUsers(root); };
+  const act = async (payload, okMsg) => { try { const r = await Api.call(payload); if (!r.ok) throw new Error(r.error); toast(okMsg); await reload(); } catch (e) { alert(e.message || e); } };
+  const find = (em) => all.find((u) => u.email === em);
+  root.querySelector("#usr-q").addEventListener("input", (e) => { UsrUI.q = e.target.value; const pos = e.target.selectionStart; renderUsers(root); const el = root.querySelector("#usr-q"); el.focus(); el.setSelectionRange(pos, pos); });
+  root.querySelector("#usr-role").addEventListener("change", (e) => { UsrUI.role = e.target.value; renderUsers(root); });
+  root.querySelector("#usr-reload").addEventListener("click", reload);
+  root.querySelector("#usr-add").addEventListener("click", () => openUserForm(null, reload));
+  root.querySelector("#usr-bulk").addEventListener("click", () => openUserBulk(reload));
+  root.querySelectorAll("[data-u-edit]").forEach((b) => b.addEventListener("click", () => openUserForm(find(b.dataset.uEdit), reload)));
+  root.querySelectorAll("[data-u-sus]").forEach((b) => b.addEventListener("click", () => { const u = find(b.dataset.uSus), off = u.status !== "suspended"; if (off && !confirm(mt(`ระงับ ${u.email}? ผู้ใช้จะถูกออกจากระบบทุกเครื่องทันที`, `Suspend ${u.email}? They are signed out everywhere now.`))) return; act({ action: "userSave", notify: false, user: Object.assign({}, u, { status: off ? "suspended" : "active" }) }, off ? mt("ระงับแล้ว", "Suspended") : mt("เปิดใช้งานแล้ว", "Activated")); }));
+  root.querySelectorAll("[data-u-inv]").forEach((b) => b.addEventListener("click", () => act({ action: "userInvite", email: b.dataset.uInv, appUrl: location.origin + location.pathname }, mt("ส่งอีเมลเชิญแล้ว", "Invitation sent"))));
+  root.querySelectorAll("[data-u-rev]").forEach((b) => b.addEventListener("click", () => { if (confirm(mt("ออกจากระบบทุกเครื่องของผู้ใช้นี้?", "Sign this user out on every device?"))) act({ action: "userRevoke", email: b.dataset.uRev }, mt("ออกจากระบบทุกเครื่องแล้ว", "Signed out everywhere")); }));
+  root.querySelectorAll("[data-u-del]").forEach((b) => b.addEventListener("click", () => { if (confirm(mt(`ลบ ${b.dataset.uDel}? (ตัดสิทธิ์ทุกเครื่องทันที · ข้อมูลที่ผู้ใช้บันทึกไว้ยังอยู่)`, `Delete ${b.dataset.uDel}? (access ends on every device; their data stays)`))) act({ action: "userDelete", email: b.dataset.uDel }, mt("ลบแล้ว", "Deleted")); }));
   const accHost = document.createElement("div"); accHost.id = "acc-host"; root.appendChild(accHost);
   renderAccessSection(accHost);
+}
+function usrBuildingChecks(sel) {
+  const buildings = DB.get("buildings", []), all = !sel.length || sel.includes("ALL");
+  return `<div class="checkbox-list" id="building-checks">
+    <label class="checkbox-pill"><input type="checkbox" value="ALL" ${all ? "checked" : ""}/> ${mt("ทุกอาคาร", "All buildings")}</label>
+    ${buildings.map((b) => `<label class="checkbox-pill"><input type="checkbox" value="${b.id}" ${!all && (sel.includes(b.id) || sel.includes(b.code)) ? "checked" : ""}/> ${mpEsc((b.code ? b.code + " · " : "") + b.name)}</label>`).join("")}
+  </div>`;
+}
+function usrReadChecks(modal) { const v = [...modal.querySelectorAll("#building-checks input:checked")].map((c) => c.value); return !v.length || v.includes("ALL") ? ["ALL"] : v; }
+function openUserForm(existing, done) {
+  const E = mpEsc, u = existing || { email: "", name: "", role: "user", status: "active", buildingIds: [], phone: "", alias: "", note: "" };
+  const modal = openModal(`
+    <h3>${existing ? mt("แก้ไขผู้ใช้งาน", "Edit user") : mt("เพิ่มผู้ใช้งาน (เชิญด้วยอีเมล)", "Add user (invite by e-mail)")}</h3>
+    <div class="form-row">
+      <div class="field"><label>${mt("อีเมล", "E-mail")} *</label><input type="email" id="f-email" ${existing ? "disabled" : ""} value="${E(u.email)}" placeholder="name@bhirajburi.co.th" /></div>
+      <div class="field"><label>${mt("ชื่อ-นามสกุล", "Full name")} *</label><input type="text" id="f-name" value="${E(u.name)}" /></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>${mt("สิทธิ์การใช้งาน", "Role")}</label><select id="f-role"><option value="user" ${u.role !== "admin" ? "selected" : ""}>${mt("ผู้ใช้งาน", "User")}</option><option value="admin" ${u.role === "admin" ? "selected" : ""}>${mt("ผู้ดูแลระบบ (Admin)", "Admin")}</option></select></div>
+      <div class="field"><label>${mt("สถานะ", "Status")}</label><select id="f-status"><option value="active" ${u.status !== "suspended" ? "selected" : ""}>${mt("ใช้งานได้", "Active")}</option><option value="suspended" ${u.status === "suspended" ? "selected" : ""}>${mt("ระงับ", "Suspended")}</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>${mt("โทรศัพท์", "Phone")}</label><input type="text" id="f-phone" value="${E(u.phone || "")}" /></div>
+      <div class="field"><label>${mt("ชื่อผู้ใช้เดิม (ถ้ามี — ให้เห็นข้อมูลที่เคยบันทึก)", "Old username (optional – keeps their earlier records)")}</label><input type="text" id="f-alias" value="${E(u.alias || "")}" placeholder="${mt("เช่น Oneudomsuk", "e.g. Oneudomsuk")}" /></div>
+    </div>
+    <div class="field"><label>${mt("อาคาร/BU ที่เข้าถึงได้", "Buildings / BU")}</label>${usrBuildingChecks(u.buildingIds || [])}</div>
+    ${existing ? "" : `<label class="checkbox-pill"><input type="checkbox" id="f-notify" checked /> ${mt("ส่งอีเมลแจ้งสิทธิ์พร้อมลิงก์เข้าระบบ", "E-mail the invitation with the sign-in link")}</label>`}
+    <div class="actions"><button class="btn ghost" id="cancel-u">${t("btn_cancel")}</button><button class="btn" id="save-u">${t("btn_save") || "บันทึก"}</button></div>`);
+  modal.querySelector("#cancel-u").addEventListener("click", closeModal);
+  modal.querySelector("#save-u").addEventListener("click", async (ev) => {
+    const email = (existing ? u.email : modal.querySelector("#f-email").value).trim().toLowerCase(), name = modal.querySelector("#f-name").value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert(mt("อีเมลไม่ถูกต้อง", "Invalid e-mail")); return; }
+    if (!name) { alert(mt("กรุณาระบุชื่อ-นามสกุล", "Please enter the name")); return; }
+    const user = { email, name, role: modal.querySelector("#f-role").value, status: modal.querySelector("#f-status").value, phone: modal.querySelector("#f-phone").value.trim(), alias: modal.querySelector("#f-alias").value.trim(), note: u.note || "", buildingIds: usrReadChecks(modal) };
+    const nt = modal.querySelector("#f-notify");
+    ev.target.disabled = true;
+    try {
+      const r = await Api.call({ action: "userSave", user, notify: nt ? nt.checked : false, appUrl: location.origin + location.pathname });
+      if (!r.ok) throw new Error(r.error);
+      closeModal(); toast(r.created ? mt("เพิ่มผู้ใช้แล้ว", "User added") + (nt && nt.checked ? mt(" · ส่งอีเมลเชิญแล้ว", " · invitation sent") : "") : mt("บันทึกแล้ว", "Saved"));
+      if (done) done();
+    } catch (e) { alert(e.message || e); ev.target.disabled = false; }
+  });
+}
+function openUserBulk(done) {
+  const modal = openModal(`
+    <h3>${mt("เพิ่มหลายอีเมล", "Add many e-mails")}</h3>
+    <div class="desc">${mt("1 บรรทัดต่อ 1 คน: อีเมล, ชื่อ-นามสกุล (ชื่อไม่ใส่ก็ได้) · ทุกคนได้สิทธิ์และอาคารตามที่เลือกด้านล่าง", "One per line: e-mail, full name (name optional) · everyone gets the role and buildings chosen below")}</div>
+    <textarea id="ub-list" rows="8" style="width:100%;font-family:monospace;" placeholder="somchai.k@bhirajburi.co.th, สมชาย ใจดี&#10;suda.p@bhirajburi.co.th, สุดา ประเสริฐ"></textarea>
+    <div class="form-row" style="margin-top:8px;"><div class="field"><label>${mt("สิทธิ์", "Role")}</label><select id="ub-role"><option value="user">${mt("ผู้ใช้งาน", "User")}</option><option value="admin">${mt("ผู้ดูแลระบบ (Admin)", "Admin")}</option></select></div></div>
+    <div class="field"><label>${mt("อาคาร/BU ที่เข้าถึงได้", "Buildings / BU")}</label>${usrBuildingChecks([])}</div>
+    <label class="checkbox-pill"><input type="checkbox" id="ub-notify" checked /> ${mt("ส่งอีเมลเชิญทุกคน", "E-mail the invitation to everyone")}</label>
+    <div id="ub-msg" class="muted-s" style="margin-top:6px;"></div>
+    <div class="actions"><button class="btn ghost" id="ub-cancel">${t("btn_cancel")}</button><button class="btn" id="ub-save">${mt("เพิ่มทั้งหมด", "Add all")}</button></div>`);
+  modal.querySelector("#ub-cancel").addEventListener("click", closeModal);
+  modal.querySelector("#ub-save").addEventListener("click", async (ev) => {
+    const role = modal.querySelector("#ub-role").value, b = usrReadChecks(modal);
+    const users = modal.querySelector("#ub-list").value.split(/\n+/).map((l) => l.trim()).filter(Boolean).map((l) => { const [em, ...nm] = l.split(/[,;\t]/); return { email: em.trim().toLowerCase(), name: nm.join(" ").trim() || em.trim().split("@")[0], role, status: "active", buildingIds: b }; });
+    if (!users.length) return;
+    ev.target.disabled = true; modal.querySelector("#ub-msg").textContent = mt("กำลังบันทึก…", "Saving…");
+    try {
+      const r = await Api.call({ action: "userBulk", users, notify: modal.querySelector("#ub-notify").checked, appUrl: location.origin + location.pathname });
+      if (!r.ok) throw new Error(r.error);
+      closeModal(); alert(mt(`เพิ่ม ${r.added} · อัปเดต ${r.updated}`, `Added ${r.added} · updated ${r.updated}`) + (r.errors && r.errors.length ? "\n▲ " + r.errors.join("\n▲ ") : ""));
+      if (done) done();
+    } catch (e) { modal.querySelector("#ub-msg").textContent = "▲ " + (e.message || e); ev.target.disabled = false; }
+  });
 }
 
 /** Admin-only: sign-in / sign-out history and the latest data edits */
@@ -10298,89 +10590,6 @@ function renderAccessSection(host) {
   if (ac) ac.addEventListener("click", () => ExportUtil.exportCSV(audShown.map((l) => ({ at: l.at, user: l.by, name: l.byName || "", action: l.act, module: AUD_MODS[l.c] || l.c, record: l.label || l.rid, detail: (l.detail || []).join(" "), count: l.cnt || 1 })), ["at", "user", "name", "action", "module", "record", "detail", "count"].map((k) => ({ key: k, label: k })), "activity_log"));
   const sel = host.querySelector("#acc-user");
   if (sel) sel.addEventListener("change", () => { AccUI.user = sel.value; renderAccessSection(host); });
-}
-
-function openUserForm(existing, isApproval) {
-  const buildings = DB.get("buildings", []);
-  const selectedIds = existing ? existing.buildingIds.filter((id) => id !== "ALL") : [];
-  const modal = openModal(`
-    <h3>${isApproval ? "อนุมัติผู้ใช้งานใหม่" : existing ? "แก้ไขผู้ใช้งาน" : "เพิ่มผู้ใช้งานใหม่"}</h3>
-    ${isApproval ? `<div class="desc" style="margin-bottom:14px;">กำหนดสิทธิ์และอาคารที่เข้าถึงได้ก่อนเปิดใช้งานบัญชีนี้</div>` : ""}
-    <div class="form-row">
-      <div class="field"><label>ชื่อผู้ใช้ (username)</label><input type="text" id="f-username" ${existing ? "disabled" : ""} value="${existing ? escapeAttr(existing.username) : ""}" /></div>
-      <div class="field"><label>รหัสผ่าน</label><input type="text" id="f-password" placeholder="${existing ? "เว้นว่างถ้าไม่เปลี่ยน" : ""}" /></div>
-    </div>
-    <div class="form-row">
-      <div class="field"><label>ชื่อ-นามสกุล</label><input type="text" id="f-name" value="${existing ? escapeAttr(existing.name) : ""}" /></div>
-      <div class="field">
-        <label>สิทธิ์การใช้งาน</label>
-        <select id="f-role">
-          <option value="user" ${existing && existing.role === "user" ? "selected" : ""}>ผู้ใช้งานทั่วไป</option>
-          <option value="admin" ${existing && existing.role === "admin" ? "selected" : ""}>ผู้ดูแลระบบ</option>
-        </select>
-      </div>
-    </div>
-    <div class="field">
-      <label>สถานะบัญชี</label>
-      <select id="f-status">
-        <option value="active" ${!existing || existing.status !== "pending" ? "selected" : ""}>ใช้งานได้ (Active)</option>
-        <option value="pending" ${existing && existing.status === "pending" && !isApproval ? "selected" : ""}>รออนุมัติ (Pending)</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>อาคาร/BU ที่เข้าถึงได้</label>
-      <div class="checkbox-list" id="building-checks">
-        <label class="checkbox-pill"><input type="checkbox" value="ALL" ${existing && existing.buildingIds.includes("ALL") ? "checked" : ""}/> ทุกอาคาร</label>
-        ${buildings
-          .map((b) => `<label class="checkbox-pill"><input type="checkbox" value="${b.id}" ${selectedIds.includes(b.id) ? "checked" : ""}/> ${b.name}</label>`)
-          .join("")}
-      </div>
-    </div>
-    <div class="actions">
-      <button class="btn ghost" id="cancel-u">${t("btn_cancel")}</button>
-      <button class="btn" id="save-u">${isApproval ? "อนุมัติและบันทึก" : "บันทึก"}</button>
-    </div>
-  `);
-  modal.querySelector("#cancel-u").addEventListener("click", closeModal);
-  modal.querySelector("#save-u").addEventListener("click", () => {
-    const username = modal.querySelector("#f-username").value.trim();
-    const name = modal.querySelector("#f-name").value.trim();
-    if (!existing && !username) { alert("กรุณาระบุชื่อผู้ใช้"); return; }
-    if (!name) { alert("กรุณาระบุชื่อ-นามสกุล"); return; }
-    const checked = [...modal.querySelectorAll("#building-checks input:checked")].map((c) => c.value);
-    const password = modal.querySelector("#f-password").value;
-    const role = modal.querySelector("#f-role").value;
-    const status = isApproval ? "active" : modal.querySelector("#f-status").value;
-    const all = DB.get("users", []);
-    if (existing) {
-      const idx = all.findIndex((x) => x.id === existing.id);
-      all[idx] = {
-        ...existing,
-        name,
-        role,
-        status,
-        buildingIds: checked.length ? checked : ["ALL"]
-      };
-      if (password) Auth.setPassword(all[idx], password);
-    } else {
-      if (all.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
-        alert("มีชื่อผู้ใช้นี้อยู่แล้ว");
-        return;
-      }
-      all.push(Auth.setPassword({
-        id: uid("u"),
-        username,
-        name,
-        role,
-        status,
-        buildingIds: checked.length ? checked : ["ALL"]
-      }, password || "changeme"));
-    }
-    DB.set("users", all);
-    closeModal();
-    toast(isApproval ? "อนุมัติผู้ใช้งานแล้ว" : "บันทึกแล้ว");
-    navigate("users");
-  });
 }
 
 // ------------------------------------------------------------- reports ---
@@ -10553,23 +10762,12 @@ function renderReports(root) {
 // ------------------------------------------- central data connection (settings) ---
 function mpRenderSyncSettings(el) {
   if (!el) return;
-  const c = SyncMgr.cfg(), m = SyncMgr.meta();
-  const on = SyncMgr.enabled();
+  const m = SyncMgr.meta(), on = SyncMgr.enabled();
   el.innerHTML = `<h4>${mt("เชื่อมต่อข้อมูลกลาง (Google Sheet)", "Central data connection (Google Sheet)")}</h4>
-    <div class="desc" style="margin-bottom:8px;">${mt("เมื่อเชื่อมต่อ ข้อมูลที่หน่วยงานกรอกจะถูกส่งไปที่ Google Sheet และ Admin เห็นข้อมูลของทุกเครื่อง · ขอรหัสเชื่อมต่อทีมจาก Admin (หน้า สำรองข้อมูล)", "When connected, what each unit enters goes to the Google Sheet so Admin sees every computer's data · get the team connection code from Admin (Backup page)")}</div>
+    <div class="desc" style="margin-bottom:8px;">🔒 ${mt("เข้าระบบด้วยอีเมล + OTP แล้วซิงก์อัตโนมัติ (ระบบเชิญเท่านั้น)", "Signed in with e-mail + OTP – syncs automatically (invite-only)")} · ${mt("เซิร์ฟเวอร์", "Server")}: <span class="muted-s">${mpEsc(Api.url() ? Api.url().replace(/^https:\/\/script\.google\.com\/macros\/s\/(.{6}).*(.{6})\/exec$/, "…/$1…$2/exec") : "–")}</span></div>
     ${on ? `<div class="mp-banner">✔ ${mt("เชื่อมต่อแล้ว", "Connected")} · ${m.lastAt ? new Date(m.lastAt).toLocaleString(mt("th-TH", "en-GB")) : "–"}${m.status === "error" ? ` · ▲ ${mpEsc(m.lastError || "")}` : ""}</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"><button class="btn small" id="sy-now">${mt("ซิงก์ตอนนี้", "Sync now")}</button><button class="btn ghost small" id="sy-off">${mt("ยกเลิกการเชื่อมต่อ", "Disconnect")}</button></div>`
-    : `<div class="field"><label>${mt("รหัสเชื่อมต่อทีม", "Team connection code")}</label><input type="text" id="sy-code" placeholder="QSHE1.…" /></div>
-      <button class="btn small" id="sy-on">${mt("เชื่อมต่อ", "Connect")}</button> <span class="muted-s" id="sy-msg"></span>`}`;
-  const rerender = () => mpRenderSyncSettings(el);
-  const on_ = el.querySelector("#sy-on");
-  if (on_) on_.addEventListener("click", async () => {
-    const msg = el.querySelector("#sy-msg");
-    try { msg.textContent = mt("กำลังเชื่อมต่อ…", "Connecting…"); await SyncMgr.connect(el.querySelector("#sy-code").value); SyncMgr.paint(); toast(mt("เชื่อมต่อแล้ว", "Connected")); rerender(); renderView(); }
-    catch (e) { msg.textContent = e.message || String(e); }
-  });
-  const now = el.querySelector("#sy-now"); if (now) now.addEventListener("click", async () => { await SyncMgr.run(); rerender(); renderView(); });
-  const off = el.querySelector("#sy-off"); if (off) off.addEventListener("click", () => { SyncMgr.disconnect(); rerender(); });
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"><button class="btn small" id="sy-now">${mt("ซิงก์ตอนนี้", "Sync now")}</button></div>` : `<div class="mp-banner">▲ ${mt("ยังไม่ได้เชื่อมต่อเซิร์ฟเวอร์", "Not connected")}</div>`}`;
+  const now = el.querySelector("#sy-now"); if (now) now.addEventListener("click", async () => { await SyncMgr.run(); mpRenderSyncSettings(el); renderView(); });
 }
 
 
