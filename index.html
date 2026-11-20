@@ -158,6 +158,14 @@ a { color: var(--green); }
 #building-checks input[type=checkbox] { width: 16px !important; height: 16px; min-width: 16px; display: inline-block !important; margin: 0 !important; padding: 0 !important; flex: none; }
 #building-checks label { flex-direction: row !important; }
 .modal:has(#building-checks) { max-width: 900px !important; width: min(900px, 96vw) !important; }
+.ub-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
+.ub-top .ub-head { border-bottom: 0; margin-bottom: 0; }
+.ub-tools { display: inline-flex; gap: 4px; flex-shrink: 0; }
+.ub-tools button { width: 26px; height: 26px; border-radius: 7px; border: 1px solid color-mix(in srgb, var(--bu) 45%, var(--border)); background: #fff; color: var(--bu); font-weight: 800; cursor: pointer; line-height: 1; padding: 0; }
+.ub-tools button:hover, .ub-tools button.on { background: var(--bu); color: #fff; }
+.ub-hint { font-size: 11.5px; color: var(--muted); margin: -2px 0 4px; } .ub-hint a { color: var(--bu); font-weight: 700; }
+.ub-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; } .ub-row .ub-item { flex: 1; }
+.ub-x, .ub-e { border: 0; background: transparent; cursor: pointer; font-size: 13px; padding: 2px 6px; border-radius: 6px; } .ub-x { color: #dc2626; } .ub-e { color: var(--bu); } .ub-x:hover, .ub-e:hover { background: rgba(0,0,0,.06); }
 .ub-all { margin-bottom: 8px; font-weight: 700; display: inline-flex !important; align-items: center; gap: 8px; }
 .ub-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .ub-col { border: 1.5px solid color-mix(in srgb, var(--bu) 35%, var(--border)); border-radius: 12px; padding: 8px 10px; background: color-mix(in srgb, var(--bu) 5%, var(--surface, #fff)); }
@@ -10497,8 +10505,10 @@ function usrBuildingChecks(sel) {
   const cols = V3_BU.map(([bu, th, en, col]) => {
     const list = bs.filter((b) => v3dBuOf(b) === bu), whole = !all && sel.includes("BU:" + bu);
     return `<div class="ub-col" style="--bu:${col}">
-      <label class="ub-head"><input type="checkbox" value="BU:${bu}" data-bu="${bu}" ${whole ? "checked" : ""} ${all ? "disabled" : ""}/> <i></i>${E(th)} <small>${mt("ทั้ง BU · Manager", "whole BU · Manager")}</small></label>
-      <div class="ub-list">${list.map((b) => `<label class="ub-item"><input type="checkbox" value="${E(b.id)}" data-of="${bu}" ${!all && (whole || sel.includes(b.id)) ? "checked" : ""} ${all || whole ? "disabled" : ""}/> ${E(b.name)}</label>`).join("") || `<span class="muted-s">${mt("ยังไม่มีอาคาร", "no buildings")}</span>`}</div>
+      <div class="ub-top"><label class="ub-head"><input type="checkbox" value="BU:${bu}" data-bu="${bu}" ${whole ? "checked" : ""} ${all ? "disabled" : ""}/> <i></i>${E(th)} <small>${mt("ทั้ง BU · Manager", "whole BU · Manager")}</small></label>
+        <span class="ub-tools">${Auth.isAdmin(State.user) ? `<button type="button" data-ubadd="${bu}" title="${mt("เพิ่มอาคารใน ", "Add a building to ")}${E(th)}">＋</button><button type="button" data-ubmode="del" data-bu2="${bu}" class="${UbUI.mode[bu] === "del" ? "on" : ""}" title="${mt("ลบอาคาร", "Remove a building")}">－</button><button type="button" data-ubmode="ren" data-bu2="${bu}" class="${UbUI.mode[bu] === "ren" ? "on" : ""}" title="${mt("แก้ไขชื่ออาคาร", "Rename a building")}">✎</button>` : ""}</span></div>
+      ${UbUI.mode[bu] ? `<div class="ub-hint">${UbUI.mode[bu] === "del" ? mt("กด ✕ ที่อาคารที่จะลบ", "Click ✕ to remove") : mt("กด ✎ ที่อาคารที่จะแก้ชื่อ", "Click ✎ to rename")} · <a href="#" data-ubdone="${bu}" onclick="return false">${mt("เสร็จ", "Done")}</a></div>` : ""}
+      <div class="ub-list">${list.map((b) => `<div class="ub-row"><label class="ub-item"><input type="checkbox" value="${E(b.id)}" data-of="${bu}" ${!all && (whole || sel.includes(b.id)) ? "checked" : ""} ${all || whole ? "disabled" : ""}/> ${E(b.name)}</label>${UbUI.mode[bu] === "del" ? `<button type="button" class="ub-x" data-ubdel="${E(b.id)}" title="${mt("ลบ", "Remove")}">✕</button>` : UbUI.mode[bu] === "ren" ? `<button type="button" class="ub-e" data-ubren="${E(b.id)}" title="${mt("แก้ชื่อ", "Rename")}">✎</button>` : ""}</div>`).join("") || `<span class="muted-s">${mt("ยังไม่มีอาคาร", "no buildings")}</span>`}</div>
     </div>`;
   }).join("");
   const keep = sel.filter((k) => k !== "ALL" && !/^BU:/.test(k) && !bs.some((b) => b.id === k));
@@ -10520,8 +10530,40 @@ function usrMapLegacy(sel) {
   });
   return [...new Set(out)];
 }
+const UbUI = { mode: {} };
+/** add / remove / rename buildings of a BU right from the access picker (they are the buildings of the 3D model) */
+function usrRedrawChecks(modal) {
+  const box = modal.querySelector("#building-checks"), cur = usrReadChecks(modal);
+  box.outerHTML = usrBuildingChecks(cur);
+  usrWireChecks(modal);
+}
 function usrWireChecks(modal) {
   const box = modal.querySelector("#building-checks"), allC = box.querySelector('input[value="ALL"]');
+  const save = (list, what) => { DB.set("v3dBuildings", list, { raw: true }); try { SyncMgr.schedule(); } catch (e) { /* ignore */ } toast(what); usrRedrawChecks(modal); };
+  box.querySelectorAll("[data-ubadd]").forEach((b) => b.addEventListener("click", () => {
+    const bu = b.dataset.ubadd, th = (V3_BU.find((x) => x[0] === bu) || [])[1], name = (prompt(mt(`ชื่ออาคารใหม่ใน ${th}`, `New building in ${th}`)) || "").trim();
+    if (!name) return;
+    const all = DB.full("v3dBuildings", []);
+    if (all.some((x) => x.name.toLowerCase() === name.toLowerCase())) { alert(mt("มีชื่ออาคารนี้แล้ว", "This name already exists")); return; }
+    const id = uid("v3d");
+    all.push({ id, bu, name, unitName: name, type: "", desc: mt("เพิ่มจากหน้าผู้ใช้งาน — กำหนดชั้นได้ที่ ตั้งค่าอาคาร 3D", "Added from the Users page – set its floors in 3D building setup"), blocks: [{ id: id + "-b1", name: mt("อาคาร 1", "Block 1"), floors: [{ id: id + "-f1", name: "G", use: "" }] }] });
+    save(all, mt("เพิ่มอาคารแล้ว", "Building added"));
+  }));
+  box.querySelectorAll("[data-ubmode]").forEach((b) => b.addEventListener("click", () => { const bu = b.dataset.bu2; UbUI.mode[bu] = UbUI.mode[bu] === b.dataset.ubmode ? null : b.dataset.ubmode; usrRedrawChecks(modal); }));
+  box.querySelectorAll("[data-ubdone]").forEach((b) => b.addEventListener("click", () => { UbUI.mode[b.dataset.ubdone] = null; usrRedrawChecks(modal); }));
+  box.querySelectorAll("[data-ubdel]").forEach((b) => b.addEventListener("click", () => {
+    const all = DB.full("v3dBuildings", []), x = all.find((y) => y.id === b.dataset.ubdel); if (!x) return;
+    if (!confirm(mt(`ลบ “${x.name}” ออกจากรายการอาคาร (และโมเดล 3D)?\nข้อมูล QSHE ที่บันทึกไว้ไม่ถูกลบ`, `Remove “${x.name}” from the buildings (and the 3D model)?\nRecorded QSHE data is kept.`))) return;
+    save(all.filter((y) => y.id !== x.id), mt("ลบอาคารแล้ว", "Building removed"));
+  }));
+  box.querySelectorAll("[data-ubren]").forEach((b) => b.addEventListener("click", () => {
+    const all = DB.full("v3dBuildings", []), x = all.find((y) => y.id === b.dataset.ubren); if (!x) return;
+    const name = (prompt(mt("ชื่อใหม่", "New name"), x.name) || "").trim();
+    if (!name || name === x.name) return;
+    if (!x.unitName) x.unitName = x.name;   // keep the link to data already recorded under the old name
+    x.name = name;
+    save(all, mt("แก้ไขชื่อแล้ว", "Renamed"));
+  }));
   const sync = () => {
     const a = allC.checked;
     box.querySelectorAll(".ub-head input").forEach((h) => { h.disabled = a; if (a) h.checked = false; });
