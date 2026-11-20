@@ -8279,7 +8279,7 @@ const VERSION = 13;
 const APP_NAME = 'PSD eNGINNo QSHE Management';
 const APP_URL = 'https://ienginnotech-tech.github.io/PSD_eNGINNo-QSHE-MANAGEMENT-V1.0/';
 const OWNER_EMAIL = 'kittanan.o@bhirajburi.co.th';   // first Admin (can sign in before anyone else is added)
-const ALLOWED_DOMAINS = [];          // e.g. ['bhirajburi.co.th'] - empty = any e-mail an Admin adds
+const ALLOWED_DOMAINS = ['bhirajburi.co.th'];   // only company e-mails can be added AND can sign in
 const OTP_TTL_SEC = 600, OTP_MAX_TRIES = 5, OTP_COOLDOWN_SEC = 45, OTP_PER_HOUR = 6, OTP_GLOBAL_PER_HOUR = 300;
 const SESSION_HOURS = 12, SESSION_REMEMBER_DAYS = 30;
 const CHUNK = 45000;         // one cell holds at most 50,000 characters
@@ -8417,7 +8417,7 @@ function otpRequest_(p) {
   c.put('otpLast:' + email, String(Date.now()), OTP_COOLDOWN_SEC);
   c.put('otpHour:' + email, String(hour + 1), 3600);
   c.put('otpGlobal', String(glob + 1), 3600);
-  var u = findUser_(email);
+  var u = domainOk_(email) ? findUser_(email) : null;
   // the answer is the same whether or not the e-mail is invited (no one can probe the user list)
   if (u && u.status === 'active') {
     var code = String(parseInt(Utilities.getUuid().replace(/-/g, '').slice(0, 12), 16) % 1000000);
@@ -8450,7 +8450,7 @@ function otpVerify_(p) {
     return { ok: false, error: 'code', left: OTP_MAX_TRIES - o.t };
   }
   c.remove(key);
-  var u = findUser_(email);
+  var u = domainOk_(email) ? findUser_(email) : null;
   if (!u || u.status !== 'active') return { ok: false, error: 'expired' };
   var token = (Utilities.getUuid() + Utilities.getUuid() + Utilities.getUuid()).replace(/-/g, '');
   var now = Date.now(), exp = now + (p.remember ? SESSION_REMEMBER_DAYS * 864e5 : SESSION_HOURS * 36e5), h = sha_(secret_() + '|' + token);
@@ -8474,8 +8474,8 @@ function auth_(token) {
     c.put('ses:' + h, JSON.stringify(s), 21600);
   }
   if (!s.x || s.x < Date.now()) return null;
-  var u = findUser_(s.e);
-  return u && u.status === 'active' ? u : null;   // suspended / deleted users are refused immediately
+  var u = domainOk_(s.e) ? findUser_(s.e) : null;
+  return u && u.status === 'active' ? u : null;   // suspended / deleted / outside-domain users are refused immediately
 }
 function endSession_(token) {
   var h = sha_(secret_() + '|' + token); cache_().remove('ses:' + h);
@@ -9007,6 +9007,7 @@ function showLogin() {
   const send = async () => {
     email = $("login-email").value.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err("กรุณาใส่อีเมลให้ถูกต้อง"); return; }
+    if (!/@bhirajburi\.co\.th$/.test(email)) { err("ใช้ได้เฉพาะอีเมลบริษัท @bhirajburi.co.th"); return; }
     if (!Api.url()) { sb.classList.remove("hidden"); err("ยังไม่ได้ตั้งค่าเซิร์ฟเวอร์ — วาง Apps Script URL ก่อน"); return; }
     const b = $("otp-send"); b.disabled = true; b.textContent = "กำลังส่งรหัส…";
     try {
@@ -10492,6 +10493,7 @@ function openUserForm(existing, done) {
   modal.querySelector("#save-u").addEventListener("click", async (ev) => {
     const email = (existing ? u.email : modal.querySelector("#f-email").value).trim().toLowerCase(), name = modal.querySelector("#f-name").value.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert(mt("อีเมลไม่ถูกต้อง", "Invalid e-mail")); return; }
+    if (!/@bhirajburi\.co\.th$/.test(email)) { alert(mt("เพิ่มได้เฉพาะอีเมล @bhirajburi.co.th", "Only @bhirajburi.co.th e-mails")); return; }
     if (!name) { alert(mt("กรุณาระบุชื่อ-นามสกุล", "Please enter the name")); return; }
     const user = { email, name, role: modal.querySelector("#f-role").value, status: modal.querySelector("#f-status").value, phone: modal.querySelector("#f-phone").value.trim(), alias: modal.querySelector("#f-alias").value.trim(), note: u.note || "", buildingIds: usrReadChecks(modal) };
     const nt = modal.querySelector("#f-notify");
