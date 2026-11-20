@@ -155,6 +155,17 @@ a { color: var(--green); }
   letter-spacing: 0.05em;
 }
 
+#building-checks input[type=checkbox] { width: 16px !important; height: 16px; min-width: 16px; display: inline-block !important; margin: 0 !important; padding: 0 !important; flex: none; }
+#building-checks label { flex-direction: row !important; }
+.modal:has(#building-checks) { max-width: 900px !important; width: min(900px, 96vw) !important; }
+.ub-all { margin-bottom: 8px; font-weight: 700; display: inline-flex !important; align-items: center; gap: 8px; }
+.ub-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.ub-col { border: 1.5px solid color-mix(in srgb, var(--bu) 35%, var(--border)); border-radius: 12px; padding: 8px 10px; background: color-mix(in srgb, var(--bu) 5%, var(--surface, #fff)); }
+.ub-head { display: flex; align-items: center; gap: 6px; font-weight: 800; padding-bottom: 6px; border-bottom: 1px solid var(--border); margin-bottom: 6px; cursor: pointer; flex-wrap: wrap; }
+.ub-head i { width: 10px; height: 10px; border-radius: 3px; background: var(--bu); } .ub-head small { font-weight: 600; color: var(--muted); font-size: 11px; }
+.ub-list { display: flex; flex-direction: column; gap: 2px; max-height: 220px; overflow-y: auto; }
+.ub-item { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 3px 2px; cursor: pointer; border-radius: 6px; } .ub-item:hover { background: rgba(0,0,0,.04); }
+@media (max-width: 760px) { .ub-grid { grid-template-columns: 1fr; } }
 .usr-id { display: flex; align-items: center; gap: 10px; } .usr-av { width: 34px; height: 34px; border-radius: 50%; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
 .usr-off td { opacity: .55; } .usr-table td { vertical-align: middle; }
 .tb-brand { display: flex; align-items: center; gap: 14px; }
@@ -1969,28 +1980,40 @@ const Scope = {
     (s.match(/\(([^)]*)\)/g) || []).forEach((m) => out.push(this.norm(m.slice(1, -1))));
     return out.filter(Boolean);
   },
+  /** whole-name forms only (no bracket parts) — used for partial matching */
+  base(name) { const s = String(name || ""), st = s.replace(/\([^)]*\)/g, " "); return [this.norm(s), st.trim() ? this.norm(st) : ""].filter(Boolean); },
   ctx() {
     if (this._c) return this._c;
-    const u = State.user, ids = new Set(u.buildingIds || []), bset = new Set(ids), al = new Set();
-    const add = (x) => { this.cands(x).forEach((n) => al.add(n)); };
+    const u = State.user, ids = new Set(u.buildingIds || []), bset = new Set(ids), al = new Set(), alSub = new Set();
+    const add = (x) => { this.cands(x).forEach((n) => al.add(n)); this.base(x).forEach((n) => alSub.add(n)); };
     DB._raw("buildings", []).forEach((b) => {
       if (!(ids.has(b.id) || ids.has(b.code))) return;
       bset.add(b.id); if (b.code) bset.add(b.code); add(b.name);
     });
     bset.forEach((k) => (this.CODE_ALIASES[k] || []).forEach(add));
-    const c = { bset, al, uset: new Set(), uname: u.username, alias: u.alias || "" };
+    // v1.01: access by BU ("BU:tw" = Manager of the whole BU) or by 3D building ("v3d-…")
+    const buset = new Set([...ids].filter((k) => /^BU:/.test(k)).map((k) => k.slice(3)));
+    const v3d = new Set();
+    DB._raw("v3dBuildings", []).forEach((b) => {
+      const bu = typeof v3dBuOf === "function" ? v3dBuOf(b) : b.bu;
+      if (!(ids.has(b.id) || buset.has(bu))) return;
+      v3d.add(b.id); add(b.name); if (b.unitName) add(b.unitName);
+    });
+    const legacy = [...ids].some((k) => k !== "ALL" && !/^BU:/.test(k) && !v3d.has(k) && !/^v3d-/.test(k));
+    const c = { bset, al, alSub, buset, v3d, legacy, uset: new Set(), uname: u.username, alias: u.alias || "" };
     this._c = c;
+    // the old building list (codes 001…) follows the names the user may see
+    DB._raw("buildings", []).forEach((b) => { if (!bset.has(b.id) && this.nameOk(b.name)) { bset.add(b.id); if (b.code) bset.add(b.code); } });
     DB._raw("mpUnits", []).forEach((x) => { if (this.nameOk(x.name)) c.uset.add(x.id); });
     return c;
   },
   /** does this building / unit / site name belong to the signed-in user? (always true for admins) */
   nameOk(name) {
     if (!this.active()) return true;
-    const al = this.ctx().al, cs = this.cands(name);
-    for (const n of cs) {
-      if (al.has(n)) return true;
-      for (const a of al) { if ((a.length >= 5 && n.length >= 5) && (n.includes(a) || a.includes(n))) return true; }
-    }
+    const c = this.ctx(), cs = this.cands(name);
+    for (const n of cs) if (c.al.has(n)) return true;
+    // partial match only on whole names (never on the short part in brackets, e.g. "(Retail)")
+    for (const n of this.base(name)) for (const a of c.alSub) { if ((a.length >= 5 && n.length >= 5) && (n.includes(a) || a.includes(n))) return true; }
     return false;
   },
   sees(name, r) {
@@ -2003,7 +2026,7 @@ const Scope = {
       case "mpUnits": return c.uset.has(r.id);
       case "mpScores": case "mpForms": return c.uset.has(r.unitId);
       case "drrRecords": { const d = r.d || {}; return r.report === "cfg" || d.site === "*" || this.nameOk(d.site) || r.by === c.uname || (!!c.alias && r.by === c.alias); }
-      case "v3dBuildings": return this.nameOk(r.name) || this.nameOk(r.unitName);
+      case "v3dBuildings": return c.v3d.has(r.id) || (c.legacy && (this.nameOk(r.name) || this.nameOk(r.unitName)));
       case "psdAnalyses": return this.nameOk(r.bu) || this.nameOk(r.location) || this.nameOk(r.site) || r.by === c.uname || (!!c.alias && r.by === c.alias);
     }
     return true;
@@ -7563,6 +7586,7 @@ const V3_TABS = [["ov", "ภาพรวม", "Overview"], ["chk", "Checklist", 
 const V3_REPS = [["lp", "Live & Play"], ["tw", "Township"], ["food", "Food"], ["ww", "Waste water"], ["ts", "ทส.1 / ทส.2"], ["mwa", "MWA Raw Water"]];
 
 function renderV3d(root) {
+  try { const al = v3dAllowedBu(); if (al.length === 1 && V3.bu !== al[0]) { V3.bu = al[0]; IrSafeUI.group = al[0]; } } catch (e) { /* ignore */ }
   v3dEnsure();
   const bs = DB.get("v3dBuildings", []);
   if (V3.sel && !bs.find((b) => b.id === V3.sel)) { V3.sel = null; V3.flr = null; V3.blk = null; }
@@ -7807,9 +7831,13 @@ async function v3dLoadImg(id) {
 }
 
 // ------------------------------------------------------------- mode switch ---
+function v3dAllowedBu() {
+  const vis = new Set(DB.get("v3dBuildings", []).map(v3dBuOf));
+  return V3_BU.map((x) => x[0]).filter((k) => vis.has(k));
+}
 function v3dModeSwitchHtml() {
-  const on = (v) => (State.view === v ? "on" : "");
-  const bu = State.view === "v3d" ? `<div class="bu-sw" role="group" aria-label="BU">${V3_BU.map(([id, th, en, col]) => `<button data-bu="${id}" class="${V3.bu === id ? "on" : ""}" style="--bu:${col}" title="${mt("แสดงเฉพาะ ", "Show only ")}${th}${mt(" · กดซ้ำเพื่อดูทั้งหมด", " · click again for all")}"><i></i>${mt(th, en)}</button>`).join("")}</div>` : "";
+  const on = (v) => (State.view === v ? "on" : ""), allow = v3dAllowedBu();
+  const bu = State.view === "v3d" ? `<div class="bu-sw" role="group" aria-label="BU">${V3_BU.filter((x) => allow.includes(x[0])).map(([id, th, en, col]) => `<button data-bu="${id}" class="${V3.bu === id ? "on" : ""}" style="--bu:${col}" title="${mt("แสดงเฉพาะ ", "Show only ")}${th}${mt(" · กดซ้ำเพื่อดูทั้งหมด", " · click again for all")}"><i></i>${mt(th, en)}</button>`).join("")}</div>` : "";
   return bu + `<div class="mode-sw" role="group" aria-label="3D / back office"><button data-mode="v3d" class="${on("v3d")}">3D</button><button data-mode="dashboard" class="${State.view === "v3d" ? "" : "on"}">${mt("หลังบ้าน", "Back office")}</button></div>`;
 }
 function v3dWireModeSwitch() {
@@ -10392,17 +10420,17 @@ async function usrLoad() {
   try { const r = await Api.call({ action: "userList" }); if (!r.ok) throw new Error(r.error === "forbidden" ? mt("เฉพาะผู้ดูแลระบบ", "Admins only") : r.error === "unknown action" ? mt("เซิร์ฟเวอร์ยังเป็นสคริปต์เวอร์ชันเก่า — วางโค้ด Apps Script v13 แล้ว Deploy เวอร์ชันใหม่", "Old server script – deploy Apps Script v13") : r.error); UsrUI.list = r.users || []; UsrUI.err = ""; }
   catch (e) { UsrUI.err = e.message || String(e); UsrUI.list = UsrUI.list || []; }
 }
-function usrScopeText(u, buildings) {
-  const ids = u.buildingIds || [];
-  if (!ids.length || ids.includes("ALL")) return mt("ทุกอาคาร", "All buildings");
-  return ids.map((id) => { const b = buildings.find((x) => x.id === id || x.code === id); return b ? (b.code ? b.code + " · " : "") + b.name : id; }).join(", ");
+function usrScopeText(u) {
+  const ids = usrMapLegacy(u.buildingIds || []), bs = DB.full("v3dBuildings", []);
+  if (!ids.length || ids.includes("ALL")) return mt("ทุก BU ทุกอาคาร", "All BUs / buildings");
+  return ids.map((k) => { if (/^BU:/.test(k)) { const x = V3_BU.find((y) => y[0] === k.slice(3)); return "★ " + (x ? x[1] : k) + mt(" (ทั้ง BU)", " (whole BU)"); } const b = bs.find((y) => y.id === k); return b ? b.name : k; }).join(", ");
 }
 function renderUsers(root) {
   if (!Auth.isAdmin(State.user)) { root.innerHTML = `<div class="card empty-state">เฉพาะผู้ดูแลระบบเท่านั้นที่จัดการหน้านี้ได้</div>`; return; }
   if (UsrUI.list === null) { root.innerHTML = `<div class="card empty-state">${mt("กำลังโหลดรายชื่อผู้ใช้จากเซิร์ฟเวอร์…", "Loading users from the server…")}</div>`; usrLoad().then(() => { if (State.view === "users") renderUsers(root); }); return; }
   const E = mpEsc, buildings = DB.get("buildings", []), all = UsrUI.list, me = (State.user.email || State.user.username || "").toLowerCase();
   const q = UsrUI.q.trim().toLowerCase();
-  const shown = all.filter((u) => (UsrUI.role === "ALL" || (UsrUI.role === "suspended" ? u.status === "suspended" : u.role === UsrUI.role && u.status !== "suspended")) && (!q || [u.email, u.name, u.alias, usrScopeText(u, buildings)].join(" ").toLowerCase().includes(q)));
+  const shown = all.filter((u) => (UsrUI.role === "ALL" || (UsrUI.role === "suspended" ? u.status === "suspended" : u.role === UsrUI.role && u.status !== "suspended")) && (!q || [u.email, u.name, u.alias, usrScopeText(u)].join(" ").toLowerCase().includes(q)));
   const nAct = all.filter((u) => u.status !== "suspended").length, nSus = all.length - nAct, nAdm = all.filter((u) => u.role === "admin" && u.status !== "suspended").length, nNever = all.filter((u) => !u.lastLogin).length;
   root.innerHTML = `
     ${UsrUI.err ? `<div class="mp-banner" style="border-color:var(--st-critical);">▲ ${E(UsrUI.err)}</div>` : ""}
@@ -10428,7 +10456,7 @@ function renderUsers(root) {
           <tr class="${u.status === "suspended" ? "usr-off" : ""}">
             <td><div class="usr-id"><span class="usr-av" style="background:${u.role === "admin" ? "#b91c1c" : "#0f766e"}">${E((u.name || u.email).trim().charAt(0).toUpperCase())}</span><div><b>${E(u.name || "–")}</b>${u.email === me ? ` <span class="badge grey">${mt("คุณ", "you")}</span>` : ""}${u.alias ? ` <span class="muted-s">@${E(u.alias)}</span>` : ""}<div class="muted-s">${E(u.email)}${u.phone ? " · " + E(u.phone) : ""}</div></div></div></td>
             <td><span class="badge ${u.role === "admin" ? "gold" : "grey"}">${u.role === "admin" ? mt("ผู้ดูแลระบบ (Admin)", "Admin") : mt("ผู้ใช้งาน", "User")}</span><div class="muted-s">${u.status === "suspended" ? "⛔ " + mt("ระงับ", "suspended") : "● " + mt("ใช้งาน", "active")}${u.sessions ? ` · 💻 ${u.sessions}` : ""}</div></td>
-            <td style="max-width:280px;">${E(usrScopeText(u, buildings))}</td>
+            <td style="max-width:280px;">${E(usrScopeText(u))}</td>
             <td>${u.lastLogin ? mpFmtWhen(u.lastLogin) : `<span class="muted-s">${mt("ยังไม่เคยเข้า", "never")}</span>`}</td>
             <td style="white-space:nowrap;text-align:right;">
               <button class="icon-btn" data-u-edit="${E(u.email)}">✎ ${t("btn_edit")}</button>
@@ -10462,14 +10490,55 @@ function renderUsers(root) {
   const accHost = document.createElement("div"); accHost.id = "acc-host"; root.appendChild(accHost);
   renderAccessSection(accHost);
 }
+/** access picker: All · whole BU (Manager) · single 3D buildings, grouped by Township / Live & Play / Workplace */
 function usrBuildingChecks(sel) {
-  const buildings = DB.get("buildings", []), all = !sel.length || sel.includes("ALL");
-  return `<div class="checkbox-list" id="building-checks">
-    <label class="checkbox-pill"><input type="checkbox" value="ALL" ${all ? "checked" : ""}/> ${mt("ทุกอาคาร", "All buildings")}</label>
-    ${buildings.map((b) => `<label class="checkbox-pill"><input type="checkbox" value="${b.id}" ${!all && (sel.includes(b.id) || sel.includes(b.code)) ? "checked" : ""}/> ${mpEsc((b.code ? b.code + " · " : "") + b.name)}</label>`).join("")}
+  sel = usrMapLegacy(sel || []);
+  const E = mpEsc, bs = DB.full("v3dBuildings", []), all = !sel.length || sel.includes("ALL");
+  const cols = V3_BU.map(([bu, th, en, col]) => {
+    const list = bs.filter((b) => v3dBuOf(b) === bu), whole = !all && sel.includes("BU:" + bu);
+    return `<div class="ub-col" style="--bu:${col}">
+      <label class="ub-head"><input type="checkbox" value="BU:${bu}" data-bu="${bu}" ${whole ? "checked" : ""} ${all ? "disabled" : ""}/> <i></i>${E(th)} <small>${mt("ทั้ง BU · Manager", "whole BU · Manager")}</small></label>
+      <div class="ub-list">${list.map((b) => `<label class="ub-item"><input type="checkbox" value="${E(b.id)}" data-of="${bu}" ${!all && (whole || sel.includes(b.id)) ? "checked" : ""} ${all || whole ? "disabled" : ""}/> ${E(b.name)}</label>`).join("") || `<span class="muted-s">${mt("ยังไม่มีอาคาร", "no buildings")}</span>`}</div>
+    </div>`;
+  }).join("");
+  const keep = sel.filter((k) => k !== "ALL" && !/^BU:/.test(k) && !bs.some((b) => b.id === k));
+  return `<div id="building-checks" data-keep="${E(keep.join(","))}">
+    <label class="checkbox-pill ub-all"><input type="checkbox" value="ALL" ${all ? "checked" : ""}/> ${mt("ทุก BU ทุกอาคาร (ผู้บริหาร / QSHE กลาง)", "Every BU and building (executives / central QSHE)")}</label>
+    <div class="ub-grid">${cols}</div>
+    <div class="muted-s" style="margin-top:6px;">${mt("ติ๊ก “ทั้ง BU” = Manager เห็นภาพรวมทุกอาคารใน BU · ติ๊กรายอาคาร = QSHE ของอาคารนั้นทำข้อมูลย่อย", "“Whole BU” = the Manager sees every building of the BU · single buildings = that building's QSHE")}</div>
   </div>`;
 }
-function usrReadChecks(modal) { const v = [...modal.querySelectorAll("#building-checks input:checked")].map((c) => c.value); return !v.length || v.includes("ALL") ? ["ALL"] : v; }
+/** old access codes (001… / building ids) → the matching 3D buildings, so existing users show up correctly */
+function usrMapLegacy(sel) {
+  const bs = DB.full("v3dBuildings", []), old = DB.full("buildings", []), out = [];
+  sel.forEach((k) => {
+    if (k === "ALL" || /^BU:/.test(k) || bs.some((b) => b.id === k)) { out.push(k); return; }
+    const ob = old.find((b) => b.id === k || b.code === k);
+    const names = [ob && ob.name].concat(Scope.CODE_ALIASES[(ob && ob.code) || k] || []).filter(Boolean);
+    const hits = bs.filter((b) => names.some((n) => Scope.cands(n).filter(Boolean).some((c) => Scope.cands(b.name).concat(Scope.cands(b.unitName || "")).filter(Boolean).some((x) => x === c || (c.length >= 5 && x.includes(c))))));
+    if (hits.length) hits.forEach((h) => out.push(h.id)); else out.push(k);
+  });
+  return [...new Set(out)];
+}
+function usrWireChecks(modal) {
+  const box = modal.querySelector("#building-checks"), allC = box.querySelector('input[value="ALL"]');
+  const sync = () => {
+    const a = allC.checked;
+    box.querySelectorAll(".ub-head input").forEach((h) => { h.disabled = a; if (a) h.checked = false; });
+    box.querySelectorAll(".ub-item input").forEach((x) => { const h = box.querySelector(`.ub-head input[data-bu="${x.dataset.of}"]`); x.disabled = a || h.checked; if (a) x.checked = false; else if (h.checked) x.checked = true; });
+  };
+  allC.addEventListener("change", sync);
+  box.querySelectorAll(".ub-head input").forEach((h) => h.addEventListener("change", () => { if (!h.checked) box.querySelectorAll(`.ub-item input[data-of="${h.dataset.bu}"]`).forEach((x) => { x.checked = false; }); sync(); }));
+}
+function usrReadChecks(modal) {
+  const box = modal.querySelector("#building-checks");
+  if (box.querySelector('input[value="ALL"]').checked) return ["ALL"];
+  const heads = [...box.querySelectorAll(".ub-head input:checked")].map((h) => h.value), hb = heads.map((h) => h.slice(3));
+  const items = [...box.querySelectorAll(".ub-item input:checked")].filter((x) => !hb.includes(x.dataset.of)).map((x) => x.value);
+  const keep = (box.dataset.keep || "").split(",").filter(Boolean);
+  const v = heads.concat(items, keep);
+  return v.length ? v : ["ALL"];
+}
 function openUserForm(existing, done) {
   const E = mpEsc, u = existing || { email: "", name: "", role: "user", status: "active", buildingIds: [], phone: "", alias: "", note: "" };
   const modal = openModal(`
@@ -10489,6 +10558,7 @@ function openUserForm(existing, done) {
     <div class="field"><label>${mt("อาคาร/BU ที่เข้าถึงได้", "Buildings / BU")}</label>${usrBuildingChecks(u.buildingIds || [])}</div>
     ${existing ? "" : `<label class="checkbox-pill"><input type="checkbox" id="f-notify" checked /> ${mt("ส่งอีเมลแจ้งสิทธิ์พร้อมลิงก์เข้าระบบ", "E-mail the invitation with the sign-in link")}</label>`}
     <div class="actions"><button class="btn ghost" id="cancel-u">${t("btn_cancel")}</button><button class="btn" id="save-u">${t("btn_save") || "บันทึก"}</button></div>`);
+  usrWireChecks(modal);
   modal.querySelector("#cancel-u").addEventListener("click", closeModal);
   modal.querySelector("#save-u").addEventListener("click", async (ev) => {
     const email = (existing ? u.email : modal.querySelector("#f-email").value).trim().toLowerCase(), name = modal.querySelector("#f-name").value.trim();
@@ -10516,6 +10586,7 @@ function openUserBulk(done) {
     <label class="checkbox-pill"><input type="checkbox" id="ub-notify" checked /> ${mt("ส่งอีเมลเชิญทุกคน", "E-mail the invitation to everyone")}</label>
     <div id="ub-msg" class="muted-s" style="margin-top:6px;"></div>
     <div class="actions"><button class="btn ghost" id="ub-cancel">${t("btn_cancel")}</button><button class="btn" id="ub-save">${mt("เพิ่มทั้งหมด", "Add all")}</button></div>`);
+  usrWireChecks(modal);
   modal.querySelector("#ub-cancel").addEventListener("click", closeModal);
   modal.querySelector("#ub-save").addEventListener("click", async (ev) => {
     const role = modal.querySelector("#ub-role").value, b = usrReadChecks(modal);
