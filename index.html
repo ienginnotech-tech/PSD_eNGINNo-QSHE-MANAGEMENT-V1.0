@@ -8267,7 +8267,9 @@ const APPS_SCRIPT_CODE = `/**
  *   - settings (buildings, 3D model, checklist forms, config records) can only be changed by Admins
  *   - the old shared Token / connection code no longer gives access
  *
- *  First Admin: the Google account that deploys this script (Execute as: Me) is added as Admin automatically.
+ *  First Admin: OWNER_EMAIL below (and the Google account that deploys the script) is added as Admin automatically.
+ *  FIRST TIME: choose the function  setup  in the toolbar → Run → Review permissions → Allow (e-mail + sheet),
+ *  then Deploy > Manage deployments > Edit > Version: New version > Deploy.
  *
  *  Setup: paste into Extensions > Apps Script of the Google Sheet (replace everything), then
  *  Deploy > Manage deployments > Edit > Version: New version > Deploy   (keep: Execute as Me, Who has access: Anyone).
@@ -8276,6 +8278,7 @@ const APPS_SCRIPT_CODE = `/**
 const VERSION = 13;
 const APP_NAME = 'PSD eNGINNo QSHE Management';
 const APP_URL = 'https://ienginnotech-tech.github.io/PSD_eNGINNo-QSHE-MANAGEMENT-V1.0/';
+const OWNER_EMAIL = 'kittanan.o@bhirajburi.co.th';   // first Admin (can sign in before anyone else is added)
 const ALLOWED_DOMAINS = [];          // e.g. ['bhirajburi.co.th'] - empty = any e-mail an Admin adds
 const OTP_TTL_SEC = 600, OTP_MAX_TRIES = 5, OTP_COOLDOWN_SEC = 45, OTP_PER_HOUR = 6, OTP_GLOBAL_PER_HOUR = 300;
 const SESSION_HOURS = 12, SESSION_REMEMBER_DAYS = 30;
@@ -8323,6 +8326,19 @@ function doPost(e) {
     return out_({ ok: false, error: String(err && err.message || err) });
   }
 }
+/** run ONCE from the Apps Script editor (select "setup" → Run): grants the permissions (Sheet + send e-mail),
+ *  creates the _Users tab with the first Admin and sends a test e-mail to that Admin. */
+function setup() {
+  cache_().remove('users');
+  var list = usersAll_(), owner = normEmail_(OWNER_EMAIL);
+  if (owner && !list.some(function (u) { return u.email === owner; })) {
+    list.push({ email: owner, name: 'ผู้ดูแลระบบ', role: 'admin', buildings: 'ALL', status: 'active', phone: '', alias: 'admin', createdAt: new Date().toISOString(), invitedBy: 'setup', lastLogin: '', note: 'owner' });
+    writeUsers_(list);
+  }
+  secret_();
+  if (owner) MailApp.sendEmail({ to: owner, subject: APP_NAME + ' – ตั้งค่าระบบเข้าใช้ด้วย OTP สำเร็จ', htmlBody: mailBox_('ตั้งค่าเรียบร้อย', '<p>สคริปต์เวอร์ชัน ' + VERSION + ' ส่งอีเมลได้แล้ว และ ' + esc_(owner) + ' เป็นผู้ดูแลระบบ</p><p>ขั้นต่อไป: Deploy → Manage deployments → Edit → New version → Deploy</p>'), name: APP_NAME });
+  Logger.log('OK – admins: ' + usersAll_().filter(function (u) { return u.role === 'admin'; }).map(function (u) { return u.email; }).join(', '));
+}
 function doGet() { return out_({ ok: true, app: APP_NAME, version: VERSION }); }
 
 function withLock_(fn) {
@@ -8369,7 +8385,8 @@ function usersAll_() {
   });
   // first run: the Google account that deployed the script becomes the first Admin
   if (!list.some(function (u) { return u.role === 'admin' && u.status === 'active'; })) {
-    var owner = normEmail_(Session.getEffectiveUser().getEmail());
+    var owner = normEmail_(OWNER_EMAIL);
+    if (!owner) { try { owner = normEmail_(Session.getEffectiveUser().getEmail()); } catch (e) { owner = ''; } }
     if (owner) {
       var ex = list.filter(function (u) { return u.email === owner; })[0];
       if (ex) { ex.role = 'admin'; ex.status = 'active'; ex.buildings = 'ALL'; }
