@@ -2246,6 +2246,7 @@ const Api = {
     try { r = await (await fetch(url, { method: "POST", body: JSON.stringify(body), headers: { "Content-Type": "text/plain;charset=utf-8" } })).json(); }
     catch (e) { throw new Error(mt("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจสอบอินเทอร์เน็ต / URL", "Cannot reach the server – check the connection / URL")); }
     if (r && r.auth && !noAuth) Auth.expired();
+    if (r && r.busy) r.error = mt("เซิร์ฟเวอร์กำลังบันทึกข้อมูลของผู้ใช้อื่น — ระบบจะลองใหม่ในรอบถัดไปอัตโนมัติ", "The server is busy saving other users' data – it retries automatically");
     if (r && r.error === "bad token") r.error = mt("เซิร์ฟเวอร์ยังเป็นสคริปต์เวอร์ชันเก่า — วางโค้ด Apps Script v13 แล้ว Deploy เวอร์ชันใหม่", "The server still runs an old script – paste Apps Script v13 and deploy a new version");
     return r;
   }
@@ -8311,7 +8312,7 @@ const APPS_SCRIPT_CODE = `/**
  *  Deploy > Manage deployments > Edit > Version: New version > Deploy   (keep: Execute as Me, Who has access: Anyone).
  *  The first deploy asks for permission to send e-mail (MailApp) - allow it.
  */
-const VERSION = 13;
+const VERSION = 13;   // 13.1: no lock-timeout errors
 const APP_NAME = 'PSD eNGINNo QSHE Management';
 const APP_URL = 'https://ienginnotech-tech.github.io/PSD_eNGINNo-QSHE-MANAGEMENT-V1.0/';
 const OWNER_EMAIL = 'kittanan.o@bhirajburi.co.th';   // first Admin (can sign in before anyone else is added)
@@ -8332,7 +8333,7 @@ function doPost(e) {
     switch (p.action) {
       case 'ping': return out_({ ok: true, version: VERSION, auth: 'otp' });
       case 'otpRequest': return out_(otpRequest_(p));
-      case 'otpVerify': return out_(withLock_(function () { return otpVerify_(p); }));
+      case 'otpVerify': return out_(withLock_(function () { return otpVerify_(p); }, 'users'));
     }
     // ---- everything else needs a valid session ----
     var me = auth_(p.session);
@@ -8351,11 +8352,11 @@ function doPost(e) {
       case 'save': return adm ? out_(save_(ss, p, me)) : deny();
       case 'latest': return adm ? out_(readSnapshot_(ss)) : deny();
       case 'userList': return adm ? out_(userList_()) : deny();
-      case 'userSave': return adm ? out_(withLock_(function () { return userSave_(p, me); })) : deny();
-      case 'userBulk': return adm ? out_(withLock_(function () { return userBulk_(p, me); })) : deny();
-      case 'userDelete': return adm ? out_(withLock_(function () { return userDelete_(p, me); })) : deny();
+      case 'userSave': return adm ? out_(withLock_(function () { return userSave_(p, me); }, 'users')) : deny();
+      case 'userBulk': return adm ? out_(withLock_(function () { return userBulk_(p, me); }, 'users')) : deny();
+      case 'userDelete': return adm ? out_(withLock_(function () { return userDelete_(p, me); }, 'users')) : deny();
       case 'userInvite': return adm ? out_(userInvite_(p, me)) : deny();
-      case 'userRevoke': return adm ? out_(withLock_(function () { revokeAll_(normEmail_(p.email)); return { ok: true }; })) : deny();
+      case 'userRevoke': return adm ? out_(withLock_(function () { revokeAll_(normEmail_(p.email)); return { ok: true }; }, 'users')) : deny();
     }
     return out_({ ok: false, error: 'unknown action' });
   } catch (err) {
@@ -8377,10 +8378,22 @@ function setup() {
 }
 function doGet() { return out_({ ok: true, app: APP_NAME, version: VERSION }); }
 
-function withLock_(fn) {
-  var lock = LockService.getScriptLock();
-  lock.waitLock(25000);
-  try { return fn(); } finally { lock.releaseLock(); }
+/**
+ * Locks (v13.1 – no more "lock timeout" errors):
+ *  - data sync / tables / photos share the script lock; if it stays busy the client simply gets {busy} and retries on the next sync
+ *  - sign-in and user management use their own (document) lock and never fail: if it is busy they run anyway
+ *  - e-mails are sent after the lock is released, so a slow mail server never blocks anybody
+ */
+var MAILQ_ = [];
+function withLock_(fn, kind) {
+  var users = kind === 'users', lock = users ? LockService.getDocumentLock() : LockService.getScriptLock(), got = false;
+  try { got = lock.tryLock(users ? 10000 : 20000); } catch (e) { got = false; }
+  if (!got && !users) return { ok: false, busy: true, error: 'busy' };
+  var res;
+  try { res = fn(); } finally { if (got) try { lock.releaseLock(); } catch (e) {} }
+  var q = MAILQ_; MAILQ_ = [];
+  q.forEach(function (f) { try { f(); } catch (e) { log_('', 'mail-error', String(e && e.message || e)); if (res) (res.errors = res.errors || []).push(String(e && e.message || e)); } });
+  return res;
 }
 
 /* ======================= sign-in: users, OTP, sessions ======================= */
@@ -8568,7 +8581,7 @@ function upsert_(list, x, me) {
 function userSave_(p, me) {
   var list = usersAll_(), r = upsert_(list, p.user || {}, me);
   writeUsers_(list);
-  if (r.isNew && p.notify !== false && r.u.status === 'active') invite_(r.u, me, p.appUrl);
+  if (r.isNew && p.notify !== false && r.u.status === 'active') MAILQ_.push(function () { invite_(r.u, me, p.appUrl); });
   log_(me.email, r.isNew ? 'user-add' : 'user-edit', r.u.email + ' ' + r.u.role + ' ' + r.u.status);
   return { ok: true, user: pub_(r.u), created: r.isNew };
 }
@@ -8578,7 +8591,7 @@ function userBulk_(p, me) {
     try { var r = upsert_(list, x, me); if (r.isNew) { added++; newOnes.push(r.u); } else updated++; } catch (e) { errors.push(String(e.message || e)); }
   });
   writeUsers_(list);
-  if (p.notify !== false) newOnes.forEach(function (u) { try { invite_(u, me, p.appUrl); } catch (e) { errors.push(u.email + ': ' + e); } });
+  if (p.notify !== false) newOnes.forEach(function (u) { MAILQ_.push(function () { invite_(u, me, p.appUrl); }); });
   log_(me.email, 'user-bulk', added + ' added / ' + updated + ' updated');
   return { ok: true, added: added, updated: updated, errors: errors };
 }
@@ -8707,13 +8720,13 @@ function sync_(ss, p, me) {
     });
     if (appendRows.length) sh.getRange(sh.getLastRow() + 1, 1, appendRows.length, 4 + MAXCH).setValues(appendRows);
     // what changed on the server since the client's last sync
-    var list = [];
+    var list = [], body = null;
     meta.forEach(function (r, i) {
       if (Number(r[2]) > since) {
         if (String(r[3]) === '1') res.deletes.push({ c: c, id: String(r[0]), _u: String(r[1]) });
         else {
-          var cells = sh.getRange(i + 2, 5, 1, MAXCH).getValues()[0].join('');
-          try { list.push(JSON.parse(cells)); } catch (e) {}
+          if (!body) body = sh.getRange(2, 5, meta.length, MAXCH).getValues();   // one read for the whole tab (fast)
+          try { list.push(JSON.parse(body[i].join(''))); } catch (e) {}
         }
       }
     });
